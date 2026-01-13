@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Bash(xargs kill:*)",
+      "Bash(pkill:*)",
+      "Bash(cat:*)",
+      "Bash(node -e:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(printenv:*)",
+      "Bash(unset:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:*)",
+      "Bash(rm:*)",
+      "Bash(node test-api.js:*)",
+      "Bash(npm install:*)",
+      "Bash(node test-ai.js:*)",
+      "Bash(grep:*)",
+      "Bash(psql:*)",
+      "Bash(mkdir:*)",
+      "Bash(PORT=3002 npm run dev:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

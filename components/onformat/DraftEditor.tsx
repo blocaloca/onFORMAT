@@ -1,0 +1,436 @@
+import React, { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+
+// Templates
+import { DocumentLayout } from '@/components/onformat/templates/DocumentLayout'
+import { BriefTemplate } from '@/components/onformat/templates/BriefTemplate'
+import { DirectorsTreatmentTemplate } from '@/components/onformat/templates/DirectorsTreatmentTemplate'
+import { MoodBoardTemplate } from '@/components/onformat/templates/MoodBoardTemplate'
+import { LookbookTemplate } from '@/components/onformat/templates/LookbookTemplate'
+import { ShotListTemplate } from '@/components/onformat/templates/ShotListTemplate'
+import { ShotLogTemplate } from '@/components/onformat/templates/ShotLogTemplate'
+import { BudgetTemplate } from '@/components/onformat/templates/BudgetTemplate'
+import { ScheduleTemplate } from '@/components/onformat/templates/ScheduleTemplate'
+import { LocationsTemplate } from '@/components/onformat/templates/LocationsTemplate'
+import { CrewListTemplate } from '@/components/onformat/templates/CrewListTemplate'
+import { CastingTemplate } from '@/components/onformat/templates/CastingTemplate'
+import { CallSheetTemplate } from '@/components/onformat/templates/CallSheetTemplate'
+import { OnSetNotesTemplate } from '@/components/onformat/templates/OnSetNotesTemplate'
+import { ScriptNotesTemplate } from '@/components/onformat/templates/ScriptNotesTemplate'
+import { DITLogTemplate } from '@/components/onformat/templates/DITLogTemplate'
+import { ClientSelectsTemplate } from '@/components/onformat/templates/ClientSelectsTemplate'
+import { DeliverablesTemplate } from '@/components/onformat/templates/DeliverablesTemplate'
+import { ArchiveLogTemplate } from '@/components/onformat/templates/ArchiveLogTemplate'
+import { WardrobeTemplate } from '@/components/onformat/templates/WardrobeTemplate'
+import { PropsListTemplate } from '@/components/onformat/templates/PropsListTemplate'
+import { AVScriptTemplate } from '@/components/onformat/templates/AVScriptTemplate'
+import { SoundReportTemplate } from '@/components/onformat/templates/SoundReportTemplate'
+import { EquipmentListTemplate } from '@/components/onformat/templates/EquipmentListTemplate'
+import { CreativeConceptTemplate } from '@/components/onformat/templates/CreativeConceptTemplate'
+import { StoryboardTemplate } from '@/components/onformat/templates/StoryboardTemplate'
+import { OnSetControlPanelTemplate } from '@/components/onformat/templates/OnSetControlPanelTemplate'
+import { BudgetActualTemplate } from '@/components/onformat/templates/BudgetActualTemplate'
+import { DocumentNavBar } from './DocumentNavBar'
+
+interface DraftEditorProps {
+    draft: string
+    onDraftChange: (newDraft: string) => void
+    isLocked: boolean
+    activeToolLabel: string
+    activeToolKey: string
+    persona?: string
+    clientName?: string
+    projectId?: string
+    projectName?: string
+    producer?: string
+    activePhase?: string
+    phases?: any
+    onToggleLock: () => void
+    onGenerateFromVision?: (targetTool: any, visionText: string, promptPrefix: string) => void
+    onOpenAi?: () => void
+    onJumpStart?: () => void
+}
+
+// Helper Template for Plain Text
+const PlainTemplate = ({ data, onUpdate, isLocked, activeToolLabel, orientation }: any) => {
+    // If data is object, stringify it, else use it as string
+    const text = typeof data === 'string' ? data : (data?.text || JSON.stringify(data, null, 2));
+
+    // Safety for empty object string "{}"
+    const displayText = text === '{}' ? '' : text;
+
+    return (
+        <DocumentLayout
+            title={activeToolLabel || "Notes"}
+            hideHeader={false}
+            plain={true}
+            orientation={orientation}
+        >
+            <textarea
+                className="w-full h-full bg-transparent p-0 resize-none outline-none font-mono text-xs leading-relaxed text-zinc-800 border-none"
+                placeholder="// Start writing..."
+                value={displayText}
+                onChange={(e) => onUpdate(e.target.value)}
+                disabled={isLocked}
+                spellCheck={false}
+            />
+        </DocumentLayout>
+    )
+}
+
+export const DraftEditor = ({
+    draft,
+    onDraftChange,
+    isLocked,
+    activeToolLabel,
+    activeToolKey,
+    persona,
+    clientName,
+    projectId,
+    projectName,
+    producer,
+    activePhase,
+    phases,
+    onToggleLock,
+    onGenerateFromVision,
+    onOpenAi,
+    onJumpStart
+}: DraftEditorProps) => {
+
+    // Schedule Import Logic
+    let importedSchedule = null;
+    if (phases?.['PRE_PRODUCTION']?.drafts?.['schedule']) {
+        try {
+            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['schedule']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedSchedule = arr[0];
+        } catch { }
+    }
+
+    // AV Script Import Logic (for Script Notes)
+    let importedAVScript = null;
+    if (phases?.['DEVELOPMENT']?.drafts?.['av-script']) {
+        try {
+            const raw = JSON.parse(phases['DEVELOPMENT'].drafts['av-script']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedAVScript = arr[0];
+        } catch { }
+    }
+
+    // Budget Import Logic (for Actuals)
+    let importedBudget = null;
+    if (phases?.['PRE_PRODUCTION']?.drafts?.['budget']) {
+        try {
+            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['budget']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedBudget = arr[0];
+        } catch { }
+    }
+
+    // --- Document Stack Logic ---
+    const [activeVersionIndex, setActiveVersionIndex] = useState(0);
+
+    // Parse draft safely into an Array
+    const getVersions = (): any[] => {
+        if (!draft) return [{}];
+        try {
+            const parsed = JSON.parse(draft);
+            if (Array.isArray(parsed)) return parsed;
+            return [parsed]; // Migration for legacy single objects
+        } catch {
+            return [{}]; // Fallback
+        }
+    };
+
+    const versions = getVersions();
+    // Safety: ensure activeVersionIndex is within bounds
+    const safeIndex = Math.min(activeVersionIndex, versions.length - 1);
+    // Handle empty versions array or null entries case
+    const activeData = (versions.length > 0 && versions[safeIndex]) ? versions[safeIndex] : {};
+
+    const handleUpdate = (updatedFields: any) => {
+        if (isLocked) return;
+        const newVersions = [...versions];
+        // Ensure index exists
+        if (!newVersions[safeIndex]) newVersions[safeIndex] = {};
+
+        newVersions[safeIndex] = { ...newVersions[safeIndex], ...updatedFields };
+        onDraftChange(JSON.stringify(newVersions));
+    };
+
+    // --- Nav Bar Actions ---
+    const handleNew = () => {
+        const newVersions = [{}, ...versions];
+        setActiveVersionIndex(0); // Jump to new
+        onDraftChange(JSON.stringify(newVersions));
+    };
+
+    const handleDuplicate = () => {
+        const copy = { ...activeData };
+        const newVersions = [copy, ...versions];
+        setActiveVersionIndex(0); // Jump to new copy
+        onDraftChange(JSON.stringify(newVersions));
+    };
+
+    const handleClear = () => {
+        if (confirm('Are you sure you want to clear this document?')) {
+            const newVersions = [...versions];
+            newVersions[safeIndex] = {};
+            onDraftChange(JSON.stringify(newVersions));
+        }
+    };
+
+    // Reset index when tool changes to avoid confusion
+    useEffect(() => {
+        setActiveVersionIndex(0);
+    }, [activeToolKey]);
+
+
+
+    // --- PDF Export Logic ---
+    const [isExportingPdf, setIsExportingPdf] = useState(false);
+
+    const handleExportPdf = async (scope: 'current' | 'all' = 'current') => {
+        if (isExportingPdf) return;
+        setIsExportingPdf(true);
+
+        try {
+            // Wait for render of hidden pages
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const pageWidth = orientation === 'landscape' ? 1056 : 816;
+            const pageHeight = orientation === 'landscape' ? 816 : 1056;
+
+            const pdf = new jsPDF({
+                orientation: orientation,
+                unit: 'px',
+                format: [pageWidth, pageHeight],
+                hotfixes: ['px_scaling']
+            });
+
+            // Determine which versions to export
+            const versionsToExport = scope === 'all'
+                ? versions.map((_, i) => i)
+                : [safeIndex]; // Only current
+
+            let pageAdded = false;
+
+            for (const i of versionsToExport) {
+                const container = document.getElementById(`pdf-page-${i}`);
+                if (!container) continue;
+
+                // Find all individual pages within this version/draft
+                const pages = container.querySelectorAll('.document-page');
+
+                if (pages.length > 0) {
+                    for (let p = 0; p < pages.length; p++) {
+                        const pageEl = pages[p] as HTMLElement;
+
+                        const canvas = await html2canvas(pageEl, {
+                            scale: 2,
+                            useCORS: true,
+                            logging: false,
+                            backgroundColor: '#ffffff',
+                            width: pageWidth,
+                            height: pageHeight,
+                            windowWidth: pageWidth,
+                            windowHeight: pageHeight
+                        });
+
+                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+                        if (pageAdded) {
+                            pdf.addPage([pageWidth, pageHeight], orientation);
+                        }
+
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+                        pageAdded = true;
+                    }
+                }
+            }
+
+            pdf.save(`${(activeToolLabel || 'Document').replace(/\s+/g, '_')}.pdf`);
+
+        } catch (error) {
+            console.error('PDF Generation Failed:', error);
+            alert('Failed to generate PDF. Please try again.');
+        } finally {
+            setIsExportingPdf(false);
+        }
+    };
+
+
+    // --- Orientation Support ---
+    // --- Orientation Support ---
+    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(() => {
+        if (typeof window !== 'undefined') {
+            return (localStorage.getItem('onformat_orientation') as 'portrait' | 'landscape') || 'portrait';
+        }
+        return 'portrait';
+    });
+
+    // Removed auto-sync from data to enforce global persistence
+    // useEffect(() => { ... }, [activeVersionIndex, activeToolKey]);
+
+    const handleOrientationToggle = (newOrientation: 'portrait' | 'landscape') => {
+        setOrientation(newOrientation);
+        localStorage.setItem('onformat_orientation', newOrientation);
+        handleUpdate({ orientation: newOrientation });
+    };
+
+    // --- Template Switcher ---
+    let TemplateComponent = PlainTemplate // Default to PlainTemplate
+    switch (activeToolKey) {
+        case 'brief': TemplateComponent = BriefTemplate; break;
+        case 'directors-treatment': TemplateComponent = DirectorsTreatmentTemplate; break;
+        case 'lookbook': TemplateComponent = LookbookTemplate; break;
+        case 'creative-direction': TemplateComponent = MoodBoardTemplate; break;
+        case 'shot-scene-book': TemplateComponent = ShotListTemplate; break;
+        case 'budget': TemplateComponent = BudgetTemplate; break;
+        case 'schedule': TemplateComponent = ScheduleTemplate; break;
+        case 'locations-sets': TemplateComponent = LocationsTemplate; break;
+        case 'crew-list': TemplateComponent = CrewListTemplate; break;
+        case 'casting-talent': TemplateComponent = CastingTemplate; break;
+        case 'call-sheet': TemplateComponent = CallSheetTemplate; break;
+        case 'shot-log': TemplateComponent = ShotLogTemplate; break;
+        case 'on-set-notes': TemplateComponent = OnSetNotesTemplate; break;
+        case 'script-notes': TemplateComponent = ScriptNotesTemplate; break;
+        case 'dit-log': TemplateComponent = DITLogTemplate; break;
+        case 'client-selects': TemplateComponent = ClientSelectsTemplate; break;
+        case 'deliverables-licensing': TemplateComponent = DeliverablesTemplate; break;
+        case 'archive-log': TemplateComponent = ArchiveLogTemplate; break;
+        case 'wardrobe-styling': TemplateComponent = WardrobeTemplate; break;
+        case 'props-list': TemplateComponent = PropsListTemplate; break;
+        case 'av-script': TemplateComponent = AVScriptTemplate; break;
+        case 'sound-report': TemplateComponent = SoundReportTemplate; break;
+        case 'equipment-list': TemplateComponent = EquipmentListTemplate; break;
+        case 'project-vision': TemplateComponent = CreativeConceptTemplate; break;
+        case 'storyboard': TemplateComponent = StoryboardTemplate; break;
+        case 'budget-actual': TemplateComponent = BudgetActualTemplate; break;
+        case 'onset-mobile-control': TemplateComponent = OnSetControlPanelTemplate; break;
+        default: TemplateComponent = PlainTemplate;
+    }
+
+    const containerStyle = orientation === 'landscape'
+        ? "w-[1056px] h-[816px]"
+        : "w-[816px] h-[1056px]";
+
+    return (
+        <section className="flex-1 flex flex-col h-full bg-transparent relative overflow-hidden">
+
+            <DocumentNavBar
+                title={activeToolLabel}
+                versions={versions}
+                activeVersionIndex={safeIndex}
+                onSelectVersion={setActiveVersionIndex}
+                onNew={handleNew}
+                onDuplicate={handleDuplicate}
+                onClear={handleClear}
+                onSave={() => { }} // "Save" is implicit
+                orientation={orientation}
+                onToggleOrientation={handleOrientationToggle}
+                onExportPdf={handleExportPdf}
+                isExportingPdf={isExportingPdf}
+            />
+
+            <div className="flex-1 overflow-y-auto bg-transparent p-8 flex flex-col items-center" id="document-preview-area">
+
+                {/* Document Area */}
+                <div className="w-full flex justify-center pb-20">
+                    <div className="relative z-10">
+                        <TemplateComponent
+                            data={activeData}
+                            // @ts-ignore
+                            onUpdate={handleUpdate}
+                            isLocked={isLocked}
+                            persona={persona}
+                            // @ts-ignore
+                            plain={false}
+                            orientation={orientation}
+                            metadata={{
+                                projectName,
+                                clientName,
+                                date: new Date().toLocaleDateString(),
+                                producer,
+                                directorNames: activeData.directorNames,
+                                isTreatment: activeToolKey === 'directors-treatment',
+                                importedSchedule,
+                                importedAVScript,
+                                importedBudget,
+                                projectId
+                            }}
+                            // @ts-ignore
+                            onGenerateFromVision={onGenerateFromVision}
+                            // @ts-ignore
+                            onOpenAi={onOpenAi}
+
+                            onJumpStart={onJumpStart}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Lock Overlay */}
+            {isLocked && (
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px] z-10 flex items-center justify-center cursor-not-allowed select-none">
+                    <div className="bg-white/90 px-4 py-2 border border-zinc-200 shadow-xl rounded-full text-[10px] font-bold tracking-widest uppercase text-zinc-500 flex items-center gap-2">
+                        <span>LOCKED</span>
+                    </div>
+                </div>
+            )}
+
+            {/* Hidden Container for PDF Generation */}
+            <div
+                style={{
+                    position: 'fixed',
+                    left: '-10000px',
+                    top: 0,
+                    zIndex: -50,
+                    opacity: 0,
+                    pointerEvents: 'none'
+                }}
+            >
+                {isExportingPdf && versions.map((v, i) => (
+                    // Only render if we are exporting 'all' or this is the active version
+                    // Note: We don't have 'exportScope' state here easily, so we usually render all.
+                    // But if the loop only picks one, it should work.
+                    // If the user says it downloads ALL, then the loop is iterating ALL.
+                    // Which means scope is 'all'.
+                    <div
+                        key={i}
+                        id={`pdf-page-${i}`}
+                        style={{
+                            width: orientation === 'landscape' ? '1056px' : '816px',
+                            backgroundColor: 'white',
+                            padding: '0'
+                        }}
+                    >
+                        <TemplateComponent
+                            data={v}
+                            // @ts-ignore
+                            onUpdate={() => { }}
+                            isLocked={true}
+                            persona={persona}
+                            // @ts-ignore
+                            plain={false}
+                            orientation={orientation}
+                            isPrinting={true}
+                            metadata={{
+                                projectName,
+                                clientName,
+                                date: new Date().toLocaleDateString(),
+                                producer,
+                                directorNames: activeData.directorNames,
+                                isTreatment: activeToolKey === 'directors-treatment',
+                                projectId,
+                                importedBudget
+                            }}
+                        />
+                    </div>
+                ))}
+            </div>
+        </section>
+    )
+}

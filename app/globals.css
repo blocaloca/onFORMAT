@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Medium Grey Palette */
+  --background: #e4e4e7;
+  /* zinc-200 */
+  --surface: #ffffff;
+  /* white */
+  --surface-hover: #f4f4f5;
+  /* zinc-100 */
+  --border: #d4d4d8;
+  /* zinc-300 */
+
+  --foreground: #09090b;
+  /* zinc-950 (Black-ish) */
+  --foreground-muted: #52525b;
+  /* zinc-600 */
+
+  /* Accent: Keep Terminal Green but maybe darker text on it? */
+  --accent: #00FF41;
+  --accent-dim: rgba(0, 255, 65, 0.1);
+  --accent-hover: #00CC33;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+::selection {
+  background-color: var(--accent);
+  color: #000000;
+}
+
+/* Custom Utilities for Industrial Look */
+/* Custom Utilities for Industrial Look */
+.border-industrial {
+  border-color: var(--border);
+  border-width: 1px;
+}
+
+.bg-industrial-surface {
+  background-color: var(--surface);
+}
+
+.text-industrial-accent {
+  color: var(--accent);
+}
+
+.industrial-hover {
+  transition-property: all;
+  transition-duration: 200ms;
+}
+
+.industrial-hover:hover {
+  border-color: var(--accent);
+  color: white;
+  background-color: var(--surface-hover);
+}
+
+.bg-industrial-accent {
+  background-color: var(--accent);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground-muted);
+}
+
+@media print {
+
+  /* 
+       Browser Print Reset 
+       We use 20mm margins for a standard "Letter/A4" professional feel.
+       The browser will handle pagination automatically for long text.
+    */
+  @page {
+    margin: 20mm;
+    size: auto;
+    /* Let browser match paper choice */
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide UI Elements */
+  nav,
+  section.col-span-2,
+  section.col-span-4,
+  .sidebar,
+  .ai-liaison,
+  .nav-header,
+  .save-button,
+  .lock-status,
+  button {
+    display: none !important;
+  }
+
+  /* Reset Container for flow */
+  section.col-span-6,
+  main,
+  #document-preview-area {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Ensure Text Flows and Breaks correctly */
+  .pdf-content-wrapper {
+    width: 100% !important;
+  }
+
+  /* Header styling for Print */
+  .doc-header {
+    margin-bottom: 2rem !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    border-bottom: 2px solid black !important;
+    padding-bottom: 1rem !important;
+    column-gap: 2rem !important;
+  }
+
+  /* Typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div,
+  label {
+    font-family: ui-sans-serif, system-ui, sans-serif !important;
+    color: black !important;
+  }
+}
