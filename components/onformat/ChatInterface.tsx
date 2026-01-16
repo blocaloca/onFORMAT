@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Loader2 } from 'lucide-react';
 
 
 interface AIAction {
@@ -71,7 +71,7 @@ interface ChatInterfaceProps {
     activeMode: 'OFF' | 'ASSIST' | 'DEVELOP';
     onModeChange: (m: 'OFF' | 'ASSIST' | 'DEVELOP') => void;
     onCreateBrief?: (text: string) => void;
-    onNavigate?: (tool: string) => void;
+    onNavigate?: (tool: string, payload?: string) => void;
     placeholderHint?: string;
 }
 
@@ -225,7 +225,8 @@ export const ChatInterface = ({
     const handleActionClick = (action: AIAction) => {
         // PRIORITY: Navigation
         if (action.target && onNavigate) {
-            onNavigate(action.target);
+            const payloadText = action.payload ? (typeof action.payload === 'string' ? action.payload : JSON.stringify(action.payload)) : undefined;
+            onNavigate(action.target, payloadText);
             return;
         }
 
@@ -239,12 +240,9 @@ export const ChatInterface = ({
 
             // 2. Auto-Advance Conversation
             // We tell the AI what happened so it can ask the NEXT question.
-            // We use a special marker or just clear text. 
-            // The user doesn't need to type "I added it". We simulate it.
-            // Note: We need to update the prop type of onSend to allow arguments if not already.
-            // Looking at WorkspaceEditor, send(overrideInput) IS supported.
-            // We send a message representing the user's choice to keep the flow.
-            const userResponse = `I chose: ${action.label}. Content added: ${payloadText.substring(0, 50)}...`;
+            // We transmit just the Label so the AI knows what choice was made.
+            // The document update happens via onInsertToDraft.
+            const userResponse = action.label;
             onSend(userResponse);
         }
     };
@@ -278,7 +276,10 @@ export const ChatInterface = ({
                 onMouseDown={startDrag}
             >
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-white tracking-widest">AI LIAISON</span>
+                    <span className="text-[10px] font-bold text-white tracking-widest flex items-center gap-2">
+                        AI LIAISON
+                        {isSending && <Loader2 size={12} className="text-green-400 animate-spin" style={{ filter: 'drop-shadow(0 0 2px rgba(74, 222, 128, 0.5))' }} />}
+                    </span>
                     <span className="text-[9px] text-zinc-500 font-mono pl-2 border-l border-zinc-700">
                         {(activeToolLabel || '').toUpperCase()}
                     </span>
@@ -330,6 +331,10 @@ export const ChatInterface = ({
                     const displayContent = textContent
                         .replace('[BRIEF_READY]', '')
                         .replace('[TREATMENT_READY]', '')
+                        .replace(/Auto-adding prompt:[\s\S]*$/, 'Image Prompt added to document.')
+                        .replace(/\*\*Image Prompt:\*\*[\s\S]*$/, 'Image Prompt added to document.')
+                        .replace(/\*\*Notes:\*\*[\s\S]*$/, 'Notes added to document.')
+                        .replace(/\*\*(?:Scene|Size|Angle|Movement|Description):?\*\*[\s\S]*$/i, 'Shot details added to document.')
                         .trim();
 
                     // Standard User/Assistant Render

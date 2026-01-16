@@ -170,9 +170,56 @@ export const DraftEditor = ({
     };
 
     const handleClear = () => {
-        if (confirm('Are you sure you want to clear this document?')) {
+        if (confirm('Are you sure you want to clear this document? Content will be erased.')) {
             const newVersions = [...versions];
-            newVersions[safeIndex] = {};
+
+            // Define Empty State based on Tool
+            let emptyState = {};
+
+            if (activeToolKey === 'project-vision') {
+                // Preserve structure for Vision Board
+                emptyState = {
+                    pages: [{ id: `page-${Date.now()}`, content: '' }],
+                    activePageId: `page-${Date.now()}`
+                };
+            }
+            else if (activeToolKey === 'directors-treatment') {
+                // Return to 1 empty scene
+                emptyState = {
+                    scenes: [{
+                        id: `scene-${Date.now()}`,
+                        image: '',
+                        description: '',
+                        content: '',
+                        type: 'Narrative'
+                    }]
+                };
+            }
+            else if (activeToolKey === 'av-script') {
+                emptyState = {
+                    rows: [{
+                        id: `row-${Date.now()}`,
+                        scene: '1',
+                        visual: '',
+                        audio: '',
+                        time: ''
+                    }]
+                };
+            }
+            else if (activeToolKey === 'shot-scene-book') {
+                emptyState = {
+                    shots: [{
+                        id: `shot-${Date.now()}`,
+                        scene: '1',
+                        size: 'Wide',
+                        angle: 'Eye Level',
+                        movement: 'Static',
+                        description: ''
+                    }]
+                };
+            }
+
+            newVersions[safeIndex] = emptyState;
             onDraftChange(JSON.stringify(newVersions));
         }
     };

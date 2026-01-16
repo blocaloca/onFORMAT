@@ -189,6 +189,108 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         }
     }, [state, onSave, projectId])
 
+    // Auto-Prompt for Creative Brief & AV Script & Treatment
+    useEffect(() => {
+        if (state.activeTool === 'brief') {
+            setState(s => {
+                const currentChat = s.chat['brief'] || [];
+                if (currentChat.length === 0) {
+                    return {
+                        ...s,
+                        chat: { ...s.chat, 'brief': [{ role: 'assistant', content: "What is the subject or product you are shooting?" }] }
+                    };
+                }
+                return s;
+            });
+        }
+        else if (state.activeTool === 'av-script') {
+            setState(s => {
+                const currentChat = s.chat['av-script'] || [];
+                if (currentChat.length === 0) {
+                    return {
+                        ...s,
+                        chat: { ...s.chat, 'av-script': [{ role: 'assistant', content: "Describe Scene 1." }] }
+                    };
+                }
+                return s;
+            });
+        }
+        else if (state.activeTool === 'directors-treatment') {
+            setState(s => {
+                const currentChat = s.chat['directors-treatment'] || [];
+                if (currentChat.length === 0) {
+                    return {
+                        ...s,
+                        chat: { ...s.chat, 'directors-treatment': [{ role: 'assistant', content: "What do you want to call this treatment?" }] }
+                    };
+                }
+                return s;
+            });
+        }
+        else if (state.activeTool === 'shot-scene-book') {
+            setState(s => {
+                const currentChat = s.chat['shot-scene-book'] || [];
+                if (currentChat.length === 0) {
+                    return {
+                        ...s,
+                        chat: { ...s.chat, 'shot-scene-book': [{ role: 'assistant', content: "Scene 01 Describe the shot" }] }
+                    };
+                }
+                return s;
+            });
+        }
+        else if (state.activeTool === 'project-vision') {
+            setState(s => {
+                const currentChat = s.chat['project-vision'] || [];
+                if (currentChat.length === 0) {
+                    return {
+                        ...s,
+                        chat: {
+                            ...s.chat,
+                            'project-vision': [{
+                                role: 'assistant',
+                                content: "Welcome. I'm your Creative & Production Partner. I can help you develop concepts, characters, and visual styles, or help you scope budgets and logistics.\n\nWhere should we start?",
+                                actions: [
+                                    { label: "Creative Assist", type: "suggestion", payload: "Creative Assist", prominence: "primary" },
+                                    { label: "Production Assist", type: "suggestion", payload: "Production Assist", prominence: "primary" },
+                                    { label: "Create Brief", type: "suggestion", payload: "Draft Brief", prominence: "secondary" }
+                                ]
+                            }]
+                        }
+                    };
+                }
+                return s;
+            });
+        }
+    }, [state.activeTool]);
+
+    // --- AUTO-PARSE AI MESSAGES ---
+    // If the last message is from AI, try to parse it as a document update.
+    useEffect(() => {
+        const chats = state.chat[state.activeTool] || [];
+        if (chats.length === 0) return;
+
+        const lastMsg = chats[chats.length - 1];
+        if (lastMsg.role === 'assistant') {
+            // We invoke the parser. 
+            // Note: We need to be careful not to cycle. 
+            // Since parsing updates 'drafts', and this effect depends on 'chat', it shouldn't cycle unless chat updates.
+            // But we must ensure 'saveDraftForActiveTool' only parses, doesn't add chat messages.
+            // Parse pure content from JSON protocol to avoid passing code/actions to the doc parser
+            let contentToParse = lastMsg.content;
+            try {
+                if (contentToParse.trim().startsWith('{')) {
+                    const parsed = JSON.parse(contentToParse);
+                    if (parsed.message) {
+                        contentToParse = parsed.message;
+                    }
+                }
+            } catch (e) { }
+
+            saveDraftForActiveTool(contentToParse);
+        }
+    }, [state.chat, state.activeTool]);
+
     // Derived from state now
     const persona = state.persona || 'MOTION';
     const setPersona = (p: 'STILLS' | 'MOTION' | 'HYBRID') => setState(s => ({ ...s, persona: p }));
@@ -357,26 +459,79 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
 
         // SPECIAL HANDLING: Directors Treatment
         if (state.activeTool === 'directors-treatment') {
+            const titleMatch = incoming.match(/\*\*Title:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const noteMatch = incoming.match(/\*\*Notes?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const imagePromptMatch = incoming.match(/\*\*Image Prompt:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            // Legacy matchers fallback
             const arcMatch = incoming.match(/\*\*Narrative Arc:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-            const charMatch = incoming.match(/\*\*Character Philosophy:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-            const visualMatch = incoming.match(/\*\*Visual Language:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
-            if (arcMatch || charMatch || visualMatch) {
-                const parsedUpdate: Record<string, any> = {};
-                if (arcMatch) parsedUpdate.narrativeArc = arcMatch[1].trim();
-                if (charMatch) parsedUpdate.characterPhilosophy = charMatch[1].trim();
-                if (visualMatch) parsedUpdate.visualLanguage = visualMatch[1].trim();
-
-                let newHeadRawWithUpdate = newHeadRaw;
+            if (titleMatch || noteMatch || imagePromptMatch || arcMatch) {
                 try {
                     const parsedCurrent = JSON.parse(currentHeadRaw);
-                    newHeadRawWithUpdate = JSON.stringify({ ...parsedCurrent, ...parsedUpdate }, null, 2);
+                    const currentScenes = Array.isArray(parsedCurrent.scenes) ? parsedCurrent.scenes : [];
+
+                    // Ensure at least one scene exists
+                    if (currentScenes.length === 0) {
+                        currentScenes.push({
+                            id: `scene-${Date.now()}`,
+                            image: '',
+                            image2: '', // Support 2 images
+                            description: '',
+                            type: 'Narrative',
+                            content: ''
+                        });
+                    }
+
+                    // Target the LAST scene by default for edits
+                    const targetIndex = currentScenes.length - 1;
+                    const targetScene = currentScenes[targetIndex];
+
+                    // Map fields
+                    if (titleMatch) {
+                        targetScene.description = titleMatch[1].trim();
+                    }
+
+                    const contentToAdd = (noteMatch ? noteMatch[1].trim() : '') || (arcMatch ? arcMatch[1].trim() : '');
+
+                    if (contentToAdd) {
+                        // Append or replace? Let's Append with newline if content exists
+                        targetScene.content = targetScene.content
+                            ? targetScene.content + '\n\n' + contentToAdd
+                            : contentToAdd;
+                    }
+
+                    if (imagePromptMatch) {
+                        const promptText = `Image Prompt:\n${imagePromptMatch[1].trim()}`;
+                        targetScene.content = targetScene.content
+                            ? targetScene.content + '\n\n' + promptText
+                            : promptText;
+                    }
+
+                    parsedCurrent.scenes = currentScenes;
+                    newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
                 } catch {
-                    newHeadRawWithUpdate = JSON.stringify(parsedUpdate, null, 2);
+                    // Fallback Init if broken JSON
+                    const newScene = {
+                        id: `scene-${Date.now()}`,
+                        image: '',
+                        description: titleMatch ? titleMatch[1].trim() : '',
+                        type: 'Narrative',
+                        content: (noteMatch ? noteMatch[1].trim() : '') || (imagePromptMatch ? `Image Prompt:\n${imagePromptMatch[1].trim()}` : '')
+                    };
+                    newHeadRaw = JSON.stringify({ scenes: [newScene] }, null, 2);
+                }
+
+                // Generic "Title" property fallback for metadata if needed
+                if (titleMatch) {
+                    try {
+                        const pc = JSON.parse(newHeadRaw);
+                        pc.title = titleMatch[1].trim();
+                        newHeadRaw = JSON.stringify(pc, null, 2);
+                    } catch { }
                 }
 
                 // Update Stack
-                currentStack[0] = JSON.parse(newHeadRawWithUpdate);
+                currentStack[0] = JSON.parse(newHeadRaw);
                 const finalDraftString = JSON.stringify(currentStack);
 
                 setState((s) => ({
@@ -393,6 +548,113 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                     },
                 }));
                 return;
+            }
+        }
+
+        // SPECIAL HANDLING: Project Vision Parser
+        else if (state.activeTool === 'project-vision') {
+            const visionMatch = incoming.match(/\*\*Vision:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+
+            if (visionMatch) {
+                const contentToAdd = visionMatch[1].trim();
+                try {
+                    const parsedCurrent = JSON.parse(currentHeadRaw);
+                    // Vision Doc uses 'pages' array structure typically
+                    let pages = parsedCurrent.pages || [];
+
+                    if (pages.length === 0) {
+                        pages = [{ id: 'vision-p1', content: '' }];
+                    }
+
+                    // Append to last page or create new? Append to last for running log.
+                    const lastPageIdx = pages.length - 1;
+                    const oldContent = pages[lastPageIdx].content || '';
+
+                    // Add timestamp or divider? Maybe just newlines.
+                    pages[lastPageIdx].content = oldContent
+                        ? oldContent + '\n\n' + contentToAdd
+                        : contentToAdd;
+
+                    parsedCurrent.pages = pages;
+                    newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+
+                    // Update Stack
+                    currentStack[0] = JSON.parse(newHeadRaw);
+                    const finalDraftString = JSON.stringify(currentStack);
+
+                    setState((s) => ({
+                        ...s,
+                        phases: {
+                            ...s.phases,
+                            [s.activePhase]: {
+                                ...s.phases[s.activePhase],
+                                drafts: {
+                                    ...s.phases[s.activePhase].drafts,
+                                    [s.activeTool]: finalDraftString,
+                                },
+                            },
+                        },
+                    }));
+                    return;
+
+                } catch (e) {
+                    // If structure fails, fallback to simple string append is tricky with JSON storage.
+                    // Assume JSON structure is valid for now.
+                }
+            }
+        }
+
+        // SPECIAL HANDLING: Shot List Parser (shot-scene-book)
+        else if (state.activeTool === 'shot-scene-book') {
+            const sceneMatch = incoming.match(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const sizeMatch = incoming.match(/\*\*Size:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const angleMatch = incoming.match(/\*\*Angle:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const moveMatch = incoming.match(/\*\*Movement:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const descMatch = incoming.match(/\*\*Description:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+
+            if (descMatch || sceneMatch) {
+                try {
+                    const parsedCurrent = JSON.parse(currentHeadRaw);
+                    const currentShots = parsedCurrent.shots || [];
+
+                    // Context Awareness: Inherit Scene from last shot if missing
+                    let lastScene = '';
+                    if (currentShots.length > 0) {
+                        lastScene = currentShots[currentShots.length - 1].scene;
+                    }
+
+                    const newShot = {
+                        id: `shot-${Date.now()}`,
+                        scene: sceneMatch ? sceneMatch[1].trim() : lastScene,
+                        size: sizeMatch ? sizeMatch[1].trim() : 'Wide',
+                        angle: angleMatch ? angleMatch[1].trim() : 'Eye Level',
+                        movement: moveMatch ? moveMatch[1].trim() : 'Static',
+                        description: descMatch ? descMatch[1].trim() : (incoming.replace(/\*\*/g, '').trim())
+                    };
+
+                    parsedCurrent.shots = [...currentShots, newShot];
+                    newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+
+                    // Update Stack
+                    currentStack[0] = JSON.parse(newHeadRaw);
+                    const finalDraftString = JSON.stringify(currentStack);
+
+                    setState((s) => ({
+                        ...s,
+                        phases: {
+                            ...s.phases,
+                            [s.activePhase]: {
+                                ...s.phases[s.activePhase],
+                                drafts: {
+                                    ...s.phases[s.activePhase].drafts,
+                                    [s.activeTool]: finalDraftString,
+                                },
+                            },
+                        },
+                    }));
+                    return;
+
+                } catch (e) { console.error('Shot Parse Error', e); }
             }
         }
 
@@ -646,20 +908,62 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
             const audioMatch = incoming.match(/\*\*Audio:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
             if (visualMatch || audioMatch || sceneMatch) {
-                const newRow = {
-                    id: `row-${Date.now()}`,
-                    scene: sceneMatch ? sceneMatch[1].trim() : '',
-                    time: timeMatch ? timeMatch[1].trim() : '',
-                    visual: visualMatch ? visualMatch[1].trim() : '',
-                    audio: audioMatch ? audioMatch[1].trim() : ''
-                };
+                const incomingScene = sceneMatch ? sceneMatch[1].trim() : null;
+                const incomingVisual = visualMatch ? visualMatch[1].trim() : null;
+                const incomingAudio = audioMatch ? audioMatch[1].trim() : null;
+                const incomingTime = timeMatch ? timeMatch[1].trim() : null;
 
                 try {
                     const parsedCurrent = JSON.parse(currentHeadRaw);
                     const currentRows = Array.isArray(parsedCurrent.rows) ? parsedCurrent.rows : [];
-                    parsedCurrent.rows = [...currentRows, newRow];
-                    newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+
+                    const lastRowIndex = currentRows.length - 1;
+                    const lastRow = lastRowIndex >= 0 ? currentRows[lastRowIndex] : null;
+
+                    // Decision: Update Last Row OR Create New?
+                    // Update if:
+                    // 1. Last row exists AND
+                    // 2. Incoming scene is missing (implied continuation) OR Incoming scene matches Last Row's scene
+                    let shouldUpdate = false;
+                    if (lastRow) {
+                        if (!incomingScene) shouldUpdate = true; // Just adding audio/visual to current
+                        else if (incomingScene === lastRow.scene) shouldUpdate = true; // Explicitly same scene
+                    }
+
+                    if (shouldUpdate && lastRow) {
+                        // Merge fields. If field exists in incoming, overwrite/append?
+                        // Usually overwrite for corrections, but maybe append for multi-step? 
+                        // Let's Append if content exists, to be safe.
+                        const updatedRow = { ...lastRow };
+                        if (incomingVisual) updatedRow.visual = (updatedRow.visual ? updatedRow.visual + '\n' : '') + incomingVisual;
+                        if (incomingAudio) updatedRow.audio = (updatedRow.audio ? updatedRow.audio + '\n' : '') + incomingAudio;
+                        if (incomingTime) updatedRow.time = incomingTime;
+
+                        currentRows[lastRowIndex] = updatedRow;
+                        parsedCurrent.rows = currentRows;
+                        newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+                    } else {
+                        // Create New Row
+                        const newRow = {
+                            id: `row-${Date.now()}`,
+                            scene: incomingScene || (lastRow ? String(Number(lastRow.scene) + 1) : '1'), // Auto-increment if missing? No, default to '1' or user input.
+                            time: incomingTime || '',
+                            visual: incomingVisual || '',
+                            audio: incomingAudio || ''
+                        };
+                        parsedCurrent.rows = [...currentRows, newRow];
+                        newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+                    }
+
                 } catch {
+                    // Init if broken
+                    const newRow = {
+                        id: `row-${Date.now()}`,
+                        scene: sceneMatch ? sceneMatch[1].trim() : '1',
+                        time: timeMatch ? timeMatch[1].trim() : '',
+                        visual: visualMatch ? visualMatch[1].trim() : '',
+                        audio: audioMatch ? audioMatch[1].trim() : ''
+                    };
                     newHeadRaw = JSON.stringify({ rows: [newRow] }, null, 2);
                 }
             }
@@ -782,7 +1086,26 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
     const activeToolLabel = tools?.find(t => t.key === state.activeTool)?.label || state.activeTool
     const activeChat = state.chat[state.activeTool] || []
 
-    const [isAiDocked, setIsAiDocked] = useState(true);
+    // Default to OPEN (false) for new projects
+    // Default to OPEN (false)
+    const [isAiDocked, setIsAiDocked] = useState(false);
+    const [hasLoadedState, setHasLoadedState] = useState(false);
+
+    // 1. Load State on Mount
+    useEffect(() => {
+        const savedDock = localStorage.getItem('onformat_ai_docked');
+        if (savedDock !== null) {
+            setIsAiDocked(JSON.parse(savedDock));
+        }
+        setHasLoadedState(true);
+    }, []);
+
+    // 2. Save State on Change (only after load)
+    useEffect(() => {
+        if (hasLoadedState) {
+            localStorage.setItem('onformat_ai_docked', JSON.stringify(isAiDocked));
+        }
+    }, [isAiDocked, hasLoadedState]);
 
     // Auto-Context Logic: AI Mode is derived from Dock State + Active Phase
     const aiMode = isAiDocked ? 'OFF' : (state.activePhase === 'DEVELOPMENT' ? 'DEVELOP' : 'ASSIST');
@@ -863,7 +1186,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                     activeMode={aiMode}
                     onModeChange={() => { }}
                     onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
-                    onNavigate={(targetTool) => {
+                    onNavigate={(targetTool, payload) => {
                         // Find the phase for this tool
                         let foundPhase: Phase | undefined;
                         for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
@@ -873,11 +1196,26 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                             }
                         }
                         if (foundPhase) {
-                            setState(s => ({
-                                ...s,
-                                activePhase: foundPhase!,
-                                activeTool: targetTool as ToolKey
-                            }));
+                            setState(s => {
+                                const newState = {
+                                    ...s,
+                                    activePhase: foundPhase!,
+                                    activeTool: targetTool as ToolKey
+                                };
+
+                                // Data Carrier: Inject payload as AI message in new tool to trigger Auto-Parse
+                                if (payload) {
+                                    const existingChat = newState.chat[targetTool as ToolKey] || [];
+                                    newState.chat = {
+                                        ...newState.chat,
+                                        [targetTool]: [
+                                            ...existingChat,
+                                            { role: 'assistant', content: `Transferring context...\n\n${payload}` }
+                                        ]
+                                    };
+                                }
+                                return newState;
+                            });
                         } else {
                             console.warn(`Could not find phase for tool: ${targetTool}`);
                         }
