@@ -19,7 +19,22 @@ export default function OnSetPage() {
                 .select('*')
                 .order('updated_at', { ascending: false });
 
-            if (data) setProjects(data);
+            if (data) {
+                // Parse Settings & Filter
+                const processed = data.map((p: any) => {
+                    let settings = { isLive: false, themeColor: 'zinc' };
+                    try {
+                        const draft = p.phases?.ON_SET?.drafts?.['onset-mobile-control'];
+                        if (draft) {
+                            const parsed = JSON.parse(draft);
+                            settings = { ...settings, ...parsed };
+                        }
+                    } catch (e) { /* ignore */ }
+                    return { ...p, settings };
+                }).filter((p: any) => p.settings.isLive);
+
+                setProjects(processed);
+            }
         } catch (e) {
             console.error(e);
         } finally {
@@ -54,32 +69,51 @@ export default function OnSetPage() {
                         <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Active Productions</h2>
                         {projects.length > 0 ? (
                             <div className="space-y-3">
-                                {projects.map(p => (
-                                    <Link key={p.id} href={`/onset/${p.id}`}>
-                                        <div className="group bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden">
+                                {projects.map(p => {
+                                    const color = p.settings.themeColor || 'zinc';
+                                    const colorClasses: Record<string, string> = {
+                                        zinc: 'border-zinc-800 hover:border-zinc-600',
+                                        red: 'border-red-900/50 hover:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]',
+                                        blue: 'border-blue-900/50 hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+                                        amber: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
+                                        emerald: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+                                    };
 
-                                            {/* Status Dot */}
-                                            <div className="absolute top-4 right-4 flex items-center gap-2">
-                                                <span className="text-[9px] font-bold uppercase text-zinc-600 group-hover:text-emerald-500 transition-colors">Enter Set</span>
-                                                <ChevronRight size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
-                                            </div>
+                                    const textColors: Record<string, string> = {
+                                        zinc: 'text-emerald-400',
+                                        red: 'text-red-400',
+                                        blue: 'text-blue-400',
+                                        amber: 'text-amber-400',
+                                        emerald: 'text-emerald-400'
+                                    };
 
-                                            <h3 className="text-lg font-black text-white mb-1 group-hover:text-emerald-400 transition-colors">{p.name || 'Untitled Project'}</h3>
-                                            <p className="text-[10px] font-mono text-zinc-500 mb-4 uppercase">{p.client_name || 'Internal'}</p>
+                                    return (
+                                        <Link key={p.id} href={`/onset/${p.id}`}>
+                                            <div className={`group bg-zinc-900 hover:bg-zinc-900 border p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[color]}`}>
 
-                                            <div className="flex gap-3">
-                                                <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
-                                                    <Clapperboard size={12} />
-                                                    <span className="text-[9px] font-bold">SHOTS</span>
+                                                {/* Status Dot */}
+                                                <div className="absolute top-4 right-4 flex items-center gap-2">
+                                                    <span className="text-[9px] font-bold uppercase text-zinc-600 group-hover:text-white transition-colors">Enter Set</span>
+                                                    <ChevronRight size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
-                                                    <Calendar size={12} />
-                                                    <span className="text-[9px] font-bold">DOCS</span>
+
+                                                <h3 className={`text-lg font-black text-white mb-1 group-hover:${textColors[color]} transition-colors`}>{p.name || 'Untitled Project'}</h3>
+                                                <p className="text-[10px] font-mono text-zinc-500 mb-4 uppercase">{p.client_name || 'Internal'}</p>
+
+                                                <div className="flex gap-3">
+                                                    <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
+                                                        <Clapperboard size={12} />
+                                                        <span className="text-[9px] font-bold">SHOTS</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
+                                                        <Calendar size={12} />
+                                                        <span className="text-[9px] font-bold">DOCS</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800 border-dashed">

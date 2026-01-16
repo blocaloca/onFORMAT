@@ -56,10 +56,34 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         Configure mobile experience & Sync Documents
                     </p>
                 </div>
-                <div className="text-right">
-                    <div className="text-xs font-bold uppercase bg-emerald-500 text-black px-2 py-1 inline-block mb-1">
-                        Active Sync
+                <div className="text-right flex flex-col items-end gap-4">
+
+                    {/* Live Toggle */}
+                    <button
+                        onClick={() => onUpdate({ isLive: !data.isLive })}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase transition-all ${data.isLive ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-zinc-800 text-zinc-500'}`}
+                    >
+                        <div className={`w-2 h-2 rounded-full ${data.isLive ? 'bg-black animate-pulse' : 'bg-zinc-600'}`}></div>
+                        {data.isLive ? 'Production Live' : 'Offline'}
+                    </button>
+
+                    {/* Color Picker */}
+                    <div className="flex gap-1 bg-zinc-900 p-1 rounded-full border border-zinc-800">
+                        {['zinc', 'red', 'blue', 'amber', 'emerald'].map(color => (
+                            <button
+                                key={color}
+                                onClick={() => onUpdate({ themeColor: color })}
+                                className={`w-4 h-4 rounded-full transition-transform hover:scale-110 ${data.themeColor === color ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'}
+                                ${color === 'zinc' ? 'bg-zinc-500' : ''}
+                                ${color === 'red' ? 'bg-red-500' : ''}
+                                ${color === 'blue' ? 'bg-blue-500' : ''}
+                                ${color === 'amber' ? 'bg-amber-500' : ''}
+                                ${color === 'emerald' ? 'bg-emerald-500' : ''}
+                                `}
+                            />
+                        ))}
                     </div>
+
                     <div className="text-[10px] font-mono text-zinc-500">
                         {selectedTools.length} Documents Selected
                     </div>
