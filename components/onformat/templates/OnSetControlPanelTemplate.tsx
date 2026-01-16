@@ -61,10 +61,14 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                     {/* Live Toggle */}
                     <button
                         onClick={() => onUpdate({ isLive: !data.isLive })}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase transition-all ${data.isLive ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-zinc-800 text-zinc-500'}`}
+                        className={`flex items-center gap-3 px-6 py-2 rounded-sm text-xs font-black uppercase tracking-widest transition-all
+                            ${data.isLive
+                                ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400'
+                                : 'bg-transparent border border-red-900 text-red-500 hover:bg-red-950 hover:border-red-500 hover:text-red-400'
+                            }`}
                     >
-                        <div className={`w-2 h-2 rounded-full ${data.isLive ? 'bg-black animate-pulse' : 'bg-zinc-600'}`}></div>
-                        {data.isLive ? 'Production Live' : 'Offline'}
+                        <div className={`w-2.5 h-2.5 rounded-full ${data.isLive ? 'bg-black animate-pulse' : 'bg-red-500'}`}></div>
+                        {data.isLive ? 'BROADCASTING LIVE' : 'GO LIVE'}
                     </button>
 
 
@@ -100,28 +104,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                 ))}
             </div>
 
-            {/* Info Footer */}
-            <div className="mt-16 p-6 bg-zinc-900 text-zinc-400 rounded-sm flex items-start gap-6 border border-zinc-800">
-                <div className="w-20 h-20 bg-white p-1 shrink-0">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=demo" className="w-full h-full opacity-90" alt="Preview QR" />
-                </div>
-                <div className="flex-1">
-                    <h3 className="font-bold uppercase text-xs text-white mb-2">Mobile Access Generation</h3>
-                    <p className="text-[10px] leading-relaxed mb-4 font-mono">
-                        When ready to distribute to crew, use the "Export PDF" button in the top toolbar.
-                        This will generate a dedicated access sheet with a unique QR code.
-                        Only the documents selected above will be synchronized to the mobile view.
-                    </p>
-                    <a
-                        href={`/onset/${metadata?.projectId || '#'}`}
-                        target="_blank"
-                        className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 rounded-sm transition-colors"
-                    >
-                        <span>Launch Mobile Simulator</span>
-                        <Square size={12} className="fill-current" />
-                    </a>
-                </div>
-            </div>
+
         </div>
     );
 };
