@@ -7,13 +7,24 @@ import { Loader2, Clapperboard, List, Calendar, ChevronLeft, ChevronRight, Menu,
 /* --------------------------------------------------------------------------------
  * TYPES
  * -------------------------------------------------------------------------------- */
-type Tab = 'SCRIPT' | 'SHOTS' | 'CALLSHEET';
+type Tab = string;
+
+const DOC_LABELS: Record<string, string> = {
+    'av-script': 'AV Script',
+    'shot-scene-book': 'Shot List',
+    'call-sheet': 'Call Sheet',
+    'production-schedule': 'Schedule',
+    'dit-log': 'DIT Log',
+    'budget': 'Budget',
+    'casting': 'Casting',
+    'locations': 'Locations',
+    'wardrobe': 'Wardrobe',
+    'storyboard': 'Storyboard'
+};
 
 interface MobileState {
-    script: any | null;
-    shots: any | null;
-    callSheet: any | null;
     project: any | null;
+    docs: Record<string, any>;
 }
 
 /* --------------------------------------------------------------------------------
@@ -23,8 +34,8 @@ export default function OnSetMobilePage() {
     const params = useParams();
     const id = params.id as string;
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<Tab>('SCRIPT');
-    const [data, setData] = useState<MobileState>({ script: null, shots: null, callSheet: null, project: null });
+    const [activeTab, setActiveTab] = useState<Tab>('');
+    const [data, setData] = useState<MobileState>({ project: null, docs: {} });
 
     useEffect(() => {
         if (id) fetchData();
@@ -40,19 +51,32 @@ export default function OnSetMobilePage() {
 
             if (error || !projectData) throw new Error("Project not found");
 
-            // Parse specific drafts
-            const drafts = projectData.data?.phases ? {
-                ...projectData.data.phases.DEVELOPMENT.drafts,
-                ...projectData.data.phases.PRE_PRODUCTION.drafts,
-                ...projectData.data.phases.ON_SET.drafts,
-            } : {};
+            // Parse ALL drafts across all phases
+            const allDrafts: Record<string, any> = {};
+            if (projectData.data?.phases) {
+                Object.values(projectData.data.phases).forEach((phase: any) => {
+                    if (phase.drafts) {
+                        Object.entries(phase.drafts).forEach(([key, val]) => {
+                            const parsed = safeParse(val as string);
+                            if (parsed) allDrafts[key] = parsed;
+                        });
+                    }
+                });
+            }
 
             setData({
                 project: projectData,
-                script: safeParse(drafts['av-script']),
-                shots: safeParse(drafts['shot-scene-book']),
-                callSheet: safeParse(drafts['call-sheet'])
+                docs: allDrafts
             });
+
+            // Set initial tab to first available doc or default
+            const availableKeys = Object.keys(allDrafts);
+            if (availableKeys.length > 0) {
+                // Priority sort? call-sheet -> shots -> script
+                const priority = ['call-sheet', 'shot-scene-book', 'av-script'];
+                const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
+                setActiveTab(bestStart);
+            }
 
         } catch (e) {
             console.error(e);
@@ -112,32 +136,40 @@ export default function OnSetMobilePage() {
             {/* MAIN CONTENT SCROLLER */}
             <main className="flex-1 overflow-y-auto pb-24 touch-pan-y relative">
 
-                {activeTab === 'SCRIPT' && <ScriptView data={data.script} />}
-                {activeTab === 'SHOTS' && <ShotListView data={data.shots} />}
-                {activeTab === 'CALLSHEET' && <CallSheetView data={data.callSheet} />}
+                {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
+                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} />}
+                {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
+                {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} />}
+
+                {/* Fallback for other docs */}
+                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log'].includes(activeTab) && (
+                    <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
+                )}
 
             </main>
 
-            {/* BOTTOM NAV */}
-            <nav className="fixed bottom-0 left-0 w-full h-16 bg-zinc-900 border-t border-zinc-800 flex items-center justify-around z-50 pb-safe">
-                <NavButton
-                    active={activeTab === 'SCRIPT'}
-                    onClick={() => setActiveTab('SCRIPT')}
-                    icon={FileText}
-                    label="Script"
-                />
-                <NavButton
-                    active={activeTab === 'SHOTS'}
-                    onClick={() => setActiveTab('SHOTS')}
-                    icon={Clapperboard}
-                    label="Shots"
-                />
-                <NavButton
-                    active={activeTab === 'CALLSHEET'}
-                    onClick={() => setActiveTab('CALLSHEET')}
-                    icon={Calendar}
-                    label="Call Sheet"
-                />
+            {/* BOTTOM NAV (SCROLLABLE ROWS) */}
+            <nav className="fixed bottom-0 left-0 w-full h-16 bg-zinc-950 border-t border-zinc-900 z-50 pb-safe">
+                <div className="flex items-center h-full overflow-x-auto px-4 gap-3 no-scrollbar">
+                    {Object.keys(data.docs).length > 0 ? (
+                        Object.keys(data.docs).map((key) => (
+                            <button
+                                key={key}
+                                onClick={() => setActiveTab(key)}
+                                className={`
+                                flex-shrink-0 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all
+                                ${activeTab === key
+                                        ? 'bg-white text-black border-white'
+                                        : 'bg-zinc-900/50 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'}
+                            `}
+                            >
+                                {DOC_LABELS[key] || key}
+                            </button>
+                        ))
+                    ) : (
+                        <span className="text-zinc-600 text-[10px] uppercase font-bold pl-2">No synced docs</span>
+                    )}
+                </div>
             </nav>
         </div>
     );
@@ -275,6 +307,63 @@ const CallSheetView = ({ data }: { data: any }) => {
                 <p className="text-[9px] text-zinc-600 uppercase">Emergency? Call 911</p>
                 <p className="text-[9px] text-zinc-600 uppercase">Nearest Hospital: {data.nearestHospital || "Lookup required"}</p>
             </div>
+        </div>
+    )
+}
+
+const MobileDITLogView = ({ data }: { data: any }) => {
+    if (!data || !data.items || data.items.length === 0) return <EmptyState label="DIT Log" />;
+
+    return (
+        <div className="p-4 space-y-4">
+            {/* Header Stats */}
+            <div className="grid grid-cols-2 gap-2 text-center mb-4">
+                <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
+                    <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Total Offloads</div>
+                    <div className="text-2xl font-black text-white">{data.items.filter((i: any) => i.eventType === 'offload').length}</div>
+                </div>
+                <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
+                    <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Issues</div>
+                    <div className="text-2xl font-black text-red-500">{data.items.filter((i: any) => i.eventType === 'issue').length}</div>
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                {data.items.map((item: any, i: number) => (
+                    <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
+                        <div className="flex justify-between items-center mb-3">
+                            <span className="font-mono text-emerald-400 text-xs font-bold">{item.time}</span>
+                            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-sm ${item.status === 'complete' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                                {item.status || 'PENDING'}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 mb-3">
+                            <div className={`w-2 h-2 rounded-full ${item.eventType === 'issue' ? 'bg-red-500' : 'bg-zinc-500'}`}></div>
+                            <div className="font-black text-sm text-white uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-xs text-zinc-400 mb-3 bg-black/40 p-3 rounded-lg">
+                            <div>
+                                <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Source</span>
+                                <span className="font-mono text-zinc-200">{item.source || '-'}</span>
+                            </div>
+                            <div>
+                                <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Destination</span>
+                                <span className="font-mono text-zinc-200">{item.destination || '-'}</span>
+                            </div>
+                        </div>
+
+                        {item.description && (
+                            <p className="text-xs text-zinc-300 leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                                {item.description}
+                            </p>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-4">End of Log</div>
         </div>
     )
 }
