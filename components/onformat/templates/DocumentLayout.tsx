@@ -68,11 +68,11 @@ export const DocumentLayout = ({
             `}</style>
 
             <div
-                className={`document-page bg-white shadow-xl mx-auto overflow-hidden relative flex flex-col gap-8 ${className}`}
+                className={`document-page bg-white shadow-xl mx-auto relative flex flex-col gap-8 ${className}`}
                 style={{
                     width: `${width}px`,
                     height: `${height}px`,
-                    padding: '48px', // Back to standard margin
+                    padding: '32px 40px 40px 40px', // Balance between 'moving up' and 'not clipping'
                     marginBottom: '40px' // Spacing between pages in editor
                 }}
             >

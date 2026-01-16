@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useMemo, useState } from 'react'
-import { JumpStartDialog } from '@/components/onformat/JumpStartDialog'
+
 import { Header } from '@/components/onformat/Header'
 import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
 import { ChatInterface } from '@/components/onformat/ChatInterface'
@@ -38,7 +38,7 @@ type ToolKey =
     | 'budget-actual'
     | 'supervising-producer'
 
-type ChatMsg = { role: 'user' | 'assistant'; content: string }
+type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
 
 const PHASES: Phase[] = ['DEVELOPMENT', 'PRE_PRODUCTION', 'ON_SET', 'POST']
 
@@ -146,9 +146,7 @@ interface WorkspaceEditorProps {
 
 export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }: WorkspaceEditorProps) => {
     // Merge props into initial state if provided
-    const [isJumpStartOpen, setIsJumpStartOpen] = useState(false);
-    const [jumpStartStatus, setJumpStartStatus] = useState<string>('');
-    const [isJumpStartProcessing, setIsJumpStartProcessing] = useState(false);
+
 
     const mergedInitialState = useMemo(() => {
         const base = initialState || makeInitialState();
@@ -172,6 +170,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
             if (stored) setState(stored)
         }
     }, [initialState, projectId])
+
+
 
     const [input, setInput] = useState('')
     const [isSending, setIsSending] = useState(false)
@@ -520,20 +520,43 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         // SPECIAL HANDLING: Parsing for Brief
         else if (state.activeTool === 'brief') {
             // Heuristics for Brief Fields
+            const prodMatch = incoming.match(/\*\*(?:Subject\s*[/\\]\s*)?Product:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const objMatch = incoming.match(/\*\*Objective:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const audMatch = incoming.match(/\*\*Target Audience:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-            const toneMatch = incoming.match(/\*\*Tone & Style:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const toneMatch = incoming.match(/\*\*Tone(?: [&/\\,]+ Style)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const msgMatch = incoming.match(/\*\*Key Message:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            // Deliverables & Usage logic
+            const delMatch = incoming.match(/\*\*Deliverables:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const usageMatch = incoming.match(/\*\*Usage:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
-            if (objMatch || audMatch || toneMatch || msgMatch) {
+            if (prodMatch || objMatch || audMatch || toneMatch || msgMatch || delMatch || usageMatch) {
                 const parsedUpdate: Record<string, any> = {};
+                if (prodMatch) parsedUpdate.product = prodMatch[1].trim();
                 if (objMatch) parsedUpdate.objective = objMatch[1].trim();
                 if (audMatch) parsedUpdate.targetAudience = audMatch[1].trim();
                 if (toneMatch) parsedUpdate.tone = toneMatch[1].trim();
                 if (msgMatch) parsedUpdate.keyMessage = msgMatch[1].trim();
+                if (usageMatch) parsedUpdate.usage = usageMatch[1].trim();
+
+                if (delMatch) {
+                    parsedUpdate.deliverables = delMatch[1]
+                        .split(/[,;\n]/)
+                        .map(s => s.trim())
+                        .filter(s => s.length > 0)
+                        // Map to objects if needed, but the template handles string[] migration. 
+                        // Ideally we should parse into objects if format allows, but for now string array is safe.
+                        // Wait, `saveDraftForActiveTool` merges into `currentHeadRaw`. 
+                        // If current head is object with `deliverables: DeliverableItem[]`, sending strings might break it.
+                        // The template effect handles `string[]` on load. 
+                        // BUT, we are merging into state LIVE. 
+                        // We should better map them to objects here to avoid flicker or type mismatch.
+                        .map((s, i) => ({ id: `ai-del-${Date.now()}-${i}`, item: s, usage: '' }));
+                }
 
                 try {
                     const parsedCurrent = JSON.parse(currentHeadRaw);
+                    // Special handling for deliverables array merge - replace or append?
+                    // AI probably suggests a set. Let's replace if provided.
                     newHeadRaw = JSON.stringify({ ...parsedCurrent, ...parsedUpdate }, null, 2);
                 } catch {
                     newHeadRaw = JSON.stringify(parsedUpdate, null, 2);
@@ -582,6 +605,62 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                     newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
                 } catch {
                     newHeadRaw = JSON.stringify({ items: newItems }, null, 2);
+                }
+            }
+        }
+        // SPECIAL HANDLING: Shot List Parsing (shot-scene-book)
+        else if (state.activeTool === 'shot-scene-book') {
+            const sceneMatch = incoming.match(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const sizeMatch = incoming.match(/\*\*Size:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const angleMatch = incoming.match(/\*\*Angle:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const moveMatch = incoming.match(/\*\*Movement:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const descMatch = incoming.match(/\*\*Description:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+
+            // If we found at least a description or scene, treat as a Shot
+            if (descMatch || sceneMatch) {
+                const newShot = {
+                    id: `shot-${Date.now()}`,
+                    scene: sceneMatch ? sceneMatch[1].trim() : '',
+                    size: sizeMatch ? sizeMatch[1].trim() : 'Wide',
+                    angle: angleMatch ? angleMatch[1].trim() : 'Eye Level',
+                    movement: moveMatch ? moveMatch[1].trim() : 'Static',
+                    description: descMatch ? descMatch[1].trim() : (incoming.replace(/\*\*/g, '').trim()) // Fallback to raw text if only desc
+                };
+
+                try {
+                    const parsedCurrent = JSON.parse(currentHeadRaw);
+                    const currentShots = Array.isArray(parsedCurrent.shots) ? parsedCurrent.shots : [];
+                    parsedCurrent.shots = [...currentShots, newShot];
+                    newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+                } catch {
+                    // Init
+                    newHeadRaw = JSON.stringify({ shots: [newShot] }, null, 2);
+                }
+            }
+        }
+        // SPECIAL HANDLING: AV Script Parsing (av-script)
+        else if (state.activeTool === 'av-script') {
+            const sceneMatch = incoming.match(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const timeMatch = incoming.match(/\*\*Time:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const visualMatch = incoming.match(/\*\*Visual:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const audioMatch = incoming.match(/\*\*Audio:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+
+            if (visualMatch || audioMatch || sceneMatch) {
+                const newRow = {
+                    id: `row-${Date.now()}`,
+                    scene: sceneMatch ? sceneMatch[1].trim() : '',
+                    time: timeMatch ? timeMatch[1].trim() : '',
+                    visual: visualMatch ? visualMatch[1].trim() : '',
+                    audio: audioMatch ? audioMatch[1].trim() : ''
+                };
+
+                try {
+                    const parsedCurrent = JSON.parse(currentHeadRaw);
+                    const currentRows = Array.isArray(parsedCurrent.rows) ? parsedCurrent.rows : [];
+                    parsedCurrent.rows = [...currentRows, newRow];
+                    newHeadRaw = JSON.stringify(parsedCurrent, null, 2);
+                } catch {
+                    newHeadRaw = JSON.stringify({ rows: [newRow] }, null, 2);
                 }
             }
         }
@@ -712,31 +791,35 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         setIsAiDocked(!isAiDocked);
     };
 
-    const handleExecuteJumpStart = async (targets: string[]) => {
-        setIsJumpStartProcessing(true);
-        setJumpStartStatus('Initializing Production Protocol...');
 
-        setIsAiDocked(false);
 
-        const prompt = `JUMP START PROTOCOL: Acting as Supervising Producer, analyze this Creative Brief.
-        
-Then, I need you to sequentially generate preliminary drafts for the following documents:
-${targets.map((t) => `- ${t.replace(/-/g, ' ').toUpperCase()}`).join('\n')}
+    // Calculate Contextual Placeholder Hint
+    const chatPlaceholderHint = useMemo(() => {
+        if (!state.activeTool) return undefined;
+        const currentDraftRaw = activePhaseState?.drafts?.[state.activeTool];
+        if (!currentDraftRaw) return undefined;
 
-Please provide the content for the first document now.`;
+        try {
+            const data = JSON.parse(currentDraftRaw);
+            const list = Array.isArray(data) ? data[0] : data; // Handle array stack
 
-        setTimeout(() => {
-            setJumpStartStatus('Analyzing Creative Brief...');
-            setTimeout(() => {
-                setJumpStartStatus('Generating Drafts...');
-                send(prompt, 'supervising-producer');
-                setTimeout(() => {
-                    setIsJumpStartProcessing(false);
-                    setIsJumpStartOpen(false);
-                }, 1500);
-            }, 1000);
-        }, 1000);
-    };
+            if (state.activeTool === 'av-script' && list.rows?.length > 0) {
+                const lastRow = list.rows[list.rows.length - 1];
+                const lastScene = lastRow.scene || '1';
+                // Check if last scene is numeric
+                const sceneNum = parseInt(lastScene);
+                const nextScene = isNaN(sceneNum) ? 'Next' : sceneNum + 1;
+                return `Stats: Scene ${lastScene}. Any notes, or ready for Scene ${nextScene}?`;
+            }
+            if (state.activeTool === 'shot-scene-book' && list.shots?.length > 0) {
+                const lastShot = list.shots[list.shots.length - 1];
+                const lastScene = lastShot.scene || '1';
+                return `Stats: Scene ${lastScene}. Add coverage or move to next?`;
+            }
+        } catch { }
+
+        return undefined;
+    }, [state.phases, state.activeTool]);
 
     return (
         <div className="h-screen bg-[var(--background)] flex flex-col font-sans text-[var(--foreground)]">
@@ -765,6 +848,7 @@ Please provide the content for the first document now.`;
                     onSend={send}
                     activeToolLabel={activeToolLabel}
                     activeToolKey={state.activeTool}
+                    placeholderHint={chatPlaceholderHint} // Pass the hint
                     onInsertToDraft={saveDraftForActiveTool}
                     onClear={() => setState(s => ({
                         ...s,
@@ -779,6 +863,25 @@ Please provide the content for the first document now.`;
                     activeMode={aiMode}
                     onModeChange={() => { }}
                     onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
+                    onNavigate={(targetTool) => {
+                        // Find the phase for this tool
+                        let foundPhase: Phase | undefined;
+                        for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
+                            if (tools.some(t => t.key === targetTool)) {
+                                foundPhase = p as Phase;
+                                break;
+                            }
+                        }
+                        if (foundPhase) {
+                            setState(s => ({
+                                ...s,
+                                activePhase: foundPhase!,
+                                activeTool: targetTool as ToolKey
+                            }));
+                        } else {
+                            console.warn(`Could not find phase for tool: ${targetTool}`);
+                        }
+                    }}
                 />
 
 
@@ -804,18 +907,10 @@ Please provide the content for the first document now.`;
                     onOpenAi={() => {
                         setIsAiDocked(false);
                     }}
-                    onJumpStart={() => {
-                        setIsJumpStartOpen(true);
-                    }}
+
                 />
 
-                <JumpStartDialog
-                    isOpen={isJumpStartOpen}
-                    onClose={() => setIsJumpStartOpen(false)}
-                    onStart={handleExecuteJumpStart}
-                    isProcessing={isJumpStartProcessing}
-                    progress={jumpStartStatus}
-                />
+
             </main>
         </div>
     )

@@ -11,6 +11,8 @@ interface StoryboardItem {
     url: string;
     caption: string; // Header/Shot Type
     notes?: string;  // Description
+    title?: string;
+    imageNumber?: string;
     aspectRatio: AspectRatio;
     size: ItemSize;
 }
@@ -58,28 +60,44 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
 
     // Initial Population
     useEffect(() => {
-        if (!data.items || data.items.length === 0) {
+        const items = data.items || [];
+        // Migration logic for existing items
+        const migratedItems = items.map((item, idx) => ({
+            ...item,
+            imageNumber: item.imageNumber || (idx + 1).toString().padStart(2, '0'),
+            title: item.title || '',
+            size: item.size || 'small'
+        }));
+
+        if (JSON.stringify(migratedItems) !== JSON.stringify(items)) {
+            onUpdate({ items: migratedItems });
+        } else if (!data.items || data.items.length === 0) {
             const count = orientation === 'landscape' ? 6 : 9;
             const newItems: StoryboardItem[] = Array.from({ length: count }).map((_, i) => ({
                 id: `sb-${Date.now()}-${i}`,
                 url: '',
                 caption: '',
                 notes: '',
+                title: '',
+                imageNumber: (i + 1).toString().padStart(2, '0'),
                 aspectRatio: '3:2',
                 size: 'small'
             }));
             onUpdate({ items: newItems });
         }
-    }, []); // Only run on mount if empty. 
+    }, []); // Run once on mount 
 
     const items = data.items || [];
 
     const handleAddItem = () => {
+        const nextNum = (items.length + 1).toString().padStart(2, '0');
         const newItem: StoryboardItem = {
             id: `sb-${Date.now()}`,
             url: '',
             caption: '',
             notes: '',
+            title: '',
+            imageNumber: nextNum,
             aspectRatio: '3:2',
             size: 'small'
         };
@@ -118,7 +136,8 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
     // We use a "Score" system where 1 Row of Small items = Score 2.
     // Landscape Max Score = 5 (2 rows fits easily, 3rd row might spill).
     // Portrait Max Score = 8 (3 rows fits easily, 4th might spill).
-    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 5 : 8;
+    // Reduced slightly to 4.5/7.5 to handle new header row height.
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 4.5 : 7.5;
 
     const pages: StoryboardItem[][] = [];
     let currentPage: StoryboardItem[] = [];
@@ -184,14 +203,45 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                 >
                     <div className="flex flex-col h-full">
 
-                        <div className="grid grid-cols-6 gap-x-6 gap-y-8 content-start flex-1 mt-4">
+                        <div className="grid grid-cols-6 gap-x-6 gap-y-4 content-start flex-1 mt-4">
                             {pageItems.map((item) => {
                                 const originalIndex = items.findIndex(i => i.id === item.id);
                                 return (
-                                    <div key={item.id} className={`relative group flex flex-col gap-3 ${getSizeClass(item.size)}`}>
+                                    <div key={item.id} className={`relative group flex flex-col gap-1.5 ${getSizeClass(item.size)}`}>
+
+                                        {/* Header Row: Number + Title */}
+                                        <div className="flex items-center gap-2 w-full mb-1 border-b border-zinc-100 pb-1">
+                                            {isPrinting ? (
+                                                <div className="w-6 flex-shrink-0 text-[10px] font-bold text-black text-left uppercase tracking-widest h-4 leading-4">
+                                                    {item.imageNumber}
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-transparent outline-none focus:border-black text-left uppercase tracking-widest h-4 leading-4"
+                                                    placeholder="00"
+                                                    value={item.imageNumber || ''}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+
+                                            {isPrinting ? (
+                                                <div className="flex-1 text-[10px] font-bold text-zinc-900 uppercase tracking-wider h-4 leading-4">
+                                                    {item.title}
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-transparent outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
+                                                    placeholder="SCENE / SHOT TITLE"
+                                                    value={item.title || ''}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { title: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+                                        </div>
 
                                         {!isLocked && (
-                                            <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
+                                            <div className="absolute top-10 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm print:hidden">
                                                 {/* Controls similar to MoodBoard but simplified/relevant */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
                                                     <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '3:2' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '3:2' ? 'text-black' : 'text-zinc-400'}`} title="3:2"><Monitor size={12} /></button>
@@ -212,27 +262,23 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
                                             />
-                                            {/* Number/ID Overlay */}
-                                            <div className="absolute top-0 left-0 bg-black/50 backdrop-blur-md px-1.5 py-0.5 text-[9px] font-bold text-white font-mono rounded-br-sm">
-                                                {originalIndex + 1}
-                                            </div>
                                         </div>
 
-                                        <div className="flex flex-col gap-1">
-                                            <input
-                                                className="w-full text-xs font-bold uppercase tracking-wide bg-transparent border-b border-transparent focus:border-zinc-300 outline-none placeholder-zinc-300 pb-1"
-                                                placeholder="SHOT TYPE / ANGLE"
-                                                value={item.caption}
-                                                onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
-                                                disabled={isLocked}
-                                            />
-                                            <textarea
-                                                className="w-full text-[10px] leading-relaxed bg-transparent border-none outline-none resize-none placeholder-zinc-300 h-10 text-zinc-600 font-mono"
-                                                placeholder="Action, dialogue, or notes..."
-                                                value={item.notes || ''}
-                                                onChange={(e) => handleUpdateItem(originalIndex, { notes: e.target.value })}
-                                                disabled={isLocked}
-                                            />
+                                        <div className="flex flex-col gap-0.5">
+                                            {isPrinting ? (
+                                                <div className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 py-0.5">
+                                                    {item.caption}
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-transparent border-none focus:text-black outline-none placeholder-zinc-300 py-0.5"
+                                                    placeholder="SHOT TYPE / ANGLE"
+                                                    value={item.caption}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+                                            {/* Notes textarea removed as requested */}
                                         </div>
 
                                     </div>

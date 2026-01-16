@@ -1,13 +1,26 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 export default function LandingPage() {
   const [isHovering, setIsHovering] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single();
+        if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+      }
+    };
+    fetchAvatar();
+  }, []);
 
   // Handle hover interactions for Hero Video
   const handleMouseEnter = () => {
@@ -29,16 +42,18 @@ export default function LandingPage() {
 
       {/* 1. Header (Fixed) */}
       <nav className="fixed top-0 w-full z-50 px-8 py-4 flex items-center justify-between mix-blend-difference pointer-events-none">
-        {/* mix-blend-difference helps visibility over light images if scrolled, 
-              but might be weird with green. Removing mix-blend if it clashes. 
-              Let's keep it simple for now, maybe add backdrop blur if needed.
-          */}
         <div className="w-60 relative h-20 pointer-events-auto">
           <img src="/logo-white.png" alt="onFORMAT" className="h-full object-contain object-left" />
         </div>
 
         <Link href="/dashboard" className="absolute top-6 right-8 flex items-center gap-3 group pointer-events-auto">
-          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-500 to-green-500 group-hover:scale-110 transition-transform" />
+          {avatarUrl ? (
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 group-hover:border-white transition-colors">
+              <img src={avatarUrl} alt="Account" className="w-full h-full object-cover" />
+            </div>
+          ) : (
+            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-500 to-green-500 group-hover:scale-110 transition-transform" />
+          )}
           <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
             Account
           </span>
@@ -200,8 +215,15 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 text-center text-zinc-800 text-xs font-mono uppercase bg-black">
-        &copy; 2026 onFORMAT. All rights reserved.
+      <footer className="py-12 text-center text-zinc-800 text-xs font-mono uppercase bg-black border-t border-white/5">
+        <div className="flex flex-col gap-4">
+          <p>&copy; 2026 onFORMAT. All rights reserved.</p>
+          <div className="flex justify-center gap-6">
+            <Link href="/terms" className="hover:text-green-500 transition-colors">Terms of Service</Link>
+            <span className="text-zinc-900">•</span>
+            <span className="text-zinc-800 cursor-not-allowed">Privacy Policy</span>
+          </div>
+        </div>
       </footer>
 
     </div>

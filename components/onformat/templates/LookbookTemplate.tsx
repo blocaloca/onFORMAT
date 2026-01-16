@@ -11,6 +11,8 @@ interface LookbookItem {
     id: string;
     url: string;
     caption: string;
+    title?: string;
+    imageNumber?: string;
     aspectRatio: AspectRatio;
     size: ItemSize;
     showCaption?: boolean;
@@ -27,6 +29,7 @@ interface LookbookTemplateProps {
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
     metadata?: any;
+    isPrinting?: boolean;
 }
 
 const getAspectClass = (ratio: AspectRatio) => {
@@ -49,10 +52,11 @@ const getSizeClass = (size: ItemSize) => {
     }
 };
 
-export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata }: LookbookTemplateProps) => {
+export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: LookbookTemplateProps) => {
 
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
 
+    // Migration: ensure items have IDs, aspect ratios, SIZES, and showCaption
     // Migration: ensure items have IDs, aspect ratios, SIZES, and showCaption
     React.useEffect(() => {
         const items = data.items || [];
@@ -60,14 +64,16 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         const newItems = items.map((item, idx) => {
             const anyItem = item as any;
             // Check for missing new props (or old format)
-            if (!anyItem.id || !anyItem.aspectRatio || !anyItem.size || anyItem.showCaption === undefined) {
+            if (!anyItem.id || !anyItem.aspectRatio || !anyItem.size || anyItem.showCaption === undefined || !anyItem.imageNumber || anyItem.title === undefined) {
                 hasChanges = true;
                 return {
                     ...item,
                     id: anyItem.id || `item-${Date.now()}-${idx}`,
                     aspectRatio: anyItem.aspectRatio || '1:1', // Default to square for Lookbook usually? Or 16:9? Let's stick to 16:9 to match Visual Direction base if desired, but 1:1 is common for lookbooks. Let's use 16:9 to match the "same tools" request perfectly unless specified.
                     size: 'medium',
-                    showCaption: anyItem.showCaption !== undefined ? anyItem.showCaption : false // Default NO caption
+                    showCaption: anyItem.showCaption !== undefined ? anyItem.showCaption : false, // Default NO caption
+                    imageNumber: anyItem.imageNumber || (idx + 1).toString().padStart(2, '0'),
+                    title: anyItem.title || ''
                 };
             }
             return item;
@@ -85,6 +91,8 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             id: `item-${Date.now()}`,
             url: '',
             caption: '',
+            title: '',
+            imageNumber: ((data.items?.length || 0) + 1).toString().padStart(2, '0'),
             aspectRatio: '16:9',
             size: 'medium',
             showCaption: false
@@ -114,7 +122,8 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     };
 
     // Height score approximates relative height of the row.
-    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 7 : 12;
+    // Reduced to prevent footer overlap (Original: 12/7)
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 6 : 10;
 
     const pages: LookbookItem[][] = [];
     let currentPage: LookbookItem[] = [];
@@ -187,11 +196,42 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 return (
                                     <div
                                         key={item.id}
-                                        className={`relative group flex flex-col ${getSizeClass(item.size || 'medium')} ${item.showCaption ? 'p-4 gap-3' : 'p-0 gap-0'}`}
+                                        className={`relative group flex flex-col ${getSizeClass(item.size || 'medium')} ${item.showCaption ? 'p-4 gap-3' : 'p-4 gap-2'}`}
                                     >
+                                        {/* Header Row: Number + Title */}
+                                        <div className="flex items-center gap-2 w-full mb-1 border-b border-zinc-100 pb-1">
+                                            {isPrinting ? (
+                                                <div className="w-6 flex-shrink-0 text-[10px] font-bold text-black text-left uppercase tracking-widest h-4 leading-4">
+                                                    {item.imageNumber}
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-transparent outline-none focus:border-black text-left uppercase tracking-widest h-4 leading-4"
+                                                    placeholder="00"
+                                                    value={item.imageNumber || ''}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+
+                                            {isPrinting ? (
+                                                <div className="flex-1 text-[10px] font-bold text-zinc-900 uppercase tracking-wider h-4 leading-4">
+                                                    {item.title}
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-transparent outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
+                                                    placeholder="IMAGE TITLE"
+                                                    value={item.title || ''}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { title: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+                                        </div>
+
                                         {/* Toolbar (Hover) */}
                                         {!isLocked && (
-                                            <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
+                                            <div className="absolute top-12 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
                                                 {/* Aspect Ratio Selector */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
                                                     <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Monitor size={12} /></button>
@@ -210,7 +250,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                                 {/* Caption Toggle */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { showCaption: !item.showCaption })} className={`p-1 rounded hover:bg-zinc-100 ${item.showCaption ? 'text-black' : 'text-zinc-400'}`} title="Caption"><Type size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { showCaption: !item.showCaption })} className={`p-1 rounded hover:bg-zinc-100 ${item.showCaption ? 'text-black' : 'text-zinc-400'}`} title="Notes"><Type size={12} /></button>
                                                 </div>
 
                                                 {/* Delete Button with Confirmation Popover */}
@@ -252,9 +292,9 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Caption */}
                                         {item.showCaption && (
                                             <textarea
-                                                className="w-full text-xs text-center font-mono text-gray-600 bg-transparent outline-none border-b border-transparent focus:border-black placeholder-gray-300 resize-none overflow-hidden"
-                                                placeholder="Caption"
-                                                rows={3}
+                                                className="w-full text-[10px] font-mono text-gray-500 bg-transparent outline-none border-b border-transparent focus:border-black placeholder-gray-300 resize-none overflow-hidden"
+                                                placeholder="Add notes..."
+                                                rows={2}
                                                 value={item.caption}
                                                 onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
                                                 disabled={isLocked}

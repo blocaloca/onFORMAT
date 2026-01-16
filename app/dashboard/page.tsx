@@ -12,6 +12,8 @@ import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav'
 import { UserMenu } from '@/components/onformat/UserMenu';
 import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone } from 'lucide-react';
 
+import { DEMO_PROJECT_DATA } from '@/lib/demoProject';
+
 interface Folder {
     id: string;
     name: string;
@@ -43,13 +45,15 @@ export default function DashboardPage() {
 
 
     useEffect(() => {
-        // OFFLINE MODE: Just check if they "entered" via login screen
-        const email = localStorage.getItem('onformat_user');
-        if (!email) {
-            router.push('/login');
-            return;
-        }
-        setUser(email);
+        const checkAuth = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.push('/login');
+            } else {
+                setUser(user.email || null);
+            }
+        };
+        checkAuth();
 
         // Load Folders
         const savedFolders = localStorage.getItem('onformat_folders');
@@ -151,38 +155,74 @@ export default function DashboardPage() {
         setFolderActionTarget(null);
     };
 
+    const createDemoProject = async (userId: string, userEmail: string | null) => {
+        try {
+            const payload = {
+                userId: userId,
+                userEmail: userEmail,
+                name: DEMO_PROJECT_DATA.projectName || 'Welcome Project',
+                data: DEMO_PROJECT_DATA,
+            };
+
+            await fetch('/api/projects', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            localStorage.setItem(`onboarded_${userId}`, 'true');
+            // Re-fetch silently
+            const { data } = await supabase.from('projects').select('*').order('updated_at', { ascending: false });
+            if (data) setProjects(data);
+
+        } catch (e) {
+            console.error("Failed to create demo project", e);
+        }
+    };
+
+    const creationLock = React.useRef(false);
+
     const fetchProjects = async () => {
         setLoading(true);
-        // OFFLINE MODE: Fetch ALL projects since we can't filter by auth user
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (!authUser) return;
+
+        // Update email state if not set
+        if (!user) setUser(authUser.email || null);
+
         const { data, error } = await supabase
             .from('projects')
             .select('*')
             .order('updated_at', { ascending: false });
 
-        if (data) setProjects(data);
+        if (data) {
+            setProjects(data);
+
+            const hasOnboarded = localStorage.getItem(`onboarded_${authUser.id}`);
+            // If they have no projects, give them the demo (even if they onboarded before, maybe they want to restart)
+            if (data.length === 0 && !creationLock.current) {
+                creationLock.current = true;
+                await createDemoProject(authUser.id, authUser.email || null);
+                creationLock.current = false;
+            }
+        }
         setLoading(false);
     };
 
     const handleCreateProject = async (name: string, client: string, producer: string, color: string) => {
-        // OFFLINE MODE / API STRATEGY:
-        // We calculate the targetUserId here (as best we can) and pass it to the API.
-        // The API uses Service Role key to bypass RLS and perform the insert.
-
-        let targetUserId = '00000000-0000-0000-0000-000000000000'; // Default fallback
-
-        // If Duplicating, keep the same owner owner
-        if (projectToDuplicate) {
-            targetUserId = projectToDuplicate.user_id;
-        } else if (projects.length > 0) {
-            targetUserId = projects[0].user_id;
-        } else {
-            const { data: anyProject } = await supabase
-                .from('projects')
-                .select('user_id')
-                .limit(1)
-                .single();
-            if (anyProject) targetUserId = anyProject.user_id;
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            alert('Authentication Error: Please reload.');
+            return;
         }
+
+        let targetUserId = user.id;
+
+        // If Duplicating, keep the same owner? 
+        // No, if I duplicate a project, I (the current user) should become the owner of the copy.
+        // Unless we are admin acting on other's behalf.
+        // For now, let's assume current user owns the new copy.
+        // user.id is correct.
 
         let payloadData = {
             clientName: client,

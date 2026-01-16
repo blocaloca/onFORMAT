@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { X, MessageSquare, Bug, Lightbulb, Send, Loader2, CheckCircle2 } from 'lucide-react'
 
@@ -8,14 +8,21 @@ interface FeedbackDialogProps {
     userId?: string // Optional, we can get from session but passing it is faster if known
 }
 
+import { createPortal } from 'react-dom';
+
 export const FeedbackDialog = ({ isOpen, onClose, userId }: FeedbackDialogProps) => {
     // const supabase = createClientComponentClient() // Removed
     const [message, setMessage] = useState('')
     const [category, setCategory] = useState<'bug' | 'feature' | 'other'>('bug')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
+    const [mounted, setMounted] = useState(false)
 
-    if (!isOpen) return null
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!isOpen || !mounted) return null
 
     const handleSubmit = async () => {
         if (!message.trim()) return
@@ -59,8 +66,8 @@ export const FeedbackDialog = ({ isOpen, onClose, userId }: FeedbackDialogProps)
         setIsSubmitting(false)
     }
 
-    return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center">
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
             <div className="relative bg-[#121212] border border-zinc-800 w-full max-w-md shadow-2xl rounded-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -138,6 +145,7 @@ export const FeedbackDialog = ({ isOpen, onClose, userId }: FeedbackDialogProps)
                     )}
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }

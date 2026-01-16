@@ -211,87 +211,94 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                         {/* Time */}
                                         <div>
-                                            <input
-                                                type="text"
-                                                value={item.time}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { time: formatTimeInput(e.target.value) })}
-                                                className={`w-full bg-transparent text-xs font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
-                                                placeholder="00:00"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-mono font-bold px-1 py-1`}>
-                                                {item.time || "—"}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="w-full text-xs font-mono font-bold px-1 py-1 block">{item.time || "—"}</div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.time}
+                                                    onChange={(e) => handleUpdateItem(globalIdx, { time: formatTimeInput(e.target.value) })}
+                                                    className="w-full bg-transparent text-xs font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1"
+                                                    placeholder="00:00"
+                                                    disabled={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Scene */}
                                         <div>
-                                            <input
-                                                type="text"
-                                                value={item.scene}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { scene: e.target.value })}
-                                                className={`w-full bg-transparent text-xs font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
-                                                placeholder="#"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold text-center px-1 py-1`}>
-                                                {item.scene || "—"}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="w-full text-xs font-bold text-center px-1 py-1 block">{item.scene || "—"}</div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.scene}
+                                                    onChange={(e) => handleUpdateItem(globalIdx, { scene: e.target.value })}
+                                                    className="w-full bg-transparent text-xs font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1"
+                                                    placeholder="#"
+                                                    disabled={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Setting (Toggle + Input) */}
-                                        <div className="flex gap-1">
-                                            <div className={`contents ${isPrinting ? 'hidden' : 'print:hidden'}`}>
-                                                <select
-                                                    value={item.intExt}
-                                                    onChange={(e) => handleUpdateItem(globalIdx, { intExt: e.target.value as any })}
-                                                    className="bg-black text-white text-[9px] font-bold uppercase px-1 rounded-sm appearance-none cursor-pointer text-center w-10 flex-shrink-0"
-                                                    disabled={isLocked}
-                                                >
-                                                    {INT_EXT_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                                </select>
-                                                <input
-                                                    type="text"
-                                                    value={item.set}
-                                                    onChange={(e) => handleUpdateItem(globalIdx, { set: e.target.value })}
-                                                    className="w-full bg-transparent text-xs font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 min-w-0"
-                                                    placeholder="SETTING"
-                                                    disabled={isLocked}
-                                                />
-                                            </div>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold uppercase px-1 py-1`}>
-                                                {item.intExt} {item.set ? `. ${item.set}` : ''}
-                                            </div>
+                                        <div className="flex gap-1 w-full">
+                                            {isPrinting ? (
+                                                <div className="w-full text-xs font-bold uppercase px-1 py-1 block">
+                                                    {item.intExt} {item.set ? `. ${item.set}` : ''}
+                                                </div>
+                                            ) : (
+                                                <div className="contents">
+                                                    <select
+                                                        value={item.intExt}
+                                                        onChange={(e) => handleUpdateItem(globalIdx, { intExt: e.target.value as any })}
+                                                        className="bg-black text-white text-[9px] font-bold uppercase px-1 rounded-sm appearance-none cursor-pointer text-center w-10 flex-shrink-0"
+                                                        disabled={isLocked}
+                                                    >
+                                                        {INT_EXT_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                    </select>
+                                                    <input
+                                                        type="text"
+                                                        value={item.set}
+                                                        onChange={(e) => handleUpdateItem(globalIdx, { set: e.target.value })}
+                                                        className="w-full bg-transparent text-xs font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 min-w-0"
+                                                        placeholder="SETTING"
+                                                        disabled={isLocked}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Day/Night */}
                                         <div>
-                                            <select
-                                                value={item.dayNight}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { dayNight: e.target.value as any })}
-                                                className={`w-full bg-zinc-100 text-[9px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center ${isPrinting ? 'hidden' : 'print:hidden'}`}
-                                                disabled={isLocked}
-                                            >
-                                                {TIME_OF_DAY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                            </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[9px] font-bold uppercase text-center px-1 py-1`}>
-                                                {item.dayNight}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="w-full text-[9px] font-bold uppercase text-center px-1 py-1 block">{item.dayNight}</div>
+                                            ) : (
+                                                <select
+                                                    value={item.dayNight}
+                                                    onChange={(e) => handleUpdateItem(globalIdx, { dayNight: e.target.value as any })}
+                                                    className="w-full bg-zinc-100 text-[9px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center"
+                                                    disabled={isLocked}
+                                                >
+                                                    {TIME_OF_DAY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                </select>
+                                            )}
                                         </div>
 
                                         {/* Description */}
                                         <div>
-                                            <input
-                                                type="text"
-                                                value={item.description}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`w-full bg-transparent text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-zinc-600 ${isPrinting ? 'hidden' : 'print:hidden'}`}
-                                                placeholder="Action / Notes..."
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs text-zinc-600 px-1 py-1`}>
-                                                {item.description || "—"}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="w-full text-xs text-zinc-600 px-1 py-1 block">{item.description || "—"}</div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.description}
+                                                    onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
+                                                    className="w-full bg-transparent text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-zinc-600"
+                                                    placeholder="Action / Notes..."
+                                                    disabled={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Sort */}

@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
-
 // Templates
 import { DocumentLayout } from '@/components/onformat/templates/DocumentLayout'
 import { BriefTemplate } from '@/components/onformat/templates/BriefTemplate'
@@ -50,7 +47,6 @@ interface DraftEditorProps {
     onToggleLock: () => void
     onGenerateFromVision?: (targetTool: any, visionText: string, promptPrefix: string) => void
     onOpenAi?: () => void
-    onJumpStart?: () => void
 }
 
 // Helper Template for Plain Text
@@ -95,8 +91,7 @@ export const DraftEditor = ({
     phases,
     onToggleLock,
     onGenerateFromVision,
-    onOpenAi,
-    onJumpStart
+    onOpenAi
 }: DraftEditorProps) => {
 
     // Schedule Import Logic
@@ -197,8 +192,14 @@ export const DraftEditor = ({
         setIsExportingPdf(true);
 
         try {
+            // Dynamically import libraries to prevent SSR/Webpack crashes
+            const html2canvas = (await import('html2canvas')).default;
+            const jsPDFModule = await import('jspdf');
+            // Handle both default (v2) and named (v3) exports for reliability
+            const jsPDF = jsPDFModule.default || (jsPDFModule as any).jsPDF;
+
             // Wait for render of hidden pages
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 800));
 
             const pageWidth = orientation === 'landscape' ? 1056 : 816;
             const pageHeight = orientation === 'landscape' ? 816 : 1056;
@@ -216,6 +217,7 @@ export const DraftEditor = ({
                 : [safeIndex]; // Only current
 
             let pageAdded = false;
+            let capturedPagesCount = 0;
 
             for (const i of versionsToExport) {
                 const container = document.getElementById(`pdf-page-${i}`);
@@ -255,7 +257,7 @@ export const DraftEditor = ({
 
         } catch (error) {
             console.error('PDF Generation Failed:', error);
-            alert('Failed to generate PDF. Please try again.');
+            alert('Failed to generate PDF. Check console for details.');
         } finally {
             setIsExportingPdf(false);
         }
@@ -365,8 +367,6 @@ export const DraftEditor = ({
                             onGenerateFromVision={onGenerateFromVision}
                             // @ts-ignore
                             onOpenAi={onOpenAi}
-
-                            onJumpStart={onJumpStart}
                         />
                     </div>
                 </div>
@@ -385,10 +385,10 @@ export const DraftEditor = ({
             <div
                 style={{
                     position: 'fixed',
-                    left: '-10000px',
+                    left: 0,
                     top: 0,
                     zIndex: -50,
-                    opacity: 0,
+                    opacity: 1,
                     pointerEvents: 'none'
                 }}
             >

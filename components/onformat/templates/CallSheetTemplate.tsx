@@ -295,29 +295,32 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         </div>
                                         <div className="flex items-center gap-2 bg-zinc-100 px-2 py-1.5 rounded-sm w-fit mt-2">
                                             <span className="text-xs font-bold uppercase text-zinc-400">Day</span>
-                                            <input
-                                                type="text"
-                                                value={data.currentDay || ''}
-                                                onChange={(e) => updateField('currentDay', e.target.value)}
-                                                className={`w-8 text-center bg-transparent text-xs font-bold uppercase text-zinc-900 outline-none border-b border-zinc-300 focus:border-zinc-900 transition-colors ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                placeholder="X"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`w-8 text-center text-xs font-bold uppercase text-zinc-900 border-b border-zinc-300 pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                {data.currentDay}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="w-8 text-center text-xs font-bold uppercase text-zinc-900 border-b border-zinc-300 pt-0.5 pb-0.5 leading-normal block">{data.currentDay}</div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={data.currentDay || ''}
+                                                    onChange={(e) => updateField('currentDay', e.target.value)}
+                                                    className="w-8 text-center bg-transparent text-xs font-bold uppercase text-zinc-900 outline-none border-b border-zinc-300 focus:border-zinc-900 transition-colors"
+                                                    placeholder="X"
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+
                                             <span className="text-xs font-bold uppercase text-zinc-400">of</span>
-                                            <input
-                                                type="text"
-                                                value={data.totalDays || ''}
-                                                onChange={(e) => updateField('totalDays', e.target.value)}
-                                                className={`w-8 text-center bg-transparent text-xs font-bold uppercase text-zinc-900 outline-none border-b border-zinc-300 focus:border-zinc-900 transition-colors ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                placeholder="Y"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`w-8 text-center text-xs font-bold uppercase text-zinc-900 border-b border-zinc-300 pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                {data.totalDays}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="w-8 text-center text-xs font-bold uppercase text-zinc-900 border-b border-zinc-300 pt-0.5 pb-0.5 leading-normal block">{data.totalDays}</div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={data.totalDays || ''}
+                                                    onChange={(e) => updateField('totalDays', e.target.value)}
+                                                    className="w-8 text-center bg-transparent text-xs font-bold uppercase text-zinc-900 outline-none border-b border-zinc-300 focus:border-zinc-900 transition-colors"
+                                                    placeholder="Y"
+                                                    disabled={isLocked}
+                                                />
+                                            )}
                                         </div>
                                     </div>
 
@@ -373,31 +376,33 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 {loadingWeather ? '...' : 'Auto-fill'}
                                             </button>
                                         </div>
-                                        <input
-                                            type="text"
-                                            value={data.weather || ''}
-                                            onChange={e => updateField('weather', e.target.value)}
-                                            placeholder="75° Sunny"
-                                            className={`w-full bg-transparent outline-none font-bold text-xs ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            disabled={isLocked}
-                                        />
-                                        <div className={`text-[10px] font-bold uppercase text-black pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                            {data.weather}
-                                        </div>
+                                        {isPrinting ? (
+                                            <div className="text-[10px] font-bold uppercase text-black pt-0.5 leading-normal block">{data.weather}</div>
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                value={data.weather || ''}
+                                                onChange={e => updateField('weather', e.target.value)}
+                                                placeholder="75° Sunny"
+                                                className="w-full bg-transparent outline-none font-bold text-xs"
+                                                disabled={isLocked}
+                                            />
+                                        )}
                                     </div>
                                     <div className="col-span-1">
                                         <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Sun</label>
-                                        <input
-                                            type="text"
-                                            value={data.sunriseSunset || ''}
-                                            onChange={e => updateField('sunriseSunset', e.target.value)}
-                                            placeholder="06:00 / 20:00"
-                                            className={`w-full bg-transparent outline-none font-bold text-xs ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            disabled={isLocked}
-                                        />
-                                        <div className={`text-[10px] font-bold uppercase text-black pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                            {data.sunriseSunset}
-                                        </div>
+                                        {isPrinting ? (
+                                            <div className="text-[10px] font-bold uppercase text-black pt-0.5 leading-normal block">{data.sunriseSunset}</div>
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                value={data.sunriseSunset || ''}
+                                                onChange={e => updateField('sunriseSunset', e.target.value)}
+                                                placeholder="06:00 / 20:00"
+                                                className="w-full bg-transparent outline-none font-bold text-xs"
+                                                disabled={isLocked}
+                                            />
+                                        )}
                                     </div>
                                     <div className="col-span-2 border-l border-zinc-200 pl-4">
                                         <div className="flex justify-between items-center mb-1">
@@ -411,17 +416,18 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 {loadingHospital ? '...' : 'Find Nearest'}
                                             </button>
                                         </div>
-                                        <input
-                                            type="text"
-                                            value={data.hospital || ''}
-                                            onChange={e => updateField('hospital', e.target.value)}
-                                            placeholder="Hospital Name & Address"
-                                            className={`w-full bg-transparent outline-none font-bold text-xs text-red-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            disabled={isLocked}
-                                        />
-                                        <div className={`text-[10px] font-bold uppercase text-red-600 pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                            {data.hospital}
-                                        </div>
+                                        {isPrinting ? (
+                                            <div className="text-[10px] font-bold uppercase text-red-600 pt-0.5 leading-normal block">{data.hospital}</div>
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                value={data.hospital || ''}
+                                                onChange={e => updateField('hospital', e.target.value)}
+                                                placeholder="Hospital Name & Address"
+                                                className="w-full bg-transparent outline-none font-bold text-xs text-red-600"
+                                                disabled={isLocked}
+                                            />
+                                        )}
                                     </div>
                                 </div>
 
@@ -430,33 +436,35 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     {/* Notes */}
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Notes</h3>
-                                        <textarea
-                                            value={data.notes || ''}
-                                            onChange={(e) => updateField('notes', e.target.value)}
-                                            className={`w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            placeholder="General production notes..."
-                                            rows={3}
-                                            disabled={isLocked}
-                                        />
-                                        <div className={`w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                            {data.notes}
-                                        </div>
+                                        {isPrinting ? (
+                                            <div className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
+                                        ) : (
+                                            <textarea
+                                                value={data.notes || ''}
+                                                onChange={(e) => updateField('notes', e.target.value)}
+                                                className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                placeholder="General production notes..."
+                                                rows={3}
+                                                disabled={isLocked}
+                                            />
+                                        )}
                                     </div>
 
                                     {/* Basecamp */}
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Basecamp</h3>
-                                        <textarea
-                                            value={data.basecamp || ''}
-                                            onChange={(e) => updateField('basecamp', e.target.value)}
-                                            className={`w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            placeholder="Basecamp Address..."
-                                            rows={3}
-                                            disabled={isLocked}
-                                        />
-                                        <div className={`w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                            {data.basecamp}
-                                        </div>
+                                        {isPrinting ? (
+                                            <div className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
+                                        ) : (
+                                            <textarea
+                                                value={data.basecamp || ''}
+                                                onChange={(e) => updateField('basecamp', e.target.value)}
+                                                className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                placeholder="Basecamp Address..."
+                                                rows={3}
+                                                disabled={isLocked}
+                                            />
+                                        )}
                                     </div>
                                 </div>
 
@@ -485,17 +493,18 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             return (
                                                 <div key={item.id} className={`relative group grid grid-cols-[50px_100px_1.5fr_1fr_30px] gap-4 mb-0.5 items-start ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                     <div>
-                                                        <input
-                                                            type="text"
-                                                            value={item.time}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
-                                                            placeholder="00:00"
-                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                            disabled={isLocked}
-                                                        />
-                                                        <div className={`text-[9px] font-bold uppercase text-black pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                            {item.time}
-                                                        </div>
+                                                        {isPrinting ? (
+                                                            <div className="text-[9px] font-bold uppercase text-black pt-0.5 leading-normal block">{item.time}</div>
+                                                        ) : (
+                                                            <input
+                                                                type="text"
+                                                                value={item.time}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
+                                                                placeholder="00:00"
+                                                                className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5"
+                                                                disabled={isLocked}
+                                                            />
+                                                        )}
                                                     </div>
 
                                                     {/* Type Dropdown */}
@@ -603,73 +612,77 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         return (
                                             <div key={item.id} className={`relative group grid grid-cols-[50px_100px_1.5fr_1fr_30px] gap-4 mb-0.5 items-start ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                 <div>
-                                                    <input
-                                                        type="text"
-                                                        value={item.time}
-                                                        onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
-                                                        placeholder="00:00"
-                                                        className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                        disabled={isLocked}
-                                                    />
-                                                    <div className={`text-[9px] font-bold uppercase text-black pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                        {item.time}
-                                                    </div>
+                                                    {isPrinting ? (
+                                                        <div className="text-[9px] font-bold uppercase text-black pt-0.5 leading-normal block">{item.time}</div>
+                                                    ) : (
+                                                        <input
+                                                            type="text"
+                                                            value={item.time}
+                                                            onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
+                                                            placeholder="00:00"
+                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5"
+                                                            disabled={isLocked}
+                                                        />
+                                                    )}
                                                 </div>
 
                                                 {/* Type Dropdown */}
                                                 <div className="relative">
-                                                    <select
-                                                        value={item.type || 'Other'}
-                                                        onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                        className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                        disabled={isLocked}
-                                                    >
-                                                        <option value="Arrive">Arrive</option>
-                                                        <option value="Set Up">Set Up</option>
-                                                        <option value="Shoot">Shoot</option>
-                                                        <option value="Break">Break</option>
-                                                        <option value="Meal">Meal</option>
-                                                        <option value="Strike">Strike</option>
-                                                        <option value="Move">Move</option>
-                                                        <option value="Other">Other</option>
-                                                    </select>
-                                                    <div className={`text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                        {item.type || 'Other'}
-                                                    </div>
+                                                    {isPrinting ? (
+                                                        <div className="text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal block">{item.type || 'Other'}</div>
+                                                    ) : (
+                                                        <select
+                                                            value={item.type || 'Other'}
+                                                            onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
+                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black"
+                                                            disabled={isLocked}
+                                                        >
+                                                            <option value="Arrive">Arrive</option>
+                                                            <option value="Set Up">Set Up</option>
+                                                            <option value="Shoot">Shoot</option>
+                                                            <option value="Break">Break</option>
+                                                            <option value="Meal">Meal</option>
+                                                            <option value="Strike">Strike</option>
+                                                            <option value="Move">Move</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                    )}
                                                 </div>
 
                                                 <div>
-                                                    <textarea
-                                                        value={item.description}
-                                                        onChange={(e) => handleUpdateEvent(globalIdx, { description: e.target.value })}
-                                                        style={{ resize: 'none' }}
-                                                        placeholder="Description"
-                                                        rows={1}
-                                                        onInput={(e) => {
-                                                            const target = e.target as HTMLTextAreaElement;
-                                                            target.style.height = 'auto';
-                                                            target.style.height = target.scrollHeight + 'px';
-                                                        }}
-                                                        className={`w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                        disabled={isLocked}
-                                                    />
-                                                    <div className={`text-[9px] font-medium uppercase text-black pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                        {item.description}
-                                                    </div>
+                                                    {isPrinting ? (
+                                                        <div className="text-[9px] font-medium uppercase text-black pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal block">{item.description}</div>
+                                                    ) : (
+                                                        <textarea
+                                                            value={item.description}
+                                                            onChange={(e) => handleUpdateEvent(globalIdx, { description: e.target.value })}
+                                                            style={{ resize: 'none' }}
+                                                            placeholder="Description"
+                                                            rows={1}
+                                                            onInput={(e) => {
+                                                                const target = e.target as HTMLTextAreaElement;
+                                                                target.style.height = 'auto';
+                                                                target.style.height = target.scrollHeight + 'px';
+                                                            }}
+                                                            className="w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden"
+                                                            disabled={isLocked}
+                                                        />
+                                                    )}
                                                 </div>
 
                                                 <div>
-                                                    <input
-                                                        type="text"
-                                                        value={item.location}
-                                                        onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
-                                                        placeholder="Location"
-                                                        className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                        disabled={isLocked}
-                                                    />
-                                                    <div className={`text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                        {item.location}
-                                                    </div>
+                                                    {isPrinting ? (
+                                                        <div className="text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal block">{item.location}</div>
+                                                    ) : (
+                                                        <input
+                                                            type="text"
+                                                            value={item.location}
+                                                            onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
+                                                            placeholder="Location"
+                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5"
+                                                            disabled={isLocked}
+                                                        />
+                                                    )}
                                                 </div>
 
                                                 {!isLocked && (

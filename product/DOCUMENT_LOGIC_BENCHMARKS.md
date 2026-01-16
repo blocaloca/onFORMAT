@@ -1,127 +1,101 @@
-# Document Logic & AI Behavior Benchmarks
+# Document Logic & AI Behavior Matrix
 
-This document outlines the functional logic and expected AI behavior (ASSIST vs DEVELOP) for every document type in the onFORMAT system. It serves as the benchmark for implementing specific tool calls and context handlers.
+This document outlines the **Logic Matrix**—the functional rules, parsing patterns, and AI strategies that govern the "Connective Logic" across the onFORMAT system.
 
 **Core Philosophy:**
-*   **ASSIST Mode (The Fixer/Librarian):** Efficient, low-token count, high speed. "Help me move faster." checks logic, fixes math, flags errors. Minimal conversation.
-*   **DEVELOP Mode (The Creative Partner/Doer):** Strategic, constructive, opinionated. "Do the heavy lifting." Fills forms completely based on context, pivots strategies, offers creative solutions.
+*   **ASSIST Mode**: "Help me move faster." (Validation, Math, Checks).
+*   **DEVELOP Mode**: "Do the heavy lifting." (Generation, Drafting, Creative Pivots).
+
+**Parsing Engine**: The `WorkspaceEditor` regex engine listens for markdown keys (e.g., `**Scene:**`) in AI responses and automatically populates structured data. Be precise.
 
 ---
 
 ## 🏗️ Phase 1: DEVELOPMENT
-*Focus: The "What" and "Why". Creative shaping and narrative.*
 
-### 1. Project Vision (New!)
-**Function**: The "War Room" / Working Canvas. High-level project strategy and ideation.
-- **ASSIST**: Summarizes chat notes into bullet points. Organizes random thoughts.
-- **DEVELOP**: "Build a full project strategy from this transcript." "Pivot the genre to Horror-Comedy and update the themes." Acts as a creative director.
+### 1. Project Vision
+*   **Role**: The "War Room". High-level ideation.
+*   **AI Strategy**: Ask for "Seed Idea". Offer 3 distinct starting points.
+*   **Parsing**: None (Raw Output).
 
 ### 2. Creative Brief
-**Function**: The constraints and client goals.
-- **ASSIST**: "Objective is missing." "Deliverables list is formatted incorrectly." (Validation).
-- **DEVELOP**: "Draft a full brief for a Nike Commercial based on their 2024 brand guidelines." (Generation).
+*   **Role**: The constraints and strategy.
+*   **Logic Flow**:
+    1.  **Subject/Product**: "First things first. What are we filming?"
+    2.  **Objective**: "What is the primary goal?"
+    3.  **Deliverables Loop**: "What assets?" -> "Any more?" (No global usage step).
+    4.  **Completion**: Offers "Draft Treatment" or "Start Pre-Production".
+*   **Parsing Keys**:
+    -   `**Subject/Product:**`
+    -   `**Objective:**`
+    -   `**Target Audience:**`
+    -   `**Tone:**` / `**Key Message:**`
+    -   `**Deliverables:**` (Parses comma/newline separated list).
 
 ### 3. AV Script
-**Function**: Two-column narrative blueprint.
-- **ASSIST**: Checks reading timing. Flags audio/video sync issues.
-- **DEVELOP**: "Rewrite the dialogue to be punchier." "Generate visual descriptions for this voiceover."
+*   **Role**: Two-column narrative blueprint.
+*   **AI Strategy**:
+    -   Check "Stats: Scene X" context to prompt for next beat.
+    -   "How does it start?" -> "What happens next?"
+*   **Parsing Keys**:
+    -   `**Scene:**` (Scene Number)
+    -   `**Time:**` (HH:MM:SS)
+    -   `**Visual:**` (Action Description)
+    -   `**Audio:**` (Dialogue/SFX)
+*   **Action Example**:
+    ```json
+    {
+      "label": "Opening Scene",
+      "payload": "**Scene:** 1\n**Time:** 00:00:05\n**Visual:** EXT. CITY\n**Audio:** SFX: Sirens."
+    }
+    ```
 
 ### 4. Director's Treatment
-**Function**: The pitch. Narrative and visual persuasion.
-- **ASSIST**: Formatting checks. Ensures sections match the Brief's requirements.
-- **DEVELOP**: "Write a 'Visual Approach' section describing a moody, noir aesthetic."
+*   **Role**: The pitch. Narrative persuasion.
+*   **Parsing Keys**:
+    -   `**Narrative Arc:**`
+    -   `**Character Philosophy:**`
+    -   `**Visual Language:**`
+    -   `**Director:**`
 
-### 5. Moodboard (Creative Direction)
-**Function**: Visual texture and color strategy.
-- **ASSIST**: "Extract the hex color palette from these images."
-- **DEVELOP**: "Generate a grid of images for 'Cyberpunk Seoul' styling." "Suggest 5 key visual words."
-
-### 6. Lookbook
-**Function**: Technical visual strategy (Camera/Lighting).
-- **ASSIST**: "These lenses don't match the sensor size entered."
-- **DEVELOP**: "Suggest a lighting package for a 'High-Key Commercial' look."
+### 5. Storyboard / Moodboard
+*   **Role**: Visual texture.
+*   **Parsing Keys**:
+    -   `**Scene:**` (Generates Image Caption Item).
 
 ---
 
 ## 📋 Phase 2: PRE-PRODUCTION
-*Focus: The "How". Logistics, Resources, and Planning.*
 
-### 7. Shot List
-**Function**: The bridge between story and execution.
-- **ASSIST**: "Calculate total setup time." "You missed coverage for Scene 5."
-- **DEVELOP**: "Generate a standard coverage shot list (Wide, Med, CU) for every scene in the script."
+### 6. Shot List
+*   **Role**: Execution plan.
+*   **AI Strategy**:
+    -   Analyzes Script (if available) or asks for "Establishing Scene".
+    -   Suggests "Master" -> "Coverage" (Medium, CU).
+    -   Context Hint: "Stats: Scene X. Add coverage or move to next?"
+*   **Parsing Keys**:
+    -   `**Scene:**`
+    -   `**Size:**` (Wide, Medium, Close Up)
+    -   `**Angle:**` (Eye Level, Low Angle)
+    -   `**Movement:**` (Static, Pan, Tracking)
+    -   `**Description:**`
+*   **Action Example**:
+    ```json
+    {
+      "label": "Wide Master",
+      "payload": "**Scene:** 1\n**Size:** Wide\n**Angle:** Eye Level\n**Movement:** Static\n**Description:** INT. ROOM"
+    }
+    ```
 
-### 8. Schedule
-**Function**: Time management.
-- **ASSIST**: "Sunrise is at 6am, move Scene 1 earlier." "Sort scenes by location."
-- **DEVELOP**: "Create an optimized 3-day schedule that prioritizes actor availability."
+### 7. Schedule
+*   **Role**: Time management.
+*   **Parsing**: (Planned: `**Day:**`, `**Call Time:**`, `**Scenes:**`).
 
-### 9. Budget
-**Function**: Money management.
-- **ASSIST**: Math verification. "Line 42 does not sum correctly."
-- **DEVELOP**: "Estimate the cost of a 10-person crew for 2 days in NYC."
-
-### 10. Crew List
-**Function**: Personnel.
-- **ASSIST**: "Auto-fill contact info from previous project." "Flag missing HODs."
-- **DEVELOP**: "Suggest a standard crew size for a $50k budget music video."
-
-### 11. Casting / Talent
-**Function**: Who is on camera.
-- **ASSIST**: "Flag conflicts between shoot dates and actor availability."
-- **DEVELOP**: "Generate character breakdowns for a 'Gritty Detective' and a 'Naive Rookie'."
-
-### 12. Locations
-**Function**: Where it happens.
-- **ASSIST**: "Calculate travel time from Basecamp." "Check power requirements."
-- **DEVELOP**: "Find 5 industrial warehouse locations in Los Angeles with permit links."
-
-### 13. Equipment List
-**Function**: The Gear.
-- **ASSIST**: "Cross-check this list against the Shot Log requirements."
-- **DEVELOP**: "Build a standard 'Arri Alexa Mini' camera package."
-
-### 14. Wardrobe & Props
-**Function**: Physical items.
-- **ASSIST**: "Group items by Scene." "Flag continuity errors."
-- **DEVELOP**: "List all props mentioned in the script." "Suggest a color palette for the Lead."
+### 8. Budget
+*   **Role**: Money management.
+*   **Parsing**: (Planned: `**Line Item:**`, `**Cost:**`).
 
 ---
 
-## 🎬 Phase 3: ON SET
-*Focus: Execution. Speed, Accuracy, Reality.*
+## 🎬 Phase 3: ON SET & POST
 
-### 15. Call Sheet
-**Function**: Daily orders.
-- **ASSIST**: "Pull weather data for tomorrow." "Auto-fill Nearest Hospital."
-- **DEVELOP**: N/A (Strict safety/logistical document).
-
-### 16. On-Set Notes
-**Function**: Producer/Scripty logs.
-- **ASSIST**: "Log current time." "Link note to Scene 4."
-- **DEVELOP**: "Summarize the day's notes into a Wrap Report email."
-
-### 17. Camera / Sound / DIT Logs
-**Function**: Technical metadata.
-- **ASSIST**: "Duplicate previous entry." "Calculate card space remaining."
-- **DEVELOP**: N/A.
-
----
-
-## 📦 Phase 4: POST-PRODUCTION
-*Focus: Completion. Organization, Delivery.*
-
-### 18. Client Selects
-**Function**: Feedback loop.
-- **ASSIST**: "Tally checks." "Filter by 'Approved'."
-- **DEVELOP**: "Summarize client feedback trends (e.g., 'They hate the blue shirt')."
-
-### 19. Deliverables
-**Function**: Handover.
-- **ASSIST**: "Check file specs against platform requirements."
-- **DEVELOP**: N/A.
-
-### 20. Archive Log
-**Function**: Storage.
-- **ASSIST**: "Generate LTO tape label."
-- **DEVELOP**: N/A.
+(Logic Matrix to be expanded for these phases as stability is confirmed).

@@ -14,11 +14,33 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isLocked) setIsDragging(true);
+    };
 
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+    };
+
+    const handleDrop = async (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+        if (isLocked) return;
+
+        const file = e.dataTransfer.files?.[0];
+        if (file) {
+            processFile(file);
+        }
+    };
+
+    const processFile = async (file: File) => {
         setIsUploading(true);
         setError(null);
 
@@ -30,9 +52,13 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
             setError(err.message || 'Upload failed');
         } finally {
             setIsUploading(false);
-            // Reset input so same file can be selected again if needed
-            if (fileInputRef.current) fileInputRef.current.value = '';
         }
+    };
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) processFile(file);
+        if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
     const handleClick = () => {
@@ -59,10 +85,14 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
         }
     };
 
+
     return (
         <div
             onClick={handleClick}
-            className={`relative group ${isLocked ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'} overflow-hidden flex items-center justify-center bg-gray-100 border-2 border-dashed border-gray-200 ${isLocked ? '' : 'hover:border-black'} transition-colors ${className}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`relative group ${isLocked ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'} overflow-hidden flex items-center justify-center bg-gray-100 border-2 border-dashed ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-200'} ${isLocked ? '' : 'hover:border-black'} transition-colors ${className}`}
         >
             <input
                 type="file"
@@ -75,7 +105,17 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
             {/* Content Layer */}
             {currentUrl ? (
                 <>
-                    <img src={currentUrl} alt="Uploaded content" className="w-full h-full object-cover" />
+                    <div
+                        className="w-full h-full"
+                        style={{
+                            backgroundImage: `url(${currentUrl})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                            backgroundRepeat: 'no-repeat',
+                            width: '100%',
+                            height: '100%'
+                        }}
+                    />
 
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

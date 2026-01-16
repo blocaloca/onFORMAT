@@ -305,14 +305,20 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Caption */}
                                         {(item.showCaption !== false) && (
-                                            <textarea
-                                                className="w-full text-[10px] text-center font-mono text-zinc-500 bg-transparent outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 resize-none overflow-hidden"
-                                                placeholder="CAPTION..."
-                                                rows={2}
-                                                value={item.caption}
-                                                onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
-                                                disabled={isLocked}
-                                            />
+                                            isPrinting ? (
+                                                <div className="w-full text-[10px] text-center font-mono text-black whitespace-pre-wrap break-words min-h-[2em]">
+                                                    {item.caption}
+                                                </div>
+                                            ) : (
+                                                <textarea
+                                                    className="w-full text-[10px] text-center font-mono text-zinc-500 bg-transparent outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 resize-none overflow-hidden"
+                                                    placeholder="CAPTION..."
+                                                    rows={2}
+                                                    value={item.caption}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )
                                         )}
                                     </div>
                                 );

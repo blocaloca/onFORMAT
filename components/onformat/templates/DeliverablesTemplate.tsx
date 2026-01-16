@@ -151,76 +151,91 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         </div>
 
                                         {/* File Number */}
-                                        <input
-                                            type="text"
-                                            value={item.fileNumber}
-                                            onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                            className={`font-mono font-bold text-xs bg-transparent outline-none focus:bg-white rounded px-1 pt-1 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            placeholder="A001_..."
-                                            disabled={isLocked}
-                                        />
-                                        <div className={`font-mono font-bold text-xs px-1 pt-1 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.fileNumber}</div>
+                                        {isPrinting ? (
+                                            <div className="font-mono font-bold text-xs px-1 pt-1 leading-normal block">{item.fileNumber}</div>
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                value={item.fileNumber}
+                                                onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
+                                                className="font-mono font-bold text-xs bg-transparent outline-none focus:bg-white rounded px-1 pt-1"
+                                                placeholder="A001_..."
+                                                disabled={isLocked}
+                                            />
+                                        )}
 
                                         {/* Description */}
                                         <div className="min-w-0">
-                                            <textarea
-                                                value={item.description}
-                                                onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[40px] w-full text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                placeholder="Description..."
-                                                rows={Math.max(2, item.description.split('\n').length)}
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.description}</div>
+                                            {isPrinting ? (
+                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block">{item.description}</div>
+                                            ) : (
+                                                <textarea
+                                                    value={item.description}
+                                                    onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
+                                                    className="bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[40px] w-full text-[10px]"
+                                                    placeholder="Description..."
+                                                    rows={Math.max(2, item.description.split('\n').length)}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Aspect Select */}
                                         <div className="relative pt-1">
-                                            <select
-                                                value={item.format}
-                                                onChange={e => handleUpdateItem(globalIdx, { format: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                disabled={isLocked}
-                                            >
-                                                <option value="" disabled className="text-zinc-300">ASPECT</option>
-                                                {ASPECT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                                            </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                {ASPECT_OPTIONS.find(o => o.value === item.format)?.label || ''}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="font-bold text-[10px] uppercase text-zinc-700 block">
+                                                    {ASPECT_OPTIONS.find(o => o.value === item.format)?.label || ''}
+                                                </div>
+                                            ) : (
+                                                <select
+                                                    value={item.format}
+                                                    onChange={e => handleUpdateItem(globalIdx, { format: e.target.value })}
+                                                    className="appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700"
+                                                    disabled={isLocked}
+                                                >
+                                                    <option value="" disabled className="text-zinc-300">ASPECT</option>
+                                                    {ASPECT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                                </select>
+                                            )}
                                         </div>
 
                                         {/* Type Select */}
                                         <div className="relative pt-1">
-                                            <select
-                                                value={item.type || ''}
-                                                onChange={e => handleUpdateItem(globalIdx, { type: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                disabled={isLocked}
-                                            >
-                                                <option value="" disabled className="text-zinc-300">TYPE</option>
-                                                {TYPE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                                            </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                                {TYPE_OPTIONS.find(o => o.value === item.type)?.label || ''}
-                                            </div>
+                                            {isPrinting ? (
+                                                <div className="font-bold text-[10px] uppercase text-zinc-700 block">
+                                                    {TYPE_OPTIONS.find(o => o.value === item.type)?.label || ''}
+                                                </div>
+                                            ) : (
+                                                <select
+                                                    value={item.type || ''}
+                                                    onChange={e => handleUpdateItem(globalIdx, { type: e.target.value })}
+                                                    className="appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700"
+                                                    disabled={isLocked}
+                                                >
+                                                    <option value="" disabled className="text-zinc-300">TYPE</option>
+                                                    {TYPE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                                </select>
+                                            )}
                                         </div>
 
                                         {/* Notes (was Edit/Grade Notes) */}
                                         <div className="min-w-0">
-                                            <textarea
-                                                value={item.notes || ''}
-                                                onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className={`bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 text-[10px] placeholder:text-zinc-300 min-h-[40px] w-full ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                placeholder="Notes..."
-                                                rows={Math.max(2, (item.notes || '').split('\n').length)}
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`px-1 pt-1 text-zinc-500 text-[10px] whitespace-pre-wrap break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.notes}</div>
+                                            {isPrinting ? (
+                                                <div className="px-1 pt-1 text-zinc-500 text-[10px] whitespace-pre-wrap break-words block">{item.notes}</div>
+                                            ) : (
+                                                <textarea
+                                                    value={item.notes || ''}
+                                                    onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
+                                                    className="bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 text-[10px] placeholder:text-zinc-300 min-h-[40px] w-full"
+                                                    placeholder="Notes..."
+                                                    rows={Math.max(2, (item.notes || '').split('\n').length)}
+                                                    disabled={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Delete Button with Confirmation Popover */}
-                                        {!isLocked && (
+                                        {!isLocked && !isPrinting && (
                                             <div className="relative flex justify-center w-full pt-1">
                                                 <button
                                                     onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === globalIdx ? null : globalIdx)}

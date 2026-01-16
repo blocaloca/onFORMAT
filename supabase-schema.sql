@@ -196,3 +196,19 @@ CREATE POLICY "Admins can update feedback status"
 
 CREATE INDEX IF NOT EXISTS idx_feedback_user_id ON feedback(user_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_created_at ON feedback(created_at DESC);
+
+-- 3. Avatar Support
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+
+-- Note: Storage buckets must be created in the dashboard or via specific storage API calls,
+-- but policies can be defined here if the bucket exists.
+-- REQUIRED: Create a public bucket named 'avatars' in Supabase Storage.
+
+-- Policy Example:
+-- CREATE POLICY "Avatar images are publicly accessible"
+--   ON storage.objects FOR SELECT
+--   USING ( bucket_id = 'avatars' );
+
+-- CREATE POLICY "Users can upload avatars"
+--   ON storage.objects FOR INSERT
+--   WITH CHECK ( bucket_id = 'avatars' AND auth.uid() = owner );

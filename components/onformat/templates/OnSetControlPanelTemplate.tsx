@@ -23,7 +23,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                 <div className="w-96 h-96 bg-black p-4 mb-8">
                     <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://onset.app/project/${metadata?.projectId || 'demo'}`}
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
                         alt="Scan QR"
                         className="w-full h-full bg-white p-2 object-contain"
                     />
@@ -104,7 +104,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         Only the documents selected above will be synchronized to the mobile view.
                     </p>
                     <a
-                        href={`/mobile/${metadata?.projectId || '#'}`}
+                        href={`/onset/${metadata?.projectId || '#'}`}
                         target="_blank"
                         className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-emerald-500 hover:bg-emerald-400 text-black px-4 py-2 rounded-sm transition-colors"
                     >

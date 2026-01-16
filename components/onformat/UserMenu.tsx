@@ -1,15 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, CreditCard, Settings, Users, LogOut, ChevronUp, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FeedbackDialog } from '@/components/dashboard/FeedbackDialog';
+
+import { supabase } from '@/lib/supabase';
 
 export const UserMenu = ({ email }: { email?: string }) => {
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-    const handleLogout = () => {
-        localStorage.removeItem('onformat_user');
+    useEffect(() => {
+        const fetchAvatar = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single();
+                if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+            }
+        };
+        fetchAvatar();
+    }, []);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
         router.push('/login');
     };
 
@@ -24,8 +38,11 @@ export const UserMenu = ({ email }: { email?: string }) => {
                             <p className="text-xs text-white truncate font-mono">{email || 'user@onset.com'}</p>
                         </div>
                         <div className="py-1">
-                            <button className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors">
-                                <User size={14} /> Profile
+                            <button
+                                onClick={() => router.push('/account')}
+                                className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors"
+                            >
+                                <User size={14} /> Account & Billing
                             </button>
                             <button
                                 onClick={async () => {
@@ -49,13 +66,7 @@ export const UserMenu = ({ email }: { email?: string }) => {
                                 }}
                                 className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors"
                             >
-                                <CreditCard size={14} /> Subscription (Beta)
-                            </button>
-                            <button className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors">
-                                <Users size={14} /> Team
-                            </button>
-                            <button className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors">
-                                <Settings size={14} /> Settings
+                                <CreditCard size={14} /> Upgrade to Pro
                             </button>
                         </div>
                         <div className="border-t border-zinc-800 py-1">
@@ -85,8 +96,12 @@ export const UserMenu = ({ email }: { email?: string }) => {
                     onClick={() => setIsOpen(!isOpen)}
                     className={`w-full flex items-center gap-3 p-2 rounded-sm transition-all border ${isOpen ? 'bg-zinc-800 border-zinc-600' : 'hover:bg-zinc-800/50 border-transparent hover:border-zinc-700'}`}
                 >
-                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-zinc-700 to-zinc-600 flex items-center justify-center text-white font-bold text-xs shadow-inner">
-                        {email ? email[0].toUpperCase() : 'U'}
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-800 border border-zinc-600 flex items-center justify-center text-white font-bold text-xs shadow-inner">
+                        {avatarUrl ? (
+                            <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                            <span>{email ? email[0].toUpperCase() : 'U'}</span>
+                        )}
                     </div>
                     <div className="flex-1 text-left min-w-0">
                         <p className="text-xs font-bold text-zinc-200 truncate tracking-wide">Account</p>
