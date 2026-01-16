@@ -59,7 +59,12 @@ export default function OnSetMobilePage() {
                     if (phase.drafts) {
                         Object.entries(phase.drafts).forEach(([key, val]) => {
                             const parsed = safeParse(val as string);
-                            if (parsed) allDrafts[key] = parsed;
+                            // Safety: Handle Array Versions (take latest/first)
+                            if (Array.isArray(parsed)) {
+                                allDrafts[key] = parsed[0];
+                            } else if (parsed) {
+                                allDrafts[key] = parsed;
+                            }
                         });
                     }
                 });
@@ -70,11 +75,18 @@ export default function OnSetMobilePage() {
                 docs: allDrafts
             });
 
-            // Set initial tab to first available doc or default
-            const availableKeys = Object.keys(allDrafts);
+            // Determine Tabs: Use "onset-mobile-control" selection if available, else all found drafts
+            const mobileControl = allDrafts['onset-mobile-control'];
+            const selectedTools = mobileControl?.selectedTools || [];
+
+            const availableKeys = selectedTools.length > 0
+                ? selectedTools
+                : Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
+
             if (availableKeys.length > 0) {
                 // Priority sort? call-sheet -> shots -> script
                 const priority = ['call-sheet', 'shot-scene-book', 'av-script'];
+                // Find first priority that exists in availableKeys, or just first available
                 const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
                 setActiveTab(bestStart);
             }
@@ -152,8 +164,18 @@ export default function OnSetMobilePage() {
             {/* BOTTOM NAV (SCROLLABLE ROWS) */}
             <nav className="fixed bottom-0 left-0 w-full h-16 bg-zinc-950 border-t border-zinc-900 z-50 pb-safe">
                 <div className="flex items-center h-full overflow-x-auto px-4 gap-3 no-scrollbar">
-                    {Object.keys(data.docs).length > 0 ? (
-                        Object.keys(data.docs).map((key) => (
+                    {(() => {
+                        const mobileControl = data.docs['onset-mobile-control'];
+                        const selectedTools = mobileControl?.selectedTools || [];
+                        const tabs = selectedTools.length > 0
+                            ? selectedTools
+                            : Object.keys(data.docs).filter(k => k !== 'onset-mobile-control');
+
+                        if (tabs.length === 0) {
+                            return <span className="text-zinc-600 text-[10px] uppercase font-bold pl-2">No synced docs</span>;
+                        }
+
+                        return tabs.map((key: string) => (
                             <button
                                 key={key}
                                 onClick={() => setActiveTab(key)}
@@ -166,10 +188,8 @@ export default function OnSetMobilePage() {
                             >
                                 {DOC_LABELS[key] || key}
                             </button>
-                        ))
-                    ) : (
-                        <span className="text-zinc-600 text-[10px] uppercase font-bold pl-2">No synced docs</span>
-                    )}
+                        ));
+                    })()}
                 </div>
             </nav>
         </div>

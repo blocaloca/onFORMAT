@@ -24,9 +24,13 @@ export default function OnSetPage() {
                 const processed = data.map((p: any) => {
                     let settings = { isLive: false, themeColor: 'zinc' };
                     try {
-                        const draft = p.phases?.ON_SET?.drafts?.['onset-mobile-control'];
+                        let draft = p.phases?.ON_SET?.drafts?.['onset-mobile-control'];
                         if (draft) {
-                            const parsed = JSON.parse(draft);
+                            let parsed = JSON.parse(draft);
+                            // Handle Document Versions (Array)
+                            if (Array.isArray(parsed)) {
+                                parsed = parsed[0]; // Active version is usually index 0 in recent system
+                            }
                             settings = { ...settings, ...parsed };
                         }
                     } catch (e) { /* ignore */ }
@@ -77,10 +81,18 @@ export default function OnSetPage() {
 
                                     const colorClasses: Record<string, string> = {
                                         green: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+                                        emerald: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+
                                         purple: 'border-purple-900/50 hover:border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.1)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+
                                         orange: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
+                                        amber: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
+
                                         blue: 'border-blue-900/50 hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]',
+                                        indio: 'border-indigo-900/50 hover:border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.1)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]',
+
                                         red: 'border-red-900/50 hover:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]',
+                                        rose: 'border-rose-900/50 hover:border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]',
                                     };
 
                                     const textColors: Record<string, string> = {
