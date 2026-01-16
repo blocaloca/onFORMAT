@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Loader2, Clapperboard, List, Calendar, ChevronLeft, ChevronRight, Menu, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 /* --------------------------------------------------------------------------------
  * TYPES
@@ -112,7 +113,7 @@ export default function OnSetMobilePage() {
 
             {/* HERDER */}
             <header className="h-16 border-b border-zinc-800 flex items-center justify-between px-4 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
-                <div className="flex items-center gap-3">
+                <Link href="/onset" className="flex items-center gap-3">
                     <img src="/onset_logo.png" className="h-6 w-auto" alt="onSET" />
                     <div className="h-4 w-[1px] bg-zinc-700"></div>
                     <div className="flex flex-col">
@@ -122,7 +123,7 @@ export default function OnSetMobilePage() {
                             <span className="text-[9px] font-mono text-emerald-500 uppercase leading-none">Live Sync</span>
                         </div>
                     </div>
-                </div>
+                </Link>
                 <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
                     <Menu size={14} />
                 </div>
