@@ -7,20 +7,10 @@ export const DEMO_PROJECT_DATA: Partial<WorkspaceState> = {
         DEVELOPMENT: {
             locked: false,
             drafts: {
-                'project-vision': `# Concept: THE SUSTAINABLE SWELL
-
-**Goal:** Launch the 'Reef-Zero' biodegradable surfboard.
-**Format:** Hybrid (YouTube Vlog + Instagram Stills).
-**Logline:** A raw, day-in-the-life journey of a local shaper testing the world's first algae-based board.
-
-**Visual Style:** 
-- Natural light, sunrise tones.
-- Handheld documentary video.
-- Grainy 35mm film stills.
-- GoPro POV surfing shots.`,
+                'project-vision': `# Project Vision\n\n**Status:** Pending Creative Brief.\n\n(This document will be populated once we define our strategy in the Brief.)`,
                 'brief': `# Creative Brief
 
-**Subject/Product:** Reef-Zero Surfboard
+**Subject/Product:**
 **Objective:**
 **Target Audience:**
 **Key Message:**
@@ -37,26 +27,32 @@ export const DEMO_PROJECT_DATA: Partial<WorkspaceState> = {
         'brief': [
             {
                 role: 'assistant',
-                content: "👋 **Welcome to onFORMAT.**\n\nI've already set up your Project Vision (check the sidebar later).\n\nLet's jump straight into the **Creative Brief**.\n\nI need to define the **Objective** for this 'Reef-Zero' launch. What is the primary goal?",
+                content: "👋 **Welcome to onFORMAT.**\n\nI've set up your workspace. Let's jump straight into the **Creative Brief**.\n\nFirst, choose a subject to demo:",
                 actions: [
                     {
-                        label: "Brand Awareness",
+                        label: "Sustainable Surfboard",
                         type: "draft_prefill",
                         prominence: "primary",
-                        payload: "**Objective:** To drive massive awareness within the eco-conscious surf community via authentic storytelling."
+                        payload: "**Subject/Product:** Reef-Zero Algae Boards"
                     },
                     {
-                        label: "Direct Sales",
+                        label: "Coffee Flavored Gum",
                         type: "draft_prefill",
-                        prominence: "secondary",
-                        payload: "**Objective:** To generate pre-orders for the limited first run of boards."
+                        prominence: "primary",
+                        payload: "**Subject/Product:** JitterChew - The Espresso Gum"
+                    },
+                    {
+                        label: "Streetwear Brand",
+                        type: "draft_prefill",
+                        prominence: "primary",
+                        payload: "**Subject/Product:** CONCRETE x FLOW Collection"
                     }
                 ]
             }
         ]
     },
     persona: 'HYBRID',
-    clientName: 'Reef & Root',
-    projectName: 'Demo: Eco-Surf Launch',
-    producer: 'onFORMAT System'
+    clientName: 'Demo Client',
+    projectName: 'Demo Project',
+    producer: 'onFORMAT Sytem'
 };
