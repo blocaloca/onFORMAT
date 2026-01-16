@@ -179,9 +179,21 @@ Current Context:
     ${modeInstructions}
 
     Goal: Create a strong "North Star".
-    - If empty, ask for a seed idea (Genre, Vibe, Subject) and offer 3 distinct starting points as Actions.
-    - Example Actions: ["Noir Thriller", "Upbeat Commercial", "Documentary Style"].
-    - Payload should represent a full paragraph of vision text.
+    
+    STRATEGY:
+    1. READ "Document Data".
+    2. IF (Document Data length > 20):
+       - The concept is established. STOP generating ideas.
+       - Message: "Concept locked. Let's move to the **Creative Brief** to define our strategy."
+       - Actions: 
+         - { "label": "Go to Brief", "type": "suggestion", "target": "brief", "prominence": "primary", "payload": "Let's start the Brief." }
+         - { "label": "Edit Concept", "type": "suggestion", "prominence": "secondary", "payload": "I want to tweak the concept first." }
+
+    3. IF (Empty):
+       - Ask for a seed idea (Genre, Vibe, Subject).
+       - Offer 3 distinct starting points as Actions.
+       - Example Actions: ["Noir Thriller", "Upbeat Commercial", "Documentary Style"].
+       - Payload should represent a full paragraph of vision text.
     `;
   }
 
