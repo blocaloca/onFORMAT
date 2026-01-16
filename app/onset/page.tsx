@@ -31,7 +31,7 @@ export default function OnSetPage() {
                         }
                     } catch (e) { /* ignore */ }
                     return { ...p, settings };
-                }).filter((p: any) => p.settings.isLive);
+                }).filter((p: any) => true); // DEBUG: Show all to verify data
 
                 setProjects(processed);
             }
@@ -66,13 +66,14 @@ export default function OnSetPage() {
                     </div>
                 ) : (
                     <>
-                        <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Active Productions</h2>
+                        <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">All Productions (Debug Mode)</h2>
                         {projects.length > 0 ? (
                             <div className="space-y-3">
                                 {projects.map(p => {
                                     // Map Project Colors to Tailwind Styles
                                     // Colors: green, purple, orange, blue, red
                                     const baseColor = p?.color || 'green';
+                                    const isLive = p.settings?.isLive;
 
                                     const colorClasses: Record<string, string> = {
                                         green: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
@@ -92,11 +93,13 @@ export default function OnSetPage() {
 
                                     return (
                                         <Link key={p.id} href={`/onset/${p.id}`}>
-                                            <div className={`group bg-zinc-900 hover:bg-zinc-900 border p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green}`}>
+                                            <div className={`group bg-zinc-900 hover:bg-zinc-900 border p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green} ${!isLive ? 'opacity-50 grayscale hover:grayscale-0' : ''}`}>
 
                                                 {/* Status Dot */}
                                                 <div className="absolute top-4 right-4 flex items-center gap-2">
-                                                    <span className="text-[9px] font-bold uppercase text-zinc-600 group-hover:text-white transition-colors">Enter Set</span>
+                                                    <span className={`text-[9px] font-bold uppercase ${isLive ? 'text-emerald-500' : 'text-red-500'} transition-colors`}>
+                                                        {isLive ? 'LIVE' : 'OFFLINE'}
+                                                    </span>
                                                     <ChevronRight size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                                                 </div>
 

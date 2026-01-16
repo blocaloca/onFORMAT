@@ -79,7 +79,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-12 gap-y-12">
+            <div className="grid grid-cols-4 gap-6">
                 {/* Phases Loop */}
                 {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]) => (
                     <div key={phase} className="mb-2">
