@@ -191,10 +191,18 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
     }, [state, onSave, projectId])
 
     // --- Realtime Subscriptions ---
+    // --- Realtime Subscriptions ---
     const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
+    const stateRef = React.useRef(state);
+
+    useEffect(() => {
+        stateRef.current = state;
+    }, [state]);
 
     useEffect(() => {
         if (!projectId) return;
+
+        console.log("🔌 Subscribing to Realtime Changes for Project:", projectId);
 
         const channel = supabase
             .channel(`project-${projectId}`)
@@ -202,14 +210,18 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
                 (payload: any) => {
+                    console.log("⚡️ Realtime Update Received:", payload);
                     const newData = payload.new?.data;
                     if (!newData) return;
 
                     // Check for DIT Log Updates specifically
                     const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'];
-                    const currentDitLog = state.phases?.ON_SET?.drafts?.['dit-log'];
+                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'];
 
+                    // Compare content lengths or simple equality
                     if (newDitLog && newDitLog !== currentDitLog) {
+                        console.log("🔔 DIT Log Change Detected! Triggering Notification.");
+
                         // 1. Notify
                         setLatestNotification({ msg: 'New DIT Log Entry Received', time: Date.now() });
 
@@ -226,24 +238,18 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                                     }
                                 }
                             },
-                            // 3. Log to Chat
-                            chat: {
-                                ...prev.chat,
-                                'onset-mobile-control': [
-                                    ...(prev.chat['onset-mobile-control'] || []),
-                                    { role: 'assistant', content: `[SYSTEM] 📡 Sync: New DIT Log Entry Received from Mobile.` }
-                                ]
-                            }
                         }));
                     }
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                console.log("🔌 Subscription Status:", status);
+            });
 
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [projectId, state.phases]); // Dep on state.phases to compare properly
+    }, [projectId]); // Remove state dependency to keep connection stable
 
     // Auto-Prompt for Creative Brief & AV Script & Treatment
     useEffect(() => {
