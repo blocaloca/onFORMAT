@@ -108,7 +108,9 @@ export const ChatInterface = ({
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            setPosition(prev => ({ ...prev, x: 280 }));
+            // Default High Right Position
+            setPosition({ x: window.innerWidth - 550, y: 120 });
+            setSize({ w: 500, h: 700 });
         }
     }, []);
 
