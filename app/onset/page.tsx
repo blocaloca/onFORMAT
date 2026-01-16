@@ -72,7 +72,7 @@ export default function OnSetPage() {
                                 {projects.map(p => {
                                     // Map Project Colors to Tailwind Styles
                                     // Colors: green, purple, orange, blue, red
-                                    const baseColor = p.color || 'green';
+                                    const baseColor = p?.color || 'green';
 
                                     const colorClasses: Record<string, string> = {
                                         green: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',

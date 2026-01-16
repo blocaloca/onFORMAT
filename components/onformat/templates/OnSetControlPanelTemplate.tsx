@@ -61,14 +61,14 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                     {/* Live Toggle */}
                     <button
                         onClick={() => onUpdate({ isLive: !data.isLive })}
-                        className={`flex items-center gap-3 px-6 py-2 rounded-sm text-xs font-black uppercase tracking-widest transition-all
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all
                             ${data.isLive
-                                ? 'bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400'
+                                ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:bg-emerald-400'
                                 : 'bg-transparent border border-red-900 text-red-500 hover:bg-red-950 hover:border-red-500 hover:text-red-400'
                             }`}
                     >
-                        <div className={`w-2.5 h-2.5 rounded-full ${data.isLive ? 'bg-black animate-pulse' : 'bg-red-500'}`}></div>
-                        {data.isLive ? 'BROADCASTING LIVE' : 'GO LIVE'}
+                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-black animate-pulse' : 'bg-red-500'}`}></div>
+                        {data.isLive ? 'LIVE' : 'GO LIVE'}
                     </button>
 
 
