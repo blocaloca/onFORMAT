@@ -115,28 +115,37 @@ export default function OnSetMobilePage() {
 
             // 2. Parse existing Log
             let logData = { items: [] };
+            let history: any[] = [];
+
             try {
                 const raw = existingDrafts['dit-log'];
                 if (raw) {
                     const parsed = JSON.parse(raw);
-                    // Calculate if array or object
-                    if (Array.isArray(parsed)) logData = parsed[0];
-                    else logData = parsed;
+                    // Handle Array vs Object for History Preservation
+                    if (Array.isArray(parsed)) {
+                        if (parsed.length > 0) logData = parsed[0];
+                        history = parsed.slice(1);
+                    } else {
+                        logData = parsed;
+                    }
                 }
             } catch { }
 
             // 3. Append Item
-            const updatedLog = {
+            const updatedHead = {
                 ...logData, // Preserve other props
                 items: [newItem, ...(logData['items'] || [])]
             };
+
+            // Re-wrap in Array for consistency with Desktop Editor
+            const finalDraftString = JSON.stringify([updatedHead, ...history]);
 
             // 4. Save
             const mergedPhase = {
                 ...existingPhase,
                 drafts: {
                     ...existingDrafts,
-                    'dit-log': JSON.stringify(updatedLog)
+                    'dit-log': finalDraftString
                 }
             };
 
