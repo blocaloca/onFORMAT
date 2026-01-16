@@ -24,7 +24,7 @@ export default function OnSetPage() {
                 const processed = data.map((p: any) => {
                     let settings = { isLive: false, themeColor: 'zinc' };
                     try {
-                        let draft = p.phases?.ON_SET?.drafts?.['onset-mobile-control'];
+                        let draft = p.data?.phases?.ON_SET?.drafts?.['onset-mobile-control'];
                         if (draft) {
                             let parsed = JSON.parse(draft);
                             // Handle Document Versions (Array)
@@ -76,7 +76,7 @@ export default function OnSetPage() {
                                 {projects.map(p => {
                                     // Map Project Colors to Tailwind Styles
                                     // Colors: green, purple, orange, blue, red
-                                    const baseColor = p?.color || 'green';
+                                    const baseColor = p?.data?.color || 'green';
                                     const isLive = p.settings?.isLive;
 
                                     const colorClasses: Record<string, string> = {
