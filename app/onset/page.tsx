@@ -1,112 +1,103 @@
-import React from 'react';
-import { Menu, Camera, Clock, MapPin, Users, Moon, Sun, ChevronLeft } from 'lucide-react';
+'use client';
+import React, { useEffect, useState } from 'react';
+import { Menu, ChevronRight, Clapperboard, Calendar, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 export default function OnSetPage() {
-    return (
-        <div className="min-h-screen bg-black text-white font-sans flex flex-col justify-between max-w-md mx-auto border-x border-zinc-800 shadow-2xl overflow-hidden relative">
+    const [projects, setProjects] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-            {/* Status Bar Mockup */}
-            <div className="h-6 flex justify-between items-center px-4 text-[10px] font-bold text-zinc-500 select-none">
-                <span>9:41</span>
-                <div className="flex gap-1">
-                    <span className="w-3 h-3 bg-zinc-600 rounded-full"></span>
-                    <span className="w-3 h-3 bg-zinc-600 rounded-full"></span>
-                    <span className="w-4 h-3 bg-zinc-600 rounded-[2px] border border-zinc-600"></span>
-                </div>
-            </div>
+    useEffect(() => {
+        fetchProjects();
+    }, []);
+
+    const fetchProjects = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('projects')
+                .select('*')
+                .order('updated_at', { ascending: false });
+
+            if (data) setProjects(data);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen bg-black text-white font-sans flex flex-col max-w-md mx-auto border-x border-zinc-800 shadow-2xl relative">
 
             {/* Header */}
-            <header className="px-4 py-4 flex justify-between items-center border-b border-zinc-900 bg-zinc-950/50 backdrop-blur-md sticky top-0 z-10">
-                <Link href="/dashboard" className="text-zinc-500 hover:text-white transition-colors">
-                    <ChevronLeft size={24} />
-                </Link>
-                <h1 className="text-lg font-black tracking-tighter text-industrial-accent">onSET</h1>
-                <button className="text-zinc-500 hover:text-white transition-colors">
-                    <Menu size={24} />
-                </button>
+            <header className="px-6 py-6 flex justify-between items-end bg-zinc-950 border-b border-zinc-900 sticky top-0 z-10">
+                <div>
+                    <h1 className="text-2xl font-black tracking-tighter text-white mb-1">onSET</h1>
+                    <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest">Mobile Companion</p>
+                </div>
+                <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500">
+                    <Menu size={16} />
+                </div>
             </header>
 
-            {/* Main Content Area */}
-            <main className="flex-1 p-4 overflow-y-auto">
-                {/* Hero / Widget */}
-                <div className="bg-zinc-900/50 rounded-xl p-6 mb-4 border border-zinc-800">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Current Status</h2>
-                            <div className="text-2xl font-light">Scene 24A</div>
-                        </div>
-                        <div className="bg-red-500/10 text-red-500 px-2 py-1 rounded text-[10px] font-bold uppercase animate-pulse border border-red-500/20">
-                            Live
-                        </div>
+            {/* Project List */}
+            <main className="flex-1 p-6 space-y-6 overflow-y-auto">
+
+                {loading ? (
+                    <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                        <div className="w-6 h-6 border-2 border-zinc-800 border-t-emerald-500 rounded-full animate-spin"></div>
+                        <p className="text-[10px] uppercase font-bold text-zinc-600">Loading Productions...</p>
                     </div>
+                ) : (
+                    <>
+                        <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Active Productions</h2>
+                        {projects.length > 0 ? (
+                            <div className="space-y-3">
+                                {projects.map(p => (
+                                    <Link key={p.id} href={`/onset/${p.id}`}>
+                                        <div className="group bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden">
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <div className="text-[10px] text-zinc-500">Location</div>
-                            <div className="text-sm font-medium">Stage 4, Lot B</div>
-                        </div>
-                        <div>
-                            <div className="text-[10px] text-zinc-500">Time</div>
-                            <div className="text-sm font-medium">14:30 PM</div>
-                        </div>
-                    </div>
-                </div>
+                                            {/* Status Dot */}
+                                            <div className="absolute top-4 right-4 flex items-center gap-2">
+                                                <span className="text-[9px] font-bold uppercase text-zinc-600 group-hover:text-emerald-500 transition-colors">Enter Set</span>
+                                                <ChevronRight size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
+                                            </div>
 
-                {/* Quick Actions Grid */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                    <button className="bg-zinc-900 hover:bg-zinc-800 p-4 rounded-xl flex flex-col items-center gap-2 transition-colors border border-zinc-800 group">
-                        <div className="p-3 bg-zinc-950 rounded-full text-zinc-400 group-hover:text-industrial-accent transition-colors">
-                            <Camera size={20} />
-                        </div>
-                        <span className="text-xs font-bold uppercase">Shot Log</span>
-                    </button>
-                    <button className="bg-zinc-900 hover:bg-zinc-800 p-4 rounded-xl flex flex-col items-center gap-2 transition-colors border border-zinc-800 group">
-                        <div className="p-3 bg-zinc-950 rounded-full text-zinc-400 group-hover:text-industrial-accent transition-colors">
-                            <Clock size={20} />
-                        </div>
-                        <span className="text-xs font-bold uppercase">Schedule</span>
-                    </button>
-                    <button className="bg-zinc-900 hover:bg-zinc-800 p-4 rounded-xl flex flex-col items-center gap-2 transition-colors border border-zinc-800 group">
-                        <div className="p-3 bg-zinc-950 rounded-full text-zinc-400 group-hover:text-industrial-accent transition-colors">
-                            <Users size={20} />
-                        </div>
-                        <span className="text-xs font-bold uppercase">Cast List</span>
-                    </button>
-                    <button className="bg-zinc-900 hover:bg-zinc-800 p-4 rounded-xl flex flex-col items-center gap-2 transition-colors border border-zinc-800 group">
-                        <div className="p-3 bg-zinc-950 rounded-full text-zinc-400 group-hover:text-industrial-accent transition-colors">
-                            <MapPin size={20} />
-                        </div>
-                        <span className="text-xs font-bold uppercase">Locations</span>
-                    </button>
-                </div>
+                                            <h3 className="text-lg font-black text-white mb-1 group-hover:text-emerald-400 transition-colors">{p.name || 'Untitled Project'}</h3>
+                                            <p className="text-[10px] font-mono text-zinc-500 mb-4 uppercase">{p.client_name || 'Internal'}</p>
 
-                <div className="text-center p-8">
-                    <p className="text-zinc-600 text-xs font-mono">
-                        onSET Mobile Experience<br />
-                        v0.1 Alpha
-                    </p>
-                </div>
-
+                                            <div className="flex gap-3">
+                                                <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
+                                                    <Clapperboard size={12} />
+                                                    <span className="text-[9px] font-bold">SHOTS</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
+                                                    <Calendar size={12} />
+                                                    <span className="text-[9px] font-bold">DOCS</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800 border-dashed">
+                                <p className="text-sm font-bold text-zinc-400 mb-1">No Projects Found</p>
+                                <p className="text-[10px] text-zinc-600 max-w-[200px] mx-auto">Create a project in the Desktop App to see it here.</p>
+                            </div>
+                        )}
+                    </>
+                )}
             </main>
 
-            {/* Bottom Nav Bar */}
-            <nav className="bg-zinc-950 border-t border-zinc-900 p-2 safe-area-pb">
-                <div className="flex justify-around items-center">
-                    <button className="flex flex-col items-center gap-1 p-2 text-industrial-accent">
-                        <Sun size={20} />
-                        <span className="text-[9px] font-bold">Day</span>
-                    </button>
-                    <button className="flex flex-col items-center gap-1 p-2 text-zinc-600 hover:text-white transition-colors">
-                        <Camera size={20} />
-                        <span className="text-[9px] font-bold">Shot</span>
-                    </button>
-                    <button className="flex flex-col items-center gap-1 p-2 text-zinc-600 hover:text-white transition-colors">
-                        <Moon size={20} />
-                        <span className="text-[9px] font-bold">Night</span>
-                    </button>
-                </div>
-            </nav>
+            {/* Footer */}
+            <div className="p-6 text-center border-t border-zinc-900 bg-zinc-950">
+                <p className="text-[9px] text-zinc-600 font-mono">
+                    Logged in as User (Dev) <br />
+                    v0.9 Beta
+                </p>
+            </div>
         </div>
     );
 }
