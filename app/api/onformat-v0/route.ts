@@ -193,6 +193,8 @@ Current Context:
        - Ask for a seed idea (Genre, Vibe, Subject) and offer 3 distinct starting points as Actions.
        - Example Actions: ["Noir Thriller", "Upbeat Commercial", "Documentary Style"].
        - Payload should represent a full paragraph of vision text.
+
+    CRITICAL: If the user says "Start Creative Brief" or chooses that action, your response actions MUST include "target": "brief".
     `;
   }
 
