@@ -70,26 +70,29 @@ export default function OnSetPage() {
                         {projects.length > 0 ? (
                             <div className="space-y-3">
                                 {projects.map(p => {
-                                    const color = p.settings.themeColor || 'zinc';
+                                    // Map Project Colors to Tailwind Styles
+                                    // Colors: green, purple, orange, blue, red
+                                    const baseColor = p.color || 'green';
+
                                     const colorClasses: Record<string, string> = {
-                                        zinc: 'border-zinc-800 hover:border-zinc-600',
-                                        red: 'border-red-900/50 hover:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]',
+                                        green: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+                                        purple: 'border-purple-900/50 hover:border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.1)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+                                        orange: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
                                         blue: 'border-blue-900/50 hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]',
-                                        amber: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
-                                        emerald: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+                                        red: 'border-red-900/50 hover:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]',
                                     };
 
                                     const textColors: Record<string, string> = {
-                                        zinc: 'text-emerald-400',
-                                        red: 'text-red-400',
+                                        green: 'text-emerald-400',
+                                        purple: 'text-purple-400',
+                                        orange: 'text-amber-400',
                                         blue: 'text-blue-400',
-                                        amber: 'text-amber-400',
-                                        emerald: 'text-emerald-400'
+                                        red: 'text-red-400',
                                     };
 
                                     return (
                                         <Link key={p.id} href={`/onset/${p.id}`}>
-                                            <div className={`group bg-zinc-900 hover:bg-zinc-900 border p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[color]}`}>
+                                            <div className={`group bg-zinc-900 hover:bg-zinc-900 border p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green}`}>
 
                                                 {/* Status Dot */}
                                                 <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -97,7 +100,7 @@ export default function OnSetPage() {
                                                     <ChevronRight size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
                                                 </div>
 
-                                                <h3 className={`text-lg font-black text-white mb-1 group-hover:${textColors[color]} transition-colors`}>{p.name || 'Untitled Project'}</h3>
+                                                <h3 className={`text-lg font-black text-white mb-1 group-hover:${textColors[baseColor] || 'text-emerald-400'} transition-colors`}>{p.name || 'Untitled Project'}</h3>
                                                 <p className="text-[10px] font-mono text-zinc-500 mb-4 uppercase">{p.client_name || 'Internal'}</p>
 
                                                 <div className="flex gap-3">

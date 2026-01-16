@@ -67,22 +67,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         {data.isLive ? 'Production Live' : 'Offline'}
                     </button>
 
-                    {/* Color Picker */}
-                    <div className="flex gap-1 bg-zinc-900 p-1 rounded-full border border-zinc-800">
-                        {['zinc', 'red', 'blue', 'amber', 'emerald'].map(color => (
-                            <button
-                                key={color}
-                                onClick={() => onUpdate({ themeColor: color })}
-                                className={`w-4 h-4 rounded-full transition-transform hover:scale-110 ${data.themeColor === color ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100'}
-                                ${color === 'zinc' ? 'bg-zinc-500' : ''}
-                                ${color === 'red' ? 'bg-red-500' : ''}
-                                ${color === 'blue' ? 'bg-blue-500' : ''}
-                                ${color === 'amber' ? 'bg-amber-500' : ''}
-                                ${color === 'emerald' ? 'bg-emerald-500' : ''}
-                                `}
-                            />
-                        ))}
-                    </div>
+
 
                     <div className="text-[10px] font-mono text-zinc-500">
                         {selectedTools.length} Documents Selected
