@@ -429,28 +429,28 @@ const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => v
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in slide-in-from-top-4">
+                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-white">New Entry</span>
-                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
+                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-400" /></button>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 mb-3">
                         <div>
-                            <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Time</label>
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Time</label>
                             <input
                                 type="time"
                                 value={form.time}
                                 onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500"
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500"
                             />
                         </div>
                         <div>
-                            <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Status</label>
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Status</label>
                             <select
                                 value={form.status}
                                 onChange={e => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 appearance-none"
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 appearance-none"
                             >
                                 <option value="complete">Complete</option>
                                 <option value="pending">Pending</option>
@@ -460,13 +460,13 @@ const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => v
                     </div>
 
                     <div className="mb-3">
-                        <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Event Type</label>
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Event Type</label>
                         <div className="flex bg-zinc-950 p-1 rounded border border-zinc-800">
                             {['offload', 'issue', 'qc'].map(t => (
                                 <button
                                     key={t}
                                     onClick={() => setForm({ ...form, eventType: t })}
-                                    className={`flex-1 text-[9px] uppercase font-bold py-1.5 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-white' : 'text-zinc-500'}`}
+                                    className={`flex-1 text-[10px] uppercase font-bold py-2 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-white' : 'text-zinc-500'}`}
                                 >
                                     {t}
                                 </button>
@@ -475,32 +475,41 @@ const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => v
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 mb-3">
-                        <input
-                            placeholder="Source (e.g. A001)"
-                            value={form.source}
-                            onChange={e => setForm({ ...form, source: e.target.value })}
-                            className="bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-700"
-                        />
-                        <input
-                            placeholder="Dest (e.g. Drive 1)"
-                            value={form.destination}
-                            onChange={e => setForm({ ...form, destination: e.target.value })}
-                            className="bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-700"
+                        <div>
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Source</label>
+                            <input
+                                placeholder="A001"
+                                value={form.source}
+                                onChange={e => setForm({ ...form, source: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-600"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Dest</label>
+                            <input
+                                placeholder="Drive 1"
+                                value={form.destination}
+                                onChange={e => setForm({ ...form, destination: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-600"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Description</label>
+                        <textarea
+                            placeholder="Add detailed notes here..."
+                            value={form.description}
+                            onChange={e => setForm({ ...form, description: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[80px] placeholder:text-zinc-600 resize-none"
                         />
                     </div>
 
-                    <textarea
-                        placeholder="Notes..."
-                        value={form.description}
-                        onChange={e => setForm({ ...form, description: e.target.value })}
-                        className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[60px] mb-4 placeholder:text-zinc-700 resize-none"
-                    />
-
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-2 rounded flex items-center justify-center gap-2"
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
                     >
-                        <Save size={14} />
+                        <Save size={16} />
                         <span>Save Entry</span>
                     </button>
                 </div>

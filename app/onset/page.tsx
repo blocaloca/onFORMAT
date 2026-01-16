@@ -21,21 +21,19 @@ export default function OnSetPage() {
 
             if (data) {
                 // Parse Settings & Filter
+                // Filter for LIVE projects only
                 const processed = data.map((p: any) => {
                     let settings = { isLive: false, themeColor: 'zinc' };
                     try {
                         let draft = p.data?.phases?.ON_SET?.drafts?.['onset-mobile-control'];
                         if (draft) {
                             let parsed = JSON.parse(draft);
-                            // Handle Document Versions (Array)
-                            if (Array.isArray(parsed)) {
-                                parsed = parsed[0]; // Active version is usually index 0 in recent system
-                            }
+                            if (Array.isArray(parsed)) parsed = parsed[0];
                             settings = { ...settings, ...parsed };
                         }
                     } catch (e) { /* ignore */ }
                     return { ...p, settings };
-                }).filter((p: any) => true); // DEBUG: Show all to verify data
+                }).filter((p: any) => p.settings.isLive);
 
                 setProjects(processed);
             }
@@ -70,14 +68,14 @@ export default function OnSetPage() {
                     </div>
                 ) : (
                     <>
-                        <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">All Productions (Debug Mode)</h2>
+                        {projects.length > 0 && <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-4">Active Productions</h2>}
+
                         {projects.length > 0 ? (
                             <div className="space-y-3">
                                 {projects.map(p => {
                                     // Map Project Colors to Tailwind Styles
                                     // Colors: green, purple, orange, blue, red
                                     const baseColor = p?.data?.color || 'green';
-                                    const isLive = p.settings?.isLive;
 
                                     const colorClasses: Record<string, string> = {
                                         green: 'bg-gradient-to-br from-emerald-800 to-emerald-950 border-emerald-500 shadow-lg shadow-emerald-900/40',
@@ -95,26 +93,14 @@ export default function OnSetPage() {
                                         rose: 'bg-gradient-to-br from-rose-800 to-rose-950 border-rose-500 shadow-lg shadow-rose-900/40',
                                     };
 
-                                    const textColors: Record<string, string> = {
-                                        green: 'text-white',
-                                        emerald: 'text-white',
-                                        purple: 'text-white',
-                                        orange: 'text-white',
-                                        amber: 'text-white',
-                                        blue: 'text-white',
-                                        red: 'text-white',
-                                        rose: 'text-white',
-                                        indio: 'text-white'
-                                    };
-
                                     return (
                                         <Link key={p.id} href={`/onset/${p.id}`}>
-                                            <div className={`group p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green} ${!isLive ? 'opacity-80 grayscale contrast-125' : ''}`}>
+                                            <div className={`group p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green}`}>
 
                                                 {/* Status Dot */}
                                                 <div className="absolute top-4 right-4 flex items-center gap-2">
-                                                    <span className={`text-[9px] font-bold uppercase ${isLive ? 'text-white animate-pulse shadow-glow' : 'text-white/60'} transition-colors`}>
-                                                        {isLive ? 'LIVE' : 'OFFLINE'}
+                                                    <span className={`text-[9px] font-bold uppercase text-white animate-pulse shadow-glow transition-colors`}>
+                                                        LIVE
                                                     </span>
                                                     <ChevronRight size={14} className="text-white/70 group-hover:text-white transition-colors" />
                                                 </div>
@@ -132,21 +118,20 @@ export default function OnSetPage() {
                                                         <span className="text-[10px] font-bold">DOCS</span>
                                                     </div>
                                                 </div>
-
-                                                {/* DEBUG INFO */}
-                                                <div className="mt-4 pt-2 border-t border-white/20 text-[8px] font-mono text-white/50 break-all leading-tight">
-                                                    DEBUG: Color=[{p.color}] Live=[{String(isLive)}] <br />
-                                                    Settings: {JSON.stringify(p.settings).slice(0, 50)}...
-                                                </div>
                                             </div>
                                         </Link>
                                     );
                                 })}
                             </div>
                         ) : (
-                            <div className="text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800 border-dashed">
-                                <p className="text-sm font-bold text-zinc-400 mb-1">No Projects Found</p>
-                                <p className="text-[10px] text-zinc-600 max-w-[200px] mx-auto">Create a project in the Desktop App to see it here.</p>
+                            <div className="text-center py-20 bg-zinc-900/50 rounded-xl border border-zinc-800 border-dashed">
+                                <div className="w-12 h-12 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 text-zinc-500">
+                                    <Clapperboard size={20} />
+                                </div>
+                                <p className="text-sm font-bold text-zinc-400 mb-1">No Live Productions</p>
+                                <p className="text-[10px] text-zinc-600 max-w-[200px] mx-auto leading-relaxed">
+                                    Projects must be set to <strong>"GO LIVE"</strong> in the Desktop Control Panel to appear here.
+                                </p>
                             </div>
                         )}
                     </>
