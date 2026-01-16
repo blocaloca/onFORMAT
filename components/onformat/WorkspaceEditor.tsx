@@ -6,6 +6,7 @@ import { Header } from '@/components/onformat/Header'
 import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
 import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
+import { supabase } from '@/lib/supabase'
 
 type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
 
@@ -188,6 +189,61 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
             } catch { }
         }
     }, [state, onSave, projectId])
+
+    // --- Realtime Subscriptions ---
+    const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
+
+    useEffect(() => {
+        if (!projectId) return;
+
+        const channel = supabase
+            .channel(`project-${projectId}`)
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
+                (payload: any) => {
+                    const newData = payload.new?.data;
+                    if (!newData) return;
+
+                    // Check for DIT Log Updates specifically
+                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'];
+                    const currentDitLog = state.phases?.ON_SET?.drafts?.['dit-log'];
+
+                    if (newDitLog && newDitLog !== currentDitLog) {
+                        // 1. Notify
+                        setLatestNotification({ msg: 'New DIT Log Entry Received', time: Date.now() });
+
+                        // 2. Update State (Merge)
+                        setState(prev => ({
+                            ...prev,
+                            phases: {
+                                ...prev.phases,
+                                ON_SET: {
+                                    ...prev.phases.ON_SET,
+                                    drafts: {
+                                        ...prev.phases.ON_SET.drafts,
+                                        'dit-log': newDitLog
+                                    }
+                                }
+                            },
+                            // 3. Log to Chat
+                            chat: {
+                                ...prev.chat,
+                                'onset-mobile-control': [
+                                    ...(prev.chat['onset-mobile-control'] || []),
+                                    { role: 'assistant', content: `[SYSTEM] 📡 Sync: New DIT Log Entry Received from Mobile.` }
+                                ]
+                            }
+                        }));
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [projectId, state.phases]); // Dep on state.phases to compare properly
 
     // Auto-Prompt for Creative Brief & AV Script & Treatment
     useEffect(() => {
@@ -1245,6 +1301,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                     onOpenAi={() => {
                         setIsAiDocked(false);
                     }}
+                    // @ts-ignore
+                    latestNotification={latestNotification}
 
                 />
 

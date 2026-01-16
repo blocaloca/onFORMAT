@@ -47,6 +47,7 @@ interface DraftEditorProps {
     onToggleLock: () => void
     onGenerateFromVision?: (targetTool: any, visionText: string, promptPrefix: string) => void
     onOpenAi?: () => void
+    latestNotification?: { msg: string, time: number } | null
 }
 
 // Helper Template for Plain Text
@@ -91,7 +92,8 @@ export const DraftEditor = ({
     phases,
     onToggleLock,
     onGenerateFromVision,
-    onOpenAi
+    onOpenAi,
+    latestNotification
 }: DraftEditorProps) => {
 
     // Schedule Import Logic
@@ -408,7 +410,8 @@ export const DraftEditor = ({
                                 importedSchedule,
                                 importedAVScript,
                                 importedBudget,
-                                projectId
+                                projectId,
+                                latestNotification
                             }}
                             // @ts-ignore
                             onGenerateFromVision={onGenerateFromVision}

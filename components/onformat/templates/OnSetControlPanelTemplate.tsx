@@ -79,6 +79,15 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                 </div>
             </div>
 
+            {/* Notification Banner */}
+            {metadata?.latestNotification && (
+                <div key={metadata.latestNotification.time} className="mb-6 bg-emerald-900/20 border border-emerald-500/30 p-3 rounded-lg flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
+                    <span className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-widest">{metadata.latestNotification.msg}</span>
+                    <span className="ml-auto text-[9px] text-emerald-500/50 font-mono">{new Date(metadata.latestNotification.time).toLocaleTimeString()}</span>
+                </div>
+            )}
+
             <div className="grid grid-cols-4 gap-6">
                 {/* Phases Loop */}
                 {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]) => (
