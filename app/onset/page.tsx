@@ -80,53 +80,63 @@ export default function OnSetPage() {
                                     const isLive = p.settings?.isLive;
 
                                     const colorClasses: Record<string, string> = {
-                                        green: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
-                                        emerald: 'border-emerald-900/50 hover:border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.3)]',
+                                        green: 'bg-gradient-to-br from-emerald-800 to-emerald-950 border-emerald-500 shadow-lg shadow-emerald-900/40',
+                                        emerald: 'bg-gradient-to-br from-emerald-800 to-emerald-950 border-emerald-500 shadow-lg shadow-emerald-900/40',
 
-                                        purple: 'border-purple-900/50 hover:border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.1)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]',
+                                        purple: 'bg-gradient-to-br from-purple-800 to-purple-950 border-purple-500 shadow-lg shadow-purple-900/40',
 
-                                        orange: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
-                                        amber: 'border-amber-900/50 hover:border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.1)] hover:shadow-[0_0_20px_rgba(245,158,11,0.3)]',
+                                        orange: 'bg-gradient-to-br from-amber-700 to-amber-950 border-amber-500 shadow-lg shadow-amber-900/40',
+                                        amber: 'bg-gradient-to-br from-amber-700 to-amber-950 border-amber-500 shadow-lg shadow-amber-900/40',
 
-                                        blue: 'border-blue-900/50 hover:border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]',
-                                        indio: 'border-indigo-900/50 hover:border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.1)] hover:shadow-[0_0_20px_rgba(99,102,241,0.3)]',
+                                        blue: 'bg-gradient-to-br from-blue-800 to-blue-950 border-blue-500 shadow-lg shadow-blue-900/40',
+                                        indio: 'bg-gradient-to-br from-indigo-800 to-indigo-950 border-indigo-500 shadow-lg shadow-indigo-900/40',
 
-                                        red: 'border-red-900/50 hover:border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_20px_rgba(239,68,68,0.3)]',
-                                        rose: 'border-rose-900/50 hover:border-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.1)] hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]',
+                                        red: 'bg-gradient-to-br from-red-800 to-red-950 border-red-500 shadow-lg shadow-red-900/40',
+                                        rose: 'bg-gradient-to-br from-rose-800 to-rose-950 border-rose-500 shadow-lg shadow-rose-900/40',
                                     };
 
                                     const textColors: Record<string, string> = {
-                                        green: 'text-emerald-400',
-                                        purple: 'text-purple-400',
-                                        orange: 'text-amber-400',
-                                        blue: 'text-blue-400',
-                                        red: 'text-red-400',
+                                        green: 'text-white',
+                                        emerald: 'text-white',
+                                        purple: 'text-white',
+                                        orange: 'text-white',
+                                        amber: 'text-white',
+                                        blue: 'text-white',
+                                        red: 'text-white',
+                                        rose: 'text-white',
+                                        indio: 'text-white'
                                     };
 
                                     return (
                                         <Link key={p.id} href={`/onset/${p.id}`}>
-                                            <div className={`group bg-zinc-900 hover:bg-zinc-900 border p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green} ${!isLive ? 'opacity-50 grayscale hover:grayscale-0' : ''}`}>
+                                            <div className={`group p-4 rounded-xl transition-all cursor-pointer relative overflow-hidden ${colorClasses[baseColor] || colorClasses.green} ${!isLive ? 'opacity-80 grayscale contrast-125' : ''}`}>
 
                                                 {/* Status Dot */}
                                                 <div className="absolute top-4 right-4 flex items-center gap-2">
-                                                    <span className={`text-[9px] font-bold uppercase ${isLive ? 'text-emerald-500' : 'text-red-500'} transition-colors`}>
+                                                    <span className={`text-[9px] font-bold uppercase ${isLive ? 'text-white animate-pulse shadow-glow' : 'text-white/60'} transition-colors`}>
                                                         {isLive ? 'LIVE' : 'OFFLINE'}
                                                     </span>
-                                                    <ChevronRight size={14} className="text-zinc-600 group-hover:text-white transition-colors" />
+                                                    <ChevronRight size={14} className="text-white/70 group-hover:text-white transition-colors" />
                                                 </div>
 
-                                                <h3 className={`text-lg font-black text-white mb-1 group-hover:${textColors[baseColor] || 'text-emerald-400'} transition-colors`}>{p.name || 'Untitled Project'}</h3>
-                                                <p className="text-[10px] font-mono text-zinc-500 mb-4 uppercase">{p.client_name || 'Internal'}</p>
+                                                <h3 className={`text-xl font-black text-white mb-1 tracking-tight`}>{p.name || 'Untitled Project'}</h3>
+                                                <p className="text-[10px] font-mono text-white/70 mb-6 uppercase tracking-wider font-bold">{p.client_name || 'Internal'}</p>
 
                                                 <div className="flex gap-3">
-                                                    <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
-                                                        <Clapperboard size={12} />
-                                                        <span className="text-[9px] font-bold">SHOTS</span>
+                                                    <div className="flex items-center gap-1.5 text-white/90 bg-black/20 px-3 py-1.5 rounded-sm backdrop-blur-sm border border-white/10 shadow-sm">
+                                                        <Clapperboard size={14} />
+                                                        <span className="text-[10px] font-bold">SHOTS</span>
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 text-zinc-500 bg-black/30 px-2 py-1 rounded">
-                                                        <Calendar size={12} />
-                                                        <span className="text-[9px] font-bold">DOCS</span>
+                                                    <div className="flex items-center gap-1.5 text-white/90 bg-black/20 px-3 py-1.5 rounded-sm backdrop-blur-sm border border-white/10 shadow-sm">
+                                                        <Calendar size={14} />
+                                                        <span className="text-[10px] font-bold">DOCS</span>
                                                     </div>
+                                                </div>
+
+                                                {/* DEBUG INFO */}
+                                                <div className="mt-4 pt-2 border-t border-white/20 text-[8px] font-mono text-white/50 break-all leading-tight">
+                                                    DEBUG: Color=[{p.color}] Live=[{String(isLive)}] <br />
+                                                    Settings: {JSON.stringify(p.settings).slice(0, 50)}...
                                                 </div>
                                             </div>
                                         </Link>

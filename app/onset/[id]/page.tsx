@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { Loader2, Clapperboard, List, Calendar, ChevronLeft, ChevronRight, Menu, FileText } from 'lucide-react';
+import { Loader2, Clapperboard, List, Calendar, ChevronLeft, ChevronRight, Menu, FileText, Plus, X, Save } from 'lucide-react';
 import Link from 'next/link';
 
 /* --------------------------------------------------------------------------------
@@ -103,6 +103,59 @@ export default function OnSetMobilePage() {
         try { return JSON.parse(json); } catch { return null; }
     };
 
+    const handleUpdateDIT = async (newItem: any) => {
+        if (!data.project) return;
+        try {
+            // 1. Get fresh project to minimize conflicts
+            const { data: fresh, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !fresh) return;
+
+            const existingPhase = fresh.data?.phases?.ON_SET || {};
+            const existingDrafts = existingPhase.drafts || {};
+
+            // 2. Parse existing Log
+            let logData = { items: [] };
+            try {
+                const raw = existingDrafts['dit-log'];
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    // Calculate if array or object
+                    if (Array.isArray(parsed)) logData = parsed[0];
+                    else logData = parsed;
+                }
+            } catch { }
+
+            // 3. Append Item
+            const updatedLog = {
+                ...logData, // Preserve other props
+                items: [newItem, ...(logData['items'] || [])]
+            };
+
+            // 4. Save
+            const mergedPhase = {
+                ...existingPhase,
+                drafts: {
+                    ...existingDrafts,
+                    'dit-log': JSON.stringify(updatedLog)
+                }
+            };
+
+            const updatedProjectData = {
+                ...fresh.data,
+                phases: {
+                    ...fresh.data.phases,
+                    ON_SET: mergedPhase
+                }
+            };
+
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+
+            // 5. Reload local
+            fetchData();
+
+        } catch (e) { console.error(e); }
+    };
+
     if (loading) {
         return (
             <div className="h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
@@ -152,7 +205,7 @@ export default function OnSetMobilePage() {
                 {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                 {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} />}
                 {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
-                {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} />}
+                {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
 
                 {/* Fallback for other docs */}
                 {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log'].includes(activeTab) && (
@@ -332,56 +385,176 @@ const CallSheetView = ({ data }: { data: any }) => {
     )
 }
 
-const MobileDITLogView = ({ data }: { data: any }) => {
-    if (!data || !data.items || data.items.length === 0) return <EmptyState label="DIT Log" />;
+const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => void }) => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [form, setForm] = useState({
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+        status: 'complete',
+        eventType: 'offload',
+        source: '',
+        destination: '',
+        description: ''
+    });
+
+    const handleSubmit = () => {
+        if (!onAdd) return;
+        const newItem = {
+            id: `entry-${Date.now()}`,
+            ...form
+        };
+        onAdd(newItem);
+        setIsAdding(false);
+        // Reset form slightly but keep useful defaults
+        setForm({ ...form, description: '', source: '', destination: '' });
+    };
+
+    if (!data && !isAdding) return <EmptyState label="DIT Log" />;
+
+    // Safety check for empty data object but valid component render
+    const items = data?.items || [];
 
     return (
         <div className="p-4 space-y-4">
+
+            {/* ADD BUTTON */}
+            {onAdd && !isAdding && (
+                <button
+                    onClick={() => setIsAdding(true)}
+                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                >
+                    <Plus size={16} />
+                    <span>Log Activity</span>
+                </button>
+            )}
+
+            {/* ADD FORM */}
+            {isAdding && (
+                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in slide-in-from-top-4">
+                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
+                        <span className="text-xs font-bold uppercase text-white">New Entry</span>
+                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Time</label>
+                            <input
+                                type="time"
+                                value={form.time}
+                                onChange={e => setForm({ ...form, time: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Status</label>
+                            <select
+                                value={form.status}
+                                onChange={e => setForm({ ...form, status: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 appearance-none"
+                            >
+                                <option value="complete">Complete</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Event Type</label>
+                        <div className="flex bg-zinc-950 p-1 rounded border border-zinc-800">
+                            {['offload', 'issue', 'qc'].map(t => (
+                                <button
+                                    key={t}
+                                    onClick={() => setForm({ ...form, eventType: t })}
+                                    className={`flex-1 text-[9px] uppercase font-bold py-1.5 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-white' : 'text-zinc-500'}`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                        <input
+                            placeholder="Source (e.g. A001)"
+                            value={form.source}
+                            onChange={e => setForm({ ...form, source: e.target.value })}
+                            className="bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-700"
+                        />
+                        <input
+                            placeholder="Dest (e.g. Drive 1)"
+                            value={form.destination}
+                            onChange={e => setForm({ ...form, destination: e.target.value })}
+                            className="bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-700"
+                        />
+                    </div>
+
+                    <textarea
+                        placeholder="Notes..."
+                        value={form.description}
+                        onChange={e => setForm({ ...form, description: e.target.value })}
+                        className="w-full bg-zinc-950 border border-zinc-800 text-white text-xs p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[60px] mb-4 placeholder:text-zinc-700 resize-none"
+                    />
+
+                    <button
+                        onClick={handleSubmit}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-2 rounded flex items-center justify-center gap-2"
+                    >
+                        <Save size={14} />
+                        <span>Save Entry</span>
+                    </button>
+                </div>
+            )}
+
             {/* Header Stats */}
             <div className="grid grid-cols-2 gap-2 text-center mb-4">
                 <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Total Offloads</div>
-                    <div className="text-2xl font-black text-white">{data.items.filter((i: any) => i.eventType === 'offload').length}</div>
+                    <div className="text-2xl font-black text-white">{items.filter((i: any) => i.eventType === 'offload').length}</div>
                 </div>
                 <div className="bg-zinc-900 p-3 rounded-lg border border-zinc-800">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Issues</div>
-                    <div className="text-2xl font-black text-red-500">{data.items.filter((i: any) => i.eventType === 'issue').length}</div>
+                    <div className="text-2xl font-black text-red-500">{items.filter((i: any) => i.eventType === 'issue').length}</div>
                 </div>
             </div>
 
             <div className="space-y-3">
-                {data.items.map((item: any, i: number) => (
-                    <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
-                        <div className="flex justify-between items-center mb-3">
-                            <span className="font-mono text-emerald-400 text-xs font-bold">{item.time}</span>
-                            <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-sm ${item.status === 'complete' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
-                                {item.status || 'PENDING'}
-                            </span>
-                        </div>
-
-                        <div className="flex items-center gap-2 mb-3">
-                            <div className={`w-2 h-2 rounded-full ${item.eventType === 'issue' ? 'bg-red-500' : 'bg-zinc-500'}`}></div>
-                            <div className="font-black text-sm text-white uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 text-xs text-zinc-400 mb-3 bg-black/40 p-3 rounded-lg">
-                            <div>
-                                <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Source</span>
-                                <span className="font-mono text-zinc-200">{item.source || '-'}</span>
+                {items.length === 0 && !isAdding ? (
+                    <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No logs yet.</p></div>
+                ) : (
+                    items.map((item: any, i: number) => (
+                        <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
+                            <div className="flex justify-between items-center mb-3">
+                                <span className="font-mono text-emerald-400 text-xs font-bold">{item.time}</span>
+                                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-sm ${item.status === 'complete' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                                    {item.status || 'PENDING'}
+                                </span>
                             </div>
-                            <div>
-                                <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Destination</span>
-                                <span className="font-mono text-zinc-200">{item.destination || '-'}</span>
-                            </div>
-                        </div>
 
-                        {item.description && (
-                            <p className="text-xs text-zinc-300 leading-relaxed border-t border-zinc-800 pt-3 mt-1">
-                                {item.description}
-                            </p>
-                        )}
-                    </div>
-                ))}
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className={`w-2 h-2 rounded-full ${item.eventType === 'issue' ? 'bg-red-500' : 'bg-zinc-500'}`}></div>
+                                <div className="font-black text-sm text-white uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 text-xs text-zinc-400 mb-3 bg-black/40 p-3 rounded-lg">
+                                <div>
+                                    <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Source</span>
+                                    <span className="font-mono text-zinc-200">{item.source || '-'}</span>
+                                </div>
+                                <div>
+                                    <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Destination</span>
+                                    <span className="font-mono text-zinc-200">{item.destination || '-'}</span>
+                                </div>
+                            </div>
+
+                            {item.description && (
+                                <p className="text-xs text-zinc-300 leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                                    {item.description}
+                                </p>
+                            )}
+                        </div>
+                    ))
+                )}
             </div>
 
             <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-4">End of Log</div>
