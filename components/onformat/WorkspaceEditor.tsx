@@ -152,9 +152,15 @@ interface WorkspaceEditorProps {
 
 export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, userSubscription, userEmail, userRole }: WorkspaceEditorProps) => {
 
-    // Merge props into initial state if provided
+    // Merge props into initial state if provided, with robust fallbacks
     const mergedInitialState = useMemo(() => {
-        const base = initialState || makeInitialState();
+        const defaults = makeInitialState();
+        const base = initialState || defaults;
+
+        // Ensure critical structures exist even if loaded state is partial
+        if (!base.chat) base.chat = {};
+        if (!base.phases) base.phases = defaults.phases;
+
         if (projectName) base.projectName = projectName;
         return base;
     }, [initialState, projectName]);
@@ -172,7 +178,12 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     useEffect(() => {
         if (!initialState && !projectId) {
             const stored = safeJsonParse<WorkspaceState>(localStorage.getItem(STORAGE_KEY))
-            if (stored) setState(stored)
+            if (stored) {
+                // Sanitize: ensure chat exists
+                if (!stored.chat) stored.chat = {};
+                if (!stored.phases) stored.phases = makeInitialState().phases;
+                setState(stored)
+            }
         }
     }, [initialState, projectId])
 
