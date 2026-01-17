@@ -205,7 +205,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         console.log("🔌 Subscribing to Realtime Changes for Project:", projectId);
 
         const channel = supabase
-            .channel(`project-${projectId}`)
+            .channel('project_updates')
             .on(
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
@@ -242,8 +242,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                     }
                 }
             )
-            .subscribe((status) => {
-                console.log("🔌 Subscription Status:", status);
+            .subscribe((status, err) => {
+                console.log("🔌 Subscription Status:", status, err);
             });
 
         return () => {
