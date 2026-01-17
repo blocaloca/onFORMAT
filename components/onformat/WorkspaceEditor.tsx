@@ -38,6 +38,7 @@ type ToolKey =
     | 'onset-mobile-control'
     | 'budget-actual'
     | 'supervising-producer'
+    | 'talent-release'
 
 type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
 
@@ -57,6 +58,7 @@ const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
         { key: 'schedule', label: 'Schedule' },
         { key: 'budget', label: 'Budget' },
         { key: 'crew-list', label: 'Crew List' },
+        { key: 'talent-release', label: 'Talent Release' },
         { key: 'casting-talent', label: 'Talent' },
         { key: 'locations-sets', label: 'Locations' },
         { key: 'equipment-list', label: 'Equipment List' },
@@ -143,12 +145,14 @@ interface WorkspaceEditorProps {
     projectId?: string;
     projectName?: string; // Passed from parent
     onSave?: (state: WorkspaceState) => void;
+    userSubscription?: { status: string, tier: string };
+    userEmail?: string;
+    userRole?: string;
 }
 
-export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }: WorkspaceEditorProps) => {
+export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, userSubscription, userEmail, userRole }: WorkspaceEditorProps) => {
+
     // Merge props into initial state if provided
-
-
     const mergedInitialState = useMemo(() => {
         const base = initialState || makeInitialState();
         if (projectName) base.projectName = projectName;
@@ -172,8 +176,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         }
     }, [initialState, projectId])
 
-
-
     const [input, setInput] = useState('')
     const [isSending, setIsSending] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -190,7 +192,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         }
     }, [state, onSave, projectId])
 
-    // --- Realtime Subscriptions ---
     // --- Realtime Subscriptions ---
     const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
     const stateRef = React.useRef(state);
@@ -249,9 +250,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [projectId]); // Remove state dependency to keep connection stable
+    }, [projectId]);
 
-    // Auto-Prompt for Creative Brief & AV Script & Treatment
+    // Auto-Prompt for Creative Brief & AV Script & Treatment (Existing Logic)
     useEffect(() => {
         if (state.activeTool === 'brief') {
             setState(s => {
@@ -326,33 +327,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         }
     }, [state.activeTool]);
 
-    // --- AUTO-PARSE AI MESSAGES ---
-    // If the last message is from AI, try to parse it as a document update.
-    useEffect(() => {
-        const chats = state.chat[state.activeTool] || [];
-        if (chats.length === 0) return;
-
-        const lastMsg = chats[chats.length - 1];
-        if (lastMsg.role === 'assistant') {
-            // We invoke the parser. 
-            // Note: We need to be careful not to cycle. 
-            // Since parsing updates 'drafts', and this effect depends on 'chat', it shouldn't cycle unless chat updates.
-            // But we must ensure 'saveDraftForActiveTool' only parses, doesn't add chat messages.
-            // Parse pure content from JSON protocol to avoid passing code/actions to the doc parser
-            let contentToParse = lastMsg.content;
-            try {
-                if (contentToParse.trim().startsWith('{')) {
-                    const parsed = JSON.parse(contentToParse);
-                    if (parsed.message) {
-                        contentToParse = parsed.message;
-                    }
-                }
-            } catch (e) { }
-
-            saveDraftForActiveTool(contentToParse);
-        }
-    }, [state.chat, state.activeTool]);
-
     // Derived from state now
     const persona = state.persona || 'MOTION';
     const setPersona = (p: 'STILLS' | 'MOTION' | 'HYBRID') => setState(s => ({ ...s, persona: p }));
@@ -375,9 +349,38 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
         return out
     }, [state.phases])
 
-    const phaseData = useMemo(() => buildHandoffPayload(state.phases), [state.phases])
+    const phaseData = useMemo(() => buildHandoffPayload(state.phases), [state.phases]);
+
+    // Role-based Access Control for Specific Tools
+    const isToolLocked = useMemo(() => {
+        // 1. Phase Lock (Global override)
+        if (state.phases[state.activePhase]?.locked) return true;
+
+        // 2. Tool Specific Locks
+        if (state.activeTool === 'dit-log') {
+            const allowed = ['Owner', 'Producer', 'DP', 'DIT', 'Director'].includes(userRole || '') || userEmail === 'casteelio@gmail.com';
+            return !allowed;
+        }
+
+        return false;
+    }, [state.phases, state.activePhase, state.activeTool, userRole, userEmail]);
 
     function setPhase(next: Phase) {
+        // ACCESS CONTROL CHECK
+        const isRestricted = next === 'ON_SET' || next === 'POST';
+
+        // Define simple check locally or import
+        const hasAccess = (() => {
+            if (userEmail === 'casteelio@gmail.com') return true; // Founder
+            if (userSubscription?.status === 'active') return true; // Any active sub allows access for now (or check tier === 'pro')
+            return false;
+        })();
+
+        if (isRestricted && !hasAccess) {
+            alert("Upgrade to PRO to access Production & Post phases.");
+            return;
+        }
+
         setState((s) => {
             const nextTool = TOOLS_BY_PHASE[next][0]?.key ?? 'brief'
             return { ...s, activePhase: next, activeTool: nextTool }
@@ -1290,7 +1293,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave }
                 <DraftEditor
                     draft={currentDraft}
                     onDraftChange={saveDraftForActiveTool}
-                    isLocked={activePhaseState.locked}
+                    isLocked={isToolLocked}
                     activeToolLabel={activeToolLabel}
                     // @ts-ignore
                     activeToolKey={state.activeTool}

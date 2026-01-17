@@ -38,12 +38,28 @@ export default function OnSetMobilePage() {
     const [activeTab, setActiveTab] = useState<Tab>('');
     const [data, setData] = useState<MobileState>({ project: null, docs: {} });
 
+    const [userEmail, setUserEmail] = useState<string>('');
+    const [userRole, setUserRole] = useState<string>('');
+
     useEffect(() => {
         if (id) fetchData();
     }, [id]);
 
     const fetchData = async () => {
         try {
+            // 0. Identity Check
+            const storedEmail = localStorage.getItem('onset_user_email');
+
+            // Try to get from Auth if not in local storage (e.g. they logged in properly)
+            let emailToUse = storedEmail;
+            if (!emailToUse) {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) emailToUse = user.email!;
+            }
+
+            if (emailToUse) setUserEmail(emailToUse);
+
+            // 1. Fetch Project
             const { data: projectData, error } = await supabase
                 .from('projects')
                 .select('*')
@@ -51,6 +67,18 @@ export default function OnSetMobilePage() {
                 .single();
 
             if (error || !projectData) throw new Error("Project not found");
+
+            // 2. Fetch Role if email exists
+            let role = 'Crew';
+            if (emailToUse) {
+                const { data: crew } = await supabase.from('crew_membership')
+                    .select('role')
+                    .eq('project_id', id)
+                    .eq('user_email', emailToUse)
+                    .single();
+                if (crew) role = crew.role;
+                setUserRole(role);
+            }
 
             // Parse ALL drafts across all phases
             const allDrafts: Record<string, any> = {};
@@ -84,11 +112,15 @@ export default function OnSetMobilePage() {
                 : Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
 
             if (availableKeys.length > 0) {
-                // Priority sort? call-sheet -> shots -> script
-                const priority = ['call-sheet', 'shot-scene-book', 'av-script'];
-                // Find first priority that exists in availableKeys, or just first available
-                const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
-                setActiveTab(bestStart);
+                // Priority Logic based on ROLE
+                if (role === 'DIT' && availableKeys.includes('dit-log')) {
+                    setActiveTab('dit-log');
+                } else {
+                    // Default Priority: call-sheet -> shots -> script
+                    const priority = ['call-sheet', 'shot-scene-book', 'av-script'];
+                    const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
+                    setActiveTab(bestStart);
+                }
             }
 
         } catch (e) {
@@ -207,6 +239,19 @@ export default function OnSetMobilePage() {
             <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
                 <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-600">Confidential Materials • {new Date().getFullYear()}</p>
             </div>
+
+            {/* WATERMARK OVERLAY */}
+            {userEmail && (
+                <div className="fixed inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
+                    <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
+                                {userEmail} • {userRole || 'Crew'}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* MAIN CONTENT SCROLLER */}
             <main className="flex-1 overflow-y-auto pb-24 touch-pan-y relative">

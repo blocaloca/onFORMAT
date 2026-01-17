@@ -4,59 +4,65 @@ import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import Stripe from 'stripe';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
 export async function POST(req: Request) {
     const body = await req.text();
-    const headerList = await headers();
-    const signature = headerList.get('Stripe-Signature') as string;
+    const headersList = await headers();
+    const signature = headersList.get('Stripe-Signature');
 
     let event: Stripe.Event;
 
     try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err: any) {
-        console.error(`Webhook Error: ${err.message}`);
-        return new NextResponse(`Webhook Error: ${err.message}`, { status: 400 });
+        if (!signature || !process.env.STRIPE_WEBHOOK_SECRET) return new NextResponse('Webhook Error', { status: 400 });
+        event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    } catch (error: any) {
+        return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
     }
 
     const session = event.data.object as Stripe.Checkout.Session;
 
+    // Handle Completed Checkout (Upgrade)
     if (event.type === 'checkout.session.completed') {
-        const subscriptionId = session.subscription as string;
-        const customerId = session.customer as string;
-        const userId = session.client_reference_id; // We MUST pass this when creating session on client
+        const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+
+        if (!session?.metadata?.userId) {
+            return new NextResponse('User id is required', { status: 400 });
+        }
+
+        const userId = session.metadata.userId; // Assuming userId passed in metadata
+
+        // Find user by ID in Supabase Profiles and Update
+        // Note: profiles table uses 'id' which matches auth.uid
+        await supabaseAdmin
+            .from('profiles')
+            .update({
+                subscription_status: 'active',
+                subscription_tier: 'pro',
+            })
+            .eq('id', userId);
+    }
+
+    // Handle Subscription Deleted (Downgrade/Cancel)
+    if (event.type === 'customer.subscription.deleted') {
+        const subscription = event.data.object as Stripe.Subscription;
+
+        // We need to find the user associated with this customer ID
+        // This assumes we stored stripe_customer_id in profiles, OR we can lookup by email if available, 
+        // BUT reliable way is metadata if attached to sub, or storing customer_id.
+        // For now, let's assume we can query profiles by stripe_customer_id IF we added it.
+        // If not, we might be stuck. 
+        // fallback: If metadata was passed to subscription creation, we can use it.
+        const userId = subscription.metadata?.userId;
 
         if (userId) {
-            await supabaseAdmin.from('profiles').update({
-                stripe_customer_id: customerId,
-                subscription_status: 'active',
-            }).eq('id', userId);
-            console.log(`Updated profile for user ${userId} with customer ${customerId}`);
-        } else {
-            console.warn("No client_reference_id found in session");
+            await supabaseAdmin
+                .from('profiles')
+                .update({
+                    subscription_status: 'inactive',
+                    subscription_tier: 'basic'
+                })
+                .eq('id', userId);
         }
     }
 
-    if (event.type === 'customer.subscription.updated') {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
-
-        const { error } = await supabaseAdmin.from('profiles').update({
-            subscription_status: subscription.status
-        }).eq('stripe_customer_id', customerId);
-
-        if (error) console.error("Error updating profile subscription status:", error);
-    }
-
-    if (event.type === 'customer.subscription.deleted') {
-        const subscription = event.data.object as Stripe.Subscription;
-        const customerId = subscription.customer as string;
-
-        await supabaseAdmin.from('profiles').update({
-            subscription_status: 'canceled'
-        }).eq('stripe_customer_id', customerId);
-    }
-
-    return NextResponse.json({ result: event, ok: true });
+    return new NextResponse(null, { status: 200 });
 }

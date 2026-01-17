@@ -16,8 +16,32 @@ export default function ProjectPage() {
     fetchProject();
   }, [id]);
 
+  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
+  const [userSubscription, setUserSubscription] = useState<{ status: string; tier: string } | undefined>(undefined);
+
+  const [userRole, setUserRole] = useState<string | undefined>(undefined);
+
   const fetchProject = async () => {
     setLoading(true);
+
+    // 1. Get User & Profile
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUserEmail(user.email);
+      const { data: profile } = await supabase.from('profiles').select('subscription_status, subscription_tier').eq('id', user.id).single();
+      if (profile) {
+        setUserSubscription({
+          status: profile.subscription_status || 'inactive',
+          tier: profile.subscription_tier || 'basic'
+        });
+      }
+
+      // 1b. Get Crew Role
+      const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).single();
+      if (crew) setUserRole(crew.role);
+    }
+
+    // 2. Get Project
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -27,6 +51,8 @@ export default function ProjectPage() {
     if (data) {
       if (data.data) setInitialState(data.data);
       if (data.name) setProjectName(data.name);
+      // Fallback: If user is owner, give them 'Owner' role effectively
+      if (user && data.owner_id === user.id) setUserRole('Owner');
     }
     setLoading(false);
   };
@@ -52,6 +78,9 @@ export default function ProjectPage() {
       projectName={projectName}
       initialState={initialState}
       onSave={handleSave}
+      userSubscription={userSubscription}
+      userEmail={userEmail}
+      userRole={userRole}
     />
   );
 }

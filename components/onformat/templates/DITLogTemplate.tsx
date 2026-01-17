@@ -8,6 +8,8 @@ interface DITLogItem {
     eventType: 'offload' | 'backup' | 'transcode' | 'transfer' | 'qc' | 'issue' | '';
     source: string;
     destination: string;
+    dataSize: string;
+    checksum: string;
     description: string;
     status: 'pending' | 'complete' | 'failed';
 }
@@ -60,6 +62,8 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
             eventType: '',
             source: '',
             destination: '',
+            dataSize: '',
+            checksum: '',
             description: '',
             status: 'pending'
         };
@@ -158,12 +162,14 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                         )}
 
                         {/* Log Table Header */}
-                        <div className="grid grid-cols-[60px_110px_80px_80px_1fr_80px_30px] gap-2 border-b border-black pb-2 items-end">
+                        <div className="grid grid-cols-[60px_100px_70px_70px_60px_120px_1fr_80px_30px] gap-2 border-b border-black pb-2 items-end">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Time</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Event</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">From</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">To</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Description / Verification</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Size (GB)</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Checksum / Hash</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Notes</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Status</span>
                             <span className="w-full"></span>
                         </div>
@@ -173,7 +179,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex === 0) ? localIdx : ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_110px_80px_80px_1fr_80px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_100px_70px_70px_60px_120px_1fr_80px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
 
                                         {/* Time */}
                                         <input
@@ -225,13 +231,35 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         />
                                         <div className={`font-mono font-bold text-[10px] px-1 text-zinc-600 pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.destination}</div>
 
+                                        {/* Size (GB) */}
+                                        <input
+                                            type="text"
+                                            value={item.dataSize || ''}
+                                            onChange={e => handleUpdateItem(globalIdx, { dataSize: e.target.value })}
+                                            className={`font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            placeholder="0 GB"
+                                            disabled={isLocked}
+                                        />
+                                        <div className={`font-mono font-bold text-[10px] px-1 text-zinc-600 pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.dataSize}</div>
+
+                                        {/* Checksum */}
+                                        <input
+                                            type="text"
+                                            value={item.checksum || ''}
+                                            onChange={e => handleUpdateItem(globalIdx, { checksum: e.target.value })}
+                                            className={`font-mono text-[9px] bg-transparent outline-none focus:bg-white rounded px-1 text-zinc-500 block w-full truncate ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            placeholder="xxhash..."
+                                            disabled={isLocked}
+                                        />
+                                        <div className={`font-mono text-[9px] px-1 text-zinc-500 pt-0.5 leading-normal truncate ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.checksum}</div>
+
                                         {/* Description */}
                                         <input
                                             type="text"
                                             value={item.description}
                                             onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
                                             className={`bg-transparent outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                            placeholder="Verification hash, notes, or details..."
+                                            placeholder="Notes..."
                                             disabled={isLocked}
                                         />
                                         <div className={`px-1 pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.description}</div>

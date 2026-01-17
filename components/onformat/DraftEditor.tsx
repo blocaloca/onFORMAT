@@ -29,6 +29,7 @@ import { CreativeConceptTemplate } from '@/components/onformat/templates/Creativ
 import { StoryboardTemplate } from '@/components/onformat/templates/StoryboardTemplate'
 import { OnSetControlPanelTemplate } from '@/components/onformat/templates/OnSetControlPanelTemplate'
 import { BudgetActualTemplate } from '@/components/onformat/templates/BudgetActualTemplate'
+import { TalentReleaseTemplate } from '@/components/onformat/templates/TalentReleaseTemplate'
 import { DocumentNavBar } from './DocumentNavBar'
 
 interface DraftEditorProps {
@@ -361,6 +362,7 @@ export const DraftEditor = ({
         case 'storyboard': TemplateComponent = StoryboardTemplate; break;
         case 'budget-actual': TemplateComponent = BudgetActualTemplate; break;
         case 'onset-mobile-control': TemplateComponent = OnSetControlPanelTemplate; break;
+        case 'talent-release': TemplateComponent = TalentReleaseTemplate; break;
         default: TemplateComponent = PlainTemplate;
     }
 
@@ -384,6 +386,7 @@ export const DraftEditor = ({
                 onToggleOrientation={handleOrientationToggle}
                 onExportPdf={handleExportPdf}
                 isExportingPdf={isExportingPdf}
+                projectId={projectId}
             />
 
             <div className="flex-1 overflow-y-auto bg-transparent p-8 flex flex-col items-center" id="document-preview-area">
