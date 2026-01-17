@@ -272,7 +272,8 @@ export default function DashboardPage() {
             fetchProjects();
 
         } catch (error: any) {
-            alert('Error processing project: ' + error.message);
+            console.error('Project Creation Error:', error);
+            alert(`Error creating project: ${error.message || 'Unknown error'}. \n\nCheck your Vercel Environment Variables (SUPABASE_SERVICE_ROLE_KEY) and ensure you ran the SQL Migration on Production.`);
         }
     };
 

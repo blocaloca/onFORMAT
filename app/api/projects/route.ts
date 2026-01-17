@@ -49,6 +49,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    if (supabaseServiceKey.includes('placeholder')) {
+      return NextResponse.json(
+        { error: 'Server Configuration Error: SUPABASE_SERVICE_ROLE_KEY is missing. Cannot create projects.' },
+        { status: 500 }
+      );
+    }
+
     console.log('========================================')
     console.log('POST /api/projects - Request received')
     console.log('========================================')
