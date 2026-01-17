@@ -256,9 +256,7 @@ function normalizeProvider(input: any): AIProvider | null {
 }
 
 function pickDefaultProvider(): AIProvider {
-  if (process.env.OPENAI_API_KEY) return 'openai'
-  if (process.env.ANTHROPIC_API_KEY) return 'anthropic'
-  return 'anthropic'
+  return 'openai'
 }
 
 export async function GET() {

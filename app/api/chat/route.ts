@@ -72,8 +72,8 @@ function buildSystemPrompt(
     aiMood === 'technical'
       ? 'Use precise, technical language.'
       : aiMood === 'cinematic'
-      ? 'Use clear language with light visual awareness.'
-      : 'Use plain, professional, client-safe language.'
+        ? 'Use clear language with light visual awareness.'
+        : 'Use plain, professional, client-safe language.'
 
   let prompt = `
 ${CORE_SYSTEM_BLOCK}
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const selectedProvider: AIProvider = provider || 'anthropic'
+    const selectedProvider: AIProvider = provider || 'openai'
     const response = await callAI(messages, systemPrompt, selectedProvider)
 
     return NextResponse.json({

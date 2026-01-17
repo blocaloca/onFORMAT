@@ -1,10 +1,11 @@
 // AI Provider Abstraction Layer
 // Supports multiple AI providers with unified interface
 
-import Anthropic from '@anthropic-ai/sdk'
 import OpenAI from 'openai'
 
-export type AIProvider = 'anthropic' | 'openai'
+// CONFIGURATION: Set the Active Provider here
+export type AIProvider = 'openai' | 'anthropic' // kept for type compatibility
+const ACTIVE_PROVIDER: AIProvider = 'openai'
 
 export interface AIMessage {
   role: 'user' | 'assistant' | 'system'
@@ -24,46 +25,6 @@ export interface AIResponse {
 }
 
 /**
- * Call Anthropic's Claude API
- */
-async function callAnthropic(
-  messages: AIMessage[],
-  systemPrompt: string
-): Promise<AIResponse> {
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    throw new Error('ANTHROPIC_API_KEY not configured')
-  }
-
-  const client = new Anthropic({ apiKey })
-
-  const response = await client.messages.create({
-    model: 'claude-3-haiku-20240307',
-    max_tokens: 4096,
-    system: systemPrompt,
-    messages: messages.map(m => ({
-      role: m.role as 'user' | 'assistant',
-      content: m.content
-    }))
-  })
-
-  const textContent = response.content
-    .filter((block: any) => block.type === 'text')
-    .map((block: any) => block.text)
-    .join('\n')
-
-  return {
-    message: textContent,
-    usage: {
-      input_tokens: response.usage.input_tokens,
-      output_tokens: response.usage.output_tokens,
-      total_tokens: response.usage.input_tokens + response.usage.output_tokens
-    },
-    provider: 'anthropic'
-  }
-}
-
-/**
  * Call OpenAI's GPT-4 API
  */
 async function callOpenAI(
@@ -78,7 +39,7 @@ async function callOpenAI(
   const client = new OpenAI({ apiKey })
 
   const response = await client.chat.completions.create({
-    model: 'gpt-4-turbo-preview',
+    model: 'gpt-4o', // Updated to latest stable model
     max_tokens: 4096,
     messages: [
       { role: 'system', content: systemPrompt },
@@ -103,40 +64,22 @@ async function callOpenAI(
 }
 
 /**
- * Main function to call AI with automatic provider fallback
+ * Main function to call AI
+ * NOW: Single Provider Mode (OpenAI Only)
+ * FUTURE: To switch, update ACTIVE_PROVIDER constant or add logic here.
  */
 export async function callAI(
   messages: AIMessage[],
   systemPrompt: string,
-  preferredProvider: AIProvider = 'openai'
+  preferredProvider: AIProvider = ACTIVE_PROVIDER // Default to Config
 ): Promise<AIResponse> {
   console.log('🤖 Calling AI with provider:', preferredProvider)
 
-  // Try preferred provider first
-  try {
-    if (preferredProvider === 'anthropic') {
-      return await callAnthropic(messages, systemPrompt)
-    } else {
-      return await callOpenAI(messages, systemPrompt)
-    }
-  } catch (error: any) {
-    console.error(`❌ ${preferredProvider} failed:`, error.message)
+  // Enforce OpenAI for now, ignoring preferredProvider if needed, 
+  // or allow switching if other functions are restored.
+  // For strict "OpenAI Only" compliance requested by user:
 
-    // Fallback to other provider
-    const fallbackProvider: AIProvider = preferredProvider === 'anthropic' ? 'openai' : 'anthropic'
-    console.log(`🔄 Falling back to ${fallbackProvider}...`)
-
-    try {
-      if (fallbackProvider === 'anthropic') {
-        return await callAnthropic(messages, systemPrompt)
-      } else {
-        return await callOpenAI(messages, systemPrompt)
-      }
-    } catch (fallbackError: any) {
-      console.error(`❌ ${fallbackProvider} also failed:`, fallbackError.message)
-      throw new Error(`Both AI providers failed. Anthropic: ${error.message}, OpenAI: ${fallbackError.message}`)
-    }
-  }
+  return await callOpenAI(messages, systemPrompt)
 }
 
 /**
@@ -151,13 +94,14 @@ export async function testProvider(provider: AIProvider): Promise<{
       { role: 'user', content: 'Say "OK" if you can read this.' }
     ]
 
-    if (provider === 'anthropic') {
-      await callAnthropic(testMessages, 'You are a helpful assistant.')
-    } else {
+    if (provider === 'openai') {
       await callOpenAI(testMessages, 'You are a helpful assistant.')
+      return { available: true }
     }
 
-    return { available: true }
+    // Stub for removed providers
+    return { available: false, error: 'Provider not implemented' }
+
   } catch (error: any) {
     return { available: false, error: error.message }
   }
@@ -170,13 +114,10 @@ export async function getAvailableProviders(): Promise<{
   anthropic: boolean
   openai: boolean
 }> {
-  const [anthropicTest, openaiTest] = await Promise.all([
-    testProvider('anthropic'),
-    testProvider('openai')
-  ])
+  const openaiTest = await testProvider('openai')
 
   return {
-    anthropic: anthropicTest.available,
+    anthropic: false, // Disabled
     openai: openaiTest.available
   }
 }
