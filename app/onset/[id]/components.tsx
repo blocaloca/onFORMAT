@@ -119,6 +119,53 @@ export const EmptyState = ({ label }: { label: string }) => (
 
 export const EmailEntryGate = ({ onJoin, projectName }: any) => {
     const [val, setVal] = useState('');
+    const [viewDoc, setViewDoc] = useState<'nda' | 'privacy' | null>(null);
+
+    if (viewDoc) {
+        return (
+            <div className="fixed inset-0 z-50 bg-black flex flex-col p-6 animate-in slide-in-from-bottom-10">
+                <div className="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
+                    <h2 className="text-lg font-black uppercase tracking-wider text-white">
+                        {viewDoc === 'nda' ? 'Non-Disclosure Agreement' : 'Privacy Policy'}
+                    </h2>
+                    <button
+                        onClick={() => setViewDoc(null)}
+                        className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white">
+                        <X size={16} />
+                    </button>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                    <div className="prose prose-invert prose-sm max-w-none text-zinc-400">
+                        {viewDoc === 'nda' ? (
+                            <>
+                                <p><strong>CONFIDENTIALITY NOTICE</strong></p>
+                                <p>By accessing this production environment (onSET), you acknowledge that you will be exposed to confidential information regarding the project "{projectName || 'Untitled'}".</p>
+                                <p>You agree to:</p>
+                                <ul className="list-disc pl-4 space-y-2">
+                                    <li>Maintain strict confidentiality of all scripts, storyboards, schedules, and cast details.</li>
+                                    <li>Not post any photos, videos, or text descriptions of the set to social media without explicit Producer approval.</li>
+                                    <li>Protect your login credentials and not share access with unauthorized individuals.</li>
+                                </ul>
+                                <p className="mt-4">Failure to comply may result in immediate termination and legal action.</p>
+                            </>
+                        ) : (
+                            <>
+                                <p><strong>DATA PRIVACY</strong></p>
+                                <p>We respect your privacy and are committed to protecting your personal data.</p>
+                                <p>When you join onSET, we collect:</p>
+                                <ul className="list-disc pl-4 space-y-2">
+                                    <li>Your email address for identification.</li>
+                                    <li>Usage logs (viewing call sheets, downloading files) for production security.</li>
+                                </ul>
+                                <p className="mt-4">This data is shared only with the production team for logistical purposes.</p>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="h-screen bg-black text-white flex flex-col items-center justify-center p-6 text-center">
             <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Welcome to Set</h1>
@@ -129,16 +176,20 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                 placeholder="Enter your email..."
                 value={val}
                 onChange={e => setVal(e.target.value)}
-                className="w-full max-w-xs bg-zinc-900 border border-zinc-700 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none"
+                className="w-full max-w-xs bg-zinc-900 border border-zinc-700 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none placeholder:text-zinc-600 font-mono"
             />
 
             <button
                 onClick={() => onJoin(val)}
                 disabled={!val}
-                className="w-full max-w-xs bg-emerald-500 text-black font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50"
+                className="w-full max-w-xs bg-emerald-500 text-black font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
             >
                 Enter
             </button>
+
+            <p className="text-[10px] text-zinc-600 max-w-[240px] leading-relaxed">
+                By entering, you verify your identity and agree to the <button onClick={() => setViewDoc('nda')} className="underline hover:text-zinc-400 transition-colors">NDA</button> and <button onClick={() => setViewDoc('privacy')} className="underline hover:text-zinc-400 transition-colors">Privacy Policy</button> regarding confidential materials.
+            </p>
         </div>
     );
 }
