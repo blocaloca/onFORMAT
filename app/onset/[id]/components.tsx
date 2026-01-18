@@ -15,12 +15,94 @@ export const DOC_LABELS: Record<string, string> = {
     'casting': 'Casting',
     'locations': 'Locations',
     'wardrobe': 'Wardrobe',
-    'storyboard': 'Storyboard'
+    'storyboard': 'Storyboard',
+    'crew-list': 'Crew List'
 };
 
 /* --------------------------------------------------------------------------------
  * VIEW COMPONENTS
  * -------------------------------------------------------------------------------- */
+
+import { Phone, Mail, Search } from 'lucide-react';
+
+export const CrewListView = ({ data }: { data: any }) => {
+    const [search, setSearch] = useState('');
+
+    if (!data || !data.crew || data.crew.length === 0) return <EmptyState label="Crew List" />;
+
+    const filtered = data.crew.filter((m: any) =>
+        (m.name || '').toLowerCase().includes(search.toLowerCase()) ||
+        (m.role || '').toLowerCase().includes(search.toLowerCase()) ||
+        (m.department || '').toLowerCase().includes(search.toLowerCase())
+    );
+
+    // Group by Department
+    const grouped: Record<string, any[]> = {};
+    filtered.forEach((m: any) => {
+        const d = m.department || 'Other';
+        if (!grouped[d]) grouped[d] = [];
+        grouped[d].push(m);
+    });
+
+    return (
+        <div className="p-4 space-y-4">
+            {/* Search */}
+            <div className="sticky top-0 z-10 bg-black pb-2 pt-2">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={14} />
+                    <input
+                        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg py-3 pl-10 pr-4 text-xs text-white placeholder:text-zinc-600 outline-none focus:border-emerald-500 uppercase font-bold tracking-wide"
+                        placeholder="SEARCH CREW..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            {Object.entries(grouped).map(([dept, members]) => (
+                <div key={dept} className="space-y-2">
+                    <div className="sticky top-14 z-0 bg-black/90 backdrop-blur py-1 border-b border-zinc-800">
+                        <h3 className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">{dept}</h3>
+                    </div>
+                    <div className="grid gap-2">
+                        {members.map((m: any) => (
+                            <div key={m.id} className="bg-zinc-900 p-4 rounded-lg border border-zinc-800 flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-bold text-white leading-none mb-1">{m.name || 'Unnamed'}</p>
+                                    <p className="text-[10px] uppercase font-bold text-emerald-500 tracking-wide mb-0.5">{m.role}</p>
+                                    {/* Groups Pill */}
+                                    {m.onSetGroups && m.onSetGroups.length > 0 && (
+                                        <div className="flex gap-1 mt-1">
+                                            {m.onSetGroups.map((g: string) => (
+                                                <span key={g} className={`text-[8px] font-black uppercase px-1 rounded ${g === 'A' ? 'bg-emerald-900 text-emerald-400' : g === 'B' ? 'bg-blue-900 text-blue-400' : 'bg-amber-900 text-amber-400'}`}>{g}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="flex gap-2">
+                                    {m.phone && (
+                                        <a href={`tel:${m.phone}`} className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-colors">
+                                            <Phone size={14} />
+                                        </a>
+                                    )}
+                                    {m.email && (
+                                        <a href={`mailto:${m.email}`} className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                            <Mail size={14} />
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+
+            {filtered.length === 0 && (
+                <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No matches found.</p></div>
+            )}
+        </div>
+    );
+};
 
 export const EmptyState = ({ label }: { label: string }) => (
     <div className="flex flex-col items-center justify-center p-12 text-center">
