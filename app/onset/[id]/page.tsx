@@ -43,7 +43,25 @@ export default function OnSetMobilePage() {
     const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
-        if (id) fetchData();
+        if (!id) return;
+        fetchData();
+
+        // Realtime Subscription
+        const channel = supabase
+            .channel(`project-live-${id}`)
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${id}` },
+                (payload) => {
+                    console.log("Live update received!", payload);
+                    fetchData();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, [id]);
 
     const fetchData = async () => {
@@ -146,9 +164,12 @@ export default function OnSetMobilePage() {
                 computedAvailableKeys = mobileControl?.selectedTools || [];
             }
 
-            const availableKeys = computedAvailableKeys.length > 0
-                ? computedAvailableKeys
-                : Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
+            let availableKeys = computedAvailableKeys;
+            if (availableKeys.length === 0 && !mobileControl) {
+                const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log'];
+                const actual = Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
+                availableKeys = Array.from(new Set([...defaults, ...actual]));
+            }
 
             if (availableKeys.length > 0 && !activeTab) {
                 // Default Priority
@@ -353,7 +374,11 @@ export default function OnSetMobilePage() {
                             availableKeys = mobileControl?.selectedTools || [];
                         }
 
-                        if (availableKeys.length === 0) availableKeys = Object.keys(data.docs).filter(k => k !== 'onset-mobile-control');
+                        if (availableKeys.length === 0 && !mobileControl) {
+                            const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log'];
+                            const actual = Object.keys(data.docs).filter(k => k !== 'onset-mobile-control');
+                            availableKeys = Array.from(new Set([...defaults, ...actual]));
+                        }
 
                         if (availableKeys.length === 0) {
                             return <span className="text-zinc-600 text-[10px] uppercase font-bold pl-2">No synced docs</span>;
