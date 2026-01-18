@@ -46,7 +46,7 @@ export const CrewListView = ({ data }: { data: any }) => {
     });
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="space-y-4">
             {/* Search */}
             <div className="sticky top-0 z-10 bg-black pb-2 pt-2">
                 <div className="relative">
@@ -207,7 +207,7 @@ export const ScriptView = ({ data }: { data: any }) => {
     if (!data || !data.rows || data.rows.length === 0) return <EmptyState label="Script" />;
 
     return (
-        <div className="p-6 space-y-8 max-w-lg mx-auto">
+        <div className="space-y-8">
             {data.rows.map((row: any, i: number) => (
                 <div key={row.id || i} className="flex gap-4 group">
                     <div className="w-8 shrink-0 pt-1">
@@ -280,7 +280,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                 }
 
                 return (
-                    <div key={shot.id || i} className="p-6 flex gap-4 bg-black">
+                    <div key={shot.id || i} className="py-6 flex gap-4 bg-black">
                         <div className="shrink-0 flex flex-col items-center gap-1 w-10">
                             <span className="text-[8px] text-zinc-500 uppercase font-bold">SCENE</span>
                             <span className="text-lg font-black text-white leading-none">{shot.scene || '-'}</span>
@@ -321,7 +321,7 @@ export const CallSheetView = ({ data }: { data: any }) => {
     if (!data) return <EmptyState label="Call Sheet" />;
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             {/* Vitals */}
             <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-6 text-center">
                 <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-widest mb-1">General Call Time</p>
@@ -413,7 +413,7 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
     const items = data?.items || [];
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="space-y-4">
 
             {/* ADD BUTTON */}
             {onAdd && !isAdding && (
@@ -597,7 +597,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
     const items = data?.entries || [];
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="space-y-4">
             {/* ADD BUTTON */}
             {onAdd && !isAdding && (
                 <button
@@ -697,7 +697,7 @@ export const ScheduleView = ({ data }: { data: any }) => {
     if (!data || !data.items || data.items.length === 0) return <EmptyState label="Schedule" />;
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="space-y-6">
             {/* Header Info */}
             <div className="flex justify-between items-end border-b border-zinc-800 pb-4">
                 <div>
