@@ -109,10 +109,28 @@ export default function OnSetMobilePage() {
             let computedAvailableKeys: string[] = [];
 
             if (mobileControl?.toolGroups) {
-                // New System: Tool is available if it belongs to ANY group (A, B, or C)
-                // Logic for assigning User -> Group will come later.
+                // New System: Group-Based Access (A/B/C)
+                const crewListDoc = allDrafts['crew-list'];
+                // Find current user in the Crew List document
+                const me = crewListDoc?.crew?.find((c: any) =>
+                    c.email && c.email.toLowerCase() === emailToUse?.toLowerCase()
+                );
+
+                const myGroups = me?.onSetGroups || [];
+                const isOwner = role === 'Owner';
+
+                // Filter available tools based on intersection of groups
                 computedAvailableKeys = Object.entries(mobileControl.toolGroups)
-                    .filter(([_, groups]: any) => Array.isArray(groups) && groups.length > 0)
+                    .filter(([_, allowedGroups]: any) => {
+                        if (!Array.isArray(allowedGroups)) return false;
+                        if (allowedGroups.length === 0) return false; // Tool not assigned to any group -> Hidden
+
+                        // Owner sees everything active
+                        if (isOwner) return true;
+
+                        // Crew sees only matching groups
+                        return allowedGroups.some((g: string) => myGroups.includes(g));
+                    })
                     .map(([key]) => key);
             } else {
                 computedAvailableKeys = mobileControl?.selectedTools || [];
