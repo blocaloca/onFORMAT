@@ -426,8 +426,8 @@ export default function OnSetMobilePage() {
             )}
 
             {/* MAIN CONTENT SCROLLER */}
-            <main className="flex-1 overflow-y-auto pb-24 touch-pan-y relative bg-black">
-                <div className="w-full max-w-md mx-auto px-6 py-8">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden pb-24 touch-pan-y relative bg-black">
+                <div className="w-full max-w-md mx-auto px-4 py-6">
                     {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                     {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                     {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
