@@ -311,9 +311,42 @@ export default function OnSetMobilePage() {
                 {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
 
                 {/* Fallback for other docs */}
-                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log'].includes(activeTab) && (
+                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log'].includes(activeTab) && availableKeys.includes(activeTab) && (
                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                 )}
+
+                {/* DEBUG FOOTER */}
+                <div className="p-4 mt-8 bg-zinc-900/50 border-t border-zinc-800 text-[10px] font-mono text-zinc-500 overflow-x-hidden">
+                    <p className="font-bold text-zinc-400 mb-2">DEBUG INFO (Remove in Prod)</p>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div>Email: <span className="text-white">{userEmail || 'None'}</span></div>
+                        <div>Role: <span className="text-white">{userRole || 'Crew'}</span></div>
+                        <div>Groups: <span className="text-emerald-500">{(() => {
+                            const crewListDoc = data.docs['crew-list'];
+                            const me = crewListDoc?.crew?.find((c: any) => c.email && c.email.toLowerCase() === userEmail?.toLowerCase());
+                            return me?.onSetGroups?.join(', ') || 'None';
+                        })()}</span></div>
+                        <div>Visible: <span className="text-white">{
+                            // Recalculate for display
+                            (() => {
+                                const mobileControl = data.docs['onset-mobile-control'];
+                                if (!mobileControl?.toolGroups) return "Legacy/None";
+                                return Object.keys(mobileControl.toolGroups).filter(k => {
+                                    const g = mobileControl.toolGroups[k];
+                                    if (userRole === 'Owner') return true;
+                                    const crewListDoc = data.docs['crew-list'];
+                                    const me = crewListDoc?.crew?.find((c: any) => c.email && c.email.toLowerCase() === userEmail?.toLowerCase());
+                                    const myG = me?.onSetGroups || [];
+                                    return g.some((x: string) => myG.includes(x));
+                                }).join(', ');
+                            })()
+                        }</span></div>
+                    </div>
+                    <button onClick={() => {
+                        localStorage.removeItem('onset_user_email');
+                        window.location.reload();
+                    }} className="mt-4 bg-red-900/30 text-red-500 px-2 py-1 rounded">Reset Identity</button>
+                </div>
 
             </main>
 
