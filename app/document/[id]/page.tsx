@@ -73,6 +73,17 @@ export default function DocumentEditorPage() {
   // Mobile Control State
   const [mobileControlDoc, setMobileControlDoc] = useState<any>(null)
   const [showMobileControl, setShowMobileControl] = useState(false)
+  const [lastEventTime, setLastEventTime] = useState(0)
+  const [isBlinking, setIsBlinking] = useState(false)
+
+  useEffect(() => {
+    if (lastEventTime > 0) {
+      setIsBlinking(true)
+      const timer = setTimeout(() => setIsBlinking(false), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [lastEventTime])
+
 
   // Ref to access form component methods
   const formRef = useRef<any>(null)
@@ -84,6 +95,27 @@ export default function DocumentEditorPage() {
   useEffect(() => {
     if (document?.project_id) {
       loadMobileControl(document.project_id)
+
+      const channel = supabase.channel('mobile-control-updates')
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${document.project_id}` },
+          (payload: any) => {
+            // Update Control Doc
+            if (payload.new.type === 'onset-mobile-control') {
+              setMobileControlDoc(payload.new)
+            }
+            // Trigger Blink on Log Updates
+            if (payload.new.type === 'shot-log' || payload.new.type === 'dit-log') {
+              setLastEventTime(Date.now())
+            }
+          }
+        )
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
     }
   }, [document?.project_id])
 
@@ -999,7 +1031,14 @@ export default function DocumentEditorPage() {
             className="fixed bottom-6 right-6 w-12 h-12 bg-black text-white rounded-full shadow-xl flex items-center justify-center hover:bg-zinc-800 transition-all z-40 border border-zinc-700"
             title="Open Mobile Control"
           >
-            <Smartphone size={20} className={mobileControlDoc.content?.isLive ? 'text-emerald-500 animate-pulse' : 'text-zinc-400'} />
+            <Smartphone
+              size={24}
+              className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
+                  ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                  : 'text-zinc-400'
+                }`}
+              strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
+            />
           </button>
         )
       }
