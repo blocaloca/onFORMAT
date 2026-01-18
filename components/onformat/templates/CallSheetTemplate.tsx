@@ -337,11 +337,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 disabled={isLocked}
                                             />
                                         </div>
-                                        <div className="p-1 bg-white flex items-center justify-center w-24">
+                                        <div className="p-1.5 bg-white flex flex-col items-center justify-center w-28">
+                                            <span className="text-[9px] font-black uppercase text-black mb-1 tracking-tighter leading-none">onSET Mobile</span>
                                             <img
                                                 src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
                                                 alt="Set QR"
-                                                className="w-full h-full object-contain"
+                                                className="w-full flex-1 object-contain"
                                             />
                                         </div>
                                     </div>
