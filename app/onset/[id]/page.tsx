@@ -311,7 +311,7 @@ export default function OnSetMobilePage() {
                 {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
 
                 {/* Fallback for other docs */}
-                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log'].includes(activeTab) && availableKeys.includes(activeTab) && (
+                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log'].includes(activeTab) && (
                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                 )}
 
