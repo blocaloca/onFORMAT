@@ -112,8 +112,14 @@ export default function OnSetMobilePage() {
                 : Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
 
             if (availableKeys.length > 0) {
-                // Priority Logic based on ROLE
-                if (role === 'DIT' && availableKeys.includes('dit-log')) {
+                // Priority Logic based on ROLE CONFIGURATION
+                const config = mobileControl?.roleConfig || {};
+                const preferredTool = config[role];
+
+                if (preferredTool && availableKeys.includes(preferredTool)) {
+                    setActiveTab(preferredTool);
+                } else if (role === 'DIT' && availableKeys.includes('dit-log')) {
+                    // Legacy Fallback
                     setActiveTab('dit-log');
                 } else {
                     // Default Priority: call-sheet -> shots -> script
