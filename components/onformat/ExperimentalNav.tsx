@@ -47,7 +47,6 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
         { key: 'script-notes', label: 'Script Notes' },
         { key: 'sound-report', label: 'Sound Report' },
         { key: 'dit-log', label: 'DIT Log' },
-        { key: 'onset-mobile-control', label: 'onSET Mobile' },
     ],
     POST: [
         { key: 'budget-actual', label: 'Actuals' },
@@ -60,7 +59,7 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
 const PHASES: { key: Phase; label: string }[] = [
     { key: 'DEVELOPMENT', label: 'Development' },
     { key: 'PRE_PRODUCTION', label: 'Pre-Production' },
-    { key: 'ON_SET', label: 'onSET' },
+    { key: 'ON_SET', label: 'Production' },
     { key: 'POST', label: 'Post-Production' }
 ];
 
@@ -312,6 +311,24 @@ export const ExperimentalWorkspaceNav = ({
             </div>
 
             <div className="flex-1 overflow-y-auto pt-2 scrollbar-none">
+
+                {/* Dedicated onSET Mobile Button */}
+                <div className="px-4 mb-6">
+                    <button
+                        onClick={() => onToolSelect('onset-mobile-control', 'ON_SET')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border transition-all group ${activeTool === 'onset-mobile-control'
+                                ? (darkMode ? 'bg-zinc-800 text-white border-zinc-700' : 'bg-black text-white border-black')
+                                : (darkMode ? 'bg-zinc-900/30 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white' : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:text-black')
+                            }`}
+                    >
+                        <Smartphone size={18} className={activeTool === 'onset-mobile-control' ? (darkMode ? 'text-emerald-400' : 'text-emerald-400') : (darkMode ? 'text-zinc-500 group-hover:text-emerald-500' : 'text-zinc-400 group-hover:text-black')} />
+                        <div className="text-left">
+                            <div className="text-xs font-black uppercase tracking-wider leading-none mb-0.5">onSET Mobile</div>
+                            <div className="text-[9px] font-bold opacity-60">Control Panel</div>
+                        </div>
+                    </button>
+                </div>
+
                 <NavSectionTitle darkMode={darkMode}>Phases</NavSectionTitle>
 
                 <div className="space-y-2 px-4">

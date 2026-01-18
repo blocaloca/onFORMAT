@@ -72,7 +72,6 @@ const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
         { key: 'script-notes', label: 'Script Notes' },
         { key: 'sound-report', label: 'Sound Report' },
         { key: 'dit-log', label: 'DIT Log' },
-        { key: 'onset-mobile-control', label: 'onSET Mobile' },
     ],
     POST: [
         { key: 'budget-actual', label: 'Actuals' },
