@@ -103,23 +103,27 @@ export default function OnSetMobilePage() {
                 docs: allDrafts
             });
 
-            // Determine Tabs: Use "onset-mobile-control" selection if available, else all found drafts
+            // Determine Tabs: Support new 'toolGroups' or legacy 'selectedTools'
             const mobileControl = allDrafts['onset-mobile-control'];
-            const selectedTools = mobileControl?.selectedTools || [];
 
-            const availableKeys = selectedTools.length > 0
-                ? selectedTools
+            let computedAvailableKeys: string[] = [];
+
+            if (mobileControl?.toolGroups) {
+                // New System: Tool is available if it belongs to ANY group (A, B, or C)
+                // Logic for assigning User -> Group will come later.
+                computedAvailableKeys = Object.entries(mobileControl.toolGroups)
+                    .filter(([_, groups]: any) => Array.isArray(groups) && groups.length > 0)
+                    .map(([key]) => key);
+            } else {
+                computedAvailableKeys = mobileControl?.selectedTools || [];
+            }
+
+            const availableKeys = computedAvailableKeys.length > 0
+                ? computedAvailableKeys
                 : Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
 
-            if (availableKeys.length > 0) {
-                // Priority Logic based on ROLE CONFIGURATION
-                const config = mobileControl?.roleConfig || {};
-                const preferredTool = config[role];
-
-                if (preferredTool && availableKeys.includes(preferredTool)) {
-                    setActiveTab(preferredTool);
-                } else if (role === 'DIT' && availableKeys.includes('dit-log')) {
-                    // Legacy Fallback
+            if (availableKeys.length > 0 && !activeTab) { // Only set if not already set (re-hydration safety, though this runs on load)
+                if (role === 'DIT' && availableKeys.includes('dit-log')) {
                     setActiveTab('dit-log');
                 } else {
                     // Default Priority: call-sheet -> shots -> script
@@ -127,6 +131,9 @@ export default function OnSetMobilePage() {
                     const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
                     setActiveTab(bestStart);
                 }
+            } else if (availableKeys.length > 0 && availableKeys.includes(activeTab) === false) {
+                // Current tab is no longer available? Reset.
+                setActiveTab(availableKeys[0]);
             }
 
         } catch (e) {
