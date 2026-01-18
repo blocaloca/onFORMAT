@@ -9,6 +9,7 @@ interface Shot {
     angle: string; // e.g. Eye Level, Low Angle
     movement: string; // e.g. Static, Pan, Dolly
     description: string;
+    status?: string;
 }
 
 interface ShotListData {
@@ -118,8 +119,9 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         <div className="space-y-0 divide-y divide-zinc-100 flex-1">
                             {pageShots.map((shot, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                                const isComplete = (shot.status || '').toLowerCase() === 'complete';
                                 return (
-                                    <div key={shot.id} className="grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px] gap-2 py-2 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={shot.id} className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px] gap-2 py-2 items-start transition-colors group ${isComplete ? 'bg-emerald-50/50' : 'hover:bg-zinc-50'}`}>
 
                                         {/* Number */}
                                         <div className="flex items-start justify-center pt-1.5">

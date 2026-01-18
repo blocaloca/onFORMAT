@@ -19,6 +19,11 @@ import {
     MobileShotLogView
 } from './components';
 
+const safeParse = (json: string) => {
+    if (!json) return null;
+    try { return JSON.parse(json); } catch { return null; }
+};
+
 /* --------------------------------------------------------------------------------
  * TYPES
  * -------------------------------------------------------------------------------- */
@@ -195,11 +200,6 @@ export default function OnSetMobilePage() {
         }
     };
 
-    const safeParse = (json: string) => {
-        if (!json) return null;
-        try { return JSON.parse(json); } catch { return null; }
-    };
-
     const handleJoin = (email: string) => {
         if (!email) return;
         localStorage.setItem('onset_user_email', email);
@@ -349,6 +349,7 @@ export default function OnSetMobilePage() {
                 });
 
                 updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
+                console.log("Adding to Shot Log:", logDoc);
             }
 
             // SAVE
