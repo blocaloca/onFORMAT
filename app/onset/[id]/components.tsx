@@ -16,8 +16,7 @@ export const DOC_LABELS: Record<string, string> = {
     'locations': 'Locations',
     'wardrobe': 'Wardrobe',
     'storyboard': 'Storyboard',
-    'crew-list': 'Crew List',
-    'production-schedule': 'Schedule'
+    'crew-list': 'Crew List'
 };
 
 /* --------------------------------------------------------------------------------
