@@ -157,8 +157,8 @@ export default function LandingPage() {
           {/* Image Side */}
           <div className="relative h-[60vh] md:h-auto w-full">
             <img
-              src="/onset-mobile-spring-26.png"
-              alt="Hand holding onSET mobile app displaying Spring 2026 Campaign DIT Log"
+              src="/onset-mobile-dit.png"
+              alt="Hand holding onSET mobile app displaying DIT Log"
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent md:hidden" />
