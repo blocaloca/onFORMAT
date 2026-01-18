@@ -15,7 +15,8 @@ import {
     EmptyState,
     EmailEntryGate,
     CrewListView,
-    ScheduleView
+    ScheduleView,
+    MobileShotLogView
 } from './components';
 
 /* --------------------------------------------------------------------------------
@@ -169,7 +170,7 @@ export default function OnSetMobilePage() {
 
             let availableKeys = computedAvailableKeys;
             if (availableKeys.length === 0 && !mobileControl) {
-                const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log'];
+                const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log', 'shot-log'];
                 const actual = Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
                 availableKeys = Array.from(new Set([...defaults, ...actual]));
             }
@@ -270,7 +271,32 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e); }
     };
 
-    const handleCheckShot = async (shotId: string, status: string = 'COMPLETE') => {
+    const handleUpdateShotLog = async (item: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const logPhaseKey = 'ON_SET';
+            let updatedPhases = { ...phases };
+
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
+            if (Array.isArray(logDoc)) logDoc = logDoc[0];
+            if (!logDoc || !logDoc.entries) logDoc = { entries: [] };
+
+            logDoc.entries.unshift(item);
+
+            updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+        } catch (e) { console.error(e) }
+    }
+
+    const handleCheckShot = async (shotId: string, status: string = 'COMPLETE', addToLog: boolean = true) => {
         if (!data.project) return;
 
         try {
@@ -303,25 +329,27 @@ export default function OnSetMobilePage() {
 
             if (!shotFound) return;
 
-            // 2. Add to Shot Log
-            const logPhaseKey = 'ON_SET';
-            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
-            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+            // 2. Add to Shot Log ONLY if requested
+            if (addToLog) {
+                const logPhaseKey = 'ON_SET';
+                if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+                if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
-            if (Array.isArray(logDoc)) logDoc = logDoc[0];
-            if (!logDoc || !logDoc.entries) logDoc = { entries: [] };
+                let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
+                if (Array.isArray(logDoc)) logDoc = logDoc[0];
+                if (!logDoc || !logDoc.entries) logDoc = { entries: [] };
 
-            logDoc.entries.unshift({
-                id: `log-${Date.now()}`,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-                type: 'SHOT',
-                status: status,
-                shotId: shotId,
-                description: `Shot ${shotId} marked as ${status}`
-            });
+                logDoc.entries.unshift({
+                    id: `log-${Date.now()}`,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                    type: 'SHOT',
+                    status: status,
+                    shotId: shotId,
+                    description: `Shot ${shotId} marked as ${status}`
+                });
 
-            updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
+                updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
+            }
 
             // SAVE
             const updatedProjectData = {
@@ -403,11 +431,12 @@ export default function OnSetMobilePage() {
                 {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                 {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
                 {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
+                {activeTab === 'shot-log' && <MobileShotLogView data={data.docs['shot-log']} onAdd={handleUpdateShotLog} />}
                 {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
                 {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
 
                 {/* Fallback for other docs */}
-                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'crew-list', 'production-schedule'].includes(activeTab) && (
+                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'shot-log', 'crew-list', 'production-schedule'].includes(activeTab) && (
                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                 )}
 

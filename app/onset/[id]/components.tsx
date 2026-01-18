@@ -16,7 +16,8 @@ export const DOC_LABELS: Record<string, string> = {
     'locations': 'Locations',
     'wardrobe': 'Wardrobe',
     'storyboard': 'Storyboard',
-    'crew-list': 'Crew List'
+    'crew-list': 'Crew List',
+    'shot-log': 'Shot Log'
 };
 
 /* --------------------------------------------------------------------------------
@@ -238,13 +239,46 @@ export const ScriptView = ({ data }: { data: any }) => {
     );
 };
 
-export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (id: string, status: string) => void }) => {
+export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (id: string, status: string, addToLog: boolean) => void }) => {
+    const [confirmingId, setConfirmingId] = useState<string | null>(null);
+
     if (!data || !data.shots || data.shots.length === 0) return <EmptyState label="Shot List" />;
 
     return (
         <div className="flex flex-col divide-y divide-zinc-800/50">
             {data.shots.map((shot: any, i: number) => {
                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
+                const isConfirming = confirmingId === shot.id;
+
+                if (isConfirming) {
+                    return (
+                        <div key={shot.id || i} className="p-6 bg-zinc-900 border-l-4 border-emerald-500 animate-in fade-in">
+                            <p className="text-sm font-bold text-white mb-4">Mark Shot {shot.scene}-{shot.shot} Complete?</p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        onCheckShot && onCheckShot(shot.id, 'COMPLETE', true);
+                                        setConfirmingId(null);
+                                    }}
+                                    className="flex-1 bg-emerald-500 text-black font-bold uppercase text-xs py-3 rounded"
+                                >
+                                    Log & Complete
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        onCheckShot && onCheckShot(shot.id, 'COMPLETE', false);
+                                        setConfirmingId(null);
+                                    }}
+                                    className="flex-1 bg-zinc-800 text-white font-bold uppercase text-xs py-3 rounded"
+                                >
+                                    Just Complete
+                                </button>
+                                <button onClick={() => setConfirmingId(null)} className="p-3 text-zinc-500"><X size={16} /></button>
+                            </div>
+                        </div>
+                    )
+                }
+
                 return (
                     <div key={shot.id || i} className="p-6 flex gap-4 bg-black">
                         <div className="shrink-0 flex flex-col items-center gap-1 w-10">
@@ -264,8 +298,14 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 
                         <div className="shrink-0 flex items-center">
                             <button
-                                onClick={() => onCheckShot && onCheckShot(shot.id, isComplete ? 'PENDING' : 'COMPLETE')}
-                                className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isComplete ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-700 bg-zinc-900/50'}`}
+                                onClick={() => {
+                                    if (isComplete) {
+                                        onCheckShot && onCheckShot(shot.id, 'PENDING', false);
+                                    } else {
+                                        setConfirmingId(shot.id);
+                                    }
+                                }}
+                                className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isComplete ? 'bg-emerald-500 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'border-zinc-700 bg-zinc-900/50'}`}
                             >
                                 {isComplete && <Check size={16} className="text-black" />}
                             </button>
@@ -528,6 +568,129 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
             <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-4">End of Log</div>
         </div>
     )
+}
+
+export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => void }) => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [form, setForm] = useState({
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+        shotId: '',
+        take: '1',
+        status: 'good',
+        description: ''
+    });
+
+    const handleSubmit = () => {
+        if (!onAdd) return;
+        const newItem = {
+            id: `log-${Date.now()}`,
+            type: 'SHOT',
+            ...form
+        };
+        onAdd(newItem);
+        setIsAdding(false);
+        setForm({ ...form, description: '', shotId: '', take: (parseInt(form.take) + 1).toString() });
+    };
+
+    if (!data && !isAdding) return <EmptyState label="Shot Log" />;
+
+    const items = data?.entries || [];
+
+    return (
+        <div className="p-6 space-y-4">
+            {/* ADD BUTTON */}
+            {onAdd && !isAdding && (
+                <button
+                    onClick={() => setIsAdding(true)}
+                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                >
+                    <Plus size={16} />
+                    <span>Log Shot</span>
+                </button>
+            )}
+
+            {/* ADD FORM */}
+            {isAdding && (
+                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
+                        <span className="text-xs font-bold uppercase text-white">New Shot Actual</span>
+                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-400" /></button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 mb-3">
+                        <div className="col-span-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Time</label>
+                            <input
+                                type="time"
+                                value={form.time}
+                                onChange={e => setForm({ ...form, time: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                            />
+                        </div>
+                        <div className="col-span-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Shot #</label>
+                            <input
+                                placeholder="1A"
+                                value={form.shotId}
+                                onChange={e => setForm({ ...form, shotId: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
+                            />
+                        </div>
+                        <div className="col-span-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Take</label>
+                            <input
+                                type="number"
+                                value={form.take}
+                                onChange={e => setForm({ ...form, take: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Notes</label>
+                        <textarea
+                            placeholder="Lens, Filters, Action notes..."
+                            value={form.description}
+                            onChange={e => setForm({ ...form, description: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[60px] resize-none"
+                        />
+                    </div>
+
+                    <button
+                        onClick={handleSubmit}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
+                    >
+                        <Save size={16} />
+                        <span>Save Shot</span>
+                    </button>
+                </div>
+            )}
+
+            <div className="space-y-3">
+                {items.length === 0 && !isAdding ? (
+                    <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No shots logged.</p></div>
+                ) : (
+                    items.map((item: any, i: number) => (
+                        <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 flex gap-4 items-center">
+                            <div className="text-center w-12 shrink-0">
+                                <span className="block text-[10px] font-mono text-zinc-500">{item.time}</span>
+                                <span className="block text-xl font-black text-white">{item.shotId || '?'}</span>
+                            </div>
+                            <div className="w-px h-8 bg-zinc-800"></div>
+                            <div className="flex-1">
+                                <div className="flex justify-between items-baseline mb-1">
+                                    <span className="text-xs font-bold text-emerald-500 uppercase">Completed</span>
+                                    {item.take && <span className="text-[9px] font-mono text-zinc-600">TK {item.take}</span>}
+                                </div>
+                                <p className="text-xs text-zinc-300 leading-tight">{item.description}</p>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+        </div>
+    );
 }
 
 export const ScheduleView = ({ data }: { data: any }) => {
