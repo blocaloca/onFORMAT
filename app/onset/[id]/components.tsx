@@ -135,45 +135,65 @@ export const CallSheetView = ({ data }: { data: any }) => {
 
     return (
         <div className="p-4 space-y-6">
-            {/* HERDER INFO */}
+            {/* Vitals */}
             <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-6 text-center">
                 <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-widest mb-1">General Call Time</p>
                 <h2 className="text-5xl font-black text-white tracking-tighter mb-4">{data.crewCall || "TBD"}</h2>
 
                 <div className="grid grid-cols-2 gap-4 border-t border-zinc-800 pt-4 text-left">
                     <div>
-                        <p className="text-[9px] text-zinc-500 uppercase font-bold">Location</p>
-                        <p className="text-xs font-bold text-zinc-200">{data.locationName || "TBD"}</p>
-                        <p className="text-[9px] text-zinc-400">{data.locationAddress}</p>
+                        <p className="text-[9px] text-zinc-500 uppercase font-bold">Basecamp / Location</p>
+                        <p className="text-xs font-bold text-zinc-200 whitespace-pre-wrap">{data.basecamp || "TBD"}</p>
                     </div>
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Weather</p>
-                        <p className="text-xs font-bold text-zinc-200">{data.weatherSummary || "Unknown"}</p>
+                        <p className="text-xs font-bold text-zinc-200">{data.weather || "Unknown"}</p>
                     </div>
                 </div>
             </div>
 
-            {/* MESSAGE */}
-            {data.dailyMessage && (
+            {/* Notes */}
+            {data.notes && (
                 <div className="bg-emerald-900/10 border border-emerald-900/30 p-4 rounded-sm">
-                    <p className="text-[10px] font-bold uppercase text-emerald-500 mb-1">Producer Note</p>
-                    <p className="text-xs text-emerald-100/80 italic">"{data.dailyMessage}"</p>
+                    <p className="text-[10px] font-bold uppercase text-emerald-500 mb-1">Producer Notes</p>
+                    <p className="text-xs text-emerald-100/80 italic whitespace-pre-wrap">{data.notes}</p>
                 </div>
             )}
 
-            {/* SCHEDULE */}
+            {/* Schedule */}
             <div>
-                <h3 className="text-xs font-black uppercase text-zinc-500 mb-2 pl-1">Schedule Block</h3>
-                <div className="space-y-1">
-                    <div className="bg-zinc-900 p-3 rounded-sm border-l-2 border-zinc-500">
-                        <span className="text-xs text-zinc-400">Schedule Details not fully parsed in preview.</span>
-                    </div>
+                <h3 className="text-xs font-black uppercase text-zinc-500 mb-2 pl-1">Schedule</h3>
+                <div className="space-y-0.5">
+                    {data.events && data.events.length > 0 ? (
+                        data.events.map((evt: any, i: number) => (
+                            <div key={i} className="bg-zinc-900 p-3 rounded-sm border-l-2 border-emerald-500 flex gap-3">
+                                <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{evt.time || '00:00'}</span>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-baseline">
+                                        <span className="text-[10px] font-black uppercase text-zinc-300">{evt.type}</span>
+                                        <span className="text-[9px] font-mono text-zinc-600 uppercase truncate max-w-[80px]">{evt.location}</span>
+                                    </div>
+                                    <p className="text-xs text-zinc-400 truncate">{evt.description}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="bg-zinc-900 p-3 rounded-sm border-l-2 border-zinc-500">
+                            <span className="text-xs text-zinc-400">No events scheduled.</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className="pt-8 text-center">
-                <p className="text-[9px] text-zinc-600 uppercase">Emergency? Call 911</p>
-                <p className="text-[9px] text-zinc-600 uppercase">Nearest Hospital: {data.nearestHospital || "Lookup required"}</p>
+            {/* Emergency */}
+            <div className="pt-8 text-center space-y-1">
+                <p className="text-[9px] text-zinc-600 uppercase font-bold">Emergency? Call 911</p>
+                <div className="inline-block bg-red-900/20 border border-red-900/40 px-3 py-2 rounded">
+                    <p className="text-[9px] text-red-500 uppercase font-bold mb-0.5">Nearest Hospital</p>
+                    <p className="text-[10px] text-red-400 font-mono">{data.hospital || "Lookup required"}</p>
+                </div>
+                {/* Debug: Sunrise check */}
+                {data.sunriseSunset && <p className="text-[9px] text-zinc-700">Sun: {data.sunriseSunset}</p>}
             </div>
         </div>
     )
