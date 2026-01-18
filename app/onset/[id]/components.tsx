@@ -16,7 +16,8 @@ export const DOC_LABELS: Record<string, string> = {
     'locations': 'Locations',
     'wardrobe': 'Wardrobe',
     'storyboard': 'Storyboard',
-    'crew-list': 'Crew List'
+    'crew-list': 'Crew List',
+    'production-schedule': 'Schedule'
 };
 
 /* --------------------------------------------------------------------------------
@@ -464,3 +465,65 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
         </div>
     )
 }
+
+export const ScheduleView = ({ data }: { data: any }) => {
+    if (!data || !data.items || data.items.length === 0) return <EmptyState label="Schedule" />;
+
+    return (
+        <div className="p-4 space-y-6">
+            {/* Header Info */}
+            <div className="flex justify-between items-end border-b border-zinc-800 pb-4">
+                <div>
+                    <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Shoot Date</p>
+                    <p className="text-xl font-black text-white">{data.date || 'TBD'}</p>
+                </div>
+                <div className="text-right">
+                    <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Call Time</p>
+                    <p className="text-xl font-mono text-emerald-500 font-bold">{data.callTime || 'TBD'}</p>
+                </div>
+            </div>
+
+            {/* Timeline */}
+            <div className="space-y-4 relative">
+                <div className="absolute left-[54px] top-2 bottom-2 w-0.5 bg-zinc-900"></div>
+
+                {data.items.map((item: any, i: number) => (
+                    <div key={item.id || i} className="relative flex gap-4 group">
+                        {/* Time Column */}
+                        <div className="w-[46px] text-right pt-1 shrink-0">
+                            <span className="text-xs font-mono font-bold text-zinc-500 block">{item.time || '00:00'}</span>
+                        </div>
+
+                        {/* Dot */}
+                        <div className="absolute left-[50px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-800 border-2 border-black z-10 group-hover:bg-emerald-500 transition-colors"></div>
+
+                        {/* Content Card */}
+                        <div className="flex-1 bg-zinc-900 rounded-lg p-3 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                            <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="bg-black text-white text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                        SCENE {item.scene || '-'}
+                                    </span>
+                                    <span className="text-[10px] font-black uppercase text-zinc-400">
+                                        {item.intExt}
+                                    </span>
+                                </div>
+                                <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' :
+                                    item.dayNight === 'NIGHT' ? 'bg-blue-900/30 text-blue-400' :
+                                        'bg-zinc-800 text-zinc-500'
+                                    }`}>
+                                    {item.dayNight}
+                                </span>
+                            </div>
+
+                            <p className="text-xs font-black text-white uppercase mb-1 leading-tight">{item.set}</p>
+                            <p className="text-xs text-zinc-400 font-medium leading-relaxed">{item.description}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-8">End of Day</div>
+        </div>
+    );
+};

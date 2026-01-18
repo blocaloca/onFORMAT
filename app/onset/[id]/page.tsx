@@ -14,7 +14,8 @@ import {
     MobileDITLogView,
     EmptyState,
     EmailEntryGate,
-    CrewListView
+    CrewListView,
+    ScheduleView
 } from './components';
 
 /* --------------------------------------------------------------------------------
@@ -311,9 +312,10 @@ export default function OnSetMobilePage() {
                 {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
                 {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
                 {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
+                {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
 
                 {/* Fallback for other docs */}
-                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'crew-list'].includes(activeTab) && (
+                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'crew-list', 'production-schedule'].includes(activeTab) && (
                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                 )}
 
