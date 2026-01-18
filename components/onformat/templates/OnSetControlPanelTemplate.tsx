@@ -86,14 +86,35 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                 {/* LEFT COL: DOCUMENT SYNC (SPAN 2) */}
                 <div className="lg:col-span-2">
 
-                    {/* NOTIFICATIONS */}
-                    {metadata?.latestNotification && (
-                        <div className="mb-6 bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
-                            <Zap className="text-emerald-500 fill-emerald-500 animate-pulse" size={16} />
-                            <span className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">{metadata.latestNotification.msg}</span>
-                            <span className="ml-auto text-[9px] text-zinc-500 font-mono">{new Date(metadata.latestNotification.time).toLocaleTimeString()}</span>
-                        </div>
-                    )}
+                    {/* ALERTS SECTION */}
+                    {(() => {
+                        const issues = metadata?.importedDITLog?.items?.filter((i: any) => i.eventType === 'issue' && i.status !== 'complete') || [];
+                        if (issues.length === 0 && !metadata?.latestNotification) return null;
+
+                        return (
+                            <div className="space-y-2 mb-6 animate-in fade-in slide-in-from-top-2">
+                                {/* DIT ISSUES */}
+                                {issues.map((issue: any, i: number) => (
+                                    <div key={i} className="bg-red-500/10 border border-red-500/30 p-3 rounded-lg flex items-center gap-3">
+                                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                        <div className="flex-1">
+                                            <p className="text-red-400 font-mono text-xs font-bold uppercase tracking-wider">DIT ISSUE: {issue.description || 'Check Log'}</p>
+                                            <p className="text-[9px] text-zinc-500 font-mono">Time: {issue.time}</p>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                {/* GENERAL NOTIFICATIONS */}
+                                {metadata?.latestNotification && (
+                                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg flex items-center gap-3">
+                                        <Zap className="text-emerald-500 fill-emerald-500 animate-pulse" size={16} />
+                                        <span className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">{metadata.latestNotification.msg}</span>
+                                        <span className="ml-auto text-[9px] text-zinc-500 font-mono">{new Date(metadata.latestNotification.time).toLocaleTimeString()}</span>
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })()}
 
                     <div className="space-y-8">
                         {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]) => {

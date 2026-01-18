@@ -127,6 +127,16 @@ export const DraftEditor = ({
         } catch { }
     }
 
+    // DIT Log Import Logic (for Control Panel Alerts)
+    let importedDITLog = null;
+    if (phases?.['ON_SET']?.drafts?.['dit-log']) {
+        try {
+            const raw = JSON.parse(phases['ON_SET'].drafts['dit-log']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedDITLog = arr[0];
+        } catch { }
+    }
+
     // --- Document Stack Logic ---
     const [activeVersionIndex, setActiveVersionIndex] = useState(0);
 
@@ -413,6 +423,7 @@ export const DraftEditor = ({
                                 importedSchedule,
                                 importedAVScript,
                                 importedBudget,
+                                importedDITLog,
                                 projectId,
                                 latestNotification
                             }}
