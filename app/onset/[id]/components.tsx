@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, X, Save } from 'lucide-react';
+import { Plus, X, Save, Check } from 'lucide-react';
 
 /* --------------------------------------------------------------------------------
  * CONSTANTS & TYPES
@@ -238,35 +238,41 @@ export const ScriptView = ({ data }: { data: any }) => {
     );
 };
 
-export const ShotListView = ({ data }: { data: any }) => {
+export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (id: string, status: string) => void }) => {
     if (!data || !data.shots || data.shots.length === 0) return <EmptyState label="Shot List" />;
 
     return (
         <div className="flex flex-col divide-y divide-zinc-800/50">
-            {data.shots.map((shot: any, i: number) => (
-                <div key={shot.id || i} className="p-6 flex gap-4 bg-black">
-                    <div className="shrink-0 flex flex-col items-center gap-1 w-10">
-                        <span className="text-[8px] text-zinc-500 uppercase font-bold">SCENE</span>
-                        <span className="text-lg font-black text-white leading-none">{shot.scene || '-'}</span>
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap gap-2 mb-2">
-                            <span className="bg-zinc-800 text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
-                            <span className="bg-zinc-800 text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
-                            <span className="bg-zinc-800 text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
+            {data.shots.map((shot: any, i: number) => {
+                const isComplete = (shot.status || '').toLowerCase() === 'complete';
+                return (
+                    <div key={shot.id || i} className="p-6 flex gap-4 bg-black">
+                        <div className="shrink-0 flex flex-col items-center gap-1 w-10">
+                            <span className="text-[8px] text-zinc-500 uppercase font-bold">SCENE</span>
+                            <span className="text-lg font-black text-white leading-none">{shot.scene || '-'}</span>
                         </div>
-                        <p className="text-xs text-zinc-300 font-medium leading-normal mb-1">{shot.description}</p>
-                        <p className="text-[10px] text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
-                    </div>
 
-                    <div className="shrink-0 flex items-center">
-                        <div className="w-8 h-8 rounded-full border border-zinc-700 flex items-center justify-center">
-                            <div className="w-4 h-4 bg-zinc-800 rounded-sm"></div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap gap-2 mb-2">
+                                <span className="bg-zinc-800 text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
+                                <span className="bg-zinc-800 text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
+                                <span className="bg-zinc-800 text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
+                            </div>
+                            <p className="text-xs text-zinc-300 font-medium leading-normal mb-1">{shot.description}</p>
+                            <p className="text-[10px] text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
+                        </div>
+
+                        <div className="shrink-0 flex items-center">
+                            <button
+                                onClick={() => onCheckShot && onCheckShot(shot.id, isComplete ? 'PENDING' : 'COMPLETE')}
+                                className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isComplete ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-700 bg-zinc-900/50'}`}
+                            >
+                                {isComplete && <Check size={16} className="text-black" />}
+                            </button>
                         </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };

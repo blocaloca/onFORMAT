@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Menu } from 'lucide-react';
@@ -41,6 +41,9 @@ export default function OnSetMobilePage() {
     const [userEmail, setUserEmail] = useState<string>('');
     const [userRole, setUserRole] = useState<string>('');
     const [showLogin, setShowLogin] = useState(false);
+
+    const activeTabRef = useRef(activeTab);
+    useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
 
     useEffect(() => {
         if (!id) return;
@@ -171,13 +174,15 @@ export default function OnSetMobilePage() {
                 availableKeys = Array.from(new Set([...defaults, ...actual]));
             }
 
-            if (availableKeys.length > 0 && !activeTab) {
+            const currentTab = activeTabRef.current;
+
+            if (availableKeys.length > 0 && !currentTab) {
                 // Default Priority
                 const priority = ['call-sheet', 'shot-scene-book', 'av-script'];
                 const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
                 setActiveTab(bestStart);
 
-            } else if (availableKeys.length > 0 && availableKeys.includes(activeTab) === false) {
+            } else if (availableKeys.length > 0 && availableKeys.includes(currentTab) === false) {
                 // Current tab is no longer available? Reset.
                 setActiveTab(availableKeys[0]);
             }
@@ -265,6 +270,72 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e); }
     };
 
+    const handleCheckShot = async (shotId: string, status: string = 'COMPLETE') => {
+        if (!data.project) return;
+
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+
+            let updatedPhases = { ...phases };
+            let shotFound = false;
+
+            Object.keys(updatedPhases).forEach(pKey => {
+                if (updatedPhases[pKey].drafts && updatedPhases[pKey].drafts['shot-scene-book']) {
+                    const raw = updatedPhases[pKey].drafts['shot-scene-book'];
+                    // It might be string or array
+                    let doc = safeParse(raw);
+                    if (Array.isArray(doc)) doc = doc[0];
+
+                    if (doc && doc.shots) {
+                        const idx = doc.shots.findIndex((s: any) => s.id === shotId);
+                        if (idx >= 0) {
+                            doc.shots[idx].status = status;
+                            // Save back
+                            updatedPhases[pKey].drafts['shot-scene-book'] = JSON.stringify(doc);
+                            shotFound = true;
+                        }
+                    }
+                }
+            });
+
+            if (!shotFound) return;
+
+            // 2. Add to Shot Log
+            const logPhaseKey = 'ON_SET';
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
+            if (Array.isArray(logDoc)) logDoc = logDoc[0];
+            if (!logDoc || !logDoc.entries) logDoc = { entries: [] };
+
+            logDoc.entries.unshift({
+                id: `log-${Date.now()}`,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                type: 'SHOT',
+                status: status,
+                shotId: shotId,
+                description: `Shot ${shotId} marked as ${status}`
+            });
+
+            updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
+
+            // SAVE
+            const updatedProjectData = {
+                ...latest.data,
+                phases: updatedPhases
+            };
+
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
     if (showLogin) {
         return <EmailEntryGate onJoin={handleJoin} projectName={data.project?.name} />;
     }
@@ -329,7 +400,7 @@ export default function OnSetMobilePage() {
             <main className="flex-1 overflow-y-auto pb-24 touch-pan-y relative">
 
                 {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
-                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} />}
+                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                 {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
                 {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
                 {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
