@@ -324,39 +324,24 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         </div>
                                     </div>
 
-                                    {/* Vitals Grid */}
-                                    <div className="grid grid-cols-3 bg-black text-white border border-black rounded-sm overflow-hidden divide-x divide-zinc-800">
-                                        <div className="p-3 flex flex-col items-center justify-center">
-                                            <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-wider mb-1">Crew Call</span>
+                                    {/* Vitals Grid: General Call & QR */}
+                                    <div className="grid grid-cols-[1fr_auto] bg-black text-white border border-black rounded-sm overflow-hidden p-1">
+                                        <div className="p-3 flex flex-col justify-center">
+                                            <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest mb-1">General Call</span>
                                             <input
                                                 type="text"
                                                 value={data.crewCall || ''}
                                                 onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                className="w-full bg-transparent text-center font-mono text-xl font-bold outline-none text-white placeholder:text-zinc-700"
+                                                className="w-full bg-transparent font-mono text-4xl font-black outline-none text-white placeholder:text-zinc-800 tracking-tighter"
                                                 placeholder="00:00"
                                                 disabled={isLocked}
                                             />
                                         </div>
-                                        <div className="p-3 flex flex-col items-center justify-center">
-                                            <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-wider mb-1">Breakfast</span>
-                                            <input
-                                                type="text"
-                                                value={data.breakfastTime || ''}
-                                                onChange={e => updateField('breakfastTime', formatTime(e.target.value))}
-                                                className="w-full bg-transparent text-center font-mono text-xl font-bold outline-none text-white placeholder:text-zinc-700"
-                                                placeholder="00:00"
-                                                disabled={isLocked}
-                                            />
-                                        </div>
-                                        <div className="p-3 flex flex-col items-center justify-center">
-                                            <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-wider mb-1">Lunch</span>
-                                            <input
-                                                type="text"
-                                                value={data.lunchTime || ''}
-                                                onChange={e => updateField('lunchTime', formatTime(e.target.value))}
-                                                className="w-full bg-transparent text-center font-mono text-xl font-bold outline-none text-white placeholder:text-zinc-700"
-                                                placeholder="00:00"
-                                                disabled={isLocked}
+                                        <div className="p-1 bg-white flex items-center justify-center w-24">
+                                            <img
+                                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
+                                                alt="Set QR"
+                                                className="w-full h-full object-contain"
                                             />
                                         </div>
                                     </div>
