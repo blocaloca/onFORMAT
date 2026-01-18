@@ -138,26 +138,29 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                     <div className="prose prose-invert prose-sm max-w-none text-zinc-400">
                         {viewDoc === 'nda' ? (
                             <>
-                                <p><strong>CONFIDENTIALITY NOTICE</strong></p>
-                                <p>By accessing this production environment (onSET), you acknowledge that you will be exposed to confidential information regarding the project "{projectName || 'Untitled'}".</p>
-                                <p>You agree to:</p>
-                                <ul className="list-disc pl-4 space-y-2">
-                                    <li>Maintain strict confidentiality of all scripts, storyboards, schedules, and cast details.</li>
-                                    <li>Not post any photos, videos, or text descriptions of the set to social media without explicit Producer approval.</li>
-                                    <li>Protect your login credentials and not share access with unauthorized individuals.</li>
-                                </ul>
-                                <p className="mt-4">Failure to comply may result in immediate termination and legal action.</p>
+                                <h3 className="text-white font-bold uppercase mb-4">Confidentiality & Non-Disclosure Agreement</h3>
+
+                                <p><strong className="text-white">Confidentiality:</strong> All project materials, including scripts, call sheets, and schedules, are strictly confidential.</p>
+
+                                <p><strong className="text-white">No Photography/Social Media:</strong> You are prohibited from taking or sharing photos, videos, or "behind-the-scenes" content without explicit written permission.</p>
+
+                                <p><strong className="text-white">Proprietary Info:</strong> All technical data, such as DIT logs and lighting plots, remains the property of the Production.</p>
+
+                                <p><strong className="text-white">Revocable Access:</strong> Access to this dashboard is a privilege for active crew members and can be revoked by the Administrator at any time.</p>
+
+                                <div className="mt-8 pt-8 border-t border-zinc-800">
+                                    <button
+                                        onClick={() => setViewDoc(null)}
+                                        className="w-full bg-emerald-500 text-black font-bold uppercase py-4 rounded tracking-widest hover:bg-emerald-400"
+                                    >
+                                        I have read and agree to protect the privacy of this production.
+                                    </button>
+                                </div>
                             </>
                         ) : (
                             <>
-                                <p><strong>DATA PRIVACY</strong></p>
-                                <p>We respect your privacy and are committed to protecting your personal data.</p>
-                                <p>When you join onSET, we collect:</p>
-                                <ul className="list-disc pl-4 space-y-2">
-                                    <li>Your email address for identification.</li>
-                                    <li>Usage logs (viewing call sheets, downloading files) for production security.</li>
-                                </ul>
-                                <p className="mt-4">This data is shared only with the production team for logistical purposes.</p>
+                                <p><strong>onFORMAT Terms of Service</strong></p>
+                                <p>By joining this project, you agree to the onFORMAT Terms of Service. We use your email to secure your access to project documents and to keep you updated on platform features and industry tools. You can opt-out of marketing communications at any time via your account settings.</p>
                             </>
                         )}
                     </div>
@@ -187,9 +190,14 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                 Enter
             </button>
 
-            <p className="text-[10px] text-zinc-600 max-w-[240px] leading-relaxed">
-                By entering, you verify your identity and agree to the <button onClick={() => setViewDoc('nda')} className="underline hover:text-zinc-400 transition-colors">NDA</button> and <button onClick={() => setViewDoc('privacy')} className="underline hover:text-zinc-400 transition-colors">Privacy Policy</button> regarding confidential materials.
-            </p>
+            <div className="text-[10px] text-zinc-600 max-w-[280px] leading-relaxed text-center space-y-4">
+                <p>
+                    By joining this project, you agree to the <button onClick={() => setViewDoc('privacy')} className="underline hover:text-zinc-400 transition-colors">onFORMAT Terms of Service</button>. We use your email to secure your access to project documents and to keep you updated on platform features and industry tools. You can opt-out of marketing communications at any time via your account settings.
+                </p>
+                <button onClick={() => setViewDoc('nda')} className="text-zinc-500 font-bold underline uppercase tracking-wider block mx-auto hover:text-emerald-500 transition-colors">
+                    Read Production NDA
+                </button>
+            </div>
         </div>
     );
 }
