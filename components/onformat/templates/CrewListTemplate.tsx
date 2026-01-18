@@ -20,6 +20,7 @@ interface CrewMember {
     department: string;
     role: string;
     name: string;
+    onSetGroups?: string[]; // Groups A, B, C
     email: string;
     phone: string;
     dayRate: number;
@@ -59,7 +60,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     email: anyItem.email || '',
                     phone: anyItem.phone || '',
                     dayRate: anyItem.dayRate || 0,
-                    days: anyItem.days || 1
+                    days: anyItem.days || 1,
+                    onSetGroups: anyItem.onSetGroups || []
                 };
             }
             return item;
@@ -84,6 +86,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             department: 'Production',
             role: 'Prod. Assist (PA)',
             name: '',
+            onSetGroups: [],
             email: '',
             phone: '',
             dayRate: 0,
@@ -99,6 +102,15 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         }
         newItems[index] = { ...newItems[index], ...updates };
         onUpdate({ crew: newItems });
+    };
+
+    const toggleGroup = (idx: number, group: string) => {
+        const member = items[idx];
+        const current = member.onSetGroups || [];
+        const updated = current.includes(group)
+            ? current.filter(g => g !== group)
+            : [...current, group];
+        handleUpdateItem(idx, { onSetGroups: updated });
     };
 
     const handleDeleteItem = (index: number) => {
@@ -137,10 +149,11 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         )}
 
                         {/* Table Header */}
-                        <div className="grid grid-cols-[100px_120px_1fr_120px_110px_80px_30px] gap-2 border-b border-black pb-2 items-end">
+                        <div className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_70px_30px] gap-2 border-b border-black pb-2 items-end">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Dept</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Role</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Name</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">onSET</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Email</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Phone</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Day Rate</span>
@@ -151,9 +164,10 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const roles = DEPARTMENTS[item.department] || [];
+                                const groups = item.onSetGroups || [];
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[100px_120px_1fr_120px_110px_80px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_70px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
                                         {/* Dept */}
                                         <div className="relative">
                                             <select
@@ -190,6 +204,35 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             />
                                             <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold px-1 py-1`}>{item.name || "—"}</div>
                                         </div>
+
+                                        {/* onSET Groups Toggles */}
+                                        <div className="flex justify-center gap-1">
+                                            {['A', 'B', 'C'].map(g => {
+                                                const isActive = groups.includes(g);
+                                                const activeClass = g === 'A' ? 'bg-emerald-500 text-black border-emerald-500'
+                                                    : g === 'B' ? 'bg-blue-500 text-white border-blue-500'
+                                                        : 'bg-amber-500 text-black border-amber-500';
+
+                                                if (isPrinting) {
+                                                    return isActive ? (
+                                                        <span key={g} className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-black border ${activeClass} print:flex`}>{g}</span>
+                                                    ) : null;
+                                                }
+
+                                                return (
+                                                    <button
+                                                        key={g}
+                                                        onClick={() => toggleGroup(globalIdx, g)}
+                                                        disabled={isLocked}
+                                                        className={`w-6 h-6 rounded flex items-center justify-center text-[9px] font-black border transition-all ${isActive ? activeClass : 'bg-transparent border-zinc-200 text-zinc-300 hover:border-zinc-400 hover:text-zinc-500'
+                                                            }`}
+                                                    >
+                                                        {g}
+                                                    </button>
+                                                )
+                                            })}
+                                        </div>
+
                                         {/* Email */}
                                         <div>
                                             <input
