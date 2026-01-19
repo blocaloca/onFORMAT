@@ -7,6 +7,8 @@ import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
 import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { supabase } from '@/lib/supabase'
+import { FloatingMobileControl } from '@/components/onformat/FloatingMobileControl'
+import { Smartphone } from 'lucide-react'
 
 type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
 
@@ -209,6 +211,44 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     useEffect(() => {
         stateRef.current = state;
     }, [state]);
+
+    // Mobile Control Integration
+    const [mobileControlDoc, setMobileControlDoc] = useState<any>(null)
+    const [showMobileControl, setShowMobileControl] = useState(false)
+    const [lastEventTime, setLastEventTime] = useState(0)
+    const [isBlinking, setIsBlinking] = useState(false)
+
+    useEffect(() => {
+        if (lastEventTime > 0) {
+            setIsBlinking(true)
+            const timer = setTimeout(() => setIsBlinking(false), 1000)
+            return () => clearTimeout(timer)
+        }
+    }, [lastEventTime])
+
+    useEffect(() => {
+        if (!projectId) return;
+        const fetchMobileControl = async () => {
+            let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
+            if (data) setMobileControlDoc(data);
+        };
+        fetchMobileControl();
+
+        const channel = supabase.channel('mobile-control-updates-workspace')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${projectId}` }, (payload: any) => {
+                if (payload.new.type === 'onset-mobile-control') setMobileControlDoc(payload.new);
+                if (payload.new.type === 'shot-log' || payload.new.type === 'dit-log') setLastEventTime(Date.now());
+            })
+            .subscribe();
+        return () => { supabase.removeChannel(channel); };
+    }, [projectId]);
+
+    const updateMobileControl = async (newData: any) => {
+        if (!mobileControlDoc) return;
+        const updated = { ...mobileControlDoc, content: newData };
+        setMobileControlDoc(updated);
+        await supabase.from('documents').update({ content: newData, updated_at: new Date().toISOString() }).eq('id', mobileControlDoc.id);
+    };
 
     useEffect(() => {
         if (!projectId) return;
@@ -1227,6 +1267,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     activeTool={state.activeTool}
                     activePhase={state.activePhase}
                     onToolSelect={(toolKey, phase) => {
+                        if (toolKey === 'onset-mobile-control') {
+                            setShowMobileControl(true);
+                            return;
+                        }
                         // Direct state update to handle simultaneous phase+tool switch
                         // @ts-ignore
                         setState(s => ({ ...s, activePhase: phase, activeTool: toolKey as ToolKey }));
@@ -1325,6 +1369,34 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
                 />
 
+
+                {/* FLOATING MOBILE CONTROL */}
+                {showMobileControl && mobileControlDoc && (
+                    <FloatingMobileControl
+                        data={mobileControlDoc.content}
+                        onUpdate={updateMobileControl}
+                        onClose={() => setShowMobileControl(false)}
+                        metadata={{ projectId }}
+                    />
+                )}
+
+                {/* MOBILE CONTROL TOGGLE FAB */}
+                {mobileControlDoc && !showMobileControl && (
+                    <button
+                        onClick={() => setShowMobileControl(true)}
+                        className="fixed bottom-6 right-6 w-12 h-12 bg-black text-white rounded-full shadow-xl flex items-center justify-center hover:bg-zinc-800 transition-all z-40 border border-zinc-700"
+                        title="Open Mobile Control"
+                    >
+                        <Smartphone
+                            size={24}
+                            className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
+                                    ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                                    : 'text-zinc-400'
+                                }`}
+                            strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
+                        />
+                    </button>
+                )}
 
             </main>
         </div>
