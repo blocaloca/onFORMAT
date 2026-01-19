@@ -1357,14 +1357,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 />
 
                 {/* FLOATING MOBILE CONTROL */}
+                {/* FLOATING MOBILE CONTROL */}
                 {showMobileControl && (
-                    <div className="fixed top-20 left-20 z-[9999] bg-red-500 text-white p-4 font-bold">
-                        DEBUG: SHOW IS TRUE. Doc: {mobileControlDoc ? 'YES' : 'NO'}
-                    </div>
-                )}
-                {showMobileControl && mobileControlDoc && (
                     <FloatingMobileControl
-                        data={mobileControlDoc.content}
+                        data={mobileControlDoc?.content}
                         onUpdate={updateMobileControl}
                         onClose={() => setShowMobileControl(false)}
                         metadata={{ projectId }}
@@ -1400,27 +1396,25 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             </main>
 
             {/* MOBILE CONTROL TOGGLE FAB (Persistent) */}
-            {mobileControlDoc && (
-                <button
-                    onClick={() => {
-                        console.log('Toggling Mobile Control. Current:', showMobileControl);
-                        setShowMobileControl(prev => !prev);
-                    }}
-                    className={`fixed bottom-6 right-6 w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all z-[9999] border border-zinc-700 ${showMobileControl ? 'bg-zinc-800 text-emerald-500' : 'bg-black text-white hover:bg-zinc-800'}`}
-                    title={showMobileControl ? "Close Mobile Control" : "Open Mobile Control"}
-                >
-                    {showMobileControl ? <X size={24} /> : (
-                        <Smartphone
-                            size={24}
-                            className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                                : 'text-zinc-400'
-                                }`}
-                            strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
-                        />
-                    )}
-                </button>
-            )}
+            <button
+                onClick={() => {
+                    console.log('Toggling Mobile Control. Current:', showMobileControl);
+                    setShowMobileControl(prev => !prev);
+                }}
+                className={`fixed bottom-6 right-6 w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all z-[9999] border border-zinc-700 ${showMobileControl ? 'bg-zinc-800 text-emerald-500' : 'bg-black text-white hover:bg-zinc-800'}`}
+                title={showMobileControl ? "Close Mobile Control" : "Open Mobile Control"}
+            >
+                {showMobileControl ? <X size={24} /> : (
+                    <Smartphone
+                        size={24}
+                        className={`transition-all duration-300 ${mobileControlDoc?.content?.isLive
+                            ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                            : 'text-zinc-400'
+                            }`}
+                        strokeWidth={mobileControlDoc?.content?.isLive ? 0 : 2}
+                    />
+                )}
+            </button>
         </div>
     )
 }
