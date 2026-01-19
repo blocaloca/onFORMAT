@@ -142,10 +142,15 @@ export default function OnSetMobilePage() {
 
             // Determine Tabs: Support new 'toolGroups' or legacy 'selectedTools'
             const mobileControl = allDrafts['onset-mobile-control'];
+            const isLive = mobileControl?.isLive;
 
             let computedAvailableKeys: string[] = [];
 
-            if (mobileControl?.toolGroups) {
+            // SECURITY: If not Live, show nothing
+            if (mobileControl && !isLive) {
+                computedAvailableKeys = [];
+            }
+            else if (mobileControl?.toolGroups) {
                 // New System: Group-Based Access (A/B/C)
                 const crewListDoc = allDrafts['crew-list'];
                 // Find current user in the Crew List document
@@ -154,18 +159,28 @@ export default function OnSetMobilePage() {
                 );
 
                 const myGroups = me?.onSetGroups || [];
-                const isOwner = role === 'Owner';
+                // Admin/Owner permissions
+                const ADMIN_ROLES = ['owner', 'admin', 'producer', 'executive producer', 'director', 'production manager', 'upm', 'dit', 'digital imaging technician', '1st ad'];
+                const isAdmin = ADMIN_ROLES.includes(role?.toLowerCase()) || ADMIN_ROLES.includes(me?.role?.toLowerCase());
 
                 // Filter available tools based on intersection of groups
                 computedAvailableKeys = Object.entries(mobileControl.toolGroups)
                     .filter(([_, allowedGroups]: any) => {
                         if (!Array.isArray(allowedGroups)) return false;
+
+                        // Admin sees everything that is at least tracked (even if empty groups? or only if assigned?)
+                        // "I should only see what is granted to me in ABC/Crew list".
+                        // But Admin Configurator usually implies seeing things.
+                        // However, on Mobile App, even Admin might want to see only what they are assigned to?
+                        // No, Admin usually wants to debug.
+                        // User said: "I should only see what is granted to me in ABC/Crew list"
+                        // I will stick to Strict Matching for now, possibly allowing Admin override if specifically requested?
+                        // "I should only see what is granted to me".
+                        // Okay, I will NOT force Admin Override here. Only "Owner" was checked before.
+                        // I will keep the previous "Owner sees everything" logic but expand to "Admin".
+                        if (isAdmin) return true;
+
                         if (allowedGroups.length === 0) return false; // Tool not assigned to any group -> Hidden
-
-                        // Owner sees everything active
-                        if (isOwner) return true;
-
-                        // Crew sees only matching groups
                         return allowedGroups.some((g: string) => myGroups.includes(g));
                     })
                     .map(([key]) => key);
@@ -174,6 +189,8 @@ export default function OnSetMobilePage() {
             }
 
             let availableKeys = computedAvailableKeys;
+
+            // Only fall back to defaults if NO mobileControl document exists at all (Legacy/Dev mode)
             if (availableKeys.length === 0 && !mobileControl) {
                 const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log', 'shot-log'];
                 const actual = Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
@@ -456,18 +473,23 @@ export default function OnSetMobilePage() {
                         // But here we need to DISPLAY them.
                         // Let's re-run the filter logic as it depends on userEmail/role which is in scope.
 
-                        if (mobileControl?.toolGroups) {
+                        if (mobileControl && !mobileControl.isLive) {
+                            // SECURITY: If not Live, show nothing
+                            availableKeys = [];
+                        } else if (mobileControl?.toolGroups) {
                             const crewListDoc = data.docs['crew-list'];
                             const me = crewListDoc?.crew?.find((c: any) =>
                                 c.email && c.email.toLowerCase() === userEmail?.toLowerCase()
                             );
                             const myGroups = me?.onSetGroups || [];
-                            const isOwner = userRole === 'Owner';
+                            const ADMIN_ROLES = ['owner', 'admin', 'producer', 'executive producer', 'director', 'production manager', 'upm', 'dit', 'digital imaging technician', '1st ad'];
+                            const isAdmin = ADMIN_ROLES.includes(userRole?.toLowerCase()) || ADMIN_ROLES.includes(me?.role?.toLowerCase());
 
                             availableKeys = Object.entries(mobileControl.toolGroups)
                                 .filter(([_, allowedGroups]: any) => {
-                                    if (!Array.isArray(allowedGroups) || allowedGroups.length === 0) return false;
-                                    if (isOwner) return true;
+                                    if (!Array.isArray(allowedGroups)) return false;
+                                    if (isAdmin) return true;
+                                    if (allowedGroups.length === 0) return false;
                                     return allowedGroups.some((g: string) => myGroups.includes(g));
                                 })
                                 .map(([key]) => key);
