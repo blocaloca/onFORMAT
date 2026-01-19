@@ -282,7 +282,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             if (data) {
                 setMobileControlDoc(data);
             } else if (error) {
-                console.error("Failed to create mobile control doc:", error);
+                console.error("Failed to create mobile control doc:", JSON.stringify(error, null, 2));
             }
         } else {
             // Update existing
@@ -1426,24 +1426,32 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             </main>
 
             {/* MOBILE CONTROL TOGGLE FAB (Persistent) */}
+            {/* MOBILE CONTROL TOGGLE BUTTON (Persistent) */}
             <button
                 onClick={() => {
-                    console.log('Toggling Mobile Control. Current:', showMobileControl);
+                    console.log('Toggling Mobile Control');
                     setShowMobileControl(prev => !prev);
                 }}
-                className={`fixed bottom-6 right-6 w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all z-[9999] border border-zinc-700 ${showMobileControl ? 'bg-zinc-800 text-emerald-500' : 'bg-black text-white hover:bg-zinc-800'}`}
-                title={showMobileControl ? "Close Mobile Control" : "Open Mobile Control"}
+                className={`fixed bottom-6 right-6 flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl z-[9999] transition-all border group
+                    ${latestNotification
+                        ? 'bg-zinc-900 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                        : (showMobileControl ? 'bg-zinc-900 border-emerald-500/50' : 'bg-black border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900')}
+                `}
             >
-                {showMobileControl ? <X size={24} /> : (
-                    <Smartphone
-                        size={24}
-                        className={`transition-all duration-300 ${mobileControlDoc?.content?.isLive
-                            ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                            : 'text-zinc-400'
-                            }`}
-                        strokeWidth={mobileControlDoc?.content?.isLive ? 0 : 2}
-                    />
-                )}
+                <div className={`p-2 rounded-lg transition-colors ${latestNotification
+                    ? 'bg-red-500/20 text-red-500 animate-pulse'
+                    : (showMobileControl
+                        ? 'bg-emerald-500/20 text-emerald-500'
+                        : 'bg-zinc-800 text-zinc-400 group-hover:text-white group-hover:bg-zinc-700')
+                    }`}>
+                    {showMobileControl ? <X size={20} /> : <Smartphone size={20} />}
+                </div>
+                <div className="text-left">
+                    <div className="text-[12px] font-black uppercase tracking-wide text-white leading-none mb-1">ONSET MOBILE</div>
+                    <div className={`text-[10px] font-medium tracking-wider ${showMobileControl ? 'text-emerald-500' : 'text-zinc-500'}`}>
+                        {latestNotification ? 'New Alert!' : 'Control Panel'}
+                    </div>
+                </div>
             </button>
         </div>
     )

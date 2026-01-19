@@ -23,10 +23,16 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            // Default High Right Position (Adapted for 320px width)
-            // Ensure visibility by clamping
-            const safeX = Math.min(window.innerWidth - 340, Math.max(20, window.innerWidth - 400));
-            const safeY = Math.min(window.innerHeight - 500, Math.max(80, window.innerHeight - 600));
+            // Center Position
+            const width = 1000;
+            const height = 800; // Approx max height
+            const centerX = (window.innerWidth - width) / 2;
+            const centerY = (window.innerHeight - height) / 2;
+
+            // Clamp to ensure visibility
+            const safeX = Math.max(20, Math.min(centerX, window.innerWidth - width - 20));
+            const safeY = Math.max(80, Math.min(centerY, window.innerHeight - height - 80));
+
             setPosition({ x: safeX, y: safeY });
         }
     }, []);
