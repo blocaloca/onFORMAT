@@ -95,8 +95,8 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
 
     return (
         <div
-            className="fixed top-24 right-24 z-[9999] w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
-        // style={{ left: `${position.x}px`, top: `${position.y}px` }} // Disabled for debugging visibility
+            className="fixed z-[9999] w-96 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
+            style={{ left: `${position.x}px`, top: `${position.y}px` }}
         >
             {/* ... (rest of JSX) ... */}
             <div
@@ -108,8 +108,8 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                     <span className="text-[10px] font-black uppercase tracking-widest text-white">Mobile Control</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
-                        <Minus size={14} />
+                    <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors" title="Close Panel">
+                        <X size={16} />
                     </button>
                 </div>
             </div>
