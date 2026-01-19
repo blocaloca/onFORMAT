@@ -238,7 +238,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     type: 'onset-mobile-control',
                     title: 'Mobile Control',
                     stage: 'EXECUTE',
-                    status: 'LIVE',
+                    status: 'IN_PROGRESS',
                     content: { isLive: false, toolGroups: {} }
                 };
                 const { data: created } = await supabase.from('documents').insert(newDoc).select().single();
@@ -274,7 +274,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 type: 'onset-mobile-control',
                 title: 'Mobile Control',
                 stage: 'EXECUTE',
-                status: 'LIVE',
+                status: 'IN_PROGRESS',
                 content: newData,
                 updated_at: new Date().toISOString()
             };
