@@ -1414,7 +1414,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         onUpdate={updateMobileControl}
                         onClose={() => setShowMobileControl(false)}
                         metadata={{ projectId }}
-                        crewList={safeJsonParse(state.phases.PRE_PRODUCTION?.drafts?.['crew-list'])}
+                        crewList={safeJsonParse(state.phases.PRE_PRODUCTION?.drafts?.['crew-list'] || null)}
                         userEmail={userEmail}
                         userRole={userRole}
                         latestNotification={latestNotification}
