@@ -238,9 +238,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     type: 'onset-mobile-control',
                     title: 'Mobile Control',
                     stage: 'EXECUTE',
-                    status: 'IN_PROGRESS',
+                    status: 'DRAFT', // Changed from LIVE/IN_PROGRESS to DRAFT
                     content: { isLive: false, toolGroups: {} }
                 };
+                console.log("Attempting to create Mobile Control Doc with DRAFT status...");
                 const { data: created } = await supabase.from('documents').insert(newDoc).select().single();
                 if (created) data = created;
             }
@@ -274,7 +275,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 type: 'onset-mobile-control',
                 title: 'Mobile Control',
                 stage: 'EXECUTE',
-                status: 'IN_PROGRESS',
+                status: 'DRAFT', // Changed from LIVE/IN_PROGRESS to DRAFT
                 content: newData,
                 updated_at: new Date().toISOString()
             };
