@@ -122,8 +122,8 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                         <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest">
                             <span className="text-zinc-500">SYNC CONTROL</span>
                             <span className="text-zinc-600">•</span>
-                            <span className={safeData.isLive ? "text-emerald-500" : "text-emerald-500"}>
-                                {safeData.isLive ? 'LIVE' : 'OFFLINE'}
+                            <span className={safeData.isLive ? "text-emerald-500" : "text-rose-500"}>
+                                {safeData.isLive ? 'ONLINE' : 'OFFLINE'}
                             </span>
                         </div>
                     </div>
@@ -132,11 +132,11 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                         onClick={toggleLive}
                         className={`flex items-center gap-2 px-6 py-2 rounded border text-[11px] font-bold uppercase tracking-widest transition-all
                             ${safeData.isLive
-                                ? 'bg-emerald-500 border-emerald-500 text-black hover:bg-emerald-400'
-                                : 'bg-transparent border-zinc-600 text-white hover:border-zinc-400'
+                                ? 'bg-emerald-500 border-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.4)] hover:bg-emerald-400'
+                                : 'bg-rose-600 border-rose-600 text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] hover:bg-rose-500'
                             }`}
                     >
-                        <div className={`w-2 h-2 rounded-full ${safeData.isLive ? 'bg-black' : 'bg-zinc-500'}`}></div>
+                        <div className={`w-2 h-2 rounded-full ${safeData.isLive ? 'bg-black animate-pulse' : 'bg-white'}`}></div>
                         {safeData.isLive ? 'LIVE' : 'GO LIVE'}
                     </button>
                 </div>
@@ -166,6 +166,11 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                                                     <div className="flex items-center gap-2">
                                                         {['A', 'B', 'C'].map(group => {
                                                             const isActive = groups.includes(group);
+                                                            // A=Emerald, B=Blue, C=Amber
+                                                            const activeClass = group === 'A' ? 'bg-emerald-500 border-emerald-500 text-black' :
+                                                                group === 'B' ? 'bg-blue-500 border-blue-500 text-black' :
+                                                                    'bg-amber-500 border-amber-500 text-black';
+
                                                             return (
                                                                 <button
                                                                     key={group}
@@ -173,8 +178,8 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                                                                     className={`
                                                                         w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border transition-all
                                                                         ${isActive
-                                                                            ? 'bg-zinc-700 border-zinc-600 text-white'
-                                                                            : 'bg-[#252528] border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'}
+                                                                            ? activeClass
+                                                                            : 'bg-[#252528] border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'}
                                                                     `}
                                                                 >
                                                                     {group}
