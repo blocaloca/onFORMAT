@@ -252,7 +252,14 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         const channel = supabase.channel('mobile-control-updates-workspace')
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${projectId}` }, (payload: any) => {
                 if (payload.new.type === 'onset-mobile-control') setMobileControlDoc(payload.new);
-                if (payload.new.type === 'shot-log' || payload.new.type === 'dit-log') setLastEventTime(Date.now());
+                if (payload.new.type === 'shot-log') {
+                    setLastEventTime(Date.now());
+                    setLatestNotification({ msg: 'SHOT LOG UPDATED', time: Date.now() });
+                }
+                if (payload.new.type === 'dit-log') {
+                    setLastEventTime(Date.now());
+                    setLatestNotification({ msg: 'DIT UPDATED', time: Date.now() });
+                }
             })
             .subscribe();
         return () => { supabase.removeChannel(channel); };
@@ -1328,7 +1335,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     isAiDocked={isAiDocked}
                     mobileStatus={{
                         isLive: mobileControlDoc?.content?.isLive || false,
-                        hasAlert: !!latestNotification
+                        hasAlert: !!latestNotification,
+                        alertMsg: latestNotification?.msg
                     }}
                 />
 
@@ -1406,6 +1414,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         onUpdate={updateMobileControl}
                         onClose={() => setShowMobileControl(false)}
                         metadata={{ projectId }}
+                        crewList={safeJsonParse(state.phases.PRE_PRODUCTION?.drafts?.['crew-list'])}
+                        userEmail={userEmail}
+                        userRole={userRole}
+                        latestNotification={latestNotification}
                     />
                 )}
 

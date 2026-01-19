@@ -9,12 +9,29 @@ interface FloatingMobileControlProps {
     onUpdate: (newData: any) => void;
     onClose: () => void;
     metadata?: any;
+    crewList?: any;
+    userEmail?: string;
+    userRole?: string;
+    latestNotification?: { msg: string; time: number } | null;
 }
 
-export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: FloatingMobileControlProps) => {
+export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata, crewList, userEmail, userRole, latestNotification }: FloatingMobileControlProps) => {
     const defaultData = { isLive: false, toolGroups: {} };
     const safeData = data || defaultData;
     const toolGroups = safeData.toolGroups || {};
+
+    // Permissions Logic
+    const getUserGroups = () => {
+        if (!userEmail || !crewList?.crew) return [];
+        const member = crewList.crew.find((m: any) => m.email?.toLowerCase() === userEmail.toLowerCase());
+        return member?.onSetGroups || [];
+    };
+
+    const userGroups = getUserGroups();
+    // Admin override: If role is 'admin' or 'owner', or no email provided (dev mode), or email not in crew list? 
+    // Wait, if not in crew list, maybe they are admin? Or unauthorized?
+    // Let's assume userRole 'admin'/'owner' sees all.
+    const isAdmin = userRole === 'admin' || userRole === 'owner' || !userEmail;
 
     // Exact state logic from ChatInterface
     const [position, setPosition] = useState({ x: 400, y: 100 });
@@ -96,10 +113,6 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
         onUpdate({ ...safeData, isLive: !safeData.isLive });
     };
 
-
-
-    console.log('Rendering FloatingMobileControl at:', position);
-
     return (
         <div
             className="fixed z-[9999] w-[1000px] bg-[#1E1E20] border border-zinc-800 rounded-lg shadow-2xl flex flex-col font-sans overflow-hidden text-white"
@@ -118,6 +131,15 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                     <ChevronDown size={14} />
                 </button>
             </div>
+
+            {/* ALERT BANNER */}
+            {latestNotification && (
+                <div className="bg-emerald-900/20 border-b border-emerald-900/50 px-8 py-2 flex items-center justify-center animate-in slide-in-from-top-2 fade-in duration-500">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 animate-pulse">
+                        {latestNotification.msg}
+                    </span>
+                </div>
+            )}
 
             <div className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
 
@@ -152,7 +174,20 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                     {/* LEFT COLUMN: TOOLS LIST */}
                     <div className="lg:col-span-2 space-y-8">
                         {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]: [string, any[]]) => {
-                            const visibleTools = tools.filter((t: any) => t.key !== 'onset-mobile-control');
+                            // Filter logic
+                            const visibleTools = tools.filter((t: any) => {
+                                if (t.key === 'onset-mobile-control') return false;
+                                if (isAdmin) return true; // Admins see all
+                                const assignedGroups = toolGroups[t.key] || [];
+                                // If NO groups assigned, is it visible? Assuming Yes for now? Or No?
+                                // "only see the docs i am given permission to see".
+                                // If list is empty, probably NO ONE sees it? Or EVERYONE?
+                                // Let's assume if empty => Everyone sees it (Public). 
+                                // Because default is empty.
+                                if (assignedGroups.length === 0) return true;
+                                return assignedGroups.some((g: string) => userGroups.includes(g));
+                            });
+
                             if (visibleTools.length === 0) return null;
 
                             return (
@@ -169,30 +204,45 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                                                     className="flex items-center justify-between group"
                                                 >
                                                     <span className="text-sm font-bold uppercase text-white tracking-wide">{tool.label}</span>
-                                                    <div className="flex items-center gap-2">
-                                                        {['A', 'B', 'C'].map(group => {
-                                                            const isActive = groups.includes(group);
-                                                            // A=Emerald, B=Blue, C=Amber
-                                                            const activeClass = group === 'A' ? 'bg-emerald-500 border-emerald-500 text-black' :
-                                                                group === 'B' ? 'bg-blue-500 border-blue-500 text-black' :
-                                                                    'bg-amber-500 border-amber-500 text-black';
 
-                                                            return (
-                                                                <button
-                                                                    key={group}
-                                                                    onClick={() => toggleGroup(tool.key, group)}
-                                                                    className={`
-                                                                        w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border transition-all
-                                                                        ${isActive
-                                                                            ? activeClass
-                                                                            : 'bg-[#252528] border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'}
-                                                                    `}
-                                                                >
-                                                                    {group}
-                                                                </button>
-                                                            )
-                                                        })}
-                                                    </div>
+                                                    {/* Controls only for Admin */}
+                                                    {isAdmin && (
+                                                        <div className="flex items-center gap-2">
+                                                            {['A', 'B', 'C'].map(group => {
+                                                                const isActive = groups.includes(group);
+                                                                // A=Emerald, B=Blue, C=Amber
+                                                                const activeClass = group === 'A' ? 'bg-emerald-500 border-emerald-500 text-black' :
+                                                                    group === 'B' ? 'bg-blue-500 border-blue-500 text-black' :
+                                                                        'bg-amber-500 border-amber-500 text-black';
+
+                                                                return (
+                                                                    <button
+                                                                        key={group}
+                                                                        onClick={() => toggleGroup(tool.key, group)}
+                                                                        className={`
+                                                                            w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border transition-all
+                                                                            ${isActive
+                                                                                ? activeClass
+                                                                                : 'bg-[#252528] border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'}
+                                                                        `}
+                                                                    >
+                                                                        {group}
+                                                                    </button>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    )}
+
+                                                    {/* If not Admin, maybe show badges? */}
+                                                    {!isAdmin && groups.length > 0 && (
+                                                        <div className="flex gap-1">
+                                                            {groups.filter((g: string) => userGroups.includes(g)).map((g: string) => (
+                                                                <span key={g} className="text-[9px] font-bold bg-zinc-800 text-zinc-400 px-2 py-1 rounded">
+                                                                    Group {g}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             )
                                         })}
