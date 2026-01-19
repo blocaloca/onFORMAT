@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 import { Smartphone, Lock, X, Minus, Globe, Wifi } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { TOOLS_BY_PHASE } from './ExperimentalNav';
 
 interface FloatingMobileControlProps {
@@ -108,7 +109,12 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                     <span className="text-[10px] font-black uppercase tracking-widest text-white">Mobile Control</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors" title="Close Panel">
+                    <button
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={onClose}
+                        className="text-zinc-500 hover:text-white transition-colors"
+                        title="Close Panel"
+                    >
                         <X size={16} />
                     </button>
                 </div>
@@ -135,20 +141,25 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
 
                 {/* QR CODE LINK */}
                 <div className="mb-6 pb-6 border-b border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
-                        <p className="text-[9px] font-bold uppercase text-zinc-500">Project Link</p>
-                        <button
-                            onClick={() => {
-                                const url = `https://onformat.io/join/${metadata?.projectId}`;
-                                navigator.clipboard.writeText(url);
-                            }}
-                            className="text-[9px] text-emerald-500 hover:text-emerald-400 font-bold uppercase"
-                        >
-                            Copy URL
-                        </button>
+                    <div className="flex items-center justify-between mb-4">
+                        <p className="text-[9px] font-bold uppercase text-zinc-500">Mobile Access</p>
                     </div>
-                    <div className="bg-zinc-900 border border-zinc-800 p-2 rounded text-[9px] font-mono text-zinc-400 truncate select-all">
-                        onformat.io/join/{metadata?.projectId?.substring(0, 8)}...
+                    <div className="bg-white p-4 rounded-lg flex flex-col items-center justify-center gap-4">
+                        <QRCodeSVG
+                            value={`https://onformat.io/join/${metadata?.projectId || ''}`}
+                            size={128}
+                            level="M"
+                        />
+                        <div className="text-center">
+                            <p className="text-[10px] text-zinc-900 font-bold mb-1">Scan to Join Session</p>
+                            <p className="text-[9px] text-zinc-500 font-mono select-all cursor-pointer hover:text-emerald-600 truncate max-w-[200px]"
+                                onClick={() => {
+                                    const url = `https://onformat.io/join/${metadata?.projectId}`;
+                                    navigator.clipboard.writeText(url);
+                                }}>
+                                {metadata?.projectId ? `...${metadata.projectId.slice(-8)}` : 'Loading...'}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
