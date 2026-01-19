@@ -264,8 +264,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             console.log("Creating new Mobile Control document...");
             const newDoc = {
                 project_id: projectId,
-                phase: 'ON_SET',
-                tool_key: 'onset-mobile-control',
+                type: 'onset-mobile-control',
+                title: 'Mobile Control',
+                stage: 'EXECUTE',
+                status: 'LIVE',
                 content: newData,
                 updated_at: new Date().toISOString()
             };
