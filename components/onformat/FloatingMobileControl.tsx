@@ -205,44 +205,30 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata, crewL
                                                 >
                                                     <span className="text-sm font-bold uppercase text-white tracking-wide">{tool.label}</span>
 
-                                                    {/* Controls only for Admin */}
-                                                    {isAdmin && (
-                                                        <div className="flex items-center gap-2">
-                                                            {['A', 'B', 'C'].map(group => {
-                                                                const isActive = groups.includes(group);
-                                                                // A=Emerald, B=Blue, C=Amber
-                                                                const activeClass = group === 'A' ? 'bg-emerald-500 border-emerald-500 text-black' :
-                                                                    group === 'B' ? 'bg-blue-500 border-blue-500 text-black' :
-                                                                        'bg-amber-500 border-amber-500 text-black';
+                                                    <div className="flex items-center gap-2">
+                                                        {['A', 'B', 'C'].map(group => {
+                                                            const isActive = groups.includes(group);
+                                                            // A=Emerald, B=Blue, C=Amber
+                                                            const activeClass = group === 'A' ? 'bg-emerald-500 border-emerald-500 text-black' :
+                                                                group === 'B' ? 'bg-blue-500 border-blue-500 text-black' :
+                                                                    'bg-amber-500 border-amber-500 text-black';
 
-                                                                return (
-                                                                    <button
-                                                                        key={group}
-                                                                        onClick={() => toggleGroup(tool.key, group)}
-                                                                        className={`
-                                                                            w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border transition-all
-                                                                            ${isActive
-                                                                                ? activeClass
-                                                                                : 'bg-[#252528] border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'}
-                                                                        `}
-                                                                    >
-                                                                        {group}
-                                                                    </button>
-                                                                )
-                                                            })}
-                                                        </div>
-                                                    )}
-
-                                                    {/* If not Admin, maybe show badges? */}
-                                                    {!isAdmin && groups.length > 0 && (
-                                                        <div className="flex gap-1">
-                                                            {groups.filter((g: string) => userGroups.includes(g)).map((g: string) => (
-                                                                <span key={g} className="text-[9px] font-bold bg-zinc-800 text-zinc-400 px-2 py-1 rounded">
-                                                                    Group {g}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    )}
+                                                            return (
+                                                                <button
+                                                                    key={group}
+                                                                    onClick={() => toggleGroup(tool.key, group)}
+                                                                    className={`
+                                                                        w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border transition-all
+                                                                        ${isActive
+                                                                            ? activeClass
+                                                                            : 'bg-[#252528] border-zinc-700 text-zinc-600 hover:border-zinc-500 hover:text-zinc-400'}
+                                                                    `}
+                                                                >
+                                                                    {group}
+                                                                </button>
+                                                            )
+                                                        })}
+                                                    </div>
                                                 </div>
                                             )
                                         })}
