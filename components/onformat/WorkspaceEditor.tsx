@@ -259,10 +259,40 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [projectId]);
 
     const updateMobileControl = async (newData: any) => {
-        if (!mobileControlDoc) return;
-        const updated = { ...mobileControlDoc, content: newData };
-        setMobileControlDoc(updated);
-        await supabase.from('documents').update({ content: newData, updated_at: new Date().toISOString() }).eq('id', mobileControlDoc.id);
+        if (!mobileControlDoc) {
+            // Document doesn't exist yet, create it
+            console.log("Creating new Mobile Control document...");
+            const newDoc = {
+                project_id: projectId,
+                phase: 'ON_SET',
+                tool_key: 'onset-mobile-control',
+                content: newData,
+                updated_at: new Date().toISOString()
+            };
+
+            // Optimistic update
+            setMobileControlDoc({ ...newDoc, id: 'temp-creation' } as any);
+
+            const { data, error } = await supabase
+                .from('documents')
+                .insert(newDoc)
+                .select()
+                .single();
+
+            if (data) {
+                setMobileControlDoc(data);
+            } else if (error) {
+                console.error("Failed to create mobile control doc:", error);
+            }
+        } else {
+            // Update existing
+            const updated = { ...mobileControlDoc, content: newData };
+            setMobileControlDoc(updated);
+            await supabase
+                .from('documents')
+                .update({ content: newData, updated_at: new Date().toISOString() })
+                .eq('id', mobileControlDoc.id);
+        }
     };
 
     useEffect(() => {
