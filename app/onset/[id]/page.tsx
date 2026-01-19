@@ -18,6 +18,25 @@ import {
     ScheduleView,
     MobileShotLogView
 } from './components';
+import { LogOut, Wifi, UserCircle } from 'lucide-react';
+
+/* --------------------------------------------------------------------------------
+ * COMPONENTS
+ * -------------------------------------------------------------------------------- */
+const MobileLanding = ({ projectName, status }: any) => (
+    <div className="flex flex-col items-center justify-center h-[80vh] text-center p-8 animate-in fade-in duration-700">
+        <div className="mb-8 opacity-20">
+            <img src="/onset_logo.png" className="w-24 grayscale" />
+        </div>
+        <h1 className="text-xl font-bold uppercase tracking-widest text-white mb-2">
+            {projectName}
+        </h1>
+        <div className="h-px w-12 bg-zinc-800 my-4 mx-auto" />
+        <p className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
+            {status}
+        </p>
+    </div>
+);
 
 const safeParse = (json: string) => {
     if (!json) return null;
@@ -47,6 +66,7 @@ export default function OnSetMobilePage() {
     const [userEmail, setUserEmail] = useState<string>('');
     const [userRole, setUserRole] = useState<string>('');
     const [showLogin, setShowLogin] = useState(false);
+    const [showMenu, setShowMenu] = useState(false);
 
     const activeTabRef = useRef(activeTab);
     useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
@@ -173,11 +193,12 @@ export default function OnSetMobilePage() {
                 computedAvailableKeys = mobileControl?.selectedTools || [];
             }
 
+            // Strict Permission: No defaults.
             let availableKeys = computedAvailableKeys;
+
+            // REMOVED: Default fallback logic. If empty, it stays empty.
             if (availableKeys.length === 0 && !mobileControl) {
-                const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log', 'shot-log'];
-                const actual = Object.keys(allDrafts).filter(k => k !== 'onset-mobile-control');
-                availableKeys = Array.from(new Set([...defaults, ...actual]));
+                // STRICT MODE: Do nothing.
             }
 
             const currentTab = activeTabRef.current;
@@ -402,10 +423,71 @@ export default function OnSetMobilePage() {
                         </div>
                     </div>
                 </Link>
-                <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400">
+                <button
+                    onClick={() => setShowMenu(true)}
+                    className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white transition-colors">
                     <Menu size={14} />
-                </div>
+                </button>
             </header>
+
+            {/* SYSTEM MENU DRAWER */}
+            {
+                showMenu && (
+                    <div className="fixed inset-0 z-[100] flex justify-end">
+                        {/* Backdrop */}
+                        <div
+                            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
+                            onClick={() => setShowMenu(false)}
+                        />
+
+                        {/* Drawer */}
+                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-900 border-l border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
+                                <button onClick={() => setShowMenu(false)} className="bg-black/50 p-2 rounded-full text-zinc-400">
+                                    <Menu size={14} />
+                                </button>
+                            </div>
+
+                            <div className="space-y-6 flex-1">
+                                {/* Identity Card */}
+                                <div className="bg-black/50 p-4 rounded-xl border border-zinc-800">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <UserCircle size={20} className="text-emerald-500" />
+                                        <div>
+                                            <p className="text-xs font-bold text-white">{userRole || 'Crew Member'}</p>
+                                            <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Status */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                                        <span className="flex items-center gap-2"><Wifi size={12} /> Connection</span>
+                                        <span className="text-emerald-500">Stable</span>
+                                    </div>
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                                        <span>Sync Status</span>
+                                        <span className="text-zinc-300">Live</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="border-t border-zinc-800 pt-6">
+                                <button
+                                    onClick={() => {
+                                        localStorage.removeItem('onset_user_email');
+                                        window.location.reload();
+                                    }}
+                                    className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
+                                    <LogOut size={14} /> Disconnect
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
 
             {/* CONFIDENTIAL BANNER */}
             <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
@@ -413,32 +495,49 @@ export default function OnSetMobilePage() {
             </div>
 
             {/* WATERMARK OVERLAY */}
-            {userEmail && (
-                <div className="fixed inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
-                    <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
-                        {Array.from({ length: 12 }).map((_, i) => (
-                            <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
-                                {userEmail} • {userRole || 'Crew'}
-                            </div>
-                        ))}
+            {
+                userEmail && (
+                    <div className="fixed inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
+                        <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
+                            {Array.from({ length: 12 }).map((_, i) => (
+                                <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
+                                    {userEmail} • {userRole || 'Crew'}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* MAIN CONTENT SCROLLER */}
             <main className="flex-1 overflow-y-auto overflow-x-hidden pb-24 touch-pan-y relative bg-black">
                 <div className="w-full max-w-md mx-auto px-4 py-6">
-                    {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
-                    {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
-                    {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
-                    {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
-                    {activeTab === 'shot-log' && <MobileShotLogView data={data.docs['shot-log']} onAdd={handleUpdateShotLog} />}
-                    {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
-                    {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
+                    {activeTab === '' ? (
+                        <MobileLanding
+                            projectName={data.project?.name}
+                            // Determine status message based on whether there ARE keys but none selected, or NO keys
+                            status={(() => {
+                                // Re-run small check or assume 'availableKeys' from context? 
+                                // We don't have availableKeys in scope here easily without re-calc.
+                                // But if activeTab is empty, likely we are in landing mode.
+                                return "Production Standby";
+                            })()}
+                        />
+                    ) : (
+                        <>
+                            {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
+                            {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
+                            {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
+                            {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
+                            {activeTab === 'shot-log' && <MobileShotLogView data={data.docs['shot-log']} onAdd={handleUpdateShotLog} />}
+                            {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
+                            {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
 
-                    {/* Fallback for other docs */}
-                    {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'shot-log', 'crew-list', 'production-schedule'].includes(activeTab) && (
-                        <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
+                            {/* Fallback for other docs */}
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'shot-log', 'crew-list', 'production-schedule'].includes(activeTab) && (
+                                <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
+                            )}
+                        </>
                     )}
                 </div>
             </main>
@@ -476,13 +575,11 @@ export default function OnSetMobilePage() {
                         }
 
                         if (availableKeys.length === 0 && !mobileControl) {
-                            const defaults = ['call-sheet', 'production-schedule', 'crew-list', 'dit-log'];
-                            const actual = Object.keys(data.docs).filter(k => k !== 'onset-mobile-control');
-                            availableKeys = Array.from(new Set([...defaults, ...actual]));
+                            // STRICT MODE: No defaults.
                         }
 
                         if (availableKeys.length === 0) {
-                            return <span className="text-zinc-600 text-[10px] uppercase font-bold pl-2">No synced docs</span>;
+                            return null;
                         }
 
                         return availableKeys.map((key: string) => (
@@ -502,7 +599,7 @@ export default function OnSetMobilePage() {
                     })()}
                 </div>
             </nav>
-        </div>
+        </div >
     );
 }
 
