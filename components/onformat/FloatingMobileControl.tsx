@@ -77,10 +77,12 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
         onUpdate({ ...safeData, isLive: !safeData.isLive });
     };
 
+    console.log('Rendering FloatingMobileControl at:', position);
+
     return (
         <div
-            className="fixed z-[9999] w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden animate-in zoom-in-95 duration-200"
-            style={{ left: position.x, top: position.y }}
+            className="fixed z-[9999] w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
+            style={{ left: `${position.x}px`, top: `${position.y}px` }}
         >
             {/* HEADER */}
             <div
