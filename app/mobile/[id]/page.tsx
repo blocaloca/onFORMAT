@@ -350,6 +350,12 @@ export default function MobilePage() {
         }
 
         // 3. Filter Tools
+        // SECURITY: If not Live, show nothing
+        if (!isLive) {
+            setAllowedTools([]);
+            return;
+        }
+
         const allToolsKeys = Object.values(TOOLS_BY_PHASE).flat().map((t: any) => t.key);
         const allowed: string[] = [];
 
