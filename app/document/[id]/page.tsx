@@ -120,7 +120,24 @@ export default function DocumentEditorPage() {
   }, [document?.project_id])
 
   async function loadMobileControl(projectId: string) {
-    const { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
+    let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
+
+    if (!data) {
+      // Auto-create if missing
+      console.log('Mobile Control doc missing, creating...');
+      const newDoc = {
+        project_id: projectId,
+        type: 'onset-mobile-control',
+        title: 'Mobile Control',
+        stage: 'EXECUTE',
+        status: 'LIVE',
+        content: { isLive: false, toolGroups: {} }
+      };
+      const { data: created, error } = await supabase.from('documents').insert(newDoc).select().single();
+      if (created) data = created;
+      else console.error('Failed to create Mobile Control doc:', error);
+    }
+
     if (data) setMobileControlDoc(data);
   }
 
@@ -1034,8 +1051,8 @@ export default function DocumentEditorPage() {
             <Smartphone
               size={24}
               className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                  ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                  : 'text-zinc-400'
+                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                : 'text-zinc-400'
                 }`}
               strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
             />
