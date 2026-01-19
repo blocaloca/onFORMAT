@@ -20,18 +20,19 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata, crewL
     const safeData = data || defaultData;
     const toolGroups = safeData.toolGroups || {};
 
-    // Permissions Logic
-    const getUserGroups = () => {
-        if (!userEmail || !crewList?.crew) return [];
-        const member = crewList.crew.find((m: any) => m.email?.toLowerCase() === userEmail.toLowerCase());
-        return member?.onSetGroups || [];
+    // Permissions & Admin Logic
+    const getCrewMember = () => {
+        if (!userEmail || !crewList?.crew) return null;
+        return crewList.crew.find((m: any) => m.email?.toLowerCase() === userEmail.toLowerCase());
     };
+    const crewMember = getCrewMember();
+    const userGroups = crewMember?.onSetGroups || [];
 
-    const userGroups = getUserGroups();
-    // Admin override: If role is 'admin' or 'owner', or no email provided (dev mode), or email not in crew list? 
-    // Wait, if not in crew list, maybe they are admin? Or unauthorized?
-    // Let's assume userRole 'admin'/'owner' sees all.
-    const isAdmin = userRole === 'admin' || userRole === 'owner' || !userEmail;
+    // Admin override: Role 'admin'/'owner', no email (dev), or specific Crew Roles
+    const ADMIN_ROLES = ['producer', 'executive producer', 'director', 'production manager', 'upm', 'dit', 'digital imaging technician', '1st ad'];
+    const isCrewAdmin = crewMember && ADMIN_ROLES.includes(crewMember.role?.toLowerCase());
+
+    const isAdmin = userRole === 'admin' || userRole === 'owner' || !userEmail || isCrewAdmin;
 
     // Exact state logic from ChatInterface
     const [position, setPosition] = useState({ x: 400, y: 100 });
