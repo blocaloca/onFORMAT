@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+
 import { Smartphone, Lock, X, Minus, Globe, Wifi } from 'lucide-react';
 import { TOOLS_BY_PHASE } from './ExperimentalNav';
 
@@ -89,7 +89,7 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
         onUpdate({ ...safeData, isLive: !safeData.isLive });
     };
 
-    if (!data) return null;
+
 
     console.log('Rendering FloatingMobileControl at:', position);
 
