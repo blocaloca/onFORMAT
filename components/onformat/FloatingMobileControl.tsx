@@ -15,41 +15,58 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
     const safeData = data || defaultData;
     const toolGroups = safeData.toolGroups || {};
 
+    // Exact state logic from ChatInterface
     const [position, setPosition] = useState({ x: 400, y: 100 });
-    const isDragging = useRef(false);
+    const [isDragging, setIsDragging] = useState(false);
     const dragOffset = useRef({ x: 0, y: 0 });
-    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        setMounted(true);
         if (typeof window !== 'undefined') {
-            const x = Math.min(window.innerWidth - 350, Math.max(0, window.innerWidth - 400));
-            const y = Math.min(window.innerHeight - 500, Math.max(0, window.innerHeight - 600));
-            setPosition({ x, y });
+            // Default High Right Position (Adapted for 320px width)
+            // Ensure visibility by clamping
+            const safeX = Math.min(window.innerWidth - 340, Math.max(20, window.innerWidth - 400));
+            const safeY = Math.min(window.innerHeight - 500, Math.max(80, window.innerHeight - 600));
+            setPosition({ x: safeX, y: safeY });
         }
     }, []);
 
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (isDragging.current) {
+        if (typeof window !== 'undefined' && position.x > window.innerWidth - 50) {
+            setPosition(p => ({ ...p, x: window.innerWidth - 350 }));
+        }
+    }, [position.x]);
+
+    useEffect(() => {
+        if (isDragging) {
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'move';
+        } else {
+            document.body.style.userSelect = '';
+            document.body.style.cursor = '';
+        }
+    }, [isDragging]);
+
+    useEffect(() => {
+        if (isDragging) {
+            const handleMouseMove = (e: MouseEvent) => {
                 setPosition({
                     x: e.clientX - dragOffset.current.x,
                     y: Math.max(0, e.clientY - dragOffset.current.y)
                 });
-            }
-        };
-        const handleMouseUp = () => { isDragging.current = false; };
-
-        window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('mouseup', handleMouseUp);
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, []);
+            };
+            const handleMouseUp = () => setIsDragging(false);
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+            return () => {
+                window.removeEventListener('mousemove', handleMouseMove);
+                window.removeEventListener('mouseup', handleMouseUp);
+            };
+        }
+    }, [isDragging]);
 
     const startDrag = (e: React.MouseEvent) => {
-        isDragging.current = true;
+        e.preventDefault(); // ChatInterface uses preventDefault
+        setIsDragging(true);
         dragOffset.current = {
             x: e.clientX - position.x,
             y: e.clientY - position.y
