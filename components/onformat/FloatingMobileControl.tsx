@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Smartphone, Lock, X, Minus, Globe, Wifi } from 'lucide-react';
 import { TOOLS_BY_PHASE } from './ExperimentalNav';
 
@@ -14,17 +15,14 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
     const safeData = data || defaultData;
     const toolGroups = safeData.toolGroups || {};
 
-    // ---------------------------------------------------------------------------
-    // DRAGGABLE LOGIC (Copied & Adapted from ChatInterface)
-    // ---------------------------------------------------------------------------
-    const [position, setPosition] = useState({ x: 400, y: 100 }); // Safe default (clear of sidebar)
+    const [position, setPosition] = useState({ x: 400, y: 100 });
     const isDragging = useRef(false);
     const dragOffset = useRef({ x: 0, y: 0 });
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Initial position: Bottom right-ish, but check bounds
+        setMounted(true);
         if (typeof window !== 'undefined') {
-            // Ensure it doesn't spawn off-screen
             const x = Math.min(window.innerWidth - 350, Math.max(0, window.innerWidth - 400));
             const y = Math.min(window.innerHeight - 500, Math.max(0, window.innerHeight - 600));
             setPosition({ x, y });
@@ -58,9 +56,6 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
         };
     };
 
-    // ---------------------------------------------------------------------------
-    // CONTROL LOGIC
-    // ---------------------------------------------------------------------------
     const toggleGroup = (toolKey: string, group: string) => {
         const currentGroups = toolGroups[toolKey] || [];
         let newGroups;
@@ -77,14 +72,12 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
         onUpdate({ ...safeData, isLive: !safeData.isLive });
     };
 
-    console.log('Rendering FloatingMobileControl at:', position);
-
-    return (
+    const content = (
         <div
             className="fixed z-[9999] w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
             style={{ left: `${position.x}px`, top: `${position.y}px` }}
         >
-            {/* HEADER */}
+            {/* ... (rest of JSX) ... */}
             <div
                 className="bg-zinc-900 p-3 flex items-center justify-between cursor-move select-none border-b border-zinc-800"
                 onMouseDown={startDrag}
@@ -150,7 +143,6 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                                 <div className="space-y-1">
                                     {visibleTools.map((tool: any) => {
                                         const groups = toolGroups[tool.key] || [];
-                                        // Simplified visual for compact view
                                         const totalActive = groups.length;
 
                                         return (
@@ -188,4 +180,7 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
             </div>
         </div>
     );
+
+    if (!mounted) return null;
+    return createPortal(content, document.body);
 };
