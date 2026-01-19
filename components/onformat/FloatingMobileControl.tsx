@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-import { Smartphone, Lock, X, Minus, Globe, Wifi } from 'lucide-react';
+import { Smartphone, Lock, X, Minus, Globe, Wifi, ChevronDown } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { TOOLS_BY_PHASE } from './ExperimentalNav';
 
@@ -96,169 +96,130 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
 
     return (
         <div
-            className="fixed z-[9999] w-[1100px] bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
+            className="fixed z-[9999] w-[1000px] bg-[#1E1E20] border border-zinc-800 rounded-lg shadow-2xl flex flex-col font-sans overflow-hidden text-white"
             style={{ left: `${position.x}px`, top: `${position.y}px` }}
         >
-            {/* WINDOW CONTROL HEADER (Draggable) */}
+            {/* DRAG HANDLE BAR */}
             <div
-                className="bg-zinc-900/50 p-2 flex items-center justify-between cursor-move select-none border-b border-zinc-800 backdrop-blur-md"
+                className="bg-[#2D2D30] h-6 w-full cursor-move flex items-center justify-end px-2"
                 onMouseDown={startDrag}
             >
-                <div className="flex items-center gap-2 px-2">
-                    <span className="w-2 h-2 rounded-full bg-zinc-600"></span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Floating Window</span>
-                </div>
                 <button
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={onClose}
-                    className="p-1 text-zinc-500 hover:text-white transition-colors rounded-md hover:bg-zinc-800"
+                    className="text-zinc-500 hover:text-white transition-colors"
                 >
-                    <X size={14} />
+                    <ChevronDown size={14} />
                 </button>
             </div>
 
-            {/* STATIC TEMPLATE CONTENT (Inlined) */}
-            <div className="p-8 max-h-[80vh] overflow-y-auto bg-zinc-950 text-white">
+            <div className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar">
 
-                {/* TEMPLATE HEADER */}
-                <div className="flex items-end justify-between mb-8 border-b border-zinc-900 pb-4">
+                {/* HEADER SECTION */}
+                <div className="flex items-start justify-between mb-10 border-b border-zinc-700/50 pb-8">
                     <div>
-                        <h1 className="text-3xl font-black uppercase tracking-tight mb-1 text-white">onSET Mobile Control</h1>
-                        <div className="flex items-center gap-3 text-zinc-500">
-                            <span className="font-mono text-[10px] uppercase tracking-widest">
-                                Sync Control
-                            </span>
-                            <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
-                            <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-500">
-                                {safeData.isLive ? 'Link Active' : 'Offline'}
+                        <h1 className="text-3xl font-black uppercase tracking-tight text-white mb-2">ONSET MOBILE CONTROL</h1>
+                        <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest">
+                            <span className="text-zinc-500">SYNC CONTROL</span>
+                            <span className="text-zinc-600">•</span>
+                            <span className={safeData.isLive ? "text-emerald-500" : "text-emerald-500"}>
+                                {safeData.isLive ? 'LIVE' : 'OFFLINE'}
                             </span>
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-end gap-3">
-                        <button
-                            onClick={toggleLive}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
-                                ${safeData.isLive
-                                    ? 'bg-emerald-500 border-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:bg-emerald-400'
-                                    : 'bg-transparent border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
-                                }`}
-                        >
-                            <div className={`w-1.5 h-1.5 rounded-full ${safeData.isLive ? 'bg-black animate-pulse' : 'bg-zinc-500'}`}></div>
-                            {safeData.isLive ? 'LIVE' : 'GO LIVE'}
-                        </button>
-                    </div>
+                    <button
+                        onClick={toggleLive}
+                        className={`flex items-center gap-2 px-6 py-2 rounded border text-[11px] font-bold uppercase tracking-widest transition-all
+                            ${safeData.isLive
+                                ? 'bg-emerald-500 border-emerald-500 text-black hover:bg-emerald-400'
+                                : 'bg-transparent border-zinc-600 text-white hover:border-zinc-400'
+                            }`}
+                    >
+                        <div className={`w-2 h-2 rounded-full ${safeData.isLive ? 'bg-black' : 'bg-zinc-500'}`}></div>
+                        {safeData.isLive ? 'LIVE' : 'GO LIVE'}
+                    </button>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
 
-                    {/* LEFT COL: DOCUMENT SYNC (SPAN 2) */}
-                    <div className="lg:col-span-2">
-                        {/* ALERTS (Inlined logic) */}
-                        {(() => {
-                            const issues = metadata?.importedDITLog?.items?.filter((i: any) => i.eventType === 'issue' && i.status !== 'complete') || [];
-                            if (issues.length > 0) {
-                                return (
-                                    <div className="space-y-2 mb-6">
-                                        {issues.map((issue: any, i: number) => (
-                                            <div key={i} className="bg-red-500/10 border border-red-500/30 p-3 rounded-lg flex items-center gap-3">
-                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                                                <div className="flex-1">
-                                                    <p className="text-red-400 font-mono text-xs font-bold uppercase tracking-wider">DIT ISSUE: {issue.description || 'Check Log'}</p>
-                                                    <p className="text-[9px] text-zinc-500 font-mono">Time: {issue.time}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )
-                            }
-                            return null;
-                        })()}
+                    {/* LEFT COLUMN: TOOLS LIST */}
+                    <div className="lg:col-span-2 space-y-8">
+                        {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]: [string, any[]]) => {
+                            const visibleTools = tools.filter((t: any) => t.key !== 'onset-mobile-control');
+                            if (visibleTools.length === 0) return null;
 
-                        <div className="space-y-8">
-                            {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]: [string, any[]]) => {
-                                const visibleTools = tools.filter((t: any) => t.key !== 'onset-mobile-control');
-                                if (visibleTools.length === 0) return null;
-
-                                return (
-                                    <div key={phase}>
-                                        <h3 className="text-[10px] font-black uppercase text-zinc-500 mb-3 tracking-widest border-b border-zinc-900 pb-1">{phase.replace('_', ' ')}</h3>
-                                        <div className="space-y-1">
-                                            {visibleTools.map((tool: any) => {
-                                                const groups = toolGroups[tool.key] || [];
-                                                return (
-                                                    <div
-                                                        key={tool.key}
-                                                        className="flex items-center justify-between p-2 pl-0 hover:bg-zinc-900/30 rounded transition-colors group"
-                                                    >
-                                                        <span className="text-xs font-bold uppercase text-zinc-300 group-hover:text-white transition-colors">{tool.label}</span>
-                                                        <div className="flex items-center gap-1">
-                                                            {['A', 'B', 'C'].map(group => {
-                                                                const isActive = groups.includes(group);
-                                                                const activeColor =
-                                                                    group === 'A' ? 'bg-emerald-500 text-black border-emerald-500' :
-                                                                        group === 'B' ? 'bg-blue-500 text-black border-blue-500' :
-                                                                            'bg-amber-500 text-black border-amber-500';
-
-                                                                return (
-                                                                    <button
-                                                                        key={group}
-                                                                        onClick={() => toggleGroup(tool.key, group)}
-                                                                        className={`
-                                                                            w-6 h-6 rounded flex items-center justify-center text-[9px] font-black border transition-all
-                                                                            ${isActive
-                                                                                ? activeColor
-                                                                                : 'bg-transparent border-zinc-800 text-zinc-600 hover:border-zinc-600 hover:text-zinc-400'}
-                                                                        `}
-                                                                    >
-                                                                        {group}
-                                                                    </button>
-                                                                )
-                                                            })}
-                                                        </div>
+                            return (
+                                <div key={phase}>
+                                    <h3 className="text-[11px] font-bold uppercase text-zinc-500 mb-4 border-b border-zinc-700/50 pb-2 tracking-widest">
+                                        {phase.replace('_', ' ')}
+                                    </h3>
+                                    <div className="space-y-3">
+                                        {visibleTools.map((tool: any) => {
+                                            const groups = toolGroups[tool.key] || [];
+                                            return (
+                                                <div
+                                                    key={tool.key}
+                                                    className="flex items-center justify-between group"
+                                                >
+                                                    <span className="text-sm font-bold uppercase text-white tracking-wide">{tool.label}</span>
+                                                    <div className="flex items-center gap-2">
+                                                        {['A', 'B', 'C'].map(group => {
+                                                            const isActive = groups.includes(group);
+                                                            return (
+                                                                <button
+                                                                    key={group}
+                                                                    onClick={() => toggleGroup(tool.key, group)}
+                                                                    className={`
+                                                                        w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border transition-all
+                                                                        ${isActive
+                                                                            ? 'bg-zinc-700 border-zinc-600 text-white'
+                                                                            : 'bg-[#252528] border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'}
+                                                                    `}
+                                                                >
+                                                                    {group}
+                                                                </button>
+                                                            )
+                                                        })}
                                                     </div>
-                                                )
-                                            })}
-                                        </div>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
-                                )
-                            })}
-                        </div>
+                                </div>
+                            )
+                        })}
                     </div>
 
-                    {/* RIGHT COL: PROJECT ACCESS (SPAN 1) */}
+                    {/* RIGHT COLUMN: PROJECT ACCESS CARD */}
                     <div>
-                        <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-xl sticky top-4">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-white">
-                                    <Globe size={16} className="text-emerald-500" />
-                                    Project Access
-                                </h2>
+                        <div className="bg-[#2D2D30] rounded-xl p-6 sticky top-4">
+                            <div className="flex items-center gap-2 mb-4">
+                                <Globe size={16} className="text-emerald-500" />
+                                <h2 className="text-sm font-black uppercase tracking-wide text-white">Project Access</h2>
                             </div>
 
-                            <p className="text-[10px] text-zinc-500 mb-4 leading-relaxed">
+                            <p className="text-[11px] text-zinc-400 mb-6 leading-relaxed">
                                 Invite crew to specific groups (A/B/C) via the Crew List document.
                             </p>
 
-                            <div className="flex justify-center bg-white p-2 rounded-lg mb-4">
+                            <div className="bg-white p-4 rounded-xl mb-6 flex justify-center">
                                 <QRCodeSVG
                                     value={`https://onformat.io/join/${metadata?.projectId || ''}`}
-                                    size={150}
+                                    size={160}
                                     level="M"
                                 />
                             </div>
 
-                            <div className="flex gap-2">
-                                <input
-                                    readOnly
-                                    value={`onformat.io/join/${metadata?.projectId?.substring(0, 6)}...`}
-                                    className="flex-1 bg-black border border-zinc-700 rounded px-2 py-2 text-[10px] font-mono text-zinc-300 focus:outline-none"
-                                />
+                            <div className="flex bg-black rounded overflow-hidden border border-zinc-700">
+                                <span className="flex-1 px-3 py-2 text-[10px] font-mono text-zinc-400 truncate flex items-center">
+                                    onformat.io/join/{metadata?.projectId?.substring(0, 5)}...
+                                </span>
                                 <button
                                     onClick={() => {
                                         navigator.clipboard.writeText(`https://onformat.io/join/${metadata?.projectId}`);
                                     }}
-                                    className="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition-colors"
+                                    className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 text-[10px] font-bold uppercase transition-colors"
                                 >
                                     Copy
                                 </button>
@@ -267,7 +228,6 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
                     </div>
 
                 </div>
-
             </div>
         </div>
     );
