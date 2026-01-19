@@ -1357,6 +1357,11 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 />
 
                 {/* FLOATING MOBILE CONTROL */}
+                {showMobileControl && (
+                    <div className="fixed top-20 left-20 z-[9999] bg-red-500 text-white p-4 font-bold">
+                        DEBUG: SHOW IS TRUE. Doc: {mobileControlDoc ? 'YES' : 'NO'}
+                    </div>
+                )}
                 {showMobileControl && mobileControlDoc && (
                     <FloatingMobileControl
                         data={mobileControlDoc.content}
@@ -1408,8 +1413,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         <Smartphone
                             size={24}
                             className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                                    ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                                    : 'text-zinc-400'
+                                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                                : 'text-zinc-400'
                                 }`}
                             strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
                         />
