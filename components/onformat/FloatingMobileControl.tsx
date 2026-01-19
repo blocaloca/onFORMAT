@@ -17,14 +17,17 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
     // ---------------------------------------------------------------------------
     // DRAGGABLE LOGIC (Copied & Adapted from ChatInterface)
     // ---------------------------------------------------------------------------
-    const [position, setPosition] = useState({ x: 100, y: 100 });
+    const [position, setPosition] = useState({ x: 400, y: 100 }); // Safe default (clear of sidebar)
     const isDragging = useRef(false);
     const dragOffset = useRef({ x: 0, y: 0 });
 
     useEffect(() => {
-        // Initial position: Bottom right-ish
+        // Initial position: Bottom right-ish, but check bounds
         if (typeof window !== 'undefined') {
-            setPosition({ x: window.innerWidth - 380, y: window.innerHeight - 500 });
+            // Ensure it doesn't spawn off-screen
+            const x = Math.min(window.innerWidth - 350, Math.max(0, window.innerWidth - 400));
+            const y = Math.min(window.innerHeight - 500, Math.max(0, window.innerHeight - 600));
+            setPosition({ x, y });
         }
     }, []);
 
@@ -76,7 +79,7 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
 
     return (
         <div
-            className="fixed z-50 w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden animate-in zoom-in-95 duration-200"
+            className="fixed z-[9999] w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden animate-in zoom-in-95 duration-200"
             style={{ left: position.x, top: position.y }}
         >
             {/* HEADER */}
