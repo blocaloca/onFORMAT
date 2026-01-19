@@ -230,6 +230,21 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         if (!projectId) return;
         const fetchMobileControl = async () => {
             let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
+
+            if (!data) {
+                console.log('Mobile Control doc missing in Dashboard, creating...');
+                const newDoc = {
+                    project_id: projectId,
+                    type: 'onset-mobile-control',
+                    title: 'Mobile Control',
+                    stage: 'EXECUTE',
+                    status: 'LIVE',
+                    content: { isLive: false, toolGroups: {} }
+                };
+                const { data: created } = await supabase.from('documents').insert(newDoc).select().single();
+                if (created) data = created;
+            }
+
             if (data) setMobileControlDoc(data);
         };
         fetchMobileControl();
@@ -1392,8 +1407,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     <Smartphone
                         size={24}
                         className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                                : 'text-zinc-400'
+                            ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                            : 'text-zinc-400'
                             }`}
                         strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
                     />
