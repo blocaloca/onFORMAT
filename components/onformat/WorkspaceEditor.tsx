@@ -8,7 +8,7 @@ import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { supabase } from '@/lib/supabase'
 import { FloatingMobileControl } from '@/components/onformat/FloatingMobileControl'
-import { Smartphone } from 'lucide-react'
+import { Smartphone, X } from 'lucide-react'
 
 type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
 
@@ -1394,21 +1394,26 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
             </main>
 
-            {/* MOBILE CONTROL TOGGLE FAB */}
-            {mobileControlDoc && !showMobileControl && (
+            {/* MOBILE CONTROL TOGGLE FAB (Persistent) */}
+            {mobileControlDoc && (
                 <button
-                    onClick={() => setShowMobileControl(true)}
-                    className="fixed bottom-6 right-6 w-12 h-12 bg-black text-white rounded-full shadow-xl flex items-center justify-center hover:bg-zinc-800 transition-all z-[9999] border border-zinc-700"
-                    title="Open Mobile Control"
+                    onClick={() => {
+                        console.log('Toggling Mobile Control. Current:', showMobileControl);
+                        setShowMobileControl(prev => !prev);
+                    }}
+                    className={`fixed bottom-6 right-6 w-12 h-12 rounded-full shadow-xl flex items-center justify-center transition-all z-[9999] border border-zinc-700 ${showMobileControl ? 'bg-zinc-800 text-emerald-500' : 'bg-black text-white hover:bg-zinc-800'}`}
+                    title={showMobileControl ? "Close Mobile Control" : "Open Mobile Control"}
                 >
-                    <Smartphone
-                        size={24}
-                        className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                                : 'text-zinc-400'
-                            }`}
-                        strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
-                    />
+                    {showMobileControl ? <X size={24} /> : (
+                        <Smartphone
+                            size={24}
+                            className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
+                                    ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                                    : 'text-zinc-400'
+                                }`}
+                            strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
+                        />
+                    )}
                 </button>
             )}
         </div>
