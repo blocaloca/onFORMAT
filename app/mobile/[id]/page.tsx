@@ -142,12 +142,31 @@ const MobileDocViewer = ({ toolKey, data, onBack }: any) => {
 // --- Generic Renderers ---
 
 const GenericMobileRenderer = ({ data, toolKey }: any) => {
-    if (!data) return <div className="p-8 text-center text-zinc-600 text-xs">No Data</div>;
+    if (!data) return <div className="p-8 text-center text-zinc-600 text-xs text-zinc-500 font-mono text-xs uppercase mb-2">No Data</div>;
 
     // Handle Arrays (Lists like Shot List, Schedule, Storyboard)
     if (Array.isArray(data)) {
+        // DIT Log Special Handling for Empty State
+        if (toolKey === 'dit-log' && data.length === 0) {
+            return (
+                <div className="p-4 space-y-4">
+                    <div className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest border-b border-zinc-800 pb-2">
+                        DIT Log (No Entries)
+                    </div>
+                    <div className="grid grid-cols-[60px_1fr_80px] gap-2 text-[9px] font-bold uppercase text-zinc-600 mb-2 opacity-50">
+                        <span>Time</span>
+                        <span>Event / Details</span>
+                        <span className="text-right">Status</span>
+                    </div>
+                    <div className="text-center py-8 text-zinc-700 text-[10px]">
+                        Waiting for entries...
+                    </div>
+                </div>
+            );
+        }
+
         // Attempt to detect structure
-        if (data.length === 0) return <div className="p-8 text-center text-zinc-600 text-xs">Empty List</div>;
+        if (data.length === 0) return <div className="p-8 text-center text-zinc-600 text-xs font-mono uppercase">Empty List</div>;
 
         // Storyboard / Moodboard Check (Items with URL)
         if (data[0].url !== undefined || data[0].caption !== undefined) {
@@ -259,14 +278,104 @@ export default function MobilePage() {
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<any>(null);
     const [allowedTools, setAllowedTools] = useState<string[]>([]);
+    const [userEmail, setUserEmail] = useState<string | null>(null);
 
     // Active Viewer State
     const [activeToolKey, setActiveToolKey] = useState<string | null>(null);
     const [activeToolData, setActiveToolData] = useState<any>(null);
 
     useEffect(() => {
+        // Get User Auth
+        supabase.auth.getUser().then(({ data }) => {
+            if (data?.user?.email) setUserEmail(data.user.email);
+        });
+    }, []);
+
+    useEffect(() => {
         if (id) fetchProject();
     }, [id]);
+
+    useEffect(() => {
+        if (project && userEmail) {
+            calculatePermissions();
+        } else if (project && !userEmail) {
+            // If no user email (public/simulator/dev?), maybe defaults?
+            // Or wait for email.
+            calculatePermissions();
+        }
+    }, [project, userEmail]);
+
+    const calculatePermissions = () => {
+        const phases = project?.data?.phases || {};
+
+        // 1. Get Crew List & User Groups
+        const crewRaw = phases['PRE_PRODUCTION']?.drafts?.['crew-list'];
+        let userGroups: string[] = [];
+        let isAdmin = false;
+
+        if (crewRaw) {
+            try {
+                const parsed = JSON.parse(crewRaw);
+                const stack = Array.isArray(parsed) ? parsed : [parsed];
+                const crewData = stack[0];
+                if (crewData?.crew) {
+                    const member = crewData.crew.find((m: any) => m.email?.toLowerCase() === (userEmail || '').toLowerCase());
+                    if (member) {
+                        userGroups = member.onSetGroups || [];
+                        // Admin Role Check
+                        const ADMIN_ROLES = ['producer', 'executive producer', 'director', 'production manager', 'upm', 'dit', 'digital imaging technician', '1st ad'];
+                        if (ADMIN_ROLES.includes(member.role?.toLowerCase())) isAdmin = true;
+                    }
+                }
+            } catch { }
+        }
+
+        // 2. Get Mobile Control Config
+        const controlRaw = phases['ON_SET']?.drafts?.['onset-mobile-control'];
+        let toolGroups: Record<string, string[]> = {};
+        let isLive = false;
+
+        if (controlRaw) {
+            try {
+                const parsed = JSON.parse(controlRaw);
+                const stack = Array.isArray(parsed) ? parsed : [parsed];
+                // IMPORTANT: Mobile Control Doc might be saved as simple object OR stack?
+                // WorkspaceEditor uses setMobileControlDoc(data) where data.content is the object.
+                // But DraftEditor saves versions.
+                // Let's iterate stack[0] properties.
+                const data = stack[0] || {};
+                toolGroups = data.toolGroups || {};
+                isLive = data.isLive || false;
+            } catch { }
+        }
+
+        // 3. Filter Tools
+        const allToolsKeys = Object.values(TOOLS_BY_PHASE).flat().map((t: any) => t.key);
+        const allowed: string[] = [];
+
+        allToolsKeys.forEach((key: any) => {
+            if (key === 'onset-mobile-control') return;
+
+            // If Admin, ALLOW ALL?
+            // Or respect checks? "Admin view" usually allows all.
+            if (isAdmin) {
+                allowed.push(key);
+                return;
+            }
+
+            const assigned = toolGroups[key] || [];
+            // Rule: "show none if none are granted".
+            // So if assigned is empty => Hidden.
+            // If assigned has groups => match userGroups.
+            if (assigned.length > 0) {
+                const hasPermission = assigned.some(g => userGroups.includes(g));
+                if (hasPermission) allowed.push(key);
+            }
+            // If assigned.length === 0, do NOT push. Implicitly Hidden.
+        });
+
+        setAllowedTools(allowed);
+    };
 
     const fetchProject = async () => {
         setLoading(true);
@@ -281,16 +390,6 @@ export default function MobilePage() {
                         name: parsedState.projectName || 'Local Workspace',
                         data: { ...parsedState, phases: parsedState.phases || {} }
                     });
-
-                    // Parse Allowed Tools
-                    const controlRaw = parsedState.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
-                    let allowed: string[] = [];
-                    if (controlRaw) {
-                        const rawParsed = JSON.parse(controlRaw);
-                        const stack = Array.isArray(rawParsed) ? rawParsed : [rawParsed];
-                        allowed = stack[0]?.selectedTools || [];
-                    }
-                    setAllowedTools(allowed);
                     setLoading(false);
                     return;
                 } catch (e) {
@@ -307,33 +406,14 @@ export default function MobilePage() {
 
         if (data && data.data) {
             setProject(data);
-
-            // Parse Allowed Tools (from Control Panel)
-            const controlRaw = data.data.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
-            let allowed: string[] = [];
-            if (controlRaw) {
-                try {
-                    const parsed = JSON.parse(controlRaw);
-                    // Control Panel uses a Stack array for versions.
-                    // The actual data is in the first element of stack.
-                    // Or wait. ControlPanelTemplate uses `data.selectedTools`.
-                    // `DraftEditor` saves `JSON.stringify(currentStack)`.
-                    // So `controlRaw` is `[ { selectedTools: [...] } ]` (as string).
-                    const stack = Array.isArray(parsed) ? parsed : [parsed];
-                    allowed = stack[0]?.selectedTools || [];
-                } catch { }
-            }
-            setAllowedTools(allowed);
+            // Permissions will trigger via useEffect
         }
         setLoading(false);
     }
 
     const handleSelectTool = (key: string) => {
         // Fetch Tool Data from Project State
-        // Project State is in `project.data`
         const phases = project?.data?.phases || {};
-        // Find phase for tool?
-        // We know keys are unique. Search all phases.
         let toolDraftRaw = null;
         for (const pKey of Object.keys(phases)) {
             if (phases[pKey]?.drafts?.[key]) {
@@ -351,7 +431,9 @@ export default function MobilePage() {
                 setActiveToolData({});
             }
         } else {
-            setActiveToolData(null);
+            // Initialize empty if DIT Log?
+            if (key === 'dit-log') setActiveToolData([]);
+            else setActiveToolData(null);
         }
         setActiveToolKey(key);
     };
@@ -379,6 +461,7 @@ export default function MobilePage() {
                             name: 'Demo Project (Simulator)',
                             data: { phases: {} }
                         });
+                        // Mocking allowed tools for demo
                         setAllowedTools(['call-sheet', 'schedule', 'storyboard']);
                     }}
                     className="mt-4 text-emerald-500 hover:text-emerald-400 border border-emerald-900 bg-emerald-900/20 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest"
