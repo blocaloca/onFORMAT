@@ -1356,8 +1356,15 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     }}
                 />
 
-
-
+                {/* FLOATING MOBILE CONTROL */}
+                {showMobileControl && mobileControlDoc && (
+                    <FloatingMobileControl
+                        data={mobileControlDoc.content}
+                        onUpdate={updateMobileControl}
+                        onClose={() => setShowMobileControl(false)}
+                        metadata={{ projectId }}
+                    />
+                )}
 
                 <DraftEditor
                     draft={currentDraft}
@@ -1387,28 +1394,18 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
             </main>
 
-            {/* FLOATING MOBILE CONTROL */}
-            {showMobileControl && mobileControlDoc && (
-                <FloatingMobileControl
-                    data={mobileControlDoc.content}
-                    onUpdate={updateMobileControl}
-                    onClose={() => setShowMobileControl(false)}
-                    metadata={{ projectId }}
-                />
-            )}
-
             {/* MOBILE CONTROL TOGGLE FAB */}
             {mobileControlDoc && !showMobileControl && (
                 <button
                     onClick={() => setShowMobileControl(true)}
-                    className="fixed bottom-6 right-6 w-12 h-12 bg-black text-white rounded-full shadow-xl flex items-center justify-center hover:bg-zinc-800 transition-all z-40 border border-zinc-700"
+                    className="fixed bottom-6 right-6 w-12 h-12 bg-black text-white rounded-full shadow-xl flex items-center justify-center hover:bg-zinc-800 transition-all z-[9999] border border-zinc-700"
                     title="Open Mobile Control"
                 >
                     <Smartphone
                         size={24}
                         className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                            ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                            : 'text-zinc-400'
+                                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
+                                : 'text-zinc-400'
                             }`}
                         strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
                     />

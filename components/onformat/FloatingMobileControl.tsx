@@ -72,7 +72,11 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
         onUpdate({ ...safeData, isLive: !safeData.isLive });
     };
 
-    const content = (
+    if (!data) return null;
+
+    console.log('Rendering FloatingMobileControl at:', position);
+
+    return (
         <div
             className="fixed z-[9999] w-80 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
             style={{ left: `${position.x}px`, top: `${position.y}px` }}
@@ -180,7 +184,4 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
             </div>
         </div>
     );
-
-    if (!mounted) return null;
-    return createPortal(content, document.body);
 };
