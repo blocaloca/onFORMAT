@@ -96,124 +96,176 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata }: Flo
 
     return (
         <div
-            className="fixed z-[9999] w-[600px] bg-black/95 backdrop-blur-2xl border border-zinc-800/50 rounded-2xl shadow-2xl flex flex-col font-sans overflow-hidden transition-all duration-300 ring-1 ring-white/10"
+            className="fixed z-[9999] w-[1100px] bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl flex flex-col font-sans overflow-hidden"
             style={{ left: `${position.x}px`, top: `${position.y}px` }}
         >
-            {/* HEADER */}
+            {/* WINDOW CONTROL HEADER (Draggable) */}
             <div
-                className="bg-gradient-to-r from-zinc-900 via-zinc-900 to-black p-4 flex items-center justify-between cursor-move select-none border-b border-zinc-800/50"
+                className="bg-zinc-900/50 p-2 flex items-center justify-between cursor-move select-none border-b border-zinc-800 backdrop-blur-md"
                 onMouseDown={startDrag}
             >
-                <div className="flex items-center gap-3">
-                    <div className="bg-emerald-500/10 p-1.5 rounded-md border border-emerald-500/20">
-                        <Smartphone size={16} className="text-emerald-500" />
-                    </div>
-                    <div>
-                        <div className="text-[11px] font-black uppercase tracking-widest text-white leading-none mb-0.5">Mobile Control</div>
-                        <div className="text-[9px] font-medium text-emerald-500/80 tracking-wider">Live Session Manager</div>
-                    </div>
+                <div className="flex items-center gap-2 px-2">
+                    <span className="w-2 h-2 rounded-full bg-zinc-600"></span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Floating Window</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onClick={onClose}
-                        className="text-zinc-500 hover:text-white hover:bg-zinc-800/50 p-2 rounded-lg transition-all"
-                        title="Close Panel"
-                    >
-                        <X size={16} />
-                    </button>
-                </div>
+                <button
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={onClose}
+                    className="p-1 text-zinc-500 hover:text-white transition-colors rounded-md hover:bg-zinc-800"
+                >
+                    <X size={14} />
+                </button>
             </div>
 
-            {/* BODY */}
-            <div className="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+            {/* STATIC TEMPLATE CONTENT (Inlined) */}
+            <div className="p-8 max-h-[80vh] overflow-y-auto bg-zinc-950 text-white">
 
-                {/* TOP SECTION: LIVE & QR */}
-                <div className="flex gap-6 mb-8">
-                    {/* LIVE STATUS CARD */}
-                    <div className="flex-1 bg-zinc-900/30 p-4 rounded-xl border border-zinc-800/50 flex flex-col justify-between">
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">System Status</span>
-                            </div>
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className={`w-3 h-3 rounded-full ${safeData.isLive ? 'bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-zinc-700'}`}></div>
-                                <span className={`text-sm font-bold tracking-tight ${safeData.isLive ? 'text-white' : 'text-zinc-400'}`}>
-                                    {safeData.isLive ? 'Sync Active' : 'Offline'}
-                                </span>
-                            </div>
+                {/* TEMPLATE HEADER */}
+                <div className="flex items-end justify-between mb-8 border-b border-zinc-900 pb-4">
+                    <div>
+                        <h1 className="text-3xl font-black uppercase tracking-tight mb-1 text-white">onSET Mobile Control</h1>
+                        <div className="flex items-center gap-3 text-zinc-500">
+                            <span className="font-mono text-[10px] uppercase tracking-widest">
+                                Sync Control
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
+                            <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-500">
+                                {safeData.isLive ? 'Link Active' : 'Offline'}
+                            </span>
                         </div>
-                        <button
-                            onClick={toggleLive}
-                            className={`w-full py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${safeData.isLive
-                                ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
-                                : 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/20'}`}
-                        >
-                            {safeData.isLive ? 'Stop Session' : 'Go Live'}
-                        </button>
                     </div>
 
-                    {/* QR CARD */}
-                    <div className="flex-1 bg-white p-4 rounded-xl shadow-lg flex flex-col items-center justify-center gap-3 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <QRCodeSVG
-                            value={`https://onformat.io/join/${metadata?.projectId || ''}`}
-                            size={100}
-                            level="M"
-                        />
-                        <div className="text-center z-10">
-                            <p className="text-[10px] text-zinc-900 font-bold uppercase tracking-wide">Scan to Join</p>
-                        </div>
+                    <div className="flex flex-col items-end gap-3">
+                        <button
+                            onClick={toggleLive}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
+                                ${safeData.isLive
+                                    ? 'bg-emerald-500 border-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:bg-emerald-400'
+                                    : 'bg-transparent border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
+                                }`}
+                        >
+                            <div className={`w-1.5 h-1.5 rounded-full ${safeData.isLive ? 'bg-black animate-pulse' : 'bg-zinc-500'}`}></div>
+                            {safeData.isLive ? 'LIVE' : 'GO LIVE'}
+                        </button>
                     </div>
                 </div>
 
-                {/* TOOLS GRID */}
-                <div className="space-y-8">
-                    {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]: [string, any[]]) => {
-                        const visibleTools = tools.filter((t: any) => t.key !== 'onset-mobile-control');
-                        if (visibleTools.length === 0) return null;
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                        return (
-                            <div key={phase}>
-                                <div className="flex items-center gap-3 mb-3">
-                                    <h3 className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">{phase.replace('_', ' ')}</h3>
-                                    <div className="h-px flex-1 bg-zinc-800/50" />
-                                </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {visibleTools.map((tool: any) => {
-                                        const groups = toolGroups[tool.key] || [];
-                                        const totalActive = groups.length;
-
-                                        return (
-                                            <div key={tool.key} className={`p-3 rounded-xl border transition-all duration-300 flex items-center justify-between group/card ${totalActive > 0 ? 'bg-zinc-900/80 border-zinc-700' : 'bg-zinc-950/50 border-zinc-800/50 hover:border-zinc-700/80'}`}>
-                                                <span className={`text-[10px] font-bold uppercase truncate max-w-[120px] transition-colors ${totalActive > 0 ? 'text-white' : 'text-zinc-500 group-hover/card:text-zinc-300'}`}>
-                                                    {tool.label}
-                                                </span>
-                                                <div className="flex gap-1">
-                                                    {['A', 'B', 'C'].map(g => {
-                                                        const isActive = groups.includes(g);
-                                                        return (
-                                                            <button
-                                                                key={g}
-                                                                onClick={() => toggleGroup(tool.key, g)}
-                                                                className={`w-6 h-6 rounded-md text-[9px] font-black flex items-center justify-center transition-all scale-95 hover:scale-100
-                                                                    ${isActive
-                                                                        ? (g === 'A' ? 'bg-emerald-500 text-black shadow-[0_0_8px_rgba(16,185,129,0.3)]' : g === 'B' ? 'bg-blue-500 text-black shadow-[0_0_8px_rgba(59,130,246,0.3)]' : 'bg-amber-500 text-black shadow-[0_0_8px_rgba(245,158,11,0.3)]')
-                                                                        : 'bg-zinc-900 text-zinc-700 hover:bg-zinc-800 hover:text-zinc-400 border border-zinc-800'}
-                                                                `}
-                                                            >
-                                                                {g}
-                                                            </button>
-                                                        )
-                                                    })}
+                    {/* LEFT COL: DOCUMENT SYNC (SPAN 2) */}
+                    <div className="lg:col-span-2">
+                        {/* ALERTS (Inlined logic) */}
+                        {(() => {
+                            const issues = metadata?.importedDITLog?.items?.filter((i: any) => i.eventType === 'issue' && i.status !== 'complete') || [];
+                            if (issues.length > 0) {
+                                return (
+                                    <div className="space-y-2 mb-6">
+                                        {issues.map((issue: any, i: number) => (
+                                            <div key={i} className="bg-red-500/10 border border-red-500/30 p-3 rounded-lg flex items-center gap-3">
+                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                                <div className="flex-1">
+                                                    <p className="text-red-400 font-mono text-xs font-bold uppercase tracking-wider">DIT ISSUE: {issue.description || 'Check Log'}</p>
+                                                    <p className="text-[9px] text-zinc-500 font-mono">Time: {issue.time}</p>
                                                 </div>
                                             </div>
-                                        )
-                                    })}
-                                </div>
+                                        ))}
+                                    </div>
+                                )
+                            }
+                            return null;
+                        })()}
+
+                        <div className="space-y-8">
+                            {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]: [string, any[]]) => {
+                                const visibleTools = tools.filter((t: any) => t.key !== 'onset-mobile-control');
+                                if (visibleTools.length === 0) return null;
+
+                                return (
+                                    <div key={phase}>
+                                        <h3 className="text-[10px] font-black uppercase text-zinc-500 mb-3 tracking-widest border-b border-zinc-900 pb-1">{phase.replace('_', ' ')}</h3>
+                                        <div className="space-y-1">
+                                            {visibleTools.map((tool: any) => {
+                                                const groups = toolGroups[tool.key] || [];
+                                                return (
+                                                    <div
+                                                        key={tool.key}
+                                                        className="flex items-center justify-between p-2 pl-0 hover:bg-zinc-900/30 rounded transition-colors group"
+                                                    >
+                                                        <span className="text-xs font-bold uppercase text-zinc-300 group-hover:text-white transition-colors">{tool.label}</span>
+                                                        <div className="flex items-center gap-1">
+                                                            {['A', 'B', 'C'].map(group => {
+                                                                const isActive = groups.includes(group);
+                                                                const activeColor =
+                                                                    group === 'A' ? 'bg-emerald-500 text-black border-emerald-500' :
+                                                                        group === 'B' ? 'bg-blue-500 text-black border-blue-500' :
+                                                                            'bg-amber-500 text-black border-amber-500';
+
+                                                                return (
+                                                                    <button
+                                                                        key={group}
+                                                                        onClick={() => toggleGroup(tool.key, group)}
+                                                                        className={`
+                                                                            w-6 h-6 rounded flex items-center justify-center text-[9px] font-black border transition-all
+                                                                            ${isActive
+                                                                                ? activeColor
+                                                                                : 'bg-transparent border-zinc-800 text-zinc-600 hover:border-zinc-600 hover:text-zinc-400'}
+                                                                        `}
+                                                                    >
+                                                                        {group}
+                                                                    </button>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    {/* RIGHT COL: PROJECT ACCESS (SPAN 1) */}
+                    <div>
+                        <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-xl sticky top-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-white">
+                                    <Globe size={16} className="text-emerald-500" />
+                                    Project Access
+                                </h2>
                             </div>
-                        )
-                    })}
+
+                            <p className="text-[10px] text-zinc-500 mb-4 leading-relaxed">
+                                Invite crew to specific groups (A/B/C) via the Crew List document.
+                            </p>
+
+                            <div className="flex justify-center bg-white p-2 rounded-lg mb-4">
+                                <QRCodeSVG
+                                    value={`https://onformat.io/join/${metadata?.projectId || ''}`}
+                                    size={150}
+                                    level="M"
+                                />
+                            </div>
+
+                            <div className="flex gap-2">
+                                <input
+                                    readOnly
+                                    value={`onformat.io/join/${metadata?.projectId?.substring(0, 6)}...`}
+                                    className="flex-1 bg-black border border-zinc-700 rounded px-2 py-2 text-[10px] font-mono text-zinc-300 focus:outline-none"
+                                />
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(`https://onformat.io/join/${metadata?.projectId}`);
+                                    }}
+                                    className="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition-colors"
+                                >
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
