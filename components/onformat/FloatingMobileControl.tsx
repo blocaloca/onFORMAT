@@ -175,19 +175,8 @@ export const FloatingMobileControl = ({ data, onUpdate, onClose, metadata, crewL
                     {/* LEFT COLUMN: TOOLS LIST */}
                     <div className="lg:col-span-2 space-y-8">
                         {Object.entries(TOOLS_BY_PHASE).map(([phase, tools]: [string, any[]]) => {
-                            // Filter logic
-                            const visibleTools = tools.filter((t: any) => {
-                                if (t.key === 'onset-mobile-control') return false;
-                                if (isAdmin) return true; // Admins see all
-                                const assignedGroups = toolGroups[t.key] || [];
-                                // If NO groups assigned, is it visible? Assuming Yes for now? Or No?
-                                // "only see the docs i am given permission to see".
-                                // If list is empty, probably NO ONE sees it? Or EVERYONE?
-                                // Let's assume if empty => Everyone sees it (Public). 
-                                // Because default is empty.
-                                if (assignedGroups.length === 0) return true;
-                                return assignedGroups.some((g: string) => userGroups.includes(g));
-                            });
+                            // Filter logic: Show ALL tools (Control Panel Mode)
+                            const visibleTools = tools.filter((t: any) => t.key !== 'onset-mobile-control');
 
                             if (visibleTools.length === 0) return null;
 
