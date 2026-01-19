@@ -1313,7 +1313,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     activePhase={state.activePhase}
                     onToolSelect={(toolKey, phase) => {
                         if (toolKey === 'onset-mobile-control') {
-                            setShowMobileControl(true);
+                            setShowMobileControl(prev => !prev);
                             return;
                         }
                         // Direct state update to handle simultaneous phase+tool switch
@@ -1324,6 +1324,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     producerName={state.producer}
                     onToggleAi={toggleAiDock}
                     isAiDocked={isAiDocked}
+                    mobileStatus={{
+                        isLive: mobileControlDoc?.content?.isLive || false,
+                        hasAlert: !!latestNotification
+                    }}
                 />
 
                 <ChatInterface
@@ -1351,6 +1355,12 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     onModeChange={() => { }}
                     onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
                     onNavigate={(targetTool, payload) => {
+                        // SPECIAL CASE: Mobile Control Toggle
+                        if (targetTool === 'onset-mobile-control') {
+                            setShowMobileControl(prev => !prev);
+                            return;
+                        }
+
                         // Find the phase for this tool
                         let foundPhase: Phase | undefined;
                         for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
@@ -1425,34 +1435,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
             </main>
 
-            {/* MOBILE CONTROL TOGGLE FAB (Persistent) */}
-            {/* MOBILE CONTROL TOGGLE BUTTON (Persistent) */}
-            <button
-                onClick={() => {
-                    console.log('Toggling Mobile Control');
-                    setShowMobileControl(prev => !prev);
-                }}
-                className={`fixed bottom-6 right-6 flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl z-[9999] transition-all border group
-                    ${latestNotification
-                        ? 'bg-zinc-900 border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]'
-                        : (showMobileControl ? 'bg-zinc-900 border-emerald-500/50' : 'bg-black border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900')}
-                `}
-            >
-                <div className={`p-2 rounded-lg transition-colors ${latestNotification
-                    ? 'bg-red-500/20 text-red-500 animate-pulse'
-                    : (showMobileControl
-                        ? 'bg-emerald-500/20 text-emerald-500'
-                        : 'bg-zinc-800 text-zinc-400 group-hover:text-white group-hover:bg-zinc-700')
-                    }`}>
-                    {showMobileControl ? <X size={20} /> : <Smartphone size={20} />}
-                </div>
-                <div className="text-left">
-                    <div className="text-[12px] font-black uppercase tracking-wide text-white leading-none mb-1">ONSET MOBILE</div>
-                    <div className={`text-[10px] font-medium tracking-wider ${showMobileControl ? 'text-emerald-500' : 'text-zinc-500'}`}>
-                        {latestNotification ? 'New Alert!' : 'Control Panel'}
-                    </div>
-                </div>
-            </button>
+
         </div>
     )
 }

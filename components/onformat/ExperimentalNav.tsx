@@ -276,6 +276,7 @@ interface WorkspaceSidebarProps {
     producerName?: string;
     onToggleAi?: () => void;
     isAiDocked?: boolean;
+    mobileStatus?: { isLive: boolean; hasAlert: boolean }; // New prop
 }
 
 export const ExperimentalWorkspaceNav = ({
@@ -286,7 +287,8 @@ export const ExperimentalWorkspaceNav = ({
     userEmail,
     producerName,
     onToggleAi,
-    isAiDocked = true
+    isAiDocked = true,
+    mobileStatus
 }: WorkspaceSidebarProps) => {
     // We maintain local state for 'expanded' phases, but we default to expanding the ACTIVE phase.
     const [expandedPhase, setExpandedPhase] = useState<Phase | null>(activePhase);
@@ -316,15 +318,33 @@ export const ExperimentalWorkspaceNav = ({
                 <div className="px-4 mb-6">
                     <button
                         onClick={() => onToolSelect('onset-mobile-control', 'ON_SET')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border transition-all group ${activeTool === 'onset-mobile-control'
-                                ? (darkMode ? 'bg-zinc-800 text-white border-zinc-700' : 'bg-black text-white border-black')
-                                : (darkMode ? 'bg-zinc-900/30 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white' : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:text-black')
-                            }`}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all group relative overflow-hidden
+                            ${mobileStatus?.hasAlert
+                                ? 'bg-red-900/10 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]'
+                                : mobileStatus?.isLive
+                                    ? (darkMode ? 'bg-emerald-900/10 border-emerald-500/50' : 'bg-emerald-50 border-emerald-500')
+                                    : (darkMode ? 'bg-zinc-900/30 text-zinc-400 border-zinc-800 hover:border-zinc-700 hover:text-white' : 'bg-white text-zinc-500 border-zinc-200 hover:border-zinc-300 hover:text-black')
+                            }
+                        `}
                     >
-                        <Smartphone size={18} className={activeTool === 'onset-mobile-control' ? (darkMode ? 'text-emerald-400' : 'text-emerald-400') : (darkMode ? 'text-zinc-500 group-hover:text-emerald-500' : 'text-zinc-400 group-hover:text-black')} />
+                        {/* Status Indicator */}
+                        {mobileStatus?.isLive && <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]" />}
+                        {mobileStatus?.hasAlert && <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.5)]" />}
+
+                        <div className={`p-1.5 rounded-lg ${mobileStatus?.hasAlert ? 'bg-red-500/20 text-red-500' :
+                                mobileStatus?.isLive ? 'bg-emerald-500/20 text-emerald-500' :
+                                    'bg-zinc-800 text-zinc-500 group-hover:text-zinc-300'
+                            }`}>
+                            <Smartphone size={18} />
+                        </div>
+
                         <div className="text-left">
-                            <div className="text-xs font-black uppercase tracking-wider leading-none mb-0.5">onSET Mobile</div>
-                            <div className="text-[9px] font-bold opacity-60">Control Panel</div>
+                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.hasAlert ? 'text-red-400' : mobileStatus?.isLive ? 'text-emerald-400' : 'text-zinc-300'}`}>
+                                {mobileStatus?.hasAlert ? 'Alert' : 'onSET Mobile'}
+                            </div>
+                            <div className="text-[9px] font-bold opacity-60">
+                                {mobileStatus?.isLive ? 'Link Active' : 'Control Panel'}
+                            </div>
                         </div>
                     </button>
                 </div>
