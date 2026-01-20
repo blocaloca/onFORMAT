@@ -327,6 +327,7 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
         } catch (e) { console.error(e) }
     }
 
@@ -400,6 +401,7 @@ export default function OnSetMobilePage() {
             };
 
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
 
         } catch (e) {
             console.error(e);
