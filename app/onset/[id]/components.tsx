@@ -641,6 +641,28 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                         </div>
                     </div>
 
+                    {/* Status Toggles */}
+                    <div className="flex gap-2 mb-4">
+                        {[
+                            { id: 'good', label: 'Good' },
+                            { id: 'bad', label: 'NG' },
+                            { id: 'circle', label: 'BUY' }
+                        ].map(s => (
+                            <button
+                                key={s.id}
+                                onClick={() => setForm({ ...form, status: s.id })}
+                                className={`flex-1 py-3 text-xs font-black uppercase rounded border transition-all ${form.status === s.id
+                                    ? (s.id === 'circle' ? 'bg-yellow-500 text-black border-yellow-500' :
+                                        s.id === 'bad' ? 'bg-red-500 text-white border-red-500' :
+                                            'bg-emerald-500 text-black border-emerald-500')
+                                    : 'bg-zinc-950 text-zinc-500 border-zinc-800 hover:border-zinc-700'
+                                    }`}
+                            >
+                                {s.label}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className="mb-4">
                         <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Notes</label>
                         <textarea
@@ -674,7 +696,12 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                             <div className="w-px h-8 bg-zinc-800"></div>
                             <div className="flex-1">
                                 <div className="flex justify-between items-baseline mb-1">
-                                    <span className="text-xs font-bold text-emerald-500 uppercase">Completed</span>
+                                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${item.status === 'circle' ? 'bg-yellow-500 text-black' :
+                                        item.status === 'bad' ? 'text-red-500 bg-red-900/20' :
+                                            'text-emerald-500 bg-emerald-900/20'
+                                        }`}>
+                                        {item.status === 'circle' ? 'BUY' : item.status === 'bad' ? 'NG' : 'GOOD'}
+                                    </span>
                                     {item.take && <span className="text-[9px] font-mono text-zinc-600">TK {item.take}</span>}
                                 </div>
                                 <p className="text-xs text-zinc-300 leading-tight">{item.description}</p>

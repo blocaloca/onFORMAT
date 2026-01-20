@@ -39,7 +39,7 @@ const STATUS_OPTIONS = [
     { value: '', label: '-', color: 'text-zinc-300' },
     { value: 'good', label: 'OK', color: 'text-green-600' },
     { value: 'bad', label: 'NG', color: 'text-red-500' },
-    { value: 'circle', label: '★', color: 'text-yellow-500' },
+    { value: 'circle', label: 'BUY', color: 'text-yellow-500' },
 ];
 
 const ITEMS_PER_PAGE = 20;
