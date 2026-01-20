@@ -164,8 +164,12 @@ export default function OnSetMobilePage() {
             const mobileControl = allDrafts['onset-mobile-control'];
 
             let computedAvailableKeys: string[] = [];
+            const isLive = mobileControl?.isLive;
 
-            if (mobileControl?.toolGroups) {
+            // SECURITY: Respect "Go Live" toggle. If Offline, show nothing.
+            if (mobileControl && !isLive) {
+                computedAvailableKeys = [];
+            } else if (mobileControl?.toolGroups) {
                 // New System: Group-Based Access (A/B/C)
                 const crewListDoc = allDrafts['crew-list'];
                 // Find current user in the Crew List document
@@ -469,7 +473,9 @@ export default function OnSetMobilePage() {
                                     </div>
                                     <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
                                         <span>Sync Status</span>
-                                        <span className="text-zinc-300">Live</span>
+                                        <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-500" : "text-amber-500"}>
+                                            {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
