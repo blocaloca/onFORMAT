@@ -296,20 +296,14 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                             <p className="text-[10px] text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
                         </div>
 
-                        <div className="shrink-0 flex items-center">
-                            <button
-                                onClick={() => {
-                                    if (isComplete) {
-                                        onCheckShot && onCheckShot(shot.id, 'PENDING', false);
-                                    } else {
-                                        setConfirmingId(shot.id);
-                                    }
-                                }}
-                                className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isComplete ? 'bg-emerald-500 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'border-zinc-700 bg-zinc-900/50'}`}
-                            >
-                                {isComplete && <Check size={16} className="text-black" />}
-                            </button>
-                        </div>
+                        {/* Mobile Read Only: Approve Button Removed */}
+                        {isComplete && (
+                            <div className="shrink-0 flex items-center">
+                                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/50">
+                                    <Check size={14} className="text-emerald-500" />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 );
             })}

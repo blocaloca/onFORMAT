@@ -216,6 +216,9 @@ export default function OnSetMobilePage() {
             } else if (availableKeys.length > 0 && availableKeys.includes(currentTab) === false) {
                 // Current tab is no longer available? Reset.
                 setActiveTab(availableKeys[0]);
+            } else if (availableKeys.length === 0) {
+                // No keys available (e.g. Offline) -> Reset to Landing
+                setActiveTab('');
             }
 
         } catch (e) {
@@ -554,12 +557,10 @@ export default function OnSetMobilePage() {
                     {(() => {
                         const mobileControl = data.docs['onset-mobile-control'];
                         let availableKeys: string[] = [];
+                        const isLive = mobileControl?.isLive;
 
-                        // REUSE LOGIC FROM FETCHDATA?
-                        // Ideally we computed 'availableKeys' in state or memo, but for now we re-derive or use what we know.
-                        // Actually, 'activeTab' logic in fetchData ensures we only pick valid ones.
-                        // But here we need to DISPLAY them.
-                        // Let's re-run the filter logic as it depends on userEmail/role which is in scope.
+                        // Security: If Offline, hide Nav
+                        if (mobileControl && !isLive) return null;
 
                         if (mobileControl?.toolGroups) {
                             const crewListDoc = data.docs['crew-list'];
@@ -580,8 +581,8 @@ export default function OnSetMobilePage() {
                             availableKeys = mobileControl?.selectedTools || [];
                         }
 
-                        if (availableKeys.length === 0 && !mobileControl) {
-                            // STRICT MODE: No defaults.
+                        if (availableKeys.length === 0) {
+                            return null;
                         }
 
                         if (availableKeys.length === 0) {
