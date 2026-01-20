@@ -318,28 +318,42 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     const newData = payload.new?.data;
                     if (!newData) return;
 
-                    // Check for DIT Log Updates specifically
+                    // Check for DIT Log Updates
                     const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'];
                     const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'];
 
-                    // Compare content lengths or simple equality
+                    // Check for Shot Log Updates
+                    const newShotLog = newData.phases?.ON_SET?.drafts?.['shot-log'];
+                    const currentShotLog = stateRef.current.phases?.ON_SET?.drafts?.['shot-log'];
+
+                    let updatedDrafts = { ...stateRef.current.phases?.ON_SET?.drafts };
+                    let hasUpdates = false;
+                    let notifMsg = '';
+
                     if (newDitLog && newDitLog !== currentDitLog) {
-                        console.log("🔔 DIT Log Change Detected! Triggering Notification.");
+                        console.log("🔔 DIT Log Change Detected!");
+                        updatedDrafts['dit-log'] = newDitLog;
+                        hasUpdates = true;
+                        notifMsg = 'New DIT Log Entry Received';
+                    }
 
-                        // 1. Notify
-                        setLatestNotification({ msg: 'New DIT Log Entry Received', time: Date.now() });
+                    if (newShotLog && newShotLog !== currentShotLog) {
+                        console.log("🔔 Shot Log Change Detected!");
+                        updatedDrafts['shot-log'] = newShotLog;
+                        hasUpdates = true;
+                        notifMsg = 'New Shot Logged';
+                    }
 
-                        // 2. Update State (Merge)
+                    if (hasUpdates) {
+                        setLatestNotification({ msg: notifMsg, time: Date.now() });
+
                         setState(prev => ({
                             ...prev,
                             phases: {
                                 ...prev.phases,
                                 ON_SET: {
                                     ...prev.phases.ON_SET,
-                                    drafts: {
-                                        ...prev.phases.ON_SET.drafts,
-                                        'dit-log': newDitLog
-                                    }
+                                    drafts: updatedDrafts
                                 }
                             },
                         }));
