@@ -7,7 +7,6 @@ import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
 import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { supabase } from '@/lib/supabase'
-import { FloatingMobileControl } from '@/components/onformat/FloatingMobileControl'
 import { Smartphone, X } from 'lucide-react'
 
 type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
@@ -214,7 +213,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
     // Mobile Control Integration
     const [mobileControlDoc, setMobileControlDoc] = useState<any>(null)
-    const [showMobileControl, setShowMobileControl] = useState(false)
+
     const [lastEventTime, setLastEventTime] = useState(0)
     const [isBlinking, setIsBlinking] = useState(false)
 
@@ -1321,10 +1320,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     activeTool={state.activeTool}
                     activePhase={state.activePhase}
                     onToolSelect={(toolKey, phase) => {
-                        if (toolKey === 'onset-mobile-control') {
-                            setShowMobileControl(prev => !prev);
-                            return;
-                        }
+                        // Removed intercept for mobile-control to allow normal selection
+
                         // Direct state update to handle simultaneous phase+tool switch
                         // @ts-ignore
                         setState(s => ({ ...s, activePhase: phase, activeTool: toolKey as ToolKey }));
@@ -1366,10 +1363,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
                     onNavigate={(targetTool, payload) => {
                         // SPECIAL CASE: Mobile Control Toggle
-                        if (targetTool === 'onset-mobile-control') {
-                            setShowMobileControl(prev => !prev);
-                            return;
-                        }
+                        // Removed intercept
+
 
                         // Find the phase for this tool
                         let foundPhase: Phase | undefined;
@@ -1407,19 +1402,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 />
 
                 {/* FLOATING MOBILE CONTROL */}
-                {/* FLOATING MOBILE CONTROL */}
-                {showMobileControl && (
-                    <FloatingMobileControl
-                        data={mobileControlDoc?.content}
-                        onUpdate={updateMobileControl}
-                        onClose={() => setShowMobileControl(false)}
-                        metadata={{ projectId }}
-                        crewList={safeJsonParse(state.phases.PRE_PRODUCTION?.drafts?.['crew-list'] || null)}
-                        userEmail={userEmail}
-                        userRole={userRole}
-                        latestNotification={latestNotification}
-                    />
-                )}
+
 
                 <DraftEditor
                     draft={currentDraft}
