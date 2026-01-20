@@ -314,9 +314,15 @@ export default function OnSetMobilePage() {
 
             let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
             if (Array.isArray(logDoc)) logDoc = logDoc[0];
-            if (!logDoc || !logDoc.entries) logDoc = { entries: [] };
+            if (!logDoc || !logDoc.items) logDoc = { items: [] };
 
-            logDoc.entries.unshift(item);
+            // Ensure backward compatibility or migration if needed
+            if (!logDoc.items && logDoc.entries) {
+                logDoc.items = logDoc.entries;
+                delete logDoc.entries;
+            }
+
+            logDoc.items.unshift(item);
 
             updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
@@ -365,14 +371,21 @@ export default function OnSetMobilePage() {
 
                 let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
                 if (Array.isArray(logDoc)) logDoc = logDoc[0];
-                if (!logDoc || !logDoc.entries) logDoc = { entries: [] };
+                if (!logDoc || !logDoc.items) logDoc = { items: [] };
 
-                logDoc.entries.unshift({
+                // Migration
+                if (!logDoc.items && logDoc.entries) {
+                    logDoc.items = logDoc.entries;
+                    delete logDoc.entries;
+                }
+
+                logDoc.items.unshift({
                     id: `log-${Date.now()}`,
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                     type: 'SHOT',
-                    status: status,
-                    shotId: shotId,
+                    status: status === 'COMPLETE' ? 'good' : '', // Map status
+                    shot: shotId, // Auto-log uses shotId as shot name?
+                    scene: '', // No scene known unless looked up?
                     description: `Shot ${shotId} marked as ${status}`
                 });
 

@@ -568,6 +568,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+        scene: '',
         shotId: '',
         take: '1',
         status: 'good',
@@ -579,6 +580,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         const newItem = {
             id: `log-${Date.now()}`,
             type: 'SHOT',
+            shot: form.shotId,
             ...form
         };
         onAdd(newItem);
@@ -588,7 +590,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
 
     if (!data && !isAdding) return <EmptyState label="Shot Log" />;
 
-    const items = data?.entries || [];
+    const items = data?.items || data?.entries || [];
 
     return (
         <div className="space-y-4">
@@ -611,20 +613,29 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                         <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-400" /></button>
                     </div>
 
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Time</label>
+                        <input
+                            type="time"
+                            value={form.time}
+                            onChange={e => setForm({ ...form, time: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                        />
+                    </div>
                     <div className="grid grid-cols-3 gap-3 mb-3">
                         <div className="col-span-1">
-                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Time</label>
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Scene</label>
                             <input
-                                type="time"
-                                value={form.time}
-                                onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                                placeholder="1"
+                                value={form.scene}
+                                onChange={e => setForm({ ...form, scene: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
                             />
                         </div>
                         <div className="col-span-1">
                             <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Shot #</label>
                             <input
-                                placeholder="1A"
+                                placeholder="A"
                                 value={form.shotId}
                                 onChange={e => setForm({ ...form, shotId: e.target.value })}
                                 className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
@@ -691,7 +702,8 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                         <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 flex gap-4 items-center">
                             <div className="text-center w-12 shrink-0">
                                 <span className="block text-[10px] font-mono text-zinc-500">{item.time}</span>
-                                <span className="block text-xl font-black text-white">{item.shotId || '?'}</span>
+                                <span className="block text-xl font-black text-white">{item.shot || item.shotId || '?'}</span>
+                                {item.scene && <span className="block text-[9px] font-bold text-zinc-500">Sc {item.scene}</span>}
                             </div>
                             <div className="w-px h-8 bg-zinc-800"></div>
                             <div className="flex-1">
