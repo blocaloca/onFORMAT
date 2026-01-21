@@ -772,8 +772,8 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
             {/* NEW ROLL VERIFICATION MODAL */}
             {isNewRollModal && (
-                <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
-                    <div className="bg-zinc-900 border border-zinc-700 w-full max-w-sm rounded-xl p-6 shadow-2xl">
+                <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
+                    <div className="bg-zinc-900 border border-zinc-700 w-full max-w-sm rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
                         <h3 className="text-lg font-black uppercase text-white mb-1">Start New Roll</h3>
                         <p className="text-xs text-zinc-400 mb-6">Verify technical specs for the new card.</p>
 
