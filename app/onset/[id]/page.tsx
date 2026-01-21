@@ -18,7 +18,7 @@ import {
     ScheduleView,
     MobileCameraReportView
 } from './components';
-import { LogOut, Wifi, UserCircle } from 'lucide-react';
+import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive } from 'lucide-react';
 
 /* --------------------------------------------------------------------------------
  * COMPONENTS
@@ -461,6 +461,27 @@ export default function OnSetMobilePage() {
                     <Menu size={14} />
                 </button>
             </header>
+
+            {/* GLOBAL MEDIA ALERT BANNER */}
+            {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
+                <button
+                    onClick={() => setActiveTab('dit-log')}
+                    className="w-full bg-emerald-500 text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="bg-black/10 p-1.5 rounded-full">
+                            <HardDrive size={16} />
+                        </div>
+                        <div className="text-left">
+                            <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5">Media Alert</p>
+                            <p className="text-xs font-bold leading-none">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                        </div>
+                    </div>
+                    <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                        View
+                    </div>
+                </button>
+            )}
 
             {/* SYSTEM MENU DRAWER */}
             {
