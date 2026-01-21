@@ -576,6 +576,9 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         iso: '800',
         roll: 'A001',
         timecode: '00:00:00:00',
+        shutter: '180',
+        wb: '5600K',
+        mediaType: 'Card',
         status: 'good',
         description: ''
     });
@@ -588,7 +591,11 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         camera: 'A',
         roll: '',
         iso: '800',
-        fps: '24'
+        fps: '24',
+        shutter: '180',
+        wb: '5600K',
+        mediaType: 'CFexpress',
+        soundRoll: ''
     });
 
     // Smart Carry-Over Initialization
@@ -603,6 +610,8 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                 lens: sameRoll ? (lastItem.lens || '') : '', // Reset on new roll (if detected via logic, though here we just default)
                 fps: sameRoll ? (lastItem.fps || '24') : '24',
                 iso: sameRoll ? (lastItem.iso || '800') : '800',
+                shutter: sameRoll ? (lastItem.shutter || '180') : '180',
+                wb: sameRoll ? (lastItem.wb || '5600K') : '5600K',
             }));
         }
     }, [isAdding, lastItem]);
@@ -630,7 +639,11 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
             ...rollForm,
             roll: nextRoll,
             iso: '800',
-            fps: '24'
+            fps: '24',
+            shutter: '180',
+            wb: '5600K',
+            mediaType: 'CFexpress',
+            soundRoll: ''
         });
         setIsNewRollModal(true);
     };
@@ -641,6 +654,9 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
             roll: rollForm.roll,
             iso: rollForm.iso,
             fps: rollForm.fps,
+            shutter: rollForm.shutter,
+            wb: rollForm.wb,
+            mediaType: rollForm.mediaType,
             lens: '', // Clear Lens
             timecode: '00:00:00:00', // Reset TC
             take: '1',
@@ -734,18 +750,57 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                                     <input
                                         value={rollForm.iso}
                                         onChange={e => setRollForm({ ...rollForm, iso: e.target.value })}
-                                        className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded"
+                                        className="w-full bg-zinc-900 border border-zinc-800 text-white text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Project FPS</label>
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">PROJ FPS</label>
                                     <input
                                         value={rollForm.fps}
                                         onChange={e => setRollForm({ ...rollForm, fps: e.target.value })}
                                         className="w-full bg-zinc-900 border border-zinc-800 text-white text-base p-2 rounded"
                                     />
                                 </div>
+                                <div>
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Shutter (Deg)</label>
+                                    <input
+                                        value={rollForm.shutter}
+                                        onChange={e => setRollForm({ ...rollForm, shutter: e.target.value })}
+                                        className="w-full bg-zinc-900 border border-zinc-800 text-white text-base p-2 rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">WB (K)</label>
+                                    <input
+                                        value={rollForm.wb}
+                                        onChange={e => setRollForm({ ...rollForm, wb: e.target.value })}
+                                        className="w-full bg-zinc-900 border border-zinc-800 text-white text-base p-2 rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Media Type</label>
+                                    <select
+                                        value={rollForm.mediaType}
+                                        onChange={e => setRollForm({ ...rollForm, mediaType: e.target.value })}
+                                        className="w-full bg-zinc-900 border border-zinc-800 text-white text-base p-2 rounded appearance-none"
+                                    >
+                                        <option>CFexpress</option>
+                                        <option>SD Card</option>
+                                        <option>SSD</option>
+                                        <option>RED Mag</option>
+                                        <option>Arri Codex</option>
+                                    </select>
+                                </div>
                             </div>
+                        </div>
+                        <div className="mt-4">
+                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Sound Roll</label>
+                            <input
+                                value={rollForm.soundRoll}
+                                onChange={e => setRollForm({ ...rollForm, soundRoll: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded"
+                                placeholder="SR001"
+                            />
                         </div>
 
                         <div className="flex gap-3">
@@ -862,6 +917,27 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                                     onChange={e => handleTCChange(e.target.value)}
                                     className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
                                     placeholder="00:00:00:00"
+                                />
+                            </div>
+                        </div>
+                        {/* Shutter / WB Row */}
+                        <div className="grid grid-cols-2 gap-4 mt-2 pt-2 border-t border-zinc-800/50">
+                            <div>
+                                <label className="text-[8px] uppercase font-bold text-zinc-500 block mb-1">Shutter</label>
+                                <input
+                                    value={form.shutter}
+                                    onChange={e => setForm({ ...form, shutter: e.target.value })}
+                                    className="w-full bg-zinc-900/50 border border-zinc-800 text-zinc-300 text-[10px] p-1 rounded"
+                                    placeholder="180"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-[8px] uppercase font-bold text-zinc-500 block mb-1">White Balance</label>
+                                <input
+                                    value={form.wb}
+                                    onChange={e => setForm({ ...form, wb: e.target.value })}
+                                    className="w-full bg-zinc-900/50 border border-zinc-800 text-zinc-300 text-[10px] p-1 rounded"
+                                    placeholder="5600K"
                                 />
                             </div>
                         </div>
