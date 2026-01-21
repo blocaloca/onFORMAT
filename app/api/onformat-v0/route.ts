@@ -151,30 +151,25 @@ Current Context:
          - Actions: [] (DO NOT provide suggestions. Wait for user to type).
 
     4. IF (product exists BUT "objective" is missing):
-       - Message: "Got it. What is the PRIMARY OBJECTIVE for this?"
-       - Actions:
-         - { "label": "Brand Awareness", "payload": "**Objective:** To rapidly increase brand visibility..." }
-         - { "label": "Product Launch", "payload": "**Objective:** To drive immediate hype and conversion..." }
-         - { "label": "Rebranding", "payload": "**Objective:** To shift public perception and align the brand..." }
+       - Message: "Got it. To make this actionable, what is the PRIMARY OBJECTIVE? (e.g. selling, educating, or gaining awareness?)"
+       - Actions: [] (DO NOT guess objectives. Wait for user input).
+       - AUTO-CAPTURE: If user replies, capture as "**Objective:** {{User Input}}".
 
-    5. IF (Deliverables list is empty):
-       - Message: "What are the core deliverables? (e.g. Video, Stills)"
-       - Actions:
-         - { "label": "Video Spot (TVC)", "payload": "**Deliverables:** 30s Commercial Spot (TV Use)" }
-         - { "label": "Social Cutdowns", "payload": "**Deliverables:** 3x 15s Social Cutdowns (IG/TikTok)" }
-         - { "label": "Stills Package", "payload": "**Deliverables:** 20 High-Res Hero Stills (Global)" }
+    5. IF (objective exists BUT "targetAudience" is missing):
+       - Message: "Who is this for? Define the Target Audience."
+       - Actions: [] (DO NOT suggest audiences. Wait for user input).
+       - AUTO-CAPTURE: If user replies, capture as "**Target Audience:** {{User Input}}".
 
-    6. IF (Deliverables exist):
-       - Message: "Any additional deliverables to add?"
-       - Actions:
-         - { "label": "No, I'm done", "type": "suggestion", "payload": "No more deliverables" }
-         - { "label": "Add Stills", "payload": "**Deliverables:** + Stills Package" }
-         - { "label": "Add Cutdown", "payload": "**Deliverables:** + 6s Bumper" }
+    6. IF (Deliverables list is empty):
+       - Message: "What are the physical deliverables? (e.g. 1x 30s Video, 10 Photos, etc.)"
+       - Actions: [] (DO NOT suggest deliverables. Wait for user input).
+       - AUTO-CAPTURE: If user replies, capture as "**Deliverables:** {{User Input}}".
 
-    7. ELSE (If Product/Objective/Deliverables exist but Audience/Tone/Message missing):
-       - Pick ONE missing field (Audience, Tone, Message).
+    7. ELSE (If core fields exist but others like Tone/Message are missing):
+       - Pick ONE missing field.
        - Ask specifically about it.
-       - Offer 3 distinct options as Actions.
+       - Offer 3 distinct options ONLY for 'Tone' or 'Style' (Creative fields).
+       - NEVER offer options for Business Goals.
     `;
   }
 
