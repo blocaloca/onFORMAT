@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Plus, X, Save, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, X, Save, Check, HardDrive, AlertCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 /* --------------------------------------------------------------------------------
@@ -381,7 +381,8 @@ export const CallSheetView = ({ data }: { data: any }) => {
     )
 }
 
-export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => void }) => {
+export const MobileDITLogView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
+    const [mediaAlerts, setMediaAlerts] = useState<any[]>([]);
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -391,6 +392,34 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
         destination: '',
         description: ''
     });
+
+    useEffect(() => {
+        if (!projectId) return;
+
+        const channel = supabase.channel(`project-live-${projectId}`)
+            .on('broadcast', { event: 'NEW_ROLL_PULLED' }, (payload) => {
+                console.log("Media Alert Received:", payload);
+                setMediaAlerts(prev => [...prev, payload.payload]);
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, [projectId]);
+
+    const handleStartIngest = (alert: any) => {
+        // Pre-fill form
+        setForm({
+            ...form,
+            eventType: 'offload',
+            source: `Roll ${alert.roll} (${alert.camera})`,
+            description: `${alert.mediaType} | ${alert.fps}fps | ISO ${alert.iso} | ${alert.shutter}° | ${alert.wb}`,
+            destination: ''
+        });
+        setIsAdding(true);
+        // Remove from alerts
+        setMediaAlerts(prev => prev.filter(a => a !== alert));
+    };
+
 
     const handleSubmit = () => {
         if (!onAdd) return;
@@ -409,6 +438,35 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
 
     return (
         <div className="space-y-4">
+
+            {/* MEDIA ALERTS */}
+            {mediaAlerts.map((alert, idx) => (
+                <div key={idx} className="bg-emerald-900/20 border border-emerald-500/50 p-4 rounded-xl flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 mb-2">
+                    <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shrink-0">
+                            <HardDrive size={16} />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="text-xs font-black uppercase text-emerald-400 mb-1">New Roll Pulled</h4>
+                            <p className="text-[10px] text-zinc-300">
+                                <strong className="text-white">Roll {alert.roll}</strong> • Cam {alert.camera} • {alert.mediaType}
+                            </p>
+                            <p className="text-[10px] text-zinc-400 mt-1 font-mono">
+                                {alert.fps}fps • {alert.iso} ISO • {alert.shutter} • {alert.wb}
+                            </p>
+                        </div>
+                        <button onClick={() => setMediaAlerts(prev => prev.filter((_, i) => i !== idx))} className="text-zinc-500"><X size={14} /></button>
+                    </div>
+                    {onAdd && (
+                        <button
+                            onClick={() => handleStartIngest(alert)}
+                            className="bg-emerald-500 text-black font-bold uppercase text-[10px] py-3 rounded w-full hover:bg-emerald-400"
+                        >
+                            Start Ingest
+                        </button>
+                    )}
+                </div>
+            ))}
 
             {/* ADD BUTTON */}
             {onAdd && !isAdding && (

@@ -557,7 +557,7 @@ export default function OnSetMobilePage() {
                             {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                             {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                             {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
-                            {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
+                            {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} projectId={id} />}
                             {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
                             {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
                             {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
@@ -609,7 +609,9 @@ export default function OnSetMobilePage() {
                             return null;
                         }
 
-                        return availableKeys.map((key: string) => (
+                        const mappedKeys = availableKeys.map(k => k === 'shot-log' ? 'camera-report' : k);
+
+                        return mappedKeys.map((key: string) => (
                             <button
                                 key={key}
                                 onClick={() => setActiveTab(key)}
