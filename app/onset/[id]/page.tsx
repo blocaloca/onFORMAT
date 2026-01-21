@@ -62,6 +62,7 @@ export default function OnSetMobilePage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<Tab>('');
     const [data, setData] = useState<MobileState>({ project: null, docs: {} });
+    const [mediaAlerts, setMediaAlerts] = useState<any[]>([]);
 
     const [userEmail, setUserEmail] = useState<string>('');
     const [userRole, setUserRole] = useState<string>('');
@@ -86,6 +87,10 @@ export default function OnSetMobilePage() {
                     fetchData();
                 }
             )
+            .on('broadcast', { event: 'NEW_ROLL_PULLED' }, (payload) => {
+                console.log("Media Alert Received (Page):", payload);
+                setMediaAlerts(prev => [...prev, payload.payload]);
+            })
             .subscribe();
 
         return () => {
@@ -557,7 +562,13 @@ export default function OnSetMobilePage() {
                             {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                             {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                             {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
-                            {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} projectId={id} />}
+                            {activeTab === 'dit-log' && <MobileDITLogView
+                                data={data.docs['dit-log']}
+                                onAdd={handleUpdateDIT}
+                                projectId={id}
+                                mediaAlerts={mediaAlerts}
+                                setMediaAlerts={setMediaAlerts}
+                            />}
                             {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
                             {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
                             {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
@@ -609,7 +620,7 @@ export default function OnSetMobilePage() {
                             return null;
                         }
 
-                        const mappedKeys = availableKeys.map(k => k === 'shot-log' ? 'camera-report' : k);
+                        const mappedKeys = Array.from(new Set(availableKeys.map(k => k === 'shot-log' ? 'camera-report' : k)));
 
                         return mappedKeys.map((key: string) => (
                             <button

@@ -381,8 +381,7 @@ export const CallSheetView = ({ data }: { data: any }) => {
     )
 }
 
-export const MobileDITLogView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
-    const [mediaAlerts, setMediaAlerts] = useState<any[]>([]);
+export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], setMediaAlerts }: { data: any, onAdd?: (item: any) => void, projectId?: string, mediaAlerts?: any[], setMediaAlerts?: React.Dispatch<React.SetStateAction<any[]>> }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -393,18 +392,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId }: { data: any, onAdd?
         description: ''
     });
 
-    useEffect(() => {
-        if (!projectId) return;
 
-        const channel = supabase.channel(`project-live-${projectId}`)
-            .on('broadcast', { event: 'NEW_ROLL_PULLED' }, (payload) => {
-                console.log("Media Alert Received:", payload);
-                setMediaAlerts(prev => [...prev, payload.payload]);
-            })
-            .subscribe();
-
-        return () => { supabase.removeChannel(channel); };
-    }, [projectId]);
 
     const handleStartIngest = (alert: any) => {
         // Pre-fill form
@@ -417,7 +405,10 @@ export const MobileDITLogView = ({ data, onAdd, projectId }: { data: any, onAdd?
         });
         setIsAdding(true);
         // Remove from alerts
-        setMediaAlerts(prev => prev.filter(a => a !== alert));
+        if (setMediaAlerts) {
+            // @ts-ignore
+            setMediaAlerts(prev => prev.filter(a => a !== alert));
+        }
     };
 
 
@@ -455,7 +446,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId }: { data: any, onAdd?
                                 {alert.fps}fps • {alert.iso} ISO • {alert.shutter} • {alert.wb}
                             </p>
                         </div>
-                        <button onClick={() => setMediaAlerts(prev => prev.filter((_, i) => i !== idx))} className="text-zinc-500"><X size={14} /></button>
+                        <button onClick={() => setMediaAlerts && setMediaAlerts((prev: any[]) => prev.filter((_: any, i: number) => i !== idx))} className="text-zinc-500"><X size={14} /></button>
                     </div>
                     {onAdd && (
                         <button
