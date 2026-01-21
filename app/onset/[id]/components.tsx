@@ -571,12 +571,61 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         scene: '',
         shotId: '',
         take: '1',
+        lens: '',
+        fps: '24',
+        iso: '800',
+        roll: 'A001',
+        timecode: '00:00:00:00',
         status: 'good',
         description: ''
     });
 
+    const items = data?.items || data?.entries || [];
+    const lastItem = items.length > 0 ? items[0] : null;
+
+    // Smart Carry-Over Initialization
+    React.useEffect(() => {
+        if (lastItem && !isAdding) {
+            // Auto-increment take if same shot, otherwise reset take
+            // Carry over tech specs IF same roll
+            const sameRoll = lastItem.roll === form.roll;
+            setForm(prev => ({
+                ...prev,
+                roll: lastItem.roll || prev.roll, // Sync roll
+                lens: sameRoll ? (lastItem.lens || '') : '', // Reset on new roll (if detected via logic, though here we just default)
+                fps: sameRoll ? (lastItem.fps || '24') : '24',
+                iso: sameRoll ? (lastItem.iso || '800') : '800',
+            }));
+        }
+    }, [isAdding, lastItem]);
+
+    const handleNewRoll = () => {
+        const current = form.roll || 'A001';
+        const match = current.match(/([A-Z]+)(\d+)/);
+        let nextRoll = current;
+        if (match) {
+            const prefix = match[1];
+            const num = parseInt(match[2]) + 1;
+            nextRoll = `${prefix}${String(num).padStart(3, '0')}`;
+        }
+        setForm(prev => ({
+            ...prev,
+            roll: nextRoll,
+            lens: '', // Reset Tech
+            iso: '',
+            fps: '24', // Default
+            take: '1',
+            shotId: ''
+        }));
+        setIsAdding(true);
+    };
+
     const handleSubmit = () => {
         if (!onAdd) return;
+        if (!form.roll) {
+            alert("Roll ID is required.");
+            return;
+        }
         const newItem = {
             id: `log-${Date.now()}`,
             type: 'SHOT',
@@ -585,24 +634,38 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         };
         onAdd(newItem);
         setIsAdding(false);
-        setForm({ ...form, description: '', shotId: '', take: (parseInt(form.take) + 1).toString() });
+        // Next shot prep
+        setForm(prev => ({
+            ...prev,
+            description: '',
+            shotId: prev.shotId, // Keep shot ID usually? No, usually next shot. But logic says keep take increment?
+            // Actually, keep shotId and increment take is standard for "Next Take".
+            // If new shot, user clears shotId. 
+            take: (parseInt(prev.take) + 1).toString()
+        }));
     };
 
     if (!data && !isAdding) return <EmptyState label="Shot Log" />;
 
-    const items = data?.items || data?.entries || [];
-
     return (
         <div className="space-y-4">
-            {/* ADD BUTTON */}
+            {/* HEADER ACTIONS: New Roll / Add Shot */}
             {onAdd && !isAdding && (
-                <button
-                    onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
-                >
-                    <Plus size={16} />
-                    <span>Log Shot</span>
-                </button>
+                <div className="flex gap-2 mb-4">
+                    <button
+                        onClick={() => setIsAdding(true)}
+                        className="flex-1 bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+                    >
+                        <Plus size={16} />
+                        <span>Log Shot</span>
+                    </button>
+                    <button
+                        onClick={handleNewRoll}
+                        className="w-1/3 bg-zinc-800 text-zinc-300 font-bold uppercase tracking-wider text-[10px] py-3 rounded-lg border border-zinc-700 hover:bg-zinc-700"
+                    >
+                        New Roll
+                    </button>
+                </div>
             )}
 
             {/* ADD FORM */}
@@ -652,6 +715,57 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                         </div>
                     </div>
 
+                    {/* Tech Specs Grid */}
+                    <div className="bg-black/50 p-2 rounded-lg border border-zinc-800 mb-3">
+                        <div className="mb-2 border-b border-zinc-800 pb-2">
+                            <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Current Roll</label>
+                            <input
+                                value={form.roll}
+                                onChange={e => setForm({ ...form, roll: e.target.value })}
+                                className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-left font-mono focus:border-emerald-500"
+                                placeholder="A001"
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                            <div className="col-span-1">
+                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Lens</label>
+                                <input
+                                    value={form.lens}
+                                    onChange={e => setForm({ ...form, lens: e.target.value })}
+                                    className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    placeholder="mm"
+                                />
+                            </div>
+                            <div className="col-span-1">
+                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">FPS</label>
+                                <input
+                                    value={form.fps}
+                                    onChange={e => setForm({ ...form, fps: e.target.value })}
+                                    className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    placeholder="24"
+                                />
+                            </div>
+                            <div className="col-span-1">
+                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">ISO</label>
+                                <input
+                                    value={form.iso}
+                                    onChange={e => setForm({ ...form, iso: e.target.value })}
+                                    className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    placeholder="800"
+                                />
+                            </div>
+                            <div className="col-span-1">
+                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">TC</label>
+                                <input
+                                    value={form.timecode || ''}
+                                    onChange={e => setForm({ ...form, timecode: e.target.value })}
+                                    className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    placeholder="00:00:00:00"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Status Toggles */}
                     <div className="flex gap-2 mb-4">
                         {[
@@ -692,7 +806,8 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                         <span>Save Shot</span>
                     </button>
                 </div>
-            )}
+            )
+            }
 
             <div className="space-y-3">
                 {items.length === 0 && !isAdding ? (
@@ -703,7 +818,9 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                             <div className="text-center w-12 shrink-0">
                                 <span className="block text-[10px] font-mono text-zinc-500">{item.time}</span>
                                 <span className="block text-xl font-black text-white">{item.shot || item.shotId || '?'}</span>
+                                <span className="block text-xl font-black text-white">{item.shot || item.shotId || '?'}</span>
                                 {item.scene && <span className="block text-[9px] font-bold text-zinc-500">Sc {item.scene}</span>}
+                                {item.roll && <span className="block text-[8px] font-mono text-zinc-600 mt-1">{item.roll}</span>}
                             </div>
                             <div className="w-px h-8 bg-zinc-800"></div>
                             <div className="flex-1">
@@ -722,7 +839,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                     ))
                 )}
             </div>
-        </div>
+        </div >
     );
 }
 
