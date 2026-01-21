@@ -1398,6 +1398,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
                                 // Data Carrier: Inject payload as AI message in new tool to trigger Auto-Parse
                                 if (payload) {
+                                    // 1. Add to Chat History
                                     const existingChat = newState.chat[targetTool as ToolKey] || [];
                                     newState.chat = {
                                         ...newState.chat,
@@ -1406,6 +1407,51 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                             { role: 'assistant', content: `Transferring context...\n\n${payload}` }
                                         ]
                                     };
+
+                                    // 2. Direct Draft Update (SPECIAL HANDLING FOR BRIEF)
+                                    // This ensures the fields are populated immediately upon landing.
+                                    if (targetTool === 'brief') {
+                                        const subjectMatch = payload.match(/\*\*(?:Subject|Product)(?:\/Product)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const objectiveMatch = payload.match(/\*\*Objective:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const audienceMatch = payload.match(/\*\*(?:Target )?Audience:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const toneMatch = payload.match(/\*\*Tone(?: [&/\\,]+ Style)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const messageMatch = payload.match(/\*\*(?:Key )?Message:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+
+                                        if (subjectMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch) {
+                                            const existingDraftJSON = newState.phases[foundPhase!].drafts[targetTool] || '[]';
+                                            let currentStack: any[] = [{}];
+
+                                            try {
+                                                const parsed = JSON.parse(existingDraftJSON);
+                                                if (Array.isArray(parsed)) currentStack = parsed;
+                                                else if (typeof parsed === 'object') currentStack = [parsed];
+                                            } catch (e) { /* ignore */ }
+
+                                            if (currentStack.length === 0) currentStack.push({});
+
+                                            const update: any = {};
+                                            if (subjectMatch) update.product = subjectMatch[1].trim();
+                                            if (objectiveMatch) update.objective = objectiveMatch[1].trim();
+                                            if (audienceMatch) update.targetAudience = audienceMatch[1].trim();
+                                            if (toneMatch) update.tone = toneMatch[1].trim();
+                                            if (messageMatch) update.keyMessage = messageMatch[1].trim();
+
+                                            // Update the head of the stack
+                                            currentStack[0] = { ...currentStack[0], ...update };
+
+                                            // Deep Update State
+                                            newState.phases = {
+                                                ...newState.phases,
+                                                [foundPhase!]: {
+                                                    ...newState.phases[foundPhase!],
+                                                    drafts: {
+                                                        ...newState.phases[foundPhase!].drafts,
+                                                        [targetTool]: JSON.stringify(currentStack, null, 2)
+                                                    }
+                                                }
+                                            };
+                                        }
+                                    }
                                 }
                                 return newState;
                             });

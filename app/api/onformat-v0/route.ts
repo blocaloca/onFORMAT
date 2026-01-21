@@ -216,7 +216,7 @@ Current Context:
        - **COMPLETION CHECK**:
          - IF (Document Data length > 100 chars):
            - "We have good context. Ready to draft the Brief?"
-           - ACTION: { "label": "Draft Brief", "type": "suggestion", "target": "brief", "prominence": "primary", "payload": "Draft Brief" }
+           - ACTION: { "label": "Draft Brief", "type": "suggestion", "target": "brief", "prominence": "primary", "payload": "**Subject:** [Extract Subject]\n**Objective:** [Extract Objective/Goal]\n**Target Audience:** [Extract Audience]\n**Tone:** [Extract Tone/Style]\n**Key Message:** [Extract Core Message]" }
 
     (Always prioritize Creative flow unless specific keyword triggers a switch suggestion).
     CRITICAL: ALWAYS Auto-Paste user input using '**Vision:**' when they add new info.
