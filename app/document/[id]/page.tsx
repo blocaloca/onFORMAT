@@ -106,7 +106,7 @@ export default function DocumentEditorPage() {
               setMobileControlDoc(payload.new)
             }
             // Trigger Blink on Log Updates
-            if (payload.new.type === 'shot-log' || payload.new.type === 'dit-log') {
+            if (payload.new.type === 'camera-report' || payload.new.type === 'dit-log') {
               setLastEventTime(Date.now())
             }
           }

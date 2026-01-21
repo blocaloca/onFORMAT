@@ -16,7 +16,7 @@ import {
     EmailEntryGate,
     CrewListView,
     ScheduleView,
-    MobileShotLogView
+    MobileCameraReportView
 } from './components';
 import { LogOut, Wifi, UserCircle } from 'lucide-react';
 
@@ -155,6 +155,11 @@ export default function OnSetMobilePage() {
                 });
             }
 
+            // VIRTUAL MIGRATION: Support legacy Shot Log data
+            if (allDrafts['shot-log'] && !allDrafts['camera-report']) {
+                allDrafts['camera-report'] = allDrafts['shot-log'];
+            }
+
             setData({
                 project: projectData,
                 docs: allDrafts
@@ -192,9 +197,9 @@ export default function OnSetMobilePage() {
                         // Crew sees only matching groups
                         return allowedGroups.some((g: string) => myGroups.includes(g));
                     })
-                    .map(([key]) => key);
+                    .map(([key]) => key === 'shot-log' ? 'camera-report' : key);
             } else {
-                computedAvailableKeys = mobileControl?.selectedTools || [];
+                computedAvailableKeys = (mobileControl?.selectedTools || []).map((k: string) => k === 'shot-log' ? 'camera-report' : k);
             }
 
             // Strict Permission: No defaults.
@@ -299,7 +304,7 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e); }
     };
 
-    const handleUpdateShotLog = async (item: any) => {
+    const handleUpdateCameraReport = async (item: any) => {
         if (!data.project) return;
         try {
             const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
@@ -312,7 +317,7 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
+            let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['camera-report'] || updatedPhases[logPhaseKey].drafts['shot-log']);
             if (Array.isArray(logDoc)) logDoc = logDoc[0];
             if (!logDoc || !logDoc.items) logDoc = { items: [] };
 
@@ -324,7 +329,7 @@ export default function OnSetMobilePage() {
 
             logDoc.items.unshift(item);
 
-            updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
+            updatedPhases[logPhaseKey].drafts['camera-report'] = JSON.stringify(logDoc);
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
             fetchData();
@@ -370,7 +375,7 @@ export default function OnSetMobilePage() {
                 if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
                 if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-                let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['shot-log']);
+                let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['camera-report'] || updatedPhases[logPhaseKey].drafts['shot-log']);
                 if (Array.isArray(logDoc)) logDoc = logDoc[0];
                 if (!logDoc || !logDoc.items) logDoc = { items: [] };
 
@@ -390,8 +395,8 @@ export default function OnSetMobilePage() {
                     description: `Shot ${shotId} marked as ${status}`
                 });
 
-                updatedPhases[logPhaseKey].drafts['shot-log'] = JSON.stringify(logDoc);
-                console.log("Adding to Shot Log:", logDoc);
+                updatedPhases[logPhaseKey].drafts['camera-report'] = JSON.stringify(logDoc);
+                console.log("Adding to Camera Report:", logDoc);
             }
 
             // SAVE
@@ -553,12 +558,12 @@ export default function OnSetMobilePage() {
                             {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                             {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
                             {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
-                            {activeTab === 'shot-log' && <MobileShotLogView data={data.docs['shot-log']} onAdd={handleUpdateShotLog} projectId={id} />}
+                            {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
                             {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
                             {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
 
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'shot-log', 'crew-list', 'production-schedule'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'production-schedule'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>

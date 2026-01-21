@@ -18,7 +18,7 @@ export const DOC_LABELS: Record<string, string> = {
     'wardrobe': 'Wardrobe',
     'storyboard': 'Storyboard',
     'crew-list': 'Crew List',
-    'shot-log': 'Shot Log'
+    'camera-report': 'Camera Report'
 };
 
 /* --------------------------------------------------------------------------------
@@ -565,7 +565,7 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
     )
 }
 
-export const MobileShotLogView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
+export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -702,7 +702,7 @@ export const MobileShotLogView = ({ data, onAdd, projectId }: { data: any, onAdd
         }));
     };
 
-    if (!data && !isAdding) return <EmptyState label="Shot Log" />;
+    if (!data && !isAdding) return <EmptyState label="Camera Report" />;
 
     return (
         <div className="space-y-4">

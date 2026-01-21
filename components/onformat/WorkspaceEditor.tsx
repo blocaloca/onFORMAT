@@ -24,7 +24,7 @@ type ToolKey =
     | 'crew-list'
     | 'casting-talent'
     | 'call-sheet'
-    | 'shot-log'
+    | 'camera-report'
     | 'on-set-notes'
     | 'script-notes'
     | 'dit-log'
@@ -69,7 +69,7 @@ const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
     ON_SET: [
         { key: 'call-sheet', label: 'Call Sheet' },
         { key: 'on-set-notes', label: 'On-Set Notes' },
-        { key: 'shot-log', label: 'Shot Log' },
+        { key: 'camera-report', label: 'Camera Report' },
         { key: 'script-notes', label: 'Script Notes' },
         { key: 'sound-report', label: 'Sound Report' },
         { key: 'dit-log', label: 'DIT Log' },
@@ -251,9 +251,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         const channel = supabase.channel('mobile-control-updates-workspace')
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${projectId}` }, (payload: any) => {
                 if (payload.new.type === 'onset-mobile-control') setMobileControlDoc(payload.new);
-                if (payload.new.type === 'shot-log') {
+                if (payload.new.type === 'camera-report') {
                     setLastEventTime(Date.now());
-                    setLatestNotification({ msg: 'SHOT LOG UPDATED', time: Date.now() });
+                    setLatestNotification({ msg: 'CAMERA REPORT UPDATED', time: Date.now() });
                 }
                 if (payload.new.type === 'dit-log') {
                     setLastEventTime(Date.now());
@@ -322,9 +322,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'];
                     const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'];
 
-                    // Check for Shot Log Updates
-                    const newShotLog = newData.phases?.ON_SET?.drafts?.['shot-log'];
-                    const currentShotLog = stateRef.current.phases?.ON_SET?.drafts?.['shot-log'];
+                    // Check for Camera Report Updates
+                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'];
+                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'];
 
                     let updatedDrafts = { ...stateRef.current.phases?.ON_SET?.drafts };
                     let hasUpdates = false;
@@ -337,11 +337,11 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         notifMsg = 'New DIT Log Entry Received';
                     }
 
-                    if (newShotLog && newShotLog !== currentShotLog) {
-                        console.log("🔔 Shot Log Change Detected!");
-                        updatedDrafts['shot-log'] = newShotLog;
+                    if (newCameraReport && newCameraReport !== currentCameraReport) {
+                        console.log("🔔 Camera Report Change Detected!");
+                        updatedDrafts['camera-report'] = newCameraReport;
                         hasUpdates = true;
-                        notifMsg = 'New Shot Logged';
+                        notifMsg = 'New Camera Report Entry';
                     }
 
                     if (hasUpdates) {

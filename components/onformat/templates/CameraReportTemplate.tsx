@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { DocumentLayout } from './DocumentLayout';
+import { DocumentLayout, DocumentMetadata } from './DocumentLayout';
 import { Trash2, Plus, GripVertical, CheckCircle2 } from 'lucide-react';
 
-interface ShotLogItem {
+interface CameraReportItem {
     id: string;
     scene: string;
     shot: string;
@@ -24,22 +24,22 @@ interface ShotLogItem {
     operator?: string;
 }
 
-interface ShotLogData {
+interface CameraReportData {
     date: string;
     project: string;
     roll: string;
     camera: string;
     operator: string;
-    items: ShotLogItem[];
+    items: CameraReportItem[];
 }
 
-interface ShotLogTemplateProps {
-    data: Partial<ShotLogData>;
-    onUpdate: (data: Partial<ShotLogData>) => void;
+interface CameraReportTemplateProps {
+    data: Partial<CameraReportData>;
+    onUpdate: (data: Partial<CameraReportData>) => void;
     isLocked?: boolean;
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
-    metadata?: any;
+    metadata?: DocumentMetadata;
     isPrinting?: boolean;
 }
 
@@ -52,7 +52,7 @@ const STATUS_OPTIONS = [
 
 const ITEMS_PER_PAGE = 20;
 
-export const ShotLogTemplate = ({ data, onUpdate, isLocked = false, plain, orientation = 'portrait', metadata, isPrinting = false }: ShotLogTemplateProps) => {
+export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, orientation = 'portrait', metadata, isPrinting = false }: CameraReportTemplateProps) => {
 
     // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
@@ -75,7 +75,7 @@ export const ShotLogTemplate = ({ data, onUpdate, isLocked = false, plain, orien
         const lastItem = items[items.length - 1];
         const nextTake = lastItem ? String(parseInt(lastItem.take || '0') + 1) : '1';
 
-        const newItem: ShotLogItem = {
+        const newItem: CameraReportItem = {
             id: `log-${Date.now()}`,
             scene: lastItem?.scene || '',
             shot: lastItem?.shot || '',
@@ -98,7 +98,7 @@ export const ShotLogTemplate = ({ data, onUpdate, isLocked = false, plain, orien
         onUpdate({ items: [...items, newItem] });
     };
 
-    const handleBatchUpdateRoll = (rollId: string, updates: Partial<ShotLogItem>) => {
+    const handleBatchUpdateRoll = (rollId: string, updates: Partial<CameraReportItem>) => {
         const newItems = items.map(item => {
             if ((item.roll || data.roll) === rollId) {
                 return { ...item, ...updates };
@@ -108,7 +108,7 @@ export const ShotLogTemplate = ({ data, onUpdate, isLocked = false, plain, orien
         onUpdate({ items: newItems });
     };
 
-    const handleUpdateItem = (index: number, updates: Partial<ShotLogItem>) => {
+    const handleUpdateItem = (index: number, updates: Partial<CameraReportItem>) => {
         const newItems = [...items];
         newItems[index] = { ...newItems[index], ...updates };
         onUpdate({ items: newItems });
@@ -120,7 +120,7 @@ export const ShotLogTemplate = ({ data, onUpdate, isLocked = false, plain, orien
         setDeleteConfirmIndex(null);
     };
 
-    const updateField = (field: keyof ShotLogData, value: string) => {
+    const updateField = (field: keyof CameraReportData, value: string) => {
         onUpdate({ [field]: value });
     };
 
@@ -144,7 +144,7 @@ export const ShotLogTemplate = ({ data, onUpdate, isLocked = false, plain, orien
             {pages.map((pageItems, pageIndex) => (
                 <DocumentLayout
                     key={pageIndex}
-                    title="Shot Log"
+                    title="Camera Report"
                     hideHeader={false}
                     plain={plain}
                     subtitle={pageIndex > 0 ? `(Cont. Page ${pageIndex + 1})` : ''}

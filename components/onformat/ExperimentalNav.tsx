@@ -43,7 +43,7 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
     ON_SET: [
         { key: 'call-sheet', label: 'Call Sheet' },
         { key: 'on-set-notes', label: 'On-Set Notes' },
-        { key: 'shot-log', label: 'Shot Log' },
+        { key: 'camera-report', label: 'Camera Report' },
         { key: 'script-notes', label: 'Script Notes' },
         { key: 'sound-report', label: 'Sound Report' },
         { key: 'dit-log', label: 'DIT Log' },

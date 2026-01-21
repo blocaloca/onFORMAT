@@ -7,7 +7,7 @@ import { DirectorsTreatmentTemplate } from '@/components/onformat/templates/Dire
 import { MoodBoardTemplate } from '@/components/onformat/templates/MoodBoardTemplate'
 import { LookbookTemplate } from '@/components/onformat/templates/LookbookTemplate'
 import { ShotListTemplate } from '@/components/onformat/templates/ShotListTemplate'
-import { ShotLogTemplate } from '@/components/onformat/templates/ShotLogTemplate'
+import { CameraReportTemplate } from '@/components/onformat/templates/CameraReportTemplate'
 import { BudgetTemplate } from '@/components/onformat/templates/BudgetTemplate'
 import { ScheduleTemplate } from '@/components/onformat/templates/ScheduleTemplate'
 import { LocationsTemplate } from '@/components/onformat/templates/LocationsTemplate'
@@ -356,7 +356,7 @@ export const DraftEditor = ({
         case 'crew-list': TemplateComponent = CrewListTemplate; break;
         case 'casting-talent': TemplateComponent = CastingTemplate; break;
         case 'call-sheet': TemplateComponent = CallSheetTemplate; break;
-        case 'shot-log': TemplateComponent = ShotLogTemplate; break;
+        case 'camera-report': TemplateComponent = CameraReportTemplate; break;
         case 'on-set-notes': TemplateComponent = OnSetNotesTemplate; break;
         case 'script-notes': TemplateComponent = ScriptNotesTemplate; break;
         case 'dit-log': TemplateComponent = DITLogTemplate; break;
