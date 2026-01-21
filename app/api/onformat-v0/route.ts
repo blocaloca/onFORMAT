@@ -190,7 +190,7 @@ Current Context:
     STRATEGY:
     1. READ "Document Data".
     
-    2. KEYWORD DETECTOR:
+    2. KEYWORD DETECTOR for LOGISTICS (Switching Tools):
        - IF (User mentions "Budget" or "Cost"):
          - ACTION: { "label": "Open Budget", "type": "suggestion", "target": "budget", "payload": "Switch to Budget" }
        - IF (User mentions "Location" or "Scout"):
@@ -199,16 +199,32 @@ Current Context:
          - ACTION: { "label": "Open Casting", "type": "suggestion", "target": "casting", "payload": "Switch to Casting" }
 
     3. MAIN FLOW (Creative Development):
-       - If user is just chatting/brainstorming:
-       - RESPONSE: "Vision captured.\n\n**Vision:** {{User Input}}"
-       - (Auto-Paste the content).
+       - **CREATIVE STARTER LOGIC (Invention Protocol)**:
+         - IF User says "I have a subject or product..." OR "Conceptualize":
+           - TASK: Generate 3 distinct, high-level narrative concepts based on their subject.
+           - CONSTRAINT: Be bold. Invent narrative angles.
+           - ENDING: Ask exactly ONE question to narrow the focus (e.g. "Which angle feels right?").
+         
+         - IF User says "I have a mood in mind..." OR "Visual Style":
+           - TASK: Propose 3 distinct visual metaphors or style directions.
+           - ENDING: Ask exactly ONE question about the visual preference.
+
+         - IF User says "I know what I'm making..." OR "Project Logic":
+           - TASK: Ask for the Scope (Budget/Crew/Timeline) directly. Do not invent.
+           - RESPONSE: "Understood. Let's get practical. What is your estimated budget or timeline?"
+
+       - **STANDARD BRAINSTORMING**:
+         - If user provides input (e.g. "It's a horror movie"):
+         - RESPONSE: "Vision captured.\\n\\n**Vision:** {{User Input}}"
+         - (Auto-Paste the content using **Vision:**).
        
-       - IF (Document Data length > 100 chars):
-         - "We have good context. Ready to draft the Brief?"
-         - ACTION: { "label": "Draft Brief", "type": "suggestion", "target": "brief", "prominence": "primary", "payload": "Draft Brief" }
+       - **COMPLETION CHECK**:
+         - IF (Document Data length > 100 chars):
+           - "We have good context. Ready to draft the Brief?"
+           - ACTION: { "label": "Draft Brief", "type": "suggestion", "target": "brief", "prominence": "primary", "payload": "Draft Brief" }
 
     (Always prioritize Creative flow unless specific keyword triggers a switch suggestion).
-    CRITICAL: ALWAYS Auto-Paste user input using '**Vision:**'.
+    CRITICAL: ALWAYS Auto-Paste user input using '**Vision:**' when they add new info.
     `;
   }
 
@@ -226,8 +242,8 @@ Current Context:
     2. IF (Title is missing/empty):
        - User input IS the Title.
        - RESPONSE: "What to do next?"
-       - ACTION 1: { "label": "Describe Images", "type": "suggestion", "payload": "**Title:** {{User Input}}\n\n**Next:** Describe Images" }
-       - ACTION 2: { "label": "Write Notes", "type": "suggestion", "payload": "**Title:** {{User Input}}\n\n**Next:** Write Notes" }
+       - ACTION 1: { "label": "Describe Images", "type": "suggestion", "payload": "**Title:** {{User Input}}\\n\\n**Next:** Describe Images" }
+       - ACTION 2: { "label": "Write Notes", "type": "suggestion", "payload": "**Title:** {{User Input}}\\n\\n**Next:** Write Notes" }
        - (Do not offer separate "Set Title" action. It is bundled.)
 
     3. IF (User says "Describe Images" or similar):
@@ -237,7 +253,7 @@ Current Context:
     4. USER INPUT (Image Description):
        - IF (User is describing an image):
        - GEN TASK: Convert description to a detailed Image Gen Prompt.
-       - RESPONSE: "Auto-adding prompt:\n\n**Image Prompt:** [Generated Prompt based on '{{User Input}}']"
+       - RESPONSE: "Auto-adding prompt:\\n\\n**Image Prompt:** [Generated Prompt based on '{{User Input}}']"
        - SET JSON KEY "actions": [
            { "label": "Another Image", "type": "suggestion", "payload": "I want to describe another image." },
            { "label": "Write Notes", "type": "suggestion", "payload": "I want to write notes." }
@@ -257,8 +273,6 @@ Current Context:
     `;
   }
 
-
-
   if (toolType === 'shot-scene-book') {
     return `${protocolInstruction}
      
@@ -266,18 +280,18 @@ Current Context:
     ${contextBlock}
      ${modeInstructions}
 
-  Goal: Build a comprehensive Shot List.
+    Goal: Build a comprehensive Shot List.
     STRATEGY:
-  1. READ "Document Data"(it contains the current shots).
+    1. READ "Document Data" (it contains the current shots).
 
-     2. IF(Empty):
+     2. IF (Empty):
         - Ask "Scene 01 Describe the shot"
         - WAIT for input.
 
      3. USER INPUT (Scene Description):
         - IF (User is adding a scene):
         - Determine Scene Number from Context (if existing shots, increment). Default to 1.
-        - RESPONSE: "Shot added.\n\n**Scene:** [Scene #]\n**Description:** {{User Input}}"
+        - RESPONSE: "Shot added.\\n\\n**Scene:** [Scene #]\\n**Description:** {{User Input}}"
         - SET JSON KEY "actions": [
             { "label": "Add Coverage", "type": "suggestion", "payload": "I want to add coverage to this scene." },
             { "label": "Next Scene", "type": "suggestion", "payload": "I want to move to the next scene." }
@@ -285,7 +299,7 @@ Current Context:
 
       4. USER INPUT (Coverage):
          - IF (User says "Add Coverage" or describes a specific shot):
-         - RESPONSE: "Coverage added.\n\n**Description:** {{User Input}}"
+         - RESPONSE: "Coverage added.\\n\\n**Description:** {{User Input}}"
          - (Do not change Scene #).
          - SET JSON KEY "actions": [
             { "label": "Another Shot", "type": "suggestion", "payload": "Add another shot." },
@@ -310,31 +324,31 @@ Current Context:
     ${contextBlock}
      ${modeInstructions}
 
-  Goal: Write a compelling Audio / Visual Script row by row.
+    Goal: Write a compelling Audio / Visual Script row by row.
 
     STRATEGY:
-  1. READ "Document Data"(last row).
-     2. IF(Empty):
-  - The user will provide a scene description(e.g., "Describe Scene 1").
-        - Wait for their input.DO NOT offer pre - filled actions yet.
+    1. READ "Document Data" (last row).
+     2. IF (Empty):
+        - The user will provide a scene description (e.g., "Describe Scene 1").
+        - Wait for their input. DO NOT offer pre-filled actions yet.
      
-     3. USER INPUT(Scene Description):
-  - If the user provides a visual description(e.g. "A car drives fast"):
-  - RESPONSE: "Added Scene. Want to add Dialog or Audio?"
-    - ACTION 1(Primary): { "label": "Next Scene", "type": "suggestion", "payload": "Ready for Scene 2." }
-  - ACTION 2(Secondary): { "label": "Add Audio/Dialog", "type": "suggestion", "payload": "I want to add audio." }
-  - ACTION 3(Draft): { "label": "Add to Script", "type": "draft_prefill", "payload": "**Visual:** {{User Input}}" } <--IMPORTANT: Include the visual payload if not already added.
+     3. USER INPUT (Scene Description):
+        - If the user provides a visual description (e.g. "A car drives fast"):
+        - RESPONSE: "Added Scene. Want to add Dialog or Audio?"
+        - ACTION 1 (Primary): { "label": "Next Scene", "type": "suggestion", "payload": "Ready for Scene 2." }
+        - ACTION 2 (Secondary): { "label": "Add Audio/Dialog", "type": "suggestion", "payload": "I want to add audio." }
+        - ACTION 3 (Draft): { "label": "Add to Script", "type": "draft_prefill", "payload": "**Visual:** {{User Input}}" } <--IMPORTANT: Include the visual payload if not already added.
         
-     4. USER INPUT("Add Audio"):
-  - RESPONSE: "What is the audio or dialogue?"
-    - Wait for input.
+     4. USER INPUT ("Add Audio"):
+        - RESPONSE: "What is the audio or dialogue?"
+        - Wait for input.
         - Then ACTION: { "label": "Add Audio", "type": "draft_prefill", "payload": "**Audio:** {{User Input}}" }
 
-  5. USER INPUT("Ready for Scene 2"):
-  - RESPONSE: "Describe Scene 2."
-    - ACTION: { "label": "Add Scene 2", "type": "draft_prefill", "payload": "**Scene:** 2\n**Visual:** [Waiting for input...]" } (Or just wait).
+    5. USER INPUT ("Ready for Scene 2"):
+       - RESPONSE: "Describe Scene 2."
+       - ACTION: { "label": "Add Scene 2", "type": "draft_prefill", "payload": "**Scene:** 2\\n**Visual:** [Waiting for input...]" } (Or just wait).
 
-  CRITICAL: When the user describes a scene, your PRIMARY goal is to format it as '**Visual:** ...' and ask about Audio.
+    CRITICAL: When the user describes a scene, your PRIMARY goal is to format it as '**Visual:** ...' and ask about Audio.
      `;
   }
 
@@ -346,6 +360,6 @@ Current Context:
   ${modeInstructions}
   
   Help the user with each document.
-  Use the same parsing format(** Header:** Content) whenever adding content to a document.
+  Use the same parsing format (**Header:** Content) whenever adding content to a document.
     Offer 2 - 3 distinct choices as Actions.`;
 }

@@ -14,7 +14,8 @@ Migrate `onFORMAT` to production on Vercel, implementing a tiered subscription m
 
 ### What I Need From You:
 1.  **Vercel Account**: Connect your GitHub account to Vercel.
-2.  **Environment Variables**: I will need you to input your distinct API keys (OpenAI, Supabase, Stripe) into the Vercel dashboard. I will provide a list of exactly which ones.
+2.  **Environment Variables**: I will need you to input your distinct API keys (OpenRouter/OpenAI, Supabase, Stripe) into the Vercel dashboard. I will provide a list of exactly which ones.
+    - **CRITICAL**: Add `OPENROUTER_API_KEY` to Vercel (Production environment). The app will fail without it.
 3.  **Domain (Optional)**: If you bought a domain (e.g., `onformat.com`), you'll need to add it to Vercel.
 
 ---
