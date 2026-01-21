@@ -423,8 +423,6 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
         setForm({ ...form, description: '', source: '', destination: '' });
     };
 
-    if (!data && !isAdding) return <EmptyState label="DIT Log" />;
-
     const items = data?.items || [];
 
     return (
@@ -750,8 +748,6 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
             take: (parseInt(prev.take) + 1).toString()
         }));
     };
-
-    if (!data && !isAdding) return <EmptyState label="Camera Report" />;
 
     return (
         <div className="space-y-4">
