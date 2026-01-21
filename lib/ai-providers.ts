@@ -37,8 +37,15 @@ async function callOpenAI(
   // SWITCHED TO OPENROUTER
   const apiKey = process.env.OPENROUTER_API_KEY
   if (!apiKey) {
+    console.error('❌ OPENROUTER_API_KEY is missing from environment variables')
     throw new Error('OPENROUTER_API_KEY not configured')
   }
+
+  // DEBUG LOGGING
+  console.log('🔗 Connecting to OpenRouter...')
+  console.log('🔑 API Key present:', apiKey.startsWith('sk-or-') ? 'Yes (starts with sk-or-)' : 'Yes (Unknown format)')
+  console.log('📡 Base URL:', 'https://openrouter.ai/api/v1')
+  console.log('🧠 Model:', 'deepseek/deepseek-chat')
 
   const client = new OpenAI({
     apiKey,
