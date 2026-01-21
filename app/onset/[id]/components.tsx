@@ -583,6 +583,14 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
     const items = data?.items || data?.entries || [];
     const lastItem = items.length > 0 ? items[0] : null;
 
+    const [isNewRollModal, setIsNewRollModal] = useState(false);
+    const [rollForm, setRollForm] = useState({
+        camera: 'A',
+        roll: '',
+        iso: '800',
+        fps: '24'
+    });
+
     // Smart Carry-Over Initialization
     React.useEffect(() => {
         if (lastItem && !isAdding) {
@@ -599,7 +607,17 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         }
     }, [isAdding, lastItem]);
 
-    const handleNewRoll = () => {
+    const handleTCChange = (val: string) => {
+        const digits = val.replace(/\D/g, '').slice(0, 8);
+        let formatted = digits;
+        if (digits.length > 2) formatted = `${digits.slice(0, 2)}:${digits.slice(2)}`;
+        if (digits.length > 4) formatted = `${formatted.slice(0, 5)}:${digits.slice(4)}`;
+        if (digits.length > 6) formatted = `${formatted.slice(0, 8)}:${digits.slice(6)}`;
+        setForm({ ...form, timecode: formatted });
+    };
+
+    const openNewRollModal = () => {
+        // Suggest Next Roll
         const current = form.roll || 'A001';
         const match = current.match(/([A-Z]+)(\d+)/);
         let nextRoll = current;
@@ -608,15 +626,27 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
             const num = parseInt(match[2]) + 1;
             nextRoll = `${prefix}${String(num).padStart(3, '0')}`;
         }
+        setRollForm({
+            ...rollForm,
+            roll: nextRoll,
+            iso: '800',
+            fps: '24'
+        });
+        setIsNewRollModal(true);
+    };
+
+    const confirmNewRoll = () => {
         setForm(prev => ({
             ...prev,
-            roll: nextRoll,
-            lens: '', // Reset Tech
-            iso: '',
-            fps: '24', // Default
+            roll: rollForm.roll,
+            iso: rollForm.iso,
+            fps: rollForm.fps,
+            lens: '', // Clear Lens
+            timecode: '00:00:00:00', // Reset TC
             take: '1',
             shotId: ''
         }));
+        setIsNewRollModal(false);
         setIsAdding(true);
     };
 
@@ -660,7 +690,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                         <span>Log Shot</span>
                     </button>
                     <button
-                        onClick={handleNewRoll}
+                        onClick={openNewRollModal}
                         className="w-1/3 bg-zinc-800 text-zinc-300 font-bold uppercase tracking-wider text-[10px] py-3 rounded-lg border border-zinc-700 hover:bg-zinc-700"
                     >
                         New Roll
@@ -668,11 +698,82 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                 </div>
             )}
 
+            {/* NEW ROLL VERIFICATION MODAL */}
+            {isNewRollModal && (
+                <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
+                    <div className="bg-zinc-900 border border-zinc-700 w-full max-w-sm rounded-xl p-6 shadow-2xl">
+                        <h3 className="text-lg font-black uppercase text-white mb-1">Start New Roll</h3>
+                        <p className="text-xs text-zinc-400 mb-6">Verify technical specs for the new card.</p>
+
+                        <div className="space-y-4 mb-6">
+                            <div>
+                                <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Camera ID</label>
+                                <div className="flex gap-2">
+                                    {['A', 'B', 'C'].map(cam => (
+                                        <button
+                                            key={cam}
+                                            onClick={() => setRollForm({ ...rollForm, camera: cam })}
+                                            className={`flex-1 py-3 text-sm font-black rounded border ${rollForm.camera === cam ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-zinc-950 text-zinc-500 border-zinc-800'}`}
+                                        >
+                                            {cam}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Roll Number</label>
+                                <input
+                                    value={rollForm.roll}
+                                    onChange={e => setRollForm({ ...rollForm, roll: e.target.value })}
+                                    className="w-full bg-zinc-950 border border-zinc-800 text-white text-lg font-mono p-3 rounded"
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Base ISO</label>
+                                    <input
+                                        value={rollForm.iso}
+                                        onChange={e => setRollForm({ ...rollForm, iso: e.target.value })}
+                                        className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Project FPS</label>
+                                    <input
+                                        value={rollForm.fps}
+                                        onChange={e => setRollForm({ ...rollForm, fps: e.target.value })}
+                                        className="w-full bg-zinc-900 border border-zinc-800 text-white text-base p-2 rounded"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setIsNewRollModal(false)}
+                                className="flex-1 bg-zinc-800 text-white font-bold uppercase text-xs py-3 rounded"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmNewRoll}
+                                className="flex-1 bg-emerald-500 text-black font-bold uppercase text-xs py-3 rounded"
+                            >
+                                Confirm & Start
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* ADD FORM */}
             {isAdding && (
                 <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-white">New Shot Actual</span>
+                        <div>
+                            <span className="text-xs font-bold uppercase text-white block">Log Shot Actual</span>
+                            <span className="text-[10px] font-mono font-bold text-emerald-500 block">ROLL {form.roll}</span>
+                        </div>
                         <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-400" /></button>
                     </div>
 
@@ -758,7 +859,7 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
                                 <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">TC</label>
                                 <input
                                     value={form.timecode || ''}
-                                    onChange={e => setForm({ ...form, timecode: e.target.value })}
+                                    onChange={e => handleTCChange(e.target.value)}
                                     className="w-full bg-zinc-900 border border-zinc-700 text-white text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
                                     placeholder="00:00:00:00"
                                 />
