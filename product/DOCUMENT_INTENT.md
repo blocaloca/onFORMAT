@@ -32,17 +32,17 @@ Director must use this as truth to stay in its lane.
 
 ## Phase map (north star)
 
-- CONCEPT: define what we’re making and why.
-- PLAN: translate concept into executable reality.
-- EXECUTE: run production with operational artifacts.
-- WRAP: deliver, license, archive, and close cleanly.
+- DEVELOP: define what we’re making and why.
+- PRE-PRODUCTION: translate concept into executable reality.
+- PRODUCTION: run production with operational artifacts.
+- POST-PRODUCTION: deliver, license, archive, and close cleanly.
 
 ---
 
-# CONCEPT documents
+# DEVELOP documents
 (Shared working draft — one conceptual workspace)
 
-CONCEPT documents are not separate tools.
+DEVELOP documents are not separate tools.
 They form a **single creative pipeline** that tightens focus with each step.
 
 Director must:
@@ -71,7 +71,7 @@ Director must:
 
 **Director guardrails:**
 - Do NOT ask about budget, timeline, crew, deliverables, or locations.
-- Ask at most 2 questions total across the CONCEPT pipeline until clarity is reached.
+- Ask at most 2 questions total across the DEVELOP pipeline until clarity is reached.
 
 **Completion signal:**
 - Intent + format are clear enough to articulate purpose.
@@ -136,10 +136,10 @@ Director must:
 
 ---
 
-# PLAN documents
+# PRE-PRODUCTION documents
 (Shared execution-planning workspace)
 
-PLAN documents may be entered in any order,
+PRE-PRODUCTION documents may be entered in any order,
 but Director must maintain internal consistency across them.
 
 ---
@@ -153,7 +153,7 @@ but Director must maintain internal consistency across them.
 - Known vs unknown location
 - Environment type (studio / interior / exterior / mixed)
 
-**Uses from CONCEPT:**
+**Uses from DEVELOP:**
 - Shot & Scene requirements
 - Creative tone constraints
 
@@ -175,7 +175,7 @@ but Director must maintain internal consistency across them.
 - Talent needed? (yes/no)
 - Talent type (model, real customer, spokesperson, etc.)
 
-**Uses from CONCEPT:**
+**Uses from DEVELOP:**
 - Tone
 - Audience
 - Story requirements
@@ -198,7 +198,7 @@ but Director must maintain internal consistency across them.
 - Format
 - Complexity indicator (simple / standard / complex)
 
-**Uses from PLAN + CONCEPT:**
+**Uses from PRE-PRODUCTION + DEVELOP:**
 - Shot complexity
 - Locations
 - Talent needs
@@ -221,7 +221,7 @@ but Director must maintain internal consistency across them.
 - Estimated shoot day count (user-confirmed)
 - General timing preference if relevant
 
-**Uses from PLAN:**
+**Uses from PRE-PRODUCTION:**
 - Locations
 - Talent
 - Crew scope
@@ -257,7 +257,7 @@ but Director must maintain internal consistency across them.
 
 ---
 
-# EXECUTE documents
+# PRODUCTION documents
 (Operational truth — no creativity)
 
 ---
@@ -312,7 +312,7 @@ but Director must maintain internal consistency across them.
 
 ---
 
-# WRAP documents
+# POST-PRODUCTION documents
 (Close cleanly)
 
 ---
@@ -354,7 +354,7 @@ but Director must maintain internal consistency across them.
 
 # Phase advancement rules (document-level)
 
-- Default phase = CONCEPT.
+- Default phase = DEVELOP.
 - Documents evolve within a phase as a shared draft.
 - Director advances phase only when:
   - document completion signals are met, or

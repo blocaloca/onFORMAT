@@ -25,7 +25,7 @@ Users may jump phases, but Director must protect coherence.
 
 ## Global Phase Rules
 
-- Default phase = **CONCEPT**
+- Default phase = **DEVELOP**
 - Only one phase is “active” at a time
 - Director does not mix phase logic unless the user explicitly requests it
 - Director advances phases only when:
@@ -41,14 +41,14 @@ Director acknowledges, sanity-checks with **1–2 questions**, then proceeds.
 
 | Phase   | Core Question                              |
 |--------|---------------------------------------------|
-| CONCEPT | What are we making, and why?               |
-| PLAN    | How do we execute this safely and cleanly? |
-| EXECUTE | How do we run the shoot correctly?         |
-| WRAP    | What is delivered, closed, and archived?  |
+| DEVELOP | What are we making, and why?               |
+| PRE-PRODUCTION    | How do we execute this safely and cleanly? |
+| PRODUCTION | How do we run the shoot correctly?         |
+| POST-PRODUCTION    | What is delivered, closed, and archived?  |
 
 ---
 
-# PHASE 1: CONCEPT
+# PHASE 1: DEVELOP
 
 ## Purpose
 Define *intent* and *creative shape* before reality intrudes.
@@ -67,7 +67,7 @@ Define *intent* and *creative shape* before reality intrudes.
 
 These documents form a **pipeline**, not silos.
 
-## Internal Concept Pipeline
+## Internal Develop Pipeline
 1. Brief establishes intent + format
 2. Creative Direction refines tone and meaning
 3. Shot & Scene Book defines must-have visuals
@@ -80,11 +80,11 @@ No reinvention.
 - Creative objective defined
 - Must-have shots/scenes exist
 
-At this point, Director may suggest moving to PLAN — once.
+At this point, Director may suggest moving to PRE-PRODUCTION — once.
 
 ---
 
-# PHASE 2: PLAN
+# PHASE 2: PRE-PRODUCTION
 
 ## Purpose
 Turn creative intent into executable reality.
@@ -102,7 +102,7 @@ Turn creative intent into executable reality.
 - Budget
 
 ## Planning order (flexible, not enforced)
-Director may enter PLAN through any document,
+Director may enter PRE-PRODUCTION through any document,
 but must maintain internal consistency.
 
 Examples:
@@ -121,7 +121,7 @@ Director should not force perfection.
 
 ---
 
-# PHASE 3: EXECUTE
+# PHASE 3: PRODUCTION
 
 ## Purpose
 Run production with operational truth.
@@ -136,7 +136,7 @@ Run production with operational truth.
 - On-Set Notes
 - Client Selects
 
-## Execution rules
+## Production rules
 - No invented times, contacts, or addresses
 - Everything unresolved is marked clearly
 - Director acts as recorder, not decision-maker
@@ -146,11 +146,11 @@ Run production with operational truth.
 - Selects confirmed
 - Notes captured
 
-Director may suggest WRAP when execution artifacts stabilize.
+Director may suggest POST-PRODUCTION when execution artifacts stabilize.
 
 ---
 
-# PHASE 4: WRAP
+# PHASE 4: POST-PRODUCTION
 
 ## Purpose
 Close the project cleanly and professionally.
@@ -164,7 +164,7 @@ Close the project cleanly and professionally.
 - Deliverables & Licensing
 - Archive Log
 
-## Wrap rules
+## Post-Production rules
 - No legal advice
 - No assumed usage rights
 - No invented storage paths

@@ -27,19 +27,30 @@ export interface AIResponse {
 /**
  * Call OpenAI's GPT-4 API
  */
+/**
+ * Call OpenRouter API (using OpenAI client compatibility)
+ */
 async function callOpenAI(
   messages: AIMessage[],
   systemPrompt: string
 ): Promise<AIResponse> {
-  const apiKey = process.env.OPENAI_API_KEY
+  // SWITCHED TO OPENROUTER
+  const apiKey = process.env.OPENROUTER_API_KEY
   if (!apiKey) {
-    throw new Error('OPENAI_API_KEY not configured')
+    throw new Error('OPENROUTER_API_KEY not configured')
   }
 
-  const client = new OpenAI({ apiKey })
+  const client = new OpenAI({
+    apiKey,
+    baseURL: 'https://openrouter.ai/api/v1',
+    defaultHeaders: {
+      'HTTP-Referer': 'https://onformat.com', // Required for OpenRouter rankings
+      'X-Title': 'onFORMAT', // Required for OpenRouter rankings
+    },
+  })
 
   const response = await client.chat.completions.create({
-    model: 'gpt-4o', // Updated to latest stable model
+    model: 'deepseek/deepseek-chat', // Default model per requirements
     max_tokens: 4096,
     messages: [
       { role: 'system', content: systemPrompt },
@@ -47,7 +58,8 @@ async function callOpenAI(
         role: m.role as 'user' | 'assistant' | 'system',
         content: m.content
       }))
-    ]
+    ],
+    // OpenRouter specific: ensuring stream handling is compatible if we were streaming (we're not yet, but good practice)
   })
 
   const message = response.choices[0]?.message?.content || ''
@@ -59,6 +71,8 @@ async function callOpenAI(
       completion_tokens: response.usage?.completion_tokens,
       total_tokens: response.usage?.total_tokens
     },
+    // We still call it 'openai' internally for provider compatibility in the rest of the app, 
+    // or we could change this string if strictly needed. Keeping 'openai' to minimize breaking changes elsewhere.
     provider: 'openai'
   }
 }

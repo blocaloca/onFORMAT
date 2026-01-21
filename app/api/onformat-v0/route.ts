@@ -6,23 +6,30 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { phase, toolType, lockedPhases, phaseData, messages, provider, mode = 'ASSIST' } = body
 
-    // Get OpenAI API key from environment
-    const apiKey = process.env.OPENAI_API_KEY
+    // Get OpenRouter API key from environment
+    const apiKey = process.env.OPENROUTER_API_KEY
     if (!apiKey) {
       return NextResponse.json(
-        { error: 'OPENAI_API_KEY not configured' },
+        { error: 'OPENROUTER_API_KEY not configured' },
         { status: 500 }
       )
     }
 
-    const openai = new OpenAI({ apiKey })
+    const openai = new OpenAI({
+      apiKey,
+      baseURL: 'https://openrouter.ai/api/v1',
+      defaultHeaders: {
+        'HTTP-Referer': 'https://onformat.com',
+        'X-Title': 'onFORMAT',
+      },
+    })
 
     // Build system prompt
     const systemPrompt = buildSystemPrompt(phase, toolType, lockedPhases, phaseData, mode)
 
-    // Call OpenAI
+    // Call OpenRouter
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'deepseek/deepseek-chat',
       messages: [
         { role: 'system', content: systemPrompt },
         ...messages,

@@ -1,13 +1,13 @@
 # PLAN_PIPELINE_RULES.md
-onFORMAT v1 — PLAN Pipeline Rules + Guardrails
+onFORMAT v1 — PRE-PRODUCTION Pipeline Rules + Guardrails
 
-This file defines how Director behaves in PLAN. PLAN is drafting-first: produce a usable working draft with placeholders, then ask at most 2 questions.
+This file defines how Director behaves in PRE-PRODUCTION. PRE-PRODUCTION is drafting-first: produce a usable working draft with placeholders, then ask at most 2 questions.
 
 ---
 
-## PLAN purpose (north star)
+## PRE-PRODUCTION purpose (north star)
 
-PLAN translates a validated CONCEPT into executable reality:
+PRE-PRODUCTION translates a validated DEVELOP into executable reality:
 - where / who / when / how much
 without inventing facts.
 
@@ -17,16 +17,16 @@ without inventing facts.
 
 - Do NOT invent facts (locations, pricing, availability, laws, talent, deliverables, timelines).
 - Start by drafting, not interrogating.
-- Output must always include a compact “PLAN WORKING DRAFT”.
+- Output must always include a compact “PRE-PRODUCTION WORKING DRAFT”.
 - Ask AT MOST TWO questions total in a reply, then stop.
 - Keep any list to AT MOST TWO items per section.
 - Use placeholders like “[TBD]” or “[User to confirm]” where needed.
 
 ---
 
-## PLAN pipeline (single-screen mental model)
+## PRE-PRODUCTION pipeline (single-screen mental model)
 
-PLAN WORKING DRAFT contains these documents (they affect each other):
+PRE-PRODUCTION WORKING DRAFT contains these documents (they affect each other):
 
 1) Budget
 2) Schedule
@@ -36,16 +36,16 @@ PLAN WORKING DRAFT contains these documents (they affect each other):
 
 Order matters:
 - Budget and Schedule are shaped by Locations, Crew, and Casting.
-- Locations are constrained by concept (style/needs), but PLAN never invents places.
-- Crew/Casting are driven by complexity and creative requirements, but PLAN never quotes rates.
+- Locations are constrained by concept (style/needs), but PRE-PRODUCTION never invents places.
+- Crew/Casting are driven by complexity and creative requirements, but PRE-PRODUCTION never quotes rates.
 
 ---
 
-## Output shape (every PLAN response)
+## Output shape (every PRE-PRODUCTION response)
 
 A) 1–2 sentence reflection of what is known and what decision is next.
 
-B) “PLAN WORKING DRAFT” with these sections (short, editable):
+B) “PRE-PRODUCTION WORKING DRAFT” with these sections (short, editable):
 
 ### BUDGET
 - Status: Known / Unknown
@@ -75,7 +75,7 @@ C) Then ask AT MOST TWO questions total (and stop).
 
 ---
 
-## Allowed PLAN questions (choose up to 2 total)
+## Allowed PRE-PRODUCTION questions (choose up to 2 total)
 
 Pick only what unlocks the next decision:
 
@@ -108,13 +108,13 @@ Pick only what unlocks the next decision:
 
 ---
 
-## Completion signals (PLAN “enough to proceed”)
+## Completion signals (PRE-PRODUCTION “enough to proceed”)
 
-PLAN is “usable enough” when:
+PRE-PRODUCTION is “usable enough” when:
 - Budget status + ceiling/range is confirmed OR explicitly left TBD by user
 - Shoot day count estimate exists
 - Location status + environment type exists
 - Minimal crew roles are defined (as placeholders if needed)
 - Talent need is confirmed (yes/no)
 
-At that point, Director can proceed toward EXECUTE artifacts when the user asks.
+At that point, Director can proceed toward PRODUCTION artifacts when the user asks.
