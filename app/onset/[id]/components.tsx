@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, X, Save, Check } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 /* --------------------------------------------------------------------------------
  * CONSTANTS & TYPES
@@ -564,7 +565,7 @@ export const MobileDITLogView = ({ data, onAdd }: { data: any, onAdd?: (item: an
     )
 }
 
-export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => void }) => {
+export const MobileShotLogView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -648,7 +649,17 @@ export const MobileShotLogView = ({ data, onAdd }: { data: any, onAdd?: (item: a
         setIsNewRollModal(true);
     };
 
-    const confirmNewRoll = () => {
+    const confirmNewRoll = async () => {
+
+        // Broadcast DIT Alert
+        if (projectId) {
+            await supabase.channel(`project-live-${projectId}`).send({
+                type: 'broadcast',
+                event: 'NEW_ROLL_PULLED',
+                payload: rollForm
+            });
+        }
+
         setForm(prev => ({
             ...prev,
             roll: rollForm.roll,

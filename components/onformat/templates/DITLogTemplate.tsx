@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { DocumentLayout } from './DocumentLayout';
-import { Plus, Trash2, HardDrive, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { DocumentLayout, DocumentMetadata } from './DocumentLayout';
+import { Plus, Trash2, HardDrive, AlertCircle, CheckCircle2, X } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface DITLogItem {
     id: string;
@@ -26,7 +27,7 @@ interface DITLogTemplateProps {
     isLocked?: boolean;
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
-    metadata?: any;
+    metadata?: DocumentMetadata;
     isPrinting?: boolean;
 }
 
@@ -52,6 +53,54 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
             });
         }
     }, []);
+
+    // ---------------------------------------------------------------------------
+    // DIT ALERT SYSTEM
+    // ---------------------------------------------------------------------------
+    const [mediaAlerts, setMediaAlerts] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (!metadata?.projectId) return;
+
+        console.log("Subscribing to DIT Alerts for project:", metadata.projectId);
+
+        const channel = supabase.channel(`project-live-${metadata.projectId}`)
+            .on('broadcast', { event: 'NEW_ROLL_PULLED' }, (payload) => {
+                console.log("New Roll Alert Received:", payload);
+                setMediaAlerts(prev => {
+                    // Avoid duplicates if needed, though roll IDs should be unique usually
+                    if (prev.find(a => a.roll === payload.payload.roll)) return prev;
+                    return [...prev, payload.payload];
+                });
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, [metadata?.projectId]);
+
+    const handleStartIngest = (alert: any) => {
+        // Create new log entry from alert
+        const newItem: DITLogItem = {
+            id: `dit-${Date.now()}`,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+            eventType: 'offload',
+            source: `Roll ${alert.roll} (${alert.camera})`,
+            destination: '',
+            dataSize: '',
+            checksum: '',
+            description: `Start Ingest: ${alert.mediaType} / ${alert.fps}fps / ${alert.iso}ISO`,
+            status: 'pending'
+        };
+        // Add to list
+        onUpdate({ items: [...(data.items || []), newItem] });
+
+        // Remove from alerts
+        setMediaAlerts(prev => prev.filter(a => a.roll !== alert.roll));
+    };
+
+    const dismissAlert = (roll: string) => {
+        setMediaAlerts(prev => prev.filter(a => a.roll !== roll));
+    };
 
     const items = data.items || [];
 
@@ -332,6 +381,42 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                     </div>
                 </DocumentLayout>
             ))}
+            {/* MEDIA ALERTS WIDGET (Fixed) */}
+            {mediaAlerts.length > 0 && !isPrinting && (
+                <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-3 w-80 animate-in slide-in-from-bottom-5 fade-in duration-300">
+                    {mediaAlerts.map((alert, idx) => (
+                        <div key={idx} className="bg-zinc-900 border border-zinc-800 text-white p-4 rounded-lg shadow-2xl flex flex-col gap-3 relative overflow-hidden">
+                            {/* Decorative stripe */}
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+
+                            <div className="flex justify-between items-start pl-2">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-red-500">New Roll Pulled</span>
+                                    </div>
+                                    <h3 className="text-lg font-bold leading-none">{alert.roll} <span className="text-zinc-500 text-sm">Cam {alert.camera}</span></h3>
+                                </div>
+                                <button onClick={() => dismissAlert(alert.roll)} className="text-zinc-500 hover:text-white transition-colors">
+                                    <X size={14} />
+                                </button>
+                            </div>
+
+                            <div className="pl-2 grid grid-cols-2 gap-2 text-[10px] text-zinc-400 font-mono uppercase">
+                                <div>{alert.mediaType}</div>
+                                <div>{alert.fps} FPS</div>
+                            </div>
+
+                            <button
+                                onClick={() => handleStartIngest(alert)}
+                                className="ml-2 mt-1 bg-white hover:bg-zinc-200 text-black text-xs font-bold uppercase tracking-wider py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
+                            >
+                                <HardDrive size={14} /> Start Ingest
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </>
     );
 };

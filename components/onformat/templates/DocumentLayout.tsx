@@ -1,15 +1,6 @@
 import React from 'react';
 
-interface DocumentLayoutProps {
-    title: string;
-    subtitle?: string;
-    children: React.ReactNode;
-    className?: string;
-    hideHeader?: boolean;
-    plain?: boolean;
-}
-
-interface DocumentMetadata {
+export interface DocumentMetadata {
     projectName?: string;
     clientName?: string;
     date?: string;
@@ -17,6 +8,7 @@ interface DocumentMetadata {
     producer?: string;
     directorNames?: string;
     isTreatment?: boolean;
+    projectId?: string;
 }
 
 interface DocumentLayoutProps {

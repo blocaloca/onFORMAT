@@ -553,7 +553,7 @@ export default function OnSetMobilePage() {
                             {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                             {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
                             {activeTab === 'dit-log' && <MobileDITLogView data={data.docs['dit-log']} onAdd={handleUpdateDIT} />}
-                            {activeTab === 'shot-log' && <MobileShotLogView data={data.docs['shot-log']} onAdd={handleUpdateShotLog} />}
+                            {activeTab === 'shot-log' && <MobileShotLogView data={data.docs['shot-log']} onAdd={handleUpdateShotLog} projectId={id} />}
                             {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
                             {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
 
