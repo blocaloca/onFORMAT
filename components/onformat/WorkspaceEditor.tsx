@@ -387,6 +387,43 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             setState(s => {
                 const currentChat = s.chat['av-script'] || [];
                 if (currentChat.length === 0) {
+                    // Check Brief for Context
+                    const briefDraftRaw = s.phases['DEVELOPMENT']?.drafts['brief'];
+                    let briefContext = '';
+                    if (briefDraftRaw) {
+                        try {
+                            const b = JSON.parse(briefDraftRaw);
+                            const d = Array.isArray(b) ? b[0] : b;
+                            if (d.product) briefContext = `Vision: ${d.product || 'TBD'}\nObjective: ${d.objective || 'TBD'}\nAudience: ${d.targetAudience || 'TBD'}`;
+                        } catch { }
+                    }
+
+                    if (briefContext) {
+                        return {
+                            ...s,
+                            chat: {
+                                ...s.chat, 'av-script': [{
+                                    role: 'assistant',
+                                    content: "I see a Creative Brief available. Would you like generated script ideas?",
+                                    actions: [
+                                        {
+                                            label: "Yes, offer 3 ideas",
+                                            type: "suggestion",
+                                            payload: `Using the brief context:\n${briefContext}\n\nPlease generate 3 distinct script concepts. Output them as numbered options.`,
+                                            prominence: "primary"
+                                        },
+                                        {
+                                            label: "No, just write scenes",
+                                            type: "suggestion",
+                                            payload: `Using the brief context:\n${briefContext}\n\nPlease start writing scenes immediately in **Scene**, **Visual**, **Audio** format.`,
+                                            prominence: "secondary"
+                                        }
+                                    ]
+                                }]
+                            }
+                        };
+                    }
+
                     return {
                         ...s,
                         chat: { ...s.chat, 'av-script': [{ role: 'assistant', content: "Describe Scene 1." }] }
@@ -1245,14 +1282,37 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         setState(s => ({ ...s, activeTool: targetTool }));
         setIsAiDocked(false);
 
-        // 3. Prompt Generation
-        let systemPrompt = `We are transitioning from Strategy to Execution (${targetTool === 'av-script' ? 'AV Script' : 'Storyboard'}).\n\nCreative Brief Context:\n${briefContext}\n\nTask: Using your knowledge of storytelling arcs and structure, please generate the initial scenes/frames.`;
-
+        // 3. Prompt Generation logic for AV Script vs Storyboard
         if (targetTool === 'av-script') {
-            systemPrompt += `\nOutput format: **Scene:** [Number], **Visual:** [Action Description], **Audio:** [Dialogue/SFX]. Create 3-4 compelling scenes that establish the narrative.`;
-        } else {
-            systemPrompt += `\nOutput format: **Frame:** [Number], **Visual:** [Visual Description]. Create 6 key frames that visualized the narrative arc.`;
+            // Inject Assistant Question with Actions
+            const assistantMsg: ChatMsg = {
+                role: 'assistant',
+                content: "I have your Creative Brief context. Would you like generated script ideas?",
+                actions: [
+                    {
+                        label: "Yes, offer 3 ideas",
+                        type: "suggestion",
+                        payload: `Using the brief context:\n${briefContext}\n\nPlease generate 3 distinct script concepts/angles. Output them as numbered options.`,
+                        prominence: "primary"
+                    },
+                    {
+                        label: "No, just write scenes",
+                        type: "suggestion",
+                        payload: `Using the brief context:\n${briefContext}\n\nPlease start writing scenes immediately in **Scene**, **Visual**, **Audio** format.`,
+                        prominence: "secondary"
+                    }
+                ]
+            };
+
+            setState(s => ({
+                ...s,
+                chat: { ...s.chat, [targetTool]: [...(s.chat[targetTool] || []), assistantMsg] }
+            }));
+            return;
         }
+
+        let systemPrompt = `We are transitioning from Strategy to Execution (Storyboard).\n\nCreative Brief Context:\n${briefContext}\n\nTask: Using your knowledge of storytelling arcs and structure, please generate the initial scenes/frames.`;
+        systemPrompt += `\nOutput format: **Frame:** [Number], **Visual:** [Visual Description]. Create 6 key frames that visualized the narrative arc.`;
 
         send(systemPrompt, targetTool);
     };
@@ -1266,7 +1326,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             // Detect user intent to switch tools
             const isScriptMatches = lower.includes('script');
             const isBoardMatches = lower.includes('storyboard') || lower.includes('board');
-            const isCommand = lower.includes('switch') || lower.includes('move') || lower.includes('generate') || lower.includes('create') || lower.includes('go to') || textToUse.length < 25;
+            const isCommand = lower.includes('switch') || lower.includes('move') || lower.includes('generate') || lower.includes('create') || lower.includes('go to') || (textToUse.length < 25 && (isScriptMatches || isBoardMatches));
 
             if (isCommand) {
                 if (isScriptMatches) {
@@ -1315,11 +1375,23 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             const json = await res.json()
             const assistantMsg = String(json?.message ?? '')
 
+            // INTERCEPT: AV Script Ideas Response - Attach Selection Buttons
+            let finalActions: any[] | undefined = undefined;
+            const lastUserPayload = nextChat[nextChat.length - 1]?.content.toLowerCase();
+
+            if (effectiveTool === 'av-script' && lastUserPayload.includes('generate 3 distinct script concepts')) {
+                finalActions = [
+                    { label: "Select Option 1", type: "suggestion", payload: "I choose Option 1. Break it down into scenes (Storyline, Characters, Dialog) using **Scene**, **Visual**, **Audio** format to be added to the script.", prominence: "primary" },
+                    { label: "Select Option 2", type: "suggestion", payload: "I choose Option 2. Break it down into scenes (Storyline, Characters, Dialog) using **Scene**, **Visual**, **Audio** format to be added to the script.", prominence: "primary" },
+                    { label: "Select Option 3", type: "suggestion", payload: "I choose Option 3. Break it down into scenes (Storyline, Characters, Dialog) using **Scene**, **Visual**, **Audio** format to be added to the script.", prominence: "primary" }
+                ];
+            }
+
             setState((s) => ({
                 ...s,
                 chat: {
                     ...s.chat,
-                    [effectiveTool]: [...nextChat, { role: 'assistant', content: assistantMsg }]
+                    [effectiveTool]: [...nextChat, { role: 'assistant', content: assistantMsg, actions: finalActions }]
                 }
             }))
             if (overrideInput === undefined) setInput('')
