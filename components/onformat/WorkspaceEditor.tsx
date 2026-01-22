@@ -1176,40 +1176,62 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
 
     const handleGenerateFromVision = (targetTool: ToolKey, visionText: string, promptPrefix: string) => {
-        // 1. Create new version for Target
-        // Note: Assumes targetTool is in the currently active phase (DEVELOPMENT), which is true for Brief, Treatment, AV Script, Storyboard.
-        const currentDraftRaw = activePhaseState.drafts[targetTool] || '[{}]';
-        let newDraftJSON = '[{}]';
+        // 1. Data Extraction (Heuristic / Placeholder)
+        let startingData: any = {};
+        if (targetTool === 'brief') {
+            const lines = visionText.split('\n').filter(l => l.trim().length > 0);
+            startingData = {
+                product: lines[0]?.replace(/^#+\s*/, '').substring(0, 100) || 'New Product',
+                objective: "Derived from Project Vision. Review needed.",
+                targetAudience: "TBD",
+                tone: "See Vision Board",
+                keyMessage: lines.slice(1, 4).join(' ').substring(0, 200) + '...'
+            };
+        } else if (targetTool === 'directors-treatment') {
+            const lines = visionText.split('\n').filter(l => l.trim().length > 0);
+            startingData = {
+                approach: "Based on Vision Board...",
+                tone: "See Vision Board",
+                narrativeArc: lines.slice(0, 5).join('\n')
+            };
+        }
+
+        // 2. Create new version with this data
+        const currentDraftRaw = activePhaseState.drafts[targetTool] || '[]';
+        let newDraftJSON = JSON.stringify([startingData]); // Default if empty
+
         try {
             const parsed = JSON.parse(currentDraftRaw);
             const arr = Array.isArray(parsed) ? parsed : [parsed];
-            newDraftJSON = JSON.stringify([{}, ...arr]);
+            newDraftJSON = JSON.stringify([startingData, ...arr]);
         } catch { }
 
-        // Update drafts
+        // Update drafts & Switch Tool
+        // Note: activePhaseState is derived from state.activePhase, assuming targetTool is in same phase.
         const nextDrafts = { ...activePhaseState.drafts, [targetTool]: newDraftJSON };
-        const nextState = { ...state.phases[state.activePhase], drafts: nextDrafts };
+        const nextPhaseState = { ...state.phases[state.activePhase], drafts: nextDrafts };
 
         setState(s => ({
             ...s,
             phases: {
                 ...s.phases,
-                [state.activePhase]: nextState
+                [state.activePhase]: nextPhaseState
             },
             activeTool: targetTool,
+            // Trigger AI Dock Open
         }));
+        setIsAiDocked(false); // Open dock
 
-        // 3. Auto-send logic with specific formatting instructions
+        // 3. Trigger AI Assistant
         let prompt = `${promptPrefix}:\n\n"${visionText}"`;
-
+        // Helper text for the AI to "Switch to Interview Mode"
         if (targetTool === 'brief') {
-            prompt = `Create a creative brief based on this vision. Output in Markdown with headers: **Objective**, **Target Audience**, **Tone & Style**, **Key Message**.\n\nVision:\n"${visionText}"`;
+            prompt = `I have started a new Brief based on this Vision. I've pre-filled the Product and Key Message based on the text. Please analyze the Vision text below and ask me 3 specific questions to refine the **Objective** and **Target Audience**.\n\nVision:\n"${visionText}"`;
         } else if (targetTool === 'directors-treatment') {
-            prompt = `Create a director's treatment based on this vision. Output in Markdown with headers: **Narrative Arc**, **Character Philosophy**, **Visual Language**. For each section, write a short paragraph.\n\nVision:\n"${visionText}"`;
-        } else if (targetTool === 'storyboard') { // Moodboard / Storyboard
-            prompt = `Create a storyboard shot list based on this vision. Output a list of 4-6 scenes. For each scene, start with "**Scene:**" followed by a detailed visual description suitable for an image caption.\n\nVision:\n"${visionText}"`;
+            prompt = `I have started a new Treatment. Please analyze the Vision text below and ask me questions to help flesh out the **Visual Language** and **Character Philosophy**.\n\nVision:\n"${visionText}"`;
         }
 
+        // Send with override tool because state.activeTool update in setState is async
         send(prompt, targetTool);
     };
 
