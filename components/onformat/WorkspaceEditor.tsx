@@ -1176,10 +1176,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
 
     const handleGenerateFromVision = (targetTool: ToolKey, visionText: string, promptPrefix: string) => {
-        // 1. Data Extraction (Heuristic / Placeholder)
+        // 1. Data Extraction
         let startingData: any = {};
         if (targetTool === 'brief') {
-            // Paste Full Vision Text into 'product' (Vision) field as requested
+            // Paste Full Vision Text into 'product' (Vision) field
             startingData = {
                 product: visionText,
                 objective: "Derived from Vision.",
@@ -1196,9 +1196,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             };
         }
 
-        // 2. Create new version with this data
+        // 2. Create new version
         const currentDraftRaw = activePhaseState.drafts[targetTool] || '[]';
-        let newDraftJSON = JSON.stringify([startingData]); // Default if empty
+        let newDraftJSON = JSON.stringify([startingData]);
 
         try {
             const parsed = JSON.parse(currentDraftRaw);
@@ -1207,7 +1207,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         } catch { }
 
         // Update drafts & Switch Tool
-        // Note: activePhaseState is derived from state.activePhase, assuming targetTool is in same phase.
         const nextDrafts = { ...activePhaseState.drafts, [targetTool]: newDraftJSON };
         const nextPhaseState = { ...state.phases[state.activePhase], drafts: nextDrafts };
 
@@ -1218,25 +1217,70 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 [state.activePhase]: nextPhaseState
             },
             activeTool: targetTool,
-            // Trigger AI Dock Open
         }));
-        setIsAiDocked(false); // Open dock
+        setIsAiDocked(false);
 
-        // 3. Trigger AI Assistant
+        // 3. Trigger AI Assistant with Handoff Instruction
         let prompt = `${promptPrefix}:\n\n"${visionText}"`;
-        // Helper text for the AI to "Switch to Interview Mode"
         if (targetTool === 'brief') {
-            prompt = `I have started a new Brief based on this Vision. I've pre-filled the Product and Key Message based on the text. Please analyze the Vision text below and ask me 3 specific questions to refine the **Objective** and **Target Audience**.\n\nVision:\n"${visionText}"`;
+            prompt = `I have started a new Brief based on this Vision. I've pre-filled the 'Vision' field. Please help me refine the **Target Audience** and **Key Message**. Once we have a solid brief, please ask me if I want to proceed to the **AV Script** or **Storyboard**.\n\nVision:\n"${visionText}"`;
         } else if (targetTool === 'directors-treatment') {
             prompt = `I have started a new Treatment. Please analyze the Vision text below and ask me questions to help flesh out the **Visual Language** and **Character Philosophy**.\n\nVision:\n"${visionText}"`;
         }
 
-        // Send with override tool because state.activeTool update in setState is async
         send(prompt, targetTool);
+    };
+
+    const handleGenerateFromBrief = (targetTool: ToolKey) => {
+        // 1. Retrieve Context
+        const briefDraftRaw = activePhaseState.drafts['brief'];
+        let briefContext = "Brief not found.";
+        try {
+            const b = JSON.parse(briefDraftRaw || '{}');
+            const d = Array.isArray(b) ? b[0] : b;
+            briefContext = `Vision: ${d.product}\nObjective: ${d.objective}\nAudience: ${d.targetAudience}\nTone: ${d.tone}`;
+        } catch { }
+
+        // 2. Switch Tool
+        setState(s => ({ ...s, activeTool: targetTool }));
+        setIsAiDocked(false);
+
+        // 3. Prompt Generation
+        let systemPrompt = `We are transitioning from Strategy to Execution (${targetTool === 'av-script' ? 'AV Script' : 'Storyboard'}).\n\nCreative Brief Context:\n${briefContext}\n\nTask: Using your knowledge of storytelling arcs and structure, please generate the initial scenes/frames.`;
+
+        if (targetTool === 'av-script') {
+            systemPrompt += `\nOutput format: **Scene:** [Number], **Visual:** [Action Description], **Audio:** [Dialogue/SFX]. Create 3-4 compelling scenes that establish the narrative.`;
+        } else {
+            systemPrompt += `\nOutput format: **Frame:** [Number], **Visual:** [Visual Description]. Create 6 key frames that visualized the narrative arc.`;
+        }
+
+        send(systemPrompt, targetTool);
     };
 
     async function send(overrideInput?: string, overrideTool?: ToolKey) {
         const textToUse = (typeof overrideInput === 'string') ? overrideInput : input;
+
+        // INTERCEPT: Brief -> Execution Handoff
+        if (state.activeTool === 'brief' && !overrideTool && textToUse) {
+            const lower = textToUse.toLowerCase();
+            // Detect user intent to switch tools
+            const isScriptMatches = lower.includes('script');
+            const isBoardMatches = lower.includes('storyboard') || lower.includes('board');
+            const isCommand = lower.includes('switch') || lower.includes('move') || lower.includes('generate') || lower.includes('create') || lower.includes('go to') || textToUse.length < 25;
+
+            if (isCommand) {
+                if (isScriptMatches) {
+                    handleGenerateFromBrief('av-script');
+                    setInput('');
+                    return;
+                } else if (isBoardMatches) {
+                    handleGenerateFromBrief('storyboard');
+                    setInput('');
+                    return;
+                }
+            }
+        }
+
         const trimmed = textToUse.trim()
         if (!trimmed) return
         setError(null)
