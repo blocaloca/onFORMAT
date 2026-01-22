@@ -481,6 +481,45 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
     }, [state.activeTool]);
 
+    // Auto-Check-In Logic: If current user is in Crew List, mark them Online
+    useEffect(() => {
+        if (!userEmail) return;
+
+        const crewDraftRaw = state.phases['PRE_PRODUCTION']?.drafts['crew-list'];
+        if (!crewDraftRaw) return;
+
+        try {
+            const crewData = JSON.parse(crewDraftRaw);
+            const crewList = Array.isArray(crewData.crew) ? crewData.crew : [];
+            const myIndex = crewList.findIndex((m: any) => m.email?.toLowerCase().trim() === userEmail.toLowerCase().trim());
+
+            if (myIndex !== -1) {
+                const me = crewList[myIndex];
+                if (me.status !== 'online') {
+                    // Update Status
+                    const newCrewList = [...crewList];
+                    newCrewList[myIndex] = { ...me, status: 'online' };
+
+                    const newDraftString = JSON.stringify({ ...crewData, crew: newCrewList });
+
+                    setState(s => ({
+                        ...s,
+                        phases: {
+                            ...s.phases,
+                            PRE_PRODUCTION: {
+                                ...s.phases.PRE_PRODUCTION,
+                                drafts: {
+                                    ...s.phases.PRE_PRODUCTION.drafts,
+                                    'crew-list': newDraftString
+                                }
+                            }
+                        }
+                    }));
+                }
+            }
+        } catch { }
+    }, [userEmail, state.phases.PRE_PRODUCTION?.drafts['crew-list']]);
+
     // Derived from state now
     const persona = state.persona || 'MOTION';
     const setPersona = (p: 'STILLS' | 'MOTION' | 'HYBRID') => setState(s => ({ ...s, persona: p }));

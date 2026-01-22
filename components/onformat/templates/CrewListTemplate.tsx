@@ -23,8 +23,7 @@ interface CrewMember {
     onSetGroups?: string[]; // Groups A, B, C
     email: string;
     phone: string;
-    dayRate: number;
-    days: number;
+    status?: 'online' | 'offline'; // Replaces rates
 }
 
 interface CrewListData {
@@ -50,7 +49,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         let hasChanges = false;
         const newItems = items.map((item, idx) => {
             const anyItem = item as any;
-            if (!anyItem.id || typeof anyItem.days === 'undefined') {
+            if (!anyItem.id || typeof anyItem.status === 'undefined') {
                 hasChanges = true;
                 return {
                     id: anyItem.id || `crew-${Date.now()}-${idx}`,
@@ -59,10 +58,9 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     name: anyItem.name || '',
                     email: anyItem.email || '',
                     phone: anyItem.phone || '',
-                    dayRate: anyItem.dayRate || 0,
-                    days: anyItem.days || 1,
+                    status: anyItem.status || 'offline',
                     onSetGroups: anyItem.onSetGroups || []
-                };
+                } as CrewMember;
             }
             return item;
         });
@@ -74,10 +72,6 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
     const items = data.crew || [];
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
-    const currency = data.currency || 'USD';
-    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency });
-
-    const total = items.reduce((sum, item) => sum + ((item.dayRate || 0) * (item.days || 1)), 0);
     const deptOptions = Object.keys(DEPARTMENTS);
 
     const handleAddItem = () => {
@@ -89,8 +83,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             onSetGroups: [],
             email: '',
             phone: '',
-            dayRate: 0,
-            days: 1
+            status: 'offline'
         };
         onUpdate({ crew: [...items, newItem] });
     };
@@ -102,6 +95,11 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         }
         newItems[index] = { ...newItems[index], ...updates };
         onUpdate({ crew: newItems });
+    };
+
+    const toggleStatus = (index: number) => {
+        const current = items[index].status || 'offline';
+        handleUpdateItem(index, { status: current === 'online' ? 'offline' : 'online' });
     };
 
     const toggleGroup = (idx: number, group: string) => {
@@ -136,27 +134,31 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     metadata={metadata}
                 >
                     <div className="space-y-6 text-xs font-sans h-full flex flex-col">
-                        {/* Header Context - Total on Page 1 */}
+
+                        {/* Legend for Status */}
                         {pageIndex === 0 && (
-                            <div className="flex justify-end pb-2">
-                                <div className="flex items-center gap-4">
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-xs font-mono font-bold text-zinc-900">
-                                        {formatter.format(total)}
-                                    </span>
+                            <div className="flex justify-end pb-2 gap-4 items-center">
+                                <span className="text-[9px] uppercase font-bold tracking-widest text-zinc-400">Status:</span>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></div>
+                                    <span className="text-[10px] font-bold text-zinc-500">Online</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                    <div className="w-2 h-2 rounded-full bg-zinc-200"></div>
+                                    <span className="text-[10px] font-bold text-zinc-400">Offline</span>
                                 </div>
                             </div>
                         )}
 
                         {/* Table Header */}
-                        <div className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_70px_30px] gap-2 border-b border-black pb-2 items-end">
+                        <div className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 border-b border-black pb-2 items-end">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Dept</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Role</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Name</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">onSET</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Email</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Phone</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Day Rate</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Status</span>
                         </div>
 
                         {/* Rows */}
@@ -165,9 +167,10 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const roles = DEPARTMENTS[item.department] || [];
                                 const groups = item.onSetGroups || [];
+                                const isOnline = item.status === 'online';
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_70px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
                                         {/* Dept */}
                                         <div className="relative">
                                             <select
@@ -205,7 +208,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold px-1 py-1`}>{item.name || "—"}</div>
                                         </div>
 
-                                        {/* onSET Groups Toggles */}
+                                        {/* onSET Groups */}
                                         <div className="flex justify-center gap-1">
                                             {['A', 'B', 'C'].map(g => {
                                                 const isActive = groups.includes(g);
@@ -257,19 +260,21 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             />
                                             <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] text-zinc-600 px-1 py-1`}>{item.phone || "—"}</div>
                                         </div>
-                                        {/* Rate */}
-                                        <div>
-                                            <input
-                                                type="number"
-                                                value={item.dayRate || ''}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { dayRate: parseFloat(e.target.value) || 0 })}
-                                                className={`w-full bg-transparent text-xs font-mono text-right focus:bg-white rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
-                                                placeholder="0.00"
+
+                                        {/* Status (Green Light) */}
+                                        <div className="flex justify-center items-center">
+                                            <button
+                                                onClick={() => toggleStatus(globalIdx)}
                                                 disabled={isLocked}
+                                                className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${isOnline
+                                                        ? 'bg-emerald-500 border-emerald-600 shadow-[0_0_8px_rgba(16,185,129,0.5)] scale-110'
+                                                        : 'bg-zinc-100 border-zinc-300 hover:bg-zinc-200'
+                                                    }`}
+                                                title={isOnline ? 'Online / Checked In' : 'Offline'}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-mono text-right px-1 py-1`}>{formatter.format(item.dayRate || 0)}</div>
                                         </div>
-                                        {/* Delete Button with Confirmation Popover */}
+
+                                        {/* Delete Button */}
                                         <div className={`flex justify-end ${isPrinting ? 'hidden' : 'print:hidden'}`}>
                                             {!isLocked && (
                                                 <div className="relative">
@@ -279,7 +284,6 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     >
                                                         <Trash2 size={12} />
                                                     </button>
-
                                                     {deleteConfirmIndex === globalIdx && (
                                                         <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
@@ -291,13 +295,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                             </button>
                                                         </div>
                                                     )}
-
-                                                    {/* Backdrop to close when clicking outside (transparent) */}
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div
-                                                            className="fixed inset-0 z-40 bg-transparent"
-                                                            onClick={() => setDeleteConfirmIndex(null)}
-                                                        />
+                                                        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setDeleteConfirmIndex(null)} />
                                                     )}
                                                 </div>
                                             )}
