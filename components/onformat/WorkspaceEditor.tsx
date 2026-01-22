@@ -496,6 +496,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             if (myIndex !== -1) {
                 const me = crewList[myIndex];
                 if (me.status !== 'online') {
+                    console.log(`[AutoCheckIn] Marking ${me.name || me.email} as Online`);
                     // Update Status
                     const newCrewList = [...crewList];
                     newCrewList[myIndex] = { ...me, status: 'online' };
@@ -509,15 +510,20 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             PRE_PRODUCTION: {
                                 ...s.phases.PRE_PRODUCTION,
                                 drafts: {
-                                    ...s.phases.PRE_PRODUCTION.drafts,
+                                    ...s.phases.PRE_PRODUCTION.drafts, // Ensure we preserve other drafts
                                     'crew-list': newDraftString
                                 }
                             }
                         }
                     }));
                 }
+            } else {
+                // Debug: User not found in list
+                // console.log('[AutoCheckIn] User email not found:', userEmail);
             }
-        } catch { }
+        } catch (e) {
+            console.error('[AutoCheckIn] Error', e);
+        }
     }, [userEmail, state.phases.PRE_PRODUCTION?.drafts['crew-list']]);
 
     // Derived from state now
