@@ -97,10 +97,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         onUpdate({ crew: newItems });
     };
 
-    const toggleStatus = (index: number) => {
-        const current = items[index].status || 'offline';
-        handleUpdateItem(index, { status: current === 'online' ? 'offline' : 'online' });
-    };
+    // Status is updated automatically by onSet Mobile presence
+
 
     const toggleGroup = (idx: number, group: string) => {
         const member = items[idx];
@@ -263,14 +261,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                         {/* Status (Green Light) */}
                                         <div className="flex justify-center items-center">
-                                            <button
-                                                onClick={() => toggleStatus(globalIdx)}
-                                                disabled={isLocked}
-                                                className={`w-4 h-4 rounded-full border transition-all flex items-center justify-center ${isOnline
-                                                        ? 'bg-emerald-500 border-emerald-600 shadow-[0_0_8px_rgba(16,185,129,0.5)] scale-110'
-                                                        : 'bg-zinc-100 border-zinc-300 hover:bg-zinc-200'
+                                            <div
+                                                className={`w-2.5 h-2.5 rounded-full transition-all ${isOnline
+                                                    ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]'
+                                                    : 'bg-zinc-200'
                                                     }`}
-                                                title={isOnline ? 'Online / Checked In' : 'Offline'}
+                                                title={isOnline ? 'Online via onSet Mobile' : 'Offline'}
                                             />
                                         </div>
 
