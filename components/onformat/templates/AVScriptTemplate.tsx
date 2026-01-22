@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { DocumentLayout } from './DocumentLayout';
-import { Plus, Trash2, Video, Mic } from 'lucide-react';
+import { Plus, Trash2, Video, Mic, Sparkles } from 'lucide-react';
 
 interface AVRow {
     id: string;
@@ -28,6 +28,7 @@ interface AVScriptTemplateProps {
 export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: AVScriptTemplateProps) => {
 
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+    const [showBrief, setShowBrief] = useState(false);
 
     useEffect(() => {
         if (!data.rows) {
@@ -83,54 +84,45 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const pages = Array.from({ length: totalPages }, (_, i) => rows.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
 
     return (
-        <div className="flex gap-8 justify-center items-start relative w-full">
-            {/* Reference Brief Sidebar */}
-            <div className="hidden lg:block w-56 sticky top-4 shrink-0 space-y-6 pt-4">
-                <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-sm shadow-sm">
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4 pb-2 border-b border-zinc-200">
-                        Reference Brief
-                    </h3>
+        <div className="flex flex-col items-center w-full relative">
 
-                    {metadata?.importedBrief ? (
-                        <div className="space-y-4">
-                            <div>
-                                <h4 className="text-[9px] uppercase font-bold text-zinc-500 mb-1">Subject</h4>
-                                <p className="text-xs font-medium text-black leading-snug">{metadata.importedBrief.product || '—'}</p>
+            {/* Logic Toggle */}
+            {metadata?.importedBrief && (
+                <div className="absolute -top-10 right-0 z-20 print:hidden flex justify-end w-full">
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowBrief(!showBrief)}
+                            className="flex items-center gap-2 bg-white border border-zinc-200 shadow-sm text-zinc-500 hover:text-black hover:border-zinc-300 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all"
+                        >
+                            <Sparkles size={12} className={showBrief ? "text-purple-600" : "text-zinc-400"} />
+                            {showBrief ? 'Hide Logic' : 'Reference Logic'}
+                        </button>
+                        {showBrief && (
+                            <div className="absolute right-0 top-12 w-72 bg-white border border-zinc-200 shadow-xl rounded-lg p-5 animate-in slide-in-from-top-2 fade-in z-50">
+                                <h4 className="text-[10px] uppercase font-bold text-zinc-400 mb-3 border-b border-zinc-100 pb-2">Brief Context</h4>
+                                <div className="space-y-4">
+                                    <div>
+                                        <span className="text-[9px] uppercase font-bold text-zinc-500 block">Vision</span>
+                                        <span className="text-xs font-bold text-black">{metadata.importedBrief.product || '—'}</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-[9px] uppercase font-bold text-zinc-500 block">Objective</span>
+                                        <p className="text-[11px] text-zinc-600 leading-snug">{metadata.importedBrief.objective || '—'}</p>
+                                    </div>
+                                    <div>
+                                        <span className="text-[9px] uppercase font-bold text-zinc-500 block">Tone</span>
+                                        <p className="text-[11px] text-zinc-600 leading-snug">{metadata.importedBrief.tone || '—'}</p>
+                                    </div>
+                                    <div className="bg-zinc-50 p-2 rounded border border-zinc-100 italic text-zinc-600 text-[11px]">
+                                        "{metadata.importedBrief.keyMessage || '...'}"
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="text-[9px] uppercase font-bold text-zinc-500 mb-1">Objective</h4>
-                                <p className="text-[10px] text-zinc-700 leading-snug">{metadata.importedBrief.objective || '—'}</p>
-                            </div>
-                            <div>
-                                <h4 className="text-[9px] uppercase font-bold text-zinc-500 mb-1">Audience</h4>
-                                <p className="text-[10px] text-zinc-700 leading-snug">{metadata.importedBrief.targetAudience || '—'}</p>
-                            </div>
-                            <div>
-                                <h4 className="text-[9px] uppercase font-bold text-zinc-500 mb-1">Tone</h4>
-                                <p className="text-[10px] text-zinc-700 leading-snug">{metadata.importedBrief.tone || '—'}</p>
-                            </div>
-                            <div>
-                                <h4 className="text-[9px] uppercase font-bold text-zinc-500 mb-1">Key Message</h4>
-                                <p className="text-[10px] text-zinc-700 leading-relaxed italic">{metadata.importedBrief.keyMessage || '—'}</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <p className="text-[10px] text-zinc-400 italic">No Brief data found.</p>
-                    )}
-                </div>
-
-                {metadata?.importedVision ? (
-                    <div className="p-4 bg-zinc-50 border border-zinc-200 rounded-sm shadow-sm">
-                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4 pb-2 border-b border-zinc-200">
-                            Visionary
-                        </h3>
-                        {/* Simple list of pages or summary logic if vision exists, for now just an indicator */}
-                        <p className="text-[10px] text-zinc-500">Vision Board Active</p>
+                        )}
                     </div>
-                ) : null}
-            </div>
+                </div>
+            )}
 
-            {/* AV Script Pages */}
             <div className="flex flex-col gap-8">
                 {pages.map((pageRows, pageIndex) => (
                     <DocumentLayout
@@ -143,8 +135,6 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                     >
                         <div className="space-y-6 text-xs font-sans h-full flex flex-col">
-
-                            {/* Header Info Removed */}{/* Empty */}
 
                             {/* Table Header */}
                             <div className="grid grid-cols-[60px_80px_1fr_1fr_30px] gap-6 border-b border-black pb-2 items-end">
@@ -218,7 +208,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-xs font-mono leading-relaxed whitespace-pre-wrap text-black`}>{row.audio}</div>
                                             </div>
 
-                                            {/* Delete Button with Confirmation Popover */}
+                                            {/* Delete Button */}
                                             {!isLocked && (
                                                 <div className="relative flex justify-center w-full pt-1">
                                                     <button
@@ -227,7 +217,6 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     >
                                                         <Trash2 size={12} />
                                                     </button>
-
                                                     {deleteConfirmIndex === globalIdx && (
                                                         <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
@@ -239,13 +228,8 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                             </button>
                                                         </div>
                                                     )}
-
-                                                    {/* Backdrop to close when clicking outside (transparent) */}
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div
-                                                            className="fixed inset-0 z-40 bg-transparent"
-                                                            onClick={() => setDeleteConfirmIndex(null)}
-                                                        />
+                                                        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setDeleteConfirmIndex(null)} />
                                                     )}
                                                 </div>
                                             )}

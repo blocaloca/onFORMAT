@@ -1179,13 +1179,13 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         // 1. Data Extraction (Heuristic / Placeholder)
         let startingData: any = {};
         if (targetTool === 'brief') {
-            const lines = visionText.split('\n').filter(l => l.trim().length > 0);
+            // Paste Full Vision Text into 'product' (Vision) field as requested
             startingData = {
-                product: lines[0]?.replace(/^#+\s*/, '').substring(0, 100) || 'New Product',
-                objective: "Derived from Project Vision. Review needed.",
+                product: visionText,
+                objective: "Derived from Vision.",
                 targetAudience: "TBD",
-                tone: "See Vision Board",
-                keyMessage: lines.slice(1, 4).join(' ').substring(0, 200) + '...'
+                tone: "See Vision field",
+                keyMessage: "TBD"
             };
         } else if (targetTool === 'directors-treatment') {
             const lines = visionText.split('\n').filter(l => l.trim().length > 0);

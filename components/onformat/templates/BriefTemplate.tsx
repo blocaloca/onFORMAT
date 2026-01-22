@@ -147,8 +147,8 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                         {pageIndex === 0 && (
                             <>
                                 <section>
-                                    <label className={labelStyle}>Subject / Product</label>
-                                    {renderField('product', 'What are we filming/selling?', 'min-h-[60px]')}
+                                    <label className={labelStyle}>Vision</label>
+                                    {renderField('product', 'Vision Summary... (Auto-filled from Project Vision)', 'min-h-[60px]')}
                                 </section>
 
                                 <section>
