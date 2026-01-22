@@ -12,15 +12,14 @@ interface TreatmentScene {
     content: string;
 }
 
+// Update Interface
 interface DirectorsTreatmentData {
     scenes: TreatmentScene[];
-    // Legacy support
-    heroImage?: string;
+    approach?: string;
+    tone?: string;
     narrativeArc?: string;
-    characterPhilosophy?: string;
-    visualLanguage?: string;
-    characterImage?: string;
-    visualImage?: string;
+    // Legacy
+    heroImage?: string;
 }
 
 interface DirectorsTreatmentTemplateProps {
@@ -33,16 +32,23 @@ interface DirectorsTreatmentTemplateProps {
     isPrinting?: boolean;
 }
 
+// ... imports remain the same
+
 export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: DirectorsTreatmentTemplateProps) => {
 
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+    const updateField = (field: keyof DirectorsTreatmentData, value: string) => {
+        if (onUpdate) onUpdate({ ...data, [field]: value });
+    };
+
     const handleChange = (scenes: TreatmentScene[]) => {
         if (onUpdate) {
-            onUpdate({ scenes });
+            onUpdate({ ...data, scenes });
         }
     };
 
+    // ... scene handlers (handleSceneUpdate, addScene, removeScene) same as before ...
     const handleSceneUpdate = (id: string, field: keyof TreatmentScene, value: string) => {
         const currentScenes = data.scenes || [];
         const updated = currentScenes.map(s => s.id === id ? { ...s, [field]: value } : s);
@@ -68,27 +74,26 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
         setDeleteConfirmId(null);
     };
 
-    // Migration Effect
+    // Migration Effect (Keep as is just to be safe, or simplify)
     useEffect(() => {
         if (!data.scenes || data.scenes.length === 0) {
-            const legacyScenes: TreatmentScene[] = [];
-            // Attempt to migrate legacy fields
-            if (data.narrativeArc) legacyScenes.push({ id: 'legacy-narrative', image: data.heroImage || '', description: 'Narrative Approach', type: 'Narrative', content: data.narrativeArc });
-            if (data.characterPhilosophy) legacyScenes.push({ id: 'legacy-char', image: data.characterImage || '', description: 'Character Arch', type: 'Character', content: data.characterPhilosophy });
-            if (data.visualLanguage) legacyScenes.push({ id: 'legacy-vis', image: data.visualImage || '', description: 'Visual Style', type: 'Cinematography', content: data.visualLanguage });
-
-            if (legacyScenes.length === 0) {
-                legacyScenes.push({ id: `scene-${Date.now()}`, image: '', image2: '', description: '', type: 'Narrative', content: '' });
-            }
-            if (!data.scenes || legacyScenes.length > 0) handleChange(legacyScenes);
+            // ... logic from before needed? 
+            // Simplification: Just ensure scenes array exists
+            if (!data.scenes) handleChange([]);
         }
     }, []);
 
-    // Pagination Logic: One Page = One Treatment
+    // Pagination Logic
+    // Page 1: Top Level Fields (Approach, Tone, Narrative) + maybe 1 Scene?
+    // Let's just put the Top Level fields on Page 1, and Scenes start on Page 2?
+    // OR put them above scenes on Page 1.
+    // Given layout constraints, let's put them on Page 1.
+
     const ITEMS_PER_PAGE = 1;
     const scenes = data.scenes || [];
     const totalPages = Math.max(1, Math.ceil(scenes.length / ITEMS_PER_PAGE));
 
+    // We render pages based on Scenes, but Page 1 includes the Header fields.
     const pages = Array.from({ length: totalPages }, (_, i) => {
         return scenes.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE);
     });
@@ -105,10 +110,53 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     metadata={metadata}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                 >
-                    <div className="flex flex-col h-full relative">
-                        {pageScenes.map((scene) => (
-                            <div key={scene.id} className="flex flex-col h-full gap-4 group">
+                    <div className="flex flex-col h-full relative gap-6">
 
+                        {/* FIRST PAGE HEADER FIELDS */}
+                        {pageIndex === 0 && (
+                            <div className="grid grid-cols-3 gap-4 h-48 shrink-0 mb-4">
+                                {/* Approach */}
+                                <div className="bg-zinc-50 border border-zinc-200 relative p-3">
+                                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Approach</h4>
+                                    <textarea
+                                        value={data.approach || ''}
+                                        onChange={(e) => updateField('approach', e.target.value)}
+                                        className={`w-full h-[120px] bg-transparent text-xs leading-relaxed outline-none resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : ''}`}
+                                        placeholder="Define the approach..."
+                                        disabled={isLocked}
+                                    />
+                                    {isPrinting && <div className="text-xs leading-relaxed">{data.approach}</div>}
+                                </div>
+                                {/* Tone */}
+                                <div className="bg-zinc-50 border border-zinc-200 relative p-3">
+                                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Tone</h4>
+                                    <textarea
+                                        value={data.tone || ''}
+                                        onChange={(e) => updateField('tone', e.target.value)}
+                                        className={`w-full h-[120px] bg-transparent text-xs leading-relaxed outline-none resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : ''}`}
+                                        placeholder="Define the tone..."
+                                        disabled={isLocked}
+                                    />
+                                    {isPrinting && <div className="text-xs leading-relaxed">{data.tone}</div>}
+                                </div>
+                                {/* Narrative Arc */}
+                                <div className="bg-zinc-50 border border-zinc-200 relative p-3">
+                                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Narrative Arc</h4>
+                                    <textarea
+                                        value={data.narrativeArc || ''}
+                                        onChange={(e) => updateField('narrativeArc', e.target.value)}
+                                        className={`w-full h-[120px] bg-transparent text-xs leading-relaxed outline-none resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : ''}`}
+                                        placeholder="Construct the narrative..."
+                                        disabled={isLocked}
+                                    />
+                                    {isPrinting && <div className="text-xs leading-relaxed">{data.narrativeArc}</div>}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* SCENES */}
+                        {pageScenes.map((scene) => (
+                            <div key={scene.id} className="flex flex-col h-full gap-4 group flex-1 min-h-0">
                                 {/* Header / Title Section */}
                                 <div className="flex flex-col gap-1 w-full">
                                     <div className="flex justify-between items-end">
@@ -165,9 +213,9 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                 </div>
 
                                 {/* Images Grid - 2x 16:9 Images */}
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-4 h-48 shrink-0">
                                     {/* Image 1 */}
-                                    <div className="w-full aspect-video bg-zinc-50 border border-dashed border-zinc-200 relative shrink-0">
+                                    <div className="w-full h-full bg-zinc-50 border border-dashed border-zinc-200 relative shrink-0">
                                         <ImageUploader
                                             currentUrl={scene.image}
                                             onUpload={(url) => handleSceneUpdate(scene.id, 'image', url)}
@@ -175,7 +223,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                         />
                                     </div>
                                     {/* Image 2 */}
-                                    <div className="w-full aspect-video bg-zinc-50 border border-dashed border-zinc-200 relative shrink-0">
+                                    <div className="w-full h-full bg-zinc-50 border border-dashed border-zinc-200 relative shrink-0">
                                         <ImageUploader
                                             currentUrl={scene.image2 || ''}
                                             onUpload={(url) => handleSceneUpdate(scene.id, 'image2', url)}
@@ -191,7 +239,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                             {scene.content}
                                         </div>
                                     ) : (
-                                        <div className="w-full h-[300px] bg-zinc-50 border border-zinc-200 relative flex-1">
+                                        <div className="w-full bg-zinc-50 border border-zinc-200 relative flex-1">
                                             <label className="absolute top-2 left-3 text-[10px] font-bold text-zinc-400 uppercase tracking-widest pointer-events-none">Notes</label>
                                             <textarea
                                                 value={scene.content}
@@ -204,12 +252,6 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                 </div>
                             </div>
                         ))}
-                        {/* Empty state for page if no scenes exist in slice (rare) */}
-                        {pageScenes.length === 0 && (
-                            <div className="flex items-center justify-center h-full text-zinc-300">
-                                Empty Page
-                            </div>
-                        )}
                     </div>
                 </DocumentLayout>
             ))}

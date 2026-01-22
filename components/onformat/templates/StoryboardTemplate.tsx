@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { ImageUploader } from '@/components/ui/ImageUploader';
-import { Trash2, Square, Grid3x3, Grid2x2, RectangleHorizontal, Monitor, Smartphone, Maximize, Crop, Type } from 'lucide-react';
+import { Trash2, Square, Grid3x3, Grid2x2, RectangleHorizontal, Monitor, Smartphone, Maximize, Crop, Type, Pin } from 'lucide-react';
 
 type AspectRatio = '16:9' | '9:16' | '1:1' | '4:5' | '5:4' | '3:2' | '2:3';
 type ItemSize = 'small' | 'medium' | 'large';
@@ -13,6 +13,7 @@ interface StoryboardItem {
     notes?: string;  // Description
     title?: string;
     imageNumber?: string;
+    sceneLink?: string; // Links to AV Script
     aspectRatio: AspectRatio;
     size: ItemSize;
 }
@@ -57,6 +58,17 @@ const getSizeClass = (size: ItemSize) => {
 export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: StoryboardTemplateProps) => {
 
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+    const [activePinTargetId, setActivePinTargetId] = useState<string | null>(null);
+
+    // Derived Data for Sync
+    const avScriptRows = metadata?.importedAVScript?.rows || [];
+    const validScenes = new Set(avScriptRows.map((r: any) => String(r.scene).trim()));
+    const lookbookItems = metadata?.importedLookbook?.items || [];
+
+    const isSceneValid = (val?: string) => {
+        if (!val || validScenes.size === 0) return true;
+        return validScenes.has(val.trim());
+    };
 
     // Initial Population
     useEffect(() => {
@@ -66,7 +78,8 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
             ...item,
             imageNumber: item.imageNumber || (idx + 1).toString().padStart(2, '0'),
             title: item.title || '',
-            size: item.size || 'small'
+            size: item.size || 'small',
+            sceneLink: item.sceneLink || ''
         }));
 
         if (JSON.stringify(migratedItems) !== JSON.stringify(items)) {
@@ -81,7 +94,8 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                 title: '',
                 imageNumber: (i + 1).toString().padStart(2, '0'),
                 aspectRatio: '3:2',
-                size: 'small'
+                size: 'small',
+                sceneLink: ''
             }));
             onUpdate({ items: newItems });
         }
@@ -99,7 +113,8 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
             title: '',
             imageNumber: nextNum,
             aspectRatio: '3:2',
-            size: 'small'
+            size: 'small',
+            sceneLink: ''
         };
         onUpdate({ items: [...items, newItem] });
     };
@@ -114,6 +129,15 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
         const newItems = items.filter((_, i) => i !== index);
         onUpdate({ items: newItems });
         setDeleteConfirmIndex(null);
+        setActivePinTargetId(null);
+    };
+
+    const handlePin = (itemId: string, lookbookUrl: string) => {
+        const idx = items.findIndex(i => i.id === itemId);
+        if (idx > -1) {
+            handleUpdateItem(idx, { url: lookbookUrl });
+        }
+        setActivePinTargetId(null);
     };
 
     // Pagination Logic
@@ -206,8 +230,41 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                         <div className="grid grid-cols-6 gap-x-6 gap-y-4 content-start flex-1 mt-4">
                             {pageItems.map((item) => {
                                 const originalIndex = items.findIndex(i => i.id === item.id);
+                                const isPinOpen = activePinTargetId === item.id;
+                                const invalidScene = !isSceneValid(item.sceneLink);
+
                                 return (
                                     <div key={item.id} className={`relative group flex flex-col gap-1.5 ${getSizeClass(item.size)}`}>
+
+                                        {/* Lookbook Picker Overlay */}
+                                        {isPinOpen && (
+                                            <div className="absolute inset-0 z-50 bg-white border border-black shadow-xl rounded-sm flex flex-col p-2 animate-in fade-in zoom-in-95 duration-100 h-[300px] overflow-hidden">
+                                                <div className="flex justify-between items-center mb-2 pb-2 border-b border-zinc-100">
+                                                    <span className="text-[10px] font-bold uppercase tracking-widest">Select Reference</span>
+                                                    <button onClick={() => setActivePinTargetId(null)} className="text-zinc-600 hover:text-red-500 text-[10px] uppercase font-bold">Close</button>
+                                                </div>
+                                                <div className="flex-1 overflow-y-auto grid grid-cols-2 gap-2">
+                                                    {lookbookItems.length > 0 ? lookbookItems.map((lb: any) => (
+                                                        <button
+                                                            key={lb.id}
+                                                            onClick={() => handlePin(item.id, lb.url)}
+                                                            className="aspect-square bg-zinc-50 relative group/lb border border-transparent hover:border-black transition-colors"
+                                                        >
+                                                            {lb.url ? (
+                                                                <img src={lb.url} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center text-[9px] text-zinc-300">No Img</div>
+                                                            )}
+                                                            <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-[8px] p-1 truncate opacity-0 group-hover/lb:opacity-100">
+                                                                {lb.title || 'Untitled'}
+                                                            </div>
+                                                        </button>
+                                                    )) : (
+                                                        <div className="col-span-2 text-center text-[10px] text-zinc-400 pt-4">No Lookbook items found.</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Header Row: Number + Title */}
                                         <div className="flex items-center gap-2 w-full mb-1 border-b border-zinc-100 pb-1">
@@ -242,7 +299,10 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
 
                                         {!isLocked && (
                                             <div className="absolute top-10 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm print:hidden">
-                                                {/* Controls similar to MoodBoard but simplified/relevant */}
+                                                {/* Pin Button */}
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => setActivePinTargetId(isPinOpen ? null : item.id)} className={`p-1 rounded hover:bg-zinc-100 ${isPinOpen ? 'text-blue-600 bg-blue-50' : 'text-zinc-400'}`} title="Pin from Lookbook"><Pin size={12} /></button>
+                                                </div>
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
                                                     <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '3:2' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '3:2' ? 'text-black' : 'text-zinc-400'}`} title="3:2"><Monitor size={12} /></button>
                                                     <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Crop size={12} /></button>
@@ -255,30 +315,55 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             </div>
                                         )}
 
-                                        <div className={`w-full bg-zinc-50 ${getAspectClass(item.aspectRatio)} border border-zinc-200 relative overflow-hidden`}>
+                                        <div className={`w-full bg-zinc-50 ${getAspectClass(item.aspectRatio)} border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200'} relative overflow-hidden transition-all`}>
                                             <ImageUploader
                                                 currentUrl={item.url}
                                                 onUpload={(url) => handleUpdateItem(originalIndex, { url })}
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
                                             />
+                                            {invalidScene && item.sceneLink && !isPrinting && (
+                                                <div className="absolute top-2 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+                                                    SCENE DELETED
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <div className="flex flex-col gap-0.5">
-                                            {isPrinting ? (
-                                                <div className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 py-0.5">
-                                                    {item.caption}
-                                                </div>
-                                            ) : (
-                                                <input
-                                                    className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-transparent border-none focus:text-black outline-none placeholder-zinc-300 py-0.5"
-                                                    placeholder="SHOT TYPE / ANGLE"
-                                                    value={item.caption}
-                                                    onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
-                                                    disabled={isLocked}
-                                                />
-                                            )}
-                                            {/* Notes textarea removed as requested */}
+                                        <div className="flex justify-between items-start gap-2 pt-0.5">
+                                            <div className="flex-1">
+                                                {isPrinting ? (
+                                                    <div className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 py-0.5">
+                                                        {item.caption}
+                                                    </div>
+                                                ) : (
+                                                    <input
+                                                        className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-transparent border-none focus:text-black outline-none placeholder-zinc-300 py-0.5"
+                                                        placeholder="SHOT TYPE / ANGLE"
+                                                        value={item.caption}
+                                                        onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
+                                                        disabled={isLocked}
+                                                    />
+                                                )}
+                                            </div>
+
+                                            {/* Scene Link Input */}
+                                            <div className="w-16 shrink-0 flex flex-col items-end">
+                                                {isPrinting ? (
+                                                    <div className="text-[9px] font-mono text-zinc-400 ">{item.sceneLink ? `SC: ${item.sceneLink}` : ''}</div>
+                                                ) : (
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[8px] font-bold text-zinc-300 uppercase">SC</span>
+                                                        <input
+                                                            className={`w-8 text-[9px] font-mono text-right bg-transparent outline-none border-b ${invalidScene && item.sceneLink ? 'border-red-400 text-red-500' : 'border-zinc-200 text-zinc-600 focus:border-black focus:text-black'}`}
+                                                            placeholder="#"
+                                                            value={item.sceneLink || ''}
+                                                            onChange={(e) => handleUpdateItem(originalIndex, { sceneLink: e.target.value })}
+                                                            disabled={isLocked}
+                                                            title={invalidScene && item.sceneLink ? "Scene not found in AV Script" : "Link to Scene Number"}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
 
                                     </div>

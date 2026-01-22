@@ -137,6 +137,38 @@ export const DraftEditor = ({
         } catch { }
     }
 
+    // Brief Import Logic (for Context)
+    let importedBrief = null;
+    const briefDraft = phases?.['STRATEGY']?.drafts?.['brief'] || phases?.['DEVELOPMENT']?.drafts?.['brief'];
+    if (briefDraft) {
+        try {
+            const raw = JSON.parse(briefDraft);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedBrief = arr[0];
+        } catch { }
+    }
+
+    // Project Vision Import Logic (for Context)
+    let importedVision = null;
+    const visionDraft = phases?.['STRATEGY']?.drafts?.['project-vision'] || phases?.['DEVELOPMENT']?.drafts?.['project-vision'];
+    if (visionDraft) {
+        try {
+            const raw = JSON.parse(visionDraft);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedVision = arr[0];
+        } catch { }
+    }
+
+    // Lookbook Import Logic (for Storyboard Sync)
+    let importedLookbook = null;
+    if (phases?.['DEVELOPMENT']?.drafts?.['lookbook']) {
+        try {
+            const raw = JSON.parse(phases['DEVELOPMENT'].drafts['lookbook']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedLookbook = arr[0];
+        } catch { }
+    }
+
     // --- Document Stack Logic ---
     const [activeVersionIndex, setActiveVersionIndex] = useState(0);
 
@@ -424,6 +456,9 @@ export const DraftEditor = ({
                                 importedAVScript,
                                 importedBudget,
                                 importedDITLog,
+                                importedBrief,
+                                importedVision,
+                                importedLookbook,
                                 projectId,
                                 latestNotification
                             }}
