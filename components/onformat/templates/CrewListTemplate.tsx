@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { Trash2, Plus } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const DEPARTMENTS: Record<string, string[]> = {
     'Production': ['Producer', 'UPM', 'Coordinator', 'Prod. Assist (PA)', 'Script Sup.'],
@@ -99,6 +100,73 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
     // Status is updated automatically by onSet Mobile presence
 
+    // --- REALTIME PRESENCE LISTENER ---
+    const [presenceMap, setPresenceMap] = useState<Record<string, { status: string, lastSeen: string }>>({});
+
+    useEffect(() => {
+        if (!metadata?.projectId) return;
+
+        // 1. Initial Fetch of Statuses
+        const fetchStatuses = async () => {
+            const { data } = await supabase
+                .from('crew_membership')
+                .select('user_email, status, last_seen_at')
+                .eq('project_id', metadata.projectId);
+
+            if (data) {
+                const map: any = {};
+                data.forEach((row: any) => {
+                    map[row.user_email.toLowerCase()] = { status: row.status, lastSeen: row.last_seen_at };
+                });
+                setPresenceMap(map);
+            }
+        };
+        fetchStatuses();
+
+        // 2. Realtime Listener
+        const channel = supabase.channel(`crew-presence-${metadata.projectId}`)
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'crew_membership', filter: `project_id=eq.${metadata.projectId}` },
+                (payload: any) => {
+                    if (payload.new) {
+                        setPresenceMap(prev => ({
+                            ...prev,
+                            [payload.new.user_email.toLowerCase()]: {
+                                status: payload.new.status,
+                                lastSeen: payload.new.last_seen_at
+                            }
+                        }));
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, [metadata?.projectId]);
+
+    // 3. Heartbeat Check (Every 5s, calc who is timed out)
+    const [now, setNow] = useState(Date.now());
+    useEffect(() => {
+        const i = setInterval(() => setNow(Date.now()), 5000);
+        return () => clearInterval(i);
+    }, []);
+
+    const isMemberOnline = (email: string) => {
+        if (!email) return false;
+        const p = presenceMap[email.toLowerCase().trim()];
+        if (!p) return false;
+
+        if (p.status !== 'online') return false;
+
+        // Timeout Check (30s)
+        if (p.lastSeen) {
+            const diff = now - new Date(p.lastSeen).getTime();
+            if (diff > 30000) return false; // Timed out
+        }
+        return true;
+    };
+
 
     const toggleGroup = (idx: number, group: string) => {
         const member = items[idx];
@@ -165,7 +233,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const roles = DEPARTMENTS[item.department] || [];
                                 const groups = item.onSetGroups || [];
-                                const isOnline = item.status === 'online';
+                                const isOnline = isMemberOnline(item.email);
 
                                 return (
                                     <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">

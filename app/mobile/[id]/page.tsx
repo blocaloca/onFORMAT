@@ -375,7 +375,12 @@ export default function MobilePage() {
             }
 
             // 3. Fallback: System User (Admin/Owner) NOT in Crew List
-            if (isSystemUser) {
+            // GHOST MODE: Only for Owner or Support-Enabled Founder
+            const isOwner = project.user_id === (await supabase.auth.getUser()).data.user?.id;
+            const isFounder = normalizedUserEmail === 'casteelio@gmail.com';
+            const isSupportAccess = project.data?.supportAccess === true;
+
+            if (isOwner || (isFounder && isSupportAccess)) {
                 // AUTHORIZED as ADMIN (Ghost Mode)
                 setAccessDenied(false);
                 setUserGroups(['A', 'B', 'C']); // Admins get all access
@@ -434,6 +439,57 @@ export default function MobilePage() {
     }, [projectToolGroups, userGroups]);
 
 
+    // --- HEARTBEAT LOGIC (Status Light) ---
+    useEffect(() => {
+        if (!project || !userEmail || accessDenied) return;
+        if (id === 'local') return;
+
+        // 1. Initial ONLINE pulse
+        const pulse = async (status: 'online' | 'offline') => {
+            const normalizedEmail = userEmail.toLowerCase().trim();
+            try {
+                // Upsert logic - simpler to just Update based on verified membership
+                // We assume membership exists because checkIn() passed
+                await supabase
+                    .from('crew_membership')
+                    .update({
+                        status: status,
+                        last_seen_at: new Date().toISOString()
+                    })
+                    .eq('project_id', id)
+                    .eq('user_email', normalizedEmail);
+            } catch (err) {
+                console.error("Heartbeat Pulse Failed", err);
+            }
+        };
+
+        // Fire immediately
+        pulse('online');
+
+        // 2. Loop every 20s
+        const intervalId = setInterval(() => {
+            pulse('online');
+        }, 20000);
+
+        // 3. Cleanup: Set offline
+        const handleUnload = () => {
+            // Use navigator.sendBeacon for reliability on close if possible, 
+            // but Supabase JS doesn't support beacon natively. 
+            // We'll try a best-effort sync call or standard async (which might be killed).
+            pulse('offline');
+        };
+
+        window.addEventListener('beforeunload', handleUnload);
+
+        return () => {
+            clearInterval(intervalId);
+            window.removeEventListener('beforeunload', handleUnload);
+            pulse('offline');
+        };
+    }, [project, userEmail, accessDenied, id]);
+
+
+
     const fetchProject = async () => {
         setLoading(true);
 
@@ -482,7 +538,8 @@ export default function MobilePage() {
 
         if (data && data.data) {
             setProject(data);
-            if (user && (data.user_id === user.id || data.owner_id === user.id)) setUserRole('Owner');
+            // IDENTITY ALIGNMENT: Strict user_id check. Access set via checkIn logic.
+            // We do NOT auto-set userRole to Owner here, checkIn handles it.
 
             // Parse Tool Groups (from Control Panel)
             const controlRaw = data.data.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];

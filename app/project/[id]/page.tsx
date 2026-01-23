@@ -50,9 +50,27 @@ export default function ProjectPage() {
 
     if (data) {
       if (data.data) setInitialState(data.data);
-      if (data.name) setProjectName(data.name);
-      // Fallback: If user is owner, give them 'Owner' role effectively
-      if (user && (data.user_id === user.id || data.owner_id === user.id)) setUserRole('Owner');
+      setProjectName(data.name || 'Untitled');
+
+      // IDENTITY ALIGNMENT: Strict user_id check
+      const isOwner = user && data.user_id === user.id;
+
+      // FOUNDER GUARDRAIL: Restrict automatic access unless Owner or explicitly supported
+      const isFounder = user?.email === 'casteelio@gmail.com';
+      const isSupportAccess = data.data?.supportAccess === true; // JSON flag
+
+      if (isOwner) {
+        setUserRole('Owner');
+      } else if (isFounder) {
+        // Founder Logic: Only grant access if Support Access is ON, otherwise standard Crew check
+        if (isSupportAccess) {
+          console.log("Creation OS Support Access Active");
+          setUserRole('Admin'); // or specific Support role
+        } else {
+          // Treat as normal user, let crew logic handle it below
+          // Do NOT automatically set Owner/Admin
+        }
+      }
     }
     setLoading(false);
   };

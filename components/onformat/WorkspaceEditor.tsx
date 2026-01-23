@@ -643,7 +643,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
         // 2. Tool Specific Locks
         if (state.activeTool === 'dit-log') {
-            const allowed = ['Owner', 'Producer', 'DP', 'DIT', 'Director'].includes(userRole || '') || userEmail === 'casteelio@gmail.com';
+            const allowed = ['Owner', 'Producer', 'DP', 'DIT', 'Director'].includes(userRole || '');
+            // NOTE: Founder no longer has implicit access here unless Role is granted
             return !allowed;
         }
 
@@ -656,8 +657,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
         // Define simple check locally or import
         const hasAccess = (() => {
-            if (userEmail === 'casteelio@gmail.com') return true; // Founder
-            if (userSubscription?.status === 'active') return true; // Any active sub allows access for now (or check tier === 'pro')
+            // Founder Guardrail: Access handled by page.tsx role assignment (Admin/Owner)
+            if (userRole === 'Owner' || userRole === 'Admin') return true;
+            if (userSubscription?.status === 'active') return true; // Any active sub allows access for now
             return false;
         })();
 

@@ -14,7 +14,8 @@ export default async function AdminDashboard() {
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
 
   // Security Gate
-  if (profile?.role !== 'admin') {
+  // Security Gate
+  if (profile?.role !== 'admin' && user.email !== 'casteelio@gmail.com') {
     redirect('/dashboard')
   }
 
