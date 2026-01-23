@@ -260,6 +260,8 @@ export default function MobilePage() {
     const id = params.id as string;
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<any>(null);
+    const [userGroups, setUserGroups] = useState<string[]>([]);
+    const [projectToolGroups, setProjectToolGroups] = useState<Record<string, string[]>>({});
     const [allowedTools, setAllowedTools] = useState<string[]>([]);
 
     // Auth State
@@ -285,13 +287,14 @@ export default function MobilePage() {
                             console.log('[Mobile] Received Project Update');
                             setProject(payload.new);
 
-                            // Update Allowed Tools dynamically
+                            // Update Tool Groups
                             const controlRaw = payload.new.data?.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
                             if (controlRaw) {
                                 try {
                                     const parsed = JSON.parse(controlRaw);
                                     const stack = Array.isArray(parsed) ? parsed : [parsed];
-                                    setAllowedTools(stack[0]?.selectedTools || []);
+                                    const tGroups = stack[0]?.toolGroups || {};
+                                    setProjectToolGroups(tGroups);
                                 } catch { }
                             }
                         }
@@ -331,6 +334,7 @@ export default function MobilePage() {
             if (match) {
                 // AUTHORIZED as CREW MEMBER
                 setAccessDenied(false);
+                setUserGroups(match.onSetGroups || []);
 
                 // 3. Auto-Check-In (Update Status to Online if needed)
                 // Only update if currently offline to prevent redundant writes
@@ -374,6 +378,7 @@ export default function MobilePage() {
             if (isSystemUser) {
                 // AUTHORIZED as ADMIN (Ghost Mode)
                 setAccessDenied(false);
+                setUserGroups(['A', 'B', 'C']); // Admins get all access
                 // We do NOT update status because there is no row to update.
                 console.log(`[Mobile] Admin Access (Ghost Mode): ${normalizedUserEmail} not in Crew List`);
                 return;
@@ -388,6 +393,25 @@ export default function MobilePage() {
         checkIn();
 
     }, [project, userEmail, userRole, loading, id]);
+
+    // Compute Allowed Tools
+    useEffect(() => {
+        const allowed: string[] = [];
+        const isSystemUser = !!userRole; // Fallback if needed, but userGroups should handle it
+
+        // If no tool groups defined, default to NONE (or maybe ALL for backward compatibility? Assuming strict for now)
+        // Actually, if toolGroups is empty, it might mean the Control Panel hasn't been saved yet.
+        // Let's implement strict check: tool must have group 'X', user must have group 'X'.
+
+        Object.keys(projectToolGroups).forEach(key => {
+            const groupsForTool = projectToolGroups[key] || [];
+            if (groupsForTool.some(g => userGroups.includes(g))) {
+                allowed.push(key);
+            }
+        });
+
+        setAllowedTools(allowed);
+    }, [projectToolGroups, userGroups]);
 
 
     const fetchProject = async () => {
@@ -438,19 +462,19 @@ export default function MobilePage() {
 
         if (data && data.data) {
             setProject(data);
-            if (user && data.owner_id === user.id) setUserRole('Owner');
+            if (user && (data.user_id === user.id || data.owner_id === user.id)) setUserRole('Owner');
 
-            // Parse Allowed Tools (from Control Panel)
+            // Parse Tool Groups (from Control Panel)
             const controlRaw = data.data.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
-            let allowed: string[] = [];
+            let tGroups: Record<string, string[]> = {};
             if (controlRaw) {
                 try {
                     const parsed = JSON.parse(controlRaw);
                     const stack = Array.isArray(parsed) ? parsed : [parsed];
-                    allowed = stack[0]?.selectedTools || [];
+                    tGroups = stack[0]?.toolGroups || {};
                 } catch { }
             }
-            setAllowedTools(allowed);
+            setProjectToolGroups(tGroups);
         }
         setLoading(false);
     }

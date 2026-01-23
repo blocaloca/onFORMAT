@@ -56,12 +56,20 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
     ],
 };
 
-const PHASES: { key: Phase; label: string }[] = [
+export const PHASES: { key: Phase; label: string }[] = [
     { key: 'DEVELOPMENT', label: 'Development' },
     { key: 'PRE_PRODUCTION', label: 'Pre-Production' },
     { key: 'ON_SET', label: 'Production' },
     { key: 'POST', label: 'Post-Production' }
 ];
+
+export const getPhaseKey = (label: string): Phase | undefined => {
+    return PHASES.find(p => p.label.toLowerCase() === label.toLowerCase() || p.key === label)?.key;
+}
+
+export const getPhaseLabel = (key: Phase): string => {
+    return PHASES.find(p => p.key === key)?.label || key;
+}
 
 // --- Shared Components ---
 

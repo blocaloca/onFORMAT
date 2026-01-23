@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, FileInput } from 'lucide-react';
 
 interface Shot {
     id: string;
@@ -77,6 +77,22 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         const newShots = shots.filter((_, i) => i !== index);
         onUpdate({ shots: newShots });
         setDeleteConfirmIndex(null);
+    };
+
+    const handleImportAVScript = () => {
+        if (!metadata?.importedAVScript?.rows) return;
+        if (confirm(`Import ${metadata.importedAVScript.rows.length} scenes from AV Script?`)) {
+            const importedRows = metadata.importedAVScript.rows;
+            const newShots = importedRows.map((row: any, i: number) => ({
+                id: `shot-import-${Date.now()}-${i}`,
+                scene: row.scene || '',
+                size: 'Wide',
+                angle: 'Eye Level',
+                movement: 'Static',
+                description: row.visual || ''
+            }));
+            onUpdate({ shots: [...shots, ...newShots] });
+        }
     };
 
     // Auto-resize textarea
@@ -254,6 +270,15 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     >
                                         <Plus size={10} className="mr-1" /> Add Shot
                                     </button>
+
+                                    {metadata?.importedAVScript?.rows && (
+                                        <button
+                                            onClick={handleImportAVScript}
+                                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 px-2 py-2 rounded-sm w-full mt-1"
+                                        >
+                                            <FileInput size={10} className="mr-1" /> Import from AV Script
+                                        </button>
+                                    )}
                                 </div>
                             )}
 

@@ -52,7 +52,7 @@ export default function ProjectPage() {
       if (data.data) setInitialState(data.data);
       if (data.name) setProjectName(data.name);
       // Fallback: If user is owner, give them 'Owner' role effectively
-      if (user && data.owner_id === user.id) setUserRole('Owner');
+      if (user && (data.user_id === user.id || data.owner_id === user.id)) setUserRole('Owner');
     }
     setLoading(false);
   };

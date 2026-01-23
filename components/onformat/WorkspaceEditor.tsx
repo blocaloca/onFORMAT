@@ -456,6 +456,14 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         updatedDrafts['dit-log'] = newDitLog;
                         hasUpdates = true;
                         notifMsg = 'New DIT Log Entry Received';
+
+                        // Parse for Issues
+                        try {
+                            const parsed = JSON.parse(newDitLog);
+                            const list = Array.isArray(parsed) ? parsed : (parsed.items || []);
+                            const hasIssue = list.some((i: any) => i.eventType === 'issue' && i.status !== 'complete');
+                            if (hasIssue) notifMsg = 'DIT ALERT: Issue Reported';
+                        } catch { }
                     }
 
                     if (newCameraReport && newCameraReport !== currentCameraReport) {
