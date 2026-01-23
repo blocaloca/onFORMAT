@@ -465,7 +465,8 @@ export default function MobilePage() {
                             is_online: isOnline,
                             last_seen_at: new Date().toISOString()
                         })
-                        .match({ project_id: id, user_email: email });
+                        .eq('project_id', id)
+                        .eq('user_email', email);
 
                     if (error) console.error("Heartbeat Error:", error);
                     else console.log("Status Heartbeat: DIRECT SYNC SUCCESS");
@@ -518,7 +519,7 @@ export default function MobilePage() {
         if (user) {
             setUserEmail(user.email || '');
             // Fetch Role
-            const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).single();
+            const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).maybeSingle();
             if (crew) setUserRole(crew.role);
         }
 
@@ -554,7 +555,7 @@ export default function MobilePage() {
             .from('projects')
             .select('*')
             .eq('id', id)
-            .single();
+            .maybeSingle();
 
         if (data && data.data) {
             setProject(data);

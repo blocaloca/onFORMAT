@@ -340,7 +340,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         if (!projectId) return;
         const fetchMobileControl = async () => {
             // 1. Try to fetch existing
-            let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
+            let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').maybeSingle();
 
             // 2. If missing, DO NOT create default to avoid errors
             if (data) setMobileControlDoc(data);
