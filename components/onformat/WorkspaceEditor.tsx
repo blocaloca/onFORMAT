@@ -187,21 +187,111 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
     }, [initialState, projectId])
 
+    // REALTIME SUBSCRIPTION FOR MOBILE UPDATES (Roll Call)
+    useEffect(() => {
+        if (!projectId) return;
+
+        const channel = supabase.channel(`project-updates-${projectId}`)
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
+                (payload: any) => {
+                    const newData = payload.new.data;
+                    const newCrewDraft = newData?.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
+
+                    if (newCrewDraft) {
+                        setState(current => {
+                            const currentDraft = current.phases.PRE_PRODUCTION.drafts['crew-list'];
+                            if (newCrewDraft !== currentDraft) {
+                                // Smart Merging to prevent 'erratic' behavior while typing.
+                                // We preserve local text modifications (Name, Email, etc.) but accept Remote 'Status' updates.
+                                try {
+                                    const localData = JSON.parse(currentDraft || '{}');
+                                    const remoteData = JSON.parse(newCrewDraft || '{}');
+
+                                    if (localData.crew && Array.isArray(localData.crew) && remoteData.crew && Array.isArray(remoteData.crew)) {
+                                        // 1. Update existing locals with remote status
+                                        const mergedCrew = localData.crew.map((localItem: any) => {
+                                            const remoteItem = remoteData.crew.find((r: any) => r.id === localItem.id);
+                                            if (remoteItem) {
+                                                return {
+                                                    ...localItem,
+                                                    status: remoteItem.status // Sync Status
+                                                    // Ignore remote text changes to prevent overwriting user input
+                                                };
+                                            }
+                                            return localItem;
+                                        });
+
+                                        // 2. Add new rows from remote
+                                        const newRows = remoteData.crew.filter((r: any) => !localData.crew.find((l: any) => l.id === r.id));
+
+                                        const finalCrew = [...mergedCrew, ...newRows];
+                                        const mergedDraft = JSON.stringify({ ...localData, crew: finalCrew });
+
+                                        return {
+                                            ...current,
+                                            phases: {
+                                                ...current.phases,
+                                                PRE_PRODUCTION: {
+                                                    ...current.phases.PRE_PRODUCTION,
+                                                    drafts: {
+                                                        ...current.phases.PRE_PRODUCTION.drafts,
+                                                        'crew-list': mergedDraft
+                                                    }
+                                                }
+                                            }
+                                        };
+                                    }
+                                } catch (e) { console.warn('Merge failed', e); }
+
+                                // Fallback: simple overwrite
+                                return {
+                                    ...current,
+                                    phases: {
+                                        ...current.phases,
+                                        PRE_PRODUCTION: {
+                                            ...current.phases.PRE_PRODUCTION,
+                                            drafts: {
+                                                ...current.phases.PRE_PRODUCTION.drafts,
+                                                'crew-list': newCrewDraft
+                                            }
+                                        }
+                                    }
+                                };
+                            }
+                            return current;
+                        });
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); }
+    }, [projectId]);
+
     const [input, setInput] = useState('')
     const [isSending, setIsSending] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
 
     // Persist
+    // Persist (Debounced)
     useEffect(() => {
-        // Logic: If onSave provided, use it. Else fall back to local storage if no Project ID (legacy DEV mode)
-        if (onSave) {
-            onSave(state);
-        } else if (!projectId) {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-            } catch { }
-        }
+        const hasChanges = state !== mergedInitialState; // Simple check, or always save if state changes
+
+        const timeoutId = setTimeout(() => {
+            // Logic: If onSave provided, use it. Else fall back to local storage if no Project ID (legacy DEV mode)
+            if (onSave) {
+                onSave(state);
+            } else if (!projectId) {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+                } catch { }
+            }
+        }, 1000); // 1s Debounce to prevent rapid DB writes & Realtime Echo loops
+
+        return () => clearTimeout(timeoutId);
     }, [state, onSave, projectId])
 
     // --- Realtime Subscriptions ---
@@ -1467,6 +1557,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         return undefined;
     }, [state.phases, state.activeTool]);
 
+
+
     return (
         <div className="h-screen bg-[var(--background)] flex flex-col font-sans text-[var(--foreground)]">
 
@@ -1602,7 +1694,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     }}
                 />
 
-                {/* FLOATING MOBILE CONTROL */}
+                {/* Floating Mobile Control (Simulator) Removed */}
 
 
                 <DraftEditor

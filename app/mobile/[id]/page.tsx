@@ -273,6 +273,34 @@ export default function MobilePage() {
 
     useEffect(() => {
         if (id) fetchProject();
+
+        // Realtime Updates Implementation
+        if (id && id !== 'local') {
+            const channel = supabase.channel(`mobile-project-${id}`)
+                .on(
+                    'postgres_changes',
+                    { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${id}` },
+                    (payload: any) => {
+                        if (payload.new) {
+                            console.log('[Mobile] Received Project Update');
+                            setProject(payload.new);
+
+                            // Update Allowed Tools dynamically
+                            const controlRaw = payload.new.data?.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
+                            if (controlRaw) {
+                                try {
+                                    const parsed = JSON.parse(controlRaw);
+                                    const stack = Array.isArray(parsed) ? parsed : [parsed];
+                                    setAllowedTools(stack[0]?.selectedTools || []);
+                                } catch { }
+                            }
+                        }
+                    }
+                )
+                .subscribe();
+
+            return () => { supabase.removeChannel(channel); };
+        }
     }, [id]);
 
     // Check-In & Access Control Logic
@@ -281,45 +309,38 @@ export default function MobilePage() {
         if (id === 'local') return; // Skip check-in for local simulator
 
         const checkIn = async () => {
-            const isOwner = userRole?.toLowerCase() === 'owner' || userRole?.toLowerCase() === 'admin';
+            const normalizedUserEmail = userEmail.toLowerCase().trim();
+            const isSystemUser = !!userRole;
 
             // 1. Get Crew List from Project State
             const crewDraftRaw = project.data?.phases?.['PRE_PRODUCTION']?.drafts?.['crew-list'];
 
-            if (!crewDraftRaw) {
-                // No crew list yet. Allow Owners, Block Others? 
-                // If list is empty, likely setup phase. Allow Owner.
-                if (!isOwner) {
-                    // setAccessDenied(true); // Optional: be strict
-                }
-                return;
-            }
-
             let crewList: any[] = [];
             let crewData: any = {};
-            try {
-                crewData = JSON.parse(crewDraftRaw);
-                crewList = Array.isArray(crewData.crew) ? crewData.crew : [];
-            } catch { }
+            if (crewDraftRaw) {
+                try {
+                    crewData = JSON.parse(crewDraftRaw);
+                    crewList = Array.isArray(crewData.crew) ? crewData.crew : [];
+                } catch { }
+            }
 
-            // 2. Find User
-            const myIndex = crewList.findIndex((m: any) => m.email?.toLowerCase().trim() === userEmail.toLowerCase().trim());
+            // 2. Find User in Crew List (Prioritize this for Status Light)
+            const myIndex = crewList.findIndex((m: any) => m.email?.toLowerCase().trim() === normalizedUserEmail);
             const match = myIndex !== -1 ? crewList[myIndex] : null;
 
             if (match) {
-                // Authorized
+                // AUTHORIZED as CREW MEMBER
                 setAccessDenied(false);
 
-                // 3. Auto-Check-In (Update Status to Online)
+                // 3. Auto-Check-In (Update Status to Online if needed)
+                // Only update if currently offline to prevent redundant writes
                 if (match.status !== 'online') {
-                    console.log(`[Mobile] Check-In: Marking ${match.name} Online`);
+                    console.log(`[Mobile] Check-In: Marking ${match.name || normalizedUserEmail} Online`);
 
                     const newCrewList = [...crewList];
                     newCrewList[myIndex] = { ...match, status: 'online' };
-                    // Re-serialize
                     const newDraftString = JSON.stringify({ ...crewData, crew: newCrewList });
 
-                    // Update Project Data Structure
                     const newProjectData = {
                         ...project.data,
                         phases: {
@@ -346,18 +367,22 @@ export default function MobilePage() {
                         })
                         .eq('id', id);
                 }
-
-            } else {
-                // Not in Crew List
-                if (isOwner) {
-                    setAccessDenied(false);
-                } else {
-                    console.warn(`[Mobile] Access Denied: ${userEmail} not in Crew List`);
-                    setAccessDenied(true);
-                    // Redirect Logic (Delayed to show message?)
-                    // router.push('/subscriptions?error=access_denied_mobile');
-                }
+                return;
             }
+
+            // 3. Fallback: System User (Admin/Owner) NOT in Crew List
+            if (isSystemUser) {
+                // AUTHORIZED as ADMIN (Ghost Mode)
+                setAccessDenied(false);
+                // We do NOT update status because there is no row to update.
+                console.log(`[Mobile] Admin Access (Ghost Mode): ${normalizedUserEmail} not in Crew List`);
+                return;
+            }
+
+            // 4. Access Denied
+            // If no crew list exists yet, and not system user -> Deny using default behavior
+            console.warn(`[Mobile] Access Denied: ${normalizedUserEmail} not found in Crew List`);
+            setAccessDenied(true);
         };
 
         checkIn();

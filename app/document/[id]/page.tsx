@@ -27,7 +27,7 @@ import {
   parseCallSheetTalent,
   parseBrief
 } from '@/lib/ai-parsers'
-import { FloatingMobileControl } from '@/components/onformat/FloatingMobileControl'
+
 import { Smartphone } from 'lucide-react'
 // import { exportAsPDF } from '@/lib/export-documents'
 // DEPRECATED: exportAsDOCX, exportAsExcel - hidden in UI but kept in lib for future use
@@ -70,19 +70,6 @@ export default function DocumentEditorPage() {
   const [aiLoading, setAiLoading] = useState(false)
   const [notification, setNotification] = useState<string | null>(null)
 
-  // Mobile Control State
-  const [mobileControlDoc, setMobileControlDoc] = useState<any>(null)
-  const [showMobileControl, setShowMobileControl] = useState(false)
-  const [lastEventTime, setLastEventTime] = useState(0)
-  const [isBlinking, setIsBlinking] = useState(false)
-
-  useEffect(() => {
-    if (lastEventTime > 0) {
-      setIsBlinking(true)
-      const timer = setTimeout(() => setIsBlinking(false), 1000)
-      return () => clearTimeout(timer)
-    }
-  }, [lastEventTime])
 
 
   // Ref to access form component methods
@@ -92,62 +79,7 @@ export default function DocumentEditorPage() {
     loadDocument()
   }, [params.id])
 
-  useEffect(() => {
-    if (document?.project_id) {
-      loadMobileControl(document.project_id)
 
-      const channel = supabase.channel('mobile-control-updates')
-        .on(
-          'postgres_changes',
-          { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${document.project_id}` },
-          (payload: any) => {
-            // Update Control Doc
-            if (payload.new.type === 'onset-mobile-control') {
-              setMobileControlDoc(payload.new)
-            }
-            // Trigger Blink on Log Updates
-            if (payload.new.type === 'camera-report' || payload.new.type === 'dit-log') {
-              setLastEventTime(Date.now())
-            }
-          }
-        )
-        .subscribe()
-
-      return () => {
-        supabase.removeChannel(channel)
-      }
-    }
-  }, [document?.project_id])
-
-  async function loadMobileControl(projectId: string) {
-    let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
-
-    if (!data) {
-      // Auto-create if missing
-      console.log('Mobile Control doc missing, creating...');
-      const newDoc = {
-        project_id: projectId,
-        type: 'onset-mobile-control',
-        title: 'Mobile Control',
-        stage: 'EXECUTE',
-        status: 'LIVE',
-        content: { isLive: false, toolGroups: {} }
-      };
-      const { data: created, error } = await supabase.from('documents').insert(newDoc).select().single();
-      if (created) data = created;
-      else console.error('Failed to create Mobile Control doc:', error);
-    }
-
-    if (data) setMobileControlDoc(data);
-  }
-
-  async function updateMobileControl(newData: any) {
-    if (!mobileControlDoc) return;
-    const updated = { ...mobileControlDoc, content: newData };
-    setMobileControlDoc(updated);
-
-    await supabase.from('documents').update({ content: newData, updated_at: new Date().toISOString() }).eq('id', mobileControlDoc.id);
-  }
 
   async function loadDocument() {
     try {
@@ -1028,37 +960,7 @@ export default function DocumentEditorPage() {
       </div>
 
 
-      {/* FLOATING MOBILE CONTROL */}
-      {
-        showMobileControl && mobileControlDoc && (
-          <FloatingMobileControl
-            data={mobileControlDoc.content}
-            onUpdate={updateMobileControl}
-            onClose={() => setShowMobileControl(false)}
-            metadata={{ projectId: project?.id }}
-          />
-        )
-      }
 
-      {/* MOBILE CONTROL TOGGLE FAB */}
-      {
-        mobileControlDoc && !showMobileControl && (
-          <button
-            onClick={() => setShowMobileControl(true)}
-            className="fixed bottom-6 right-6 w-12 h-12 bg-black text-white rounded-full shadow-xl flex items-center justify-center hover:bg-zinc-800 transition-all z-40 border border-zinc-700"
-            title="Open Mobile Control"
-          >
-            <Smartphone
-              size={24}
-              className={`transition-all duration-300 ${mobileControlDoc.content?.isLive
-                ? (isBlinking ? 'text-emerald-400 fill-emerald-400 animate-pulse' : 'text-emerald-500 fill-emerald-500')
-                : 'text-zinc-400'
-                }`}
-              strokeWidth={mobileControlDoc.content?.isLive ? 0 : 2}
-            />
-          </button>
-        )
-      }
     </div >
   )
 }
