@@ -10,6 +10,7 @@ interface Shot {
     movement: string; // e.g. Static, Pan, Dolly
     description: string;
     status?: string;
+    sourceId?: string; // Reference to AV Script row ID
 }
 
 interface ShotListData {
@@ -85,8 +86,9 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             const importedRows = metadata.importedAVScript.rows;
             const newShots = importedRows.map((row: any, i: number) => ({
                 id: `shot-import-${Date.now()}-${i}`,
+                sourceId: row.id, // Track source for updates
                 scene: row.scene || '',
-                size: 'Wide',
+                size: 'Wide', // Default start point
                 angle: 'Eye Level',
                 movement: 'Static',
                 description: row.visual || ''
