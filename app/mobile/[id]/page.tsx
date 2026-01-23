@@ -468,7 +468,7 @@ export default function MobilePage() {
                         .match({ project_id: id, user_email: email });
 
                     if (error) console.error("Heartbeat Error:", error);
-                    else console.log(`[Heartbeat] Sent ${status} for ${email}`);
+                    else console.log("Status Heartbeat: DIRECT SYNC SUCCESS");
                 } catch (e) {
                     console.error("Heartbeat Exception", e);
                 }
