@@ -111,6 +111,19 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
 
         // Remove from alerts
         setMediaAlerts(prev => prev.filter(a => a.roll !== alert.roll));
+
+        // RESET INGEST PENDING FLAG (Global)
+        if (metadata?.projectId) {
+            const resetFlag = async () => {
+                const { data: proj } = await supabase.from('projects').select('data').eq('id', metadata.projectId).single();
+                if (proj?.data?.phases?.ON_SET?.metadata) {
+                    const newData = { ...proj.data };
+                    newData.phases.ON_SET.metadata.ingest_pending = false;
+                    await supabase.from('projects').update({ data: newData }).eq('id', metadata.projectId);
+                }
+            };
+            resetFlag();
+        }
     };
 
     const dismissAlert = (roll: string) => {

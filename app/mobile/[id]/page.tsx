@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, FileText, Calendar, Clapperboard, Users, MapPin, Shirt, Package, File, ChevronRight, CheckCircle2, Lock } from 'lucide-react';
+import { ArrowLeft, FileText, Calendar, Clapperboard, Users, MapPin, Shirt, Package, File, ChevronRight, CheckCircle2, Lock, AlertCircle } from 'lucide-react';
 import { TOOLS_BY_PHASE } from '@/components/onformat/ExperimentalNav';
 
 // --- Mobile Components ---
@@ -40,6 +40,21 @@ const MobileDocList = ({ project, allowedTools, onSelect }: any) => {
     return (
         <div className="pt-20 pb-12 px-5 min-h-screen bg-black text-white selection:bg-emerald-500/30">
             {/* Project Card */}
+            {/* INGEST NOTIFICATION BANNER */}
+            {project.data?.phases?.ON_SET?.metadata?.ingest_pending && (
+                <div className="mb-4 bg-red-600 text-white p-4 rounded-xl shadow-lg animate-pulse flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-white/20 p-2 rounded-full">
+                            <AlertCircle size={20} className="text-white" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Action Required</p>
+                            <p className="font-bold text-sm">NEW ROLL READY FOR INGEST</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="mb-8 p-6 bg-gradient-to-br from-zinc-900 via-zinc-900 to-black border border-white/10 rounded-2xl shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-3xl rounded-full -mr-10 -mt-10 pointer-events-none" />
 
@@ -280,6 +295,32 @@ export default function MobilePage() {
     const [activeToolData, setActiveToolData] = useState<any>(null);
     const [membershipId, setMembershipId] = useState<string | null>(null);
 
+    // --- HEARTBEAT LOGIC (Status Light) - HIGHEST PRIORITY ---
+    useEffect(() => {
+        // Bypass all checks except Auth
+        const pulse = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user?.email) return;
+
+            console.log(`[Heartbeat] Pulse Active for ${user.email}`);
+
+            const { error } = await supabase
+                .from('crew_membership')
+                .update({
+                    status: 'online',
+                    is_online: true,
+                    last_seen_at: new Date().toISOString()
+                })
+                .eq('user_email', user.email);
+
+            if (error) console.error("Heartbeat Error", error);
+        };
+
+        pulse();
+        const intervalId = setInterval(pulse, 15000);
+        return () => clearInterval(intervalId);
+    }, []); // Pure mount effect
+
     useEffect(() => {
         if (id) fetchProject();
 
@@ -454,40 +495,7 @@ export default function MobilePage() {
         };
     }, [id]);
 
-    // --- HEARTBEAT LOGIC (Project JSON) ---
-    useEffect(() => {
-        if (!id || id === 'local' || !userEmail) return;
-
-        console.log("Starting Project Data Heartbeat...");
-
-        const pulse = async () => {
-            // 1. Get current project state to minimize overwrite
-            const { data: proj } = await supabase.from('projects').select('data').eq('id', id).single();
-            if (!proj || !proj.data) return;
-
-            const currentData = proj.data;
-            const presence = currentData.live_presence || {};
-
-            // 2. Update my entry
-            presence[userEmail] = {
-                status: 'online',
-                is_online: true,
-                last_seen: new Date().toISOString(),
-                role: userRole
-            };
-
-            // 3. Save back (Race condition risk accepted per instructions)
-            await supabase.from('projects').update({
-                data: { ...currentData, live_presence: presence }
-            }).eq('id', id);
-
-            console.log("PULSE SUCCESS (JSON): " + new Date().toLocaleTimeString());
-        };
-
-        pulse();
-        const intervalId = setInterval(pulse, 15000); // 15s interval
-        return () => clearInterval(intervalId);
-    }, [id, userEmail, userRole]);
+    // --- HEARTBEAT LOGIC REMOVED (Moved to Top) ---
 
 
 
@@ -638,6 +646,10 @@ export default function MobilePage() {
                 ...phases,
                 ON_SET: {
                     ...onSet,
+                    metadata: {
+                        ...(onSet.metadata || {}),
+                        ingest_pending: true
+                    },
                     drafts: {
                         ...drafts,
                         'dit-log': finalDraft
