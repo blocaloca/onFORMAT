@@ -209,23 +209,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         // NOTIFICATION LOGIC (Signal)
                         try {
                             const currentDraft = stateRef.current.phases.PRE_PRODUCTION.drafts['crew-list'];
-                            if (newCrewDraft !== currentDraft) {
-                                const localData = JSON.parse(currentDraft || '{}');
-                                const remoteData = JSON.parse(newCrewDraft || '{}');
-                                if (remoteData.crew && Array.isArray(remoteData.crew)) {
-                                    remoteData.crew.forEach((r: any) => {
-                                        if (r.status === 'online') {
-                                            let local = localData.crew?.find((l: any) => l.id === r.id);
-                                            if (!local && r.email) {
-                                                local = localData.crew?.find((l: any) => l.email?.toLowerCase().trim() === r.email.toLowerCase().trim());
-                                            }
-                                            if ((local ? local.status : 'offline') !== 'online') {
-                                                setLatestNotification({ msg: `${r.name || 'Crew Member'} Came Online`, time: Date.now() });
-                                            }
-                                        }
-                                    });
-                                }
-                            }
+                            // Logic removed to reduce noise. Status Light is sufficient.
                         } catch (e) { }
 
                         setState(current => {
@@ -305,70 +289,11 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         return () => { supabase.removeChannel(channel); }
     }, [projectId]);
 
-    // --- ROLLCALL ALERTS (New Crew Membership Listener) ---
-    const crewStatusRef = React.useRef<Record<string, string>>({});
-
+    // --- ROLLCALL ALERTS (REMOVED) ---
+    // The CrewListTemplate handles the Status Light visualization.
+    // Global Key-Value Ref is no longer needed here as we use direct DB subscription in CrewList.
     useEffect(() => {
-        if (!projectId) return;
-
-        // 1. Initial Populate of Ref (Silent)
-        const fetchInitialStatus = async () => {
-            const { data } = await supabase.from('crew_membership').select('user_email, status').eq('project_id', projectId);
-            if (data) {
-                data.forEach((m: any) => {
-                    if (m.user_email) crewStatusRef.current[m.user_email] = m.status;
-                });
-            }
-        };
-        fetchInitialStatus();
-
-        // 2. Realtime Listener
-        const channel = supabase.channel(`crew-alerts-${projectId}`)
-            .on(
-                'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'crew_membership', filter: `project_id=eq.${projectId}` },
-                (payload: any) => {
-                    const { user_email, status, name } = payload.new;
-                    if (!user_email) return;
-
-                    // FOUNDER BYPASS
-                    if (user_email === 'casteelio@gmail.com') return;
-
-                    // CHECK DIFF
-                    const prevStatus = crewStatusRef.current[user_email] || 'offline';
-
-                    if (status === 'online' && prevStatus !== 'online') {
-                        // TRIGGER TRIGGER
-                        console.log(`[RollCall] ${user_email} came online`);
-                        // Try to find name from JSON if not in payload (payload only has columns, name might be in JSON but we don't have it here easily unless we added name to membership col. 
-                        // Actually crew_membership table does NOT have a name column in schema migration 002. It only has email.
-                        // We will just use the email or "Crew Member" for now unless we look it up.
-                        // Wait, looking at CrewListTemplate, name is stored in the JSON draft, not SQL column.
-                        // So payload.new.name will be undefined.
-                        // We will use "Crew Member" + email ending or lookup from local state draft.
-
-                        let displayName = user_email;
-                        try {
-                            // Try to find in current Crew List Draft
-                            const crewDraft = stateRef.current.phases.PRE_PRODUCTION.drafts['crew-list'];
-                            if (crewDraft) {
-                                const parsed = JSON.parse(crewDraft);
-                                const member = parsed.crew?.find((c: any) => c.email === user_email);
-                                if (member && member.name) displayName = member.name;
-                            }
-                        } catch { }
-
-                        setLatestNotification({ msg: `RollCall: ${displayName} is now on-set`, time: Date.now() });
-                    }
-
-                    // UPDATE REF
-                    crewStatusRef.current[user_email] = status;
-                }
-            )
-            .subscribe();
-
-        return () => { supabase.removeChannel(channel); };
-    }, [projectId]);
+    }, []);
 
     const [input, setInput] = useState('')
     const [isSending, setIsSending] = useState(false)
@@ -417,31 +342,16 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             // 1. Try to fetch existing
             let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
 
-            // 2. If missing, create default IMMEDIATELY so mobile app doesn't 400
-            if (!data) {
-                console.log('Mobile Control doc missing in Dashboard, creating...');
-                const newDoc = {
-                    project_id: projectId,
-                    type: 'onset-mobile-control',
-                    title: 'Mobile Control',
-                    stage: 'EXECUTE',
-                    status: 'LIVE',
-                    content: { isLive: false, toolGroups: {} }
-                };
-                const { data: created } = await supabase.from('documents').insert(newDoc).select().single();
-                if (created) data = created;
-            }
-
+            // 2. If missing, DO NOT create default to avoid errors
             if (data) setMobileControlDoc(data);
         };
         fetchMobileControl();
 
-        const channel = supabase.channel('mobile-control-updates-workspace')
+        const channel = supabase.channel(`mobile-control-updates-workspace`)
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${projectId}` }, (payload: any) => {
                 if (payload.new.type === 'onset-mobile-control') setMobileControlDoc(payload.new);
                 if (payload.new.type === 'camera-report') {
-                    setLastEventTime(Date.now());
-                    setLatestNotification({ msg: 'CAMERA REPORT UPDATED', time: Date.now() });
+                    // Update state but NO notification
                 }
                 if (payload.new.type === 'dit-log') {
                     setLastEventTime(Date.now());
@@ -537,11 +447,11 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         console.log("🔔 Camera Report Change Detected!");
                         updatedDrafts['camera-report'] = newCameraReport;
                         hasUpdates = true;
-                        notifMsg = 'New Camera Report Entry';
+                        // No Notification for Camera Report
                     }
 
                     if (hasUpdates) {
-                        setLatestNotification({ msg: notifMsg, time: Date.now() });
+                        if (notifMsg) setLatestNotification({ msg: notifMsg, time: Date.now() });
 
                         setState(prev => ({
                             ...prev,
