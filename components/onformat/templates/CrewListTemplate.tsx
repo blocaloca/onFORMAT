@@ -140,6 +140,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 lastSeen: payload.new.last_seen_at
                             }
                         }));
+                        console.log(`Received status update for ${payload.new.user_email}: ${payload.new.is_online ? 'online' : 'offline'}`);
                     }
                 }
             )

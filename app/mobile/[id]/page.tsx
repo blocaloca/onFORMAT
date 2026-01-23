@@ -458,7 +458,9 @@ export default function MobilePage() {
                         last_seen_at: new Date().toISOString()
                     })
                     .eq('project_id', id)
+                    .eq('project_id', id)
                     .eq('user_email', normalizedEmail);
+                console.log(`Heartbeat sent for ${normalizedEmail}`);
             } catch (err) {
                 console.error("Heartbeat Pulse Failed", err);
             }
