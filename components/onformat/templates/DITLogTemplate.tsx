@@ -75,6 +75,21 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
             })
             .subscribe();
 
+        // Also broadcast to production_pulse (for Nav Alert)
+        const pulse = supabase.channel('production_pulse');
+        pulse.subscribe();
+
+        // Listener for pulse
+        // Note: The NAV system listens to this. We mainly need to SEND it from the Mobile side when generating the roll.
+        // Wait, DIT Log is desktop... Mobile app Generates the alert? 
+        // If "New Roll" is triggered here, we should broadcast it.
+        // But "New Roll" usually comes FROM Mobile. 
+        // If this component RECEIVES it, it means Mobile sent it.
+        // The LEFT NAV needs to know about it.
+
+        // Actually, the WorkspaceEditor listens to Document Updates.
+        // We should ensure that when we ADD the item, it saves to the JSON.
+        // The DraftEditor handles 'onUpdate'.
         return () => { supabase.removeChannel(channel); };
     }, [metadata?.projectId]);
 

@@ -394,6 +394,12 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     setIsStandby(false);
                 }
             })
+            .on('broadcast', { event: 'NEW_ROLL' }, () => {
+                // Trigger Red Dot for DIT Log
+                setLatestNotification({ msg: 'NEW ROLL PULLED', time: Date.now() });
+                setNavAlerts(prev => ({ ...prev, 'dit-log': true }));
+                setTimeout(() => setNavAlerts(prev => ({ ...prev, 'dit-log': false })), 10000);
+            })
             .subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') {
                     await presenceChannel.track({

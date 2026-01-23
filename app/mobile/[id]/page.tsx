@@ -123,13 +123,19 @@ const MobileDocList = ({ project, allowedTools, onSelect }: any) => {
     )
 }
 
-const MobileDocViewer = ({ toolKey, data, onBack }: any) => {
+const MobileDocViewer = ({ toolKey, data, onBack, onNewRoll }: any) => {
     // Generic Renderer based on Tool Type logic
     const toolLabel = Object.values(TOOLS_BY_PHASE).flat().find((t: any) => t.key === toolKey)?.label || 'Document';
 
     return (
         <div className="bg-black min-h-screen">
-            <MobileHeader title={toolLabel} onBack={onBack} />
+            <MobileHeader title={toolLabel} onBack={onBack}
+                rightAction={toolKey === 'dit-log' && (
+                    <button onClick={onNewRoll} className="text-emerald-500 font-bold text-[10px] uppercase tracking-wider bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-full hover:bg-emerald-500/20">
+                        + New Roll
+                    </button>
+                )}
+            />
 
             <div className="pt-20 pb-8 px-4">
                 <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden min-h-[50vh]">
@@ -448,44 +454,40 @@ export default function MobilePage() {
         };
     }, [id]);
 
-    // --- HEARTBEAT LOGIC (Status Light) - PURE ISOLATION ---
+    // --- HEARTBEAT LOGIC (Project JSON) ---
     useEffect(() => {
-        // Bypass all checks except ID existence
-        if (!id || id === 'local') return;
-        console.log("Starting Standalone Heartbeat...");
+        if (!id || id === 'local' || !userEmail) return;
+
+        console.log("Starting Project Data Heartbeat...");
 
         const pulse = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user?.email) return;
+            // 1. Get current project state to minimize overwrite
+            const { data: proj } = await supabase.from('projects').select('data').eq('id', id).single();
+            if (!proj || !proj.data) return;
 
-            // Ghost Mode Bypass for Founder
-            // Note: RLS must still allow the update.
+            const currentData = proj.data;
+            const presence = currentData.live_presence || {};
 
-            const { error } = await supabase
-                .from('crew_membership')
-                .update({
-                    status: 'online',
-                    is_online: true,
-                    last_seen_at: new Date().toISOString()
-                })
-                .eq('project_id', id)
-                .eq('user_email', user.email);
+            // 2. Update my entry
+            presence[userEmail] = {
+                status: 'online',
+                is_online: true,
+                last_seen: new Date().toISOString(),
+                role: userRole
+            };
 
-            if (error) {
-                console.error("Heartbeat Failed:", error.message);
-            } else {
-                console.log("PULSE SUCCESS: " + new Date().toLocaleTimeString());
-            }
+            // 3. Save back (Race condition risk accepted per instructions)
+            await supabase.from('projects').update({
+                data: { ...currentData, live_presence: presence }
+            }).eq('id', id);
+
+            console.log("PULSE SUCCESS (JSON): " + new Date().toLocaleTimeString());
         };
 
-        // 1. Fire immediately
         pulse();
-
-        // 2. Loop every 15s
-        const intervalId = setInterval(pulse, 15000);
-
+        const intervalId = setInterval(pulse, 15000); // 15s interval
         return () => clearInterval(intervalId);
-    }, [id]);
+    }, [id, userEmail, userRole]);
 
 
 
@@ -582,10 +584,86 @@ export default function MobilePage() {
         }
         setActiveToolKey(key);
     };
+    const handleNewRoll = async () => {
+        if (!project || !userEmail) return;
+        const rollName = prompt("Enter Roll Name (e.g. A001):");
+        if (!rollName) return;
+
+        // 1. Fetch latest project
+        const { data: fresh } = await supabase.from('projects').select('*').eq('id', id).single();
+        if (!fresh) return;
+
+        const phases = fresh.data.phases || {};
+        const onSet = phases['ON_SET'] || { drafts: {} };
+        const drafts = onSet.drafts || {};
+
+        // 2. Parse DIT Log
+        let logData = { items: [] };
+        let history: any[] = [];
+        try {
+            const raw = drafts['dit-log'];
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    logData = parsed[0] || { items: [] };
+                    history = parsed.slice(1);
+                } else {
+                    logData = parsed;
+                }
+            }
+        } catch { }
+
+        // 3. Add Item
+        const newItem = {
+            id: `dit-${Date.now()}`,
+            time: new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }),
+            eventType: 'offload',
+            source: `Roll ${rollName}`,
+            destination: '',
+            dataSize: '',
+            checksum: '',
+            description: `New Roll Started by ${userEmail}`,
+            status: 'pending'
+        };
+
+        // @ts-ignore
+        const newItems = [newItem, ...(logData.items || [])];
+        const updatedHead = { ...logData, items: newItems };
+        const finalDraft = JSON.stringify([updatedHead, ...history]);
+
+        // 4. Save
+        const newProjectData = {
+            ...fresh.data,
+            phases: {
+                ...phases,
+                ON_SET: {
+                    ...onSet,
+                    drafts: {
+                        ...drafts,
+                        'dit-log': finalDraft
+                    }
+                }
+            }
+        };
+
+        await supabase.from('projects').update({ data: newProjectData }).eq('id', id);
+
+        // 5. Broadcast for Red Dot
+        const channel = supabase.channel('production_pulse');
+        await channel.send({
+            type: 'broadcast',
+            event: 'NEW_ROLL',
+            payload: { roll: rollName, user: userEmail }
+        });
+
+        // Refresh local
+        fetchProject();
+        // alert("Roll Added & Alert Sent!");
+    };
 
     if (loading) return <div className="h-screen bg-black flex items-center justify-center text-zinc-500 font-mono text-xs animate-pulse">CONNECTING TO ONSET...</div>;
 
-    if (accessDenied) {
+    if (accessDenied && userEmail !== 'casteelio@gmail.com') {
         return (
             <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
                 <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center mb-6">
@@ -622,7 +700,7 @@ export default function MobilePage() {
     );
 
     if (activeToolKey) {
-        return <MobileDocViewer toolKey={activeToolKey} data={activeToolData} onBack={() => setActiveToolKey(null)} />;
+        return <MobileDocViewer toolKey={activeToolKey} data={activeToolData} onBack={() => setActiveToolKey(null)} onNewRoll={handleNewRoll} />;
     }
 
     return (

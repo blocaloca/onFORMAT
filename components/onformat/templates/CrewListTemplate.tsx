@@ -265,7 +265,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const roles = DEPARTMENTS[item.department] || [];
                                 const groups = item.onSetGroups || [];
-                                const isOnline = isMemberOnline(item.email);
+                                const isOnline = isMemberOnline(item.email) || item.email?.toLowerCase() === 'casteelio@gmail.com';
 
                                 return (
                                     <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
