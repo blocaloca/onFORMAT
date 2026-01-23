@@ -212,12 +212,18 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                     if (localData.crew && Array.isArray(localData.crew) && remoteData.crew && Array.isArray(remoteData.crew)) {
                                         // 1. Update existing locals with remote status
                                         const mergedCrew = localData.crew.map((localItem: any) => {
-                                            const remoteItem = remoteData.crew.find((r: any) => r.id === localItem.id);
+                                            let remoteItem = remoteData.crew.find((r: any) => r.id === localItem.id);
+
+                                            // Fallback: Match by Email for robust Status Sync (even if IDs drifted)
+                                            if (!remoteItem && localItem.email) {
+                                                const localEmail = localItem.email.toLowerCase().trim();
+                                                remoteItem = remoteData.crew.find((r: any) => r.email?.toLowerCase().trim() === localEmail);
+                                            }
+
                                             if (remoteItem) {
                                                 return {
                                                     ...localItem,
-                                                    status: remoteItem.status // Sync Status
-                                                    // Ignore remote text changes to prevent overwriting user input
+                                                    status: remoteItem.status
                                                 };
                                             }
                                             return localItem;
