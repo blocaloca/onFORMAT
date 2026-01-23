@@ -296,8 +296,9 @@ export const ExperimentalWorkspaceNav = ({
     producerName,
     onToggleAi,
     isAiDocked = true,
-    mobileStatus
-}: WorkspaceSidebarProps) => {
+    mobileStatus,
+    alerts
+}: WorkspaceSidebarProps & { alerts?: Record<string, boolean> }) => {
     // We maintain local state for 'expanded' phases, but we default to expanding the ACTIVE phase.
     const [expandedPhase, setExpandedPhase] = useState<Phase | null>(activePhase);
 
@@ -419,6 +420,9 @@ export const ExperimentalWorkspaceNav = ({
                                             >
                                                 {activeTool === tool.key && (
                                                     <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full ${darkMode ? 'bg-emerald-500' : 'bg-black'}`} />
+                                                )}
+                                                {alerts?.[tool.key] && (
+                                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_4px_rgba(239,68,68,0.5)]" />
                                                 )}
                                                 {tool.label}
                                             </button>

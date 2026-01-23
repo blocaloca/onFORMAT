@@ -272,6 +272,7 @@ export default function MobilePage() {
     // Active Viewer State
     const [activeToolKey, setActiveToolKey] = useState<string | null>(null);
     const [activeToolData, setActiveToolData] = useState<any>(null);
+    const [membershipId, setMembershipId] = useState<string | null>(null);
 
     useEffect(() => {
         if (id) fetchProject();
@@ -448,7 +449,7 @@ export default function MobilePage() {
 
     // --- HEARTBEAT LOGIC (Status Light) - PURE ISOLATION ---
     useEffect(() => {
-        if (!id || id === 'local') return;
+        if (!membershipId) return;
 
         const pulse = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -464,8 +465,7 @@ export default function MobilePage() {
                     is_online: true,
                     last_seen_at: new Date().toISOString()
                 })
-                .eq('project_id', id)
-                .eq('user_email', user.email);
+                .eq('id', membershipId);
 
             if (error) {
                 console.error("[Heartbeat] Pulse Failed:", error.message);
@@ -481,7 +481,7 @@ export default function MobilePage() {
         const intervalId = setInterval(pulse, 20000);
 
         return () => clearInterval(intervalId);
-    }, [id]);
+    }, [membershipId]);
 
 
 
@@ -493,8 +493,12 @@ export default function MobilePage() {
         if (user) {
             setUserEmail(user.email || '');
             // Fetch Role
-            const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).maybeSingle();
-            if (crew) setUserRole(crew.role);
+            // Fetch Role & ID
+            const { data: crew } = await supabase.from('crew_membership').select('id, role').eq('project_id', id).eq('user_email', user.email).maybeSingle();
+            if (crew) {
+                setUserRole(crew.role);
+                setMembershipId(crew.id);
+            }
         }
 
         // HANDLE LOCAL WORKSPACE (Simulation)

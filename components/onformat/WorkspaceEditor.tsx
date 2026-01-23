@@ -175,6 +175,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [projectName]);
 
     const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
+    const [navAlerts, setNavAlerts] = useState<Record<string, boolean>>({});
     const stateRef = React.useRef(state);
 
     useEffect(() => {
@@ -356,6 +357,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 if (payload.new.type === 'dit-log') {
                     setLastEventTime(Date.now());
                     setLatestNotification({ msg: 'DIT UPDATED', time: Date.now() });
+                    setNavAlerts(prev => ({ ...prev, 'dit-log': true }));
+                    setTimeout(() => setNavAlerts(prev => ({ ...prev, 'dit-log': false })), 10000);
                 }
             })
             .subscribe();
@@ -1599,6 +1602,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         hasAlert: !!latestNotification,
                         alertMsg: latestNotification?.msg
                     }}
+                    alerts={navAlerts}
                 />
 
                 <ChatInterface
