@@ -338,6 +338,11 @@ export default function MobilePage() {
 
                 // 3. Auto-Check-In (Update Status to Online if needed)
                 // Only update if currently offline to prevent redundant writes
+                // 3. Auto-Check-In (LOGIC DISABLED TO PREVENT LOOP/400 ERROR)
+                // We rely on the dedicated Heartbeat effect below to handle status.
+                // Re-enable this ONLY if we want to mutate the JSON blob directly (not recommended for status).
+
+                /*
                 if (match.status !== 'online') {
                     console.log(`[Mobile] Check-In: Marking ${match.name || normalizedUserEmail} Online`);
 
@@ -371,6 +376,8 @@ export default function MobilePage() {
                         })
                         .eq('id', id);
                 }
+                */
+                return;
                 return;
             }
 
@@ -439,74 +446,41 @@ export default function MobilePage() {
     }, [projectToolGroups, userGroups]);
 
 
-    // --- HEARTBEAT LOGIC (Status Light) - FORCE FIX ---
+    // --- HEARTBEAT LOGIC (Status Light) - PURE ISOLATION ---
     useEffect(() => {
         if (!id || id === 'local') return;
 
-        let intervalId: NodeJS.Timeout;
-
-        const startHeartbeat = async () => {
+        const pulse = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user || !user.email) return;
+            if (!user?.email) return;
 
-            const email = user.email;
+            // Ghost Mode Bypass for Founder
+            // Note: RLS must still allow the update.
 
-            // Define Pulse Function
-            const pulse = async (status: 'online' | 'offline') => {
-                // GHOST MODE / Valid Check irrelevant here - simply announce presence if Authed.
-                // The RLS policy on the server handles the permission (User must own their row).
+            const { error } = await supabase
+                .from('crew_membership')
+                .update({
+                    status: 'online',
+                    is_online: true,
+                    last_seen_at: new Date().toISOString()
+                })
+                .eq('project_id', id)
+                .eq('user_email', user.email);
 
-                try {
-                    const isOnline = status === 'online';
-                    // Using .match() for cleaner syntax and standard headers
-                    const { error } = await supabase
-                        .from('crew_membership')
-                        .update({
-                            is_online: isOnline,
-                            last_seen_at: new Date().toISOString()
-                        })
-                        .eq('project_id', id)
-                        .eq('user_email', email);
-
-                    if (error) console.error("Heartbeat Error:", error);
-                    else console.log("Status Heartbeat: DIRECT SYNC SUCCESS");
-                } catch (e) {
-                    console.error("Heartbeat Exception", e);
-                }
-            };
-
-            // 1. Fire immediately if visible
-            if (!document.hidden) pulse('online');
-
-            // 2. Loop every 30s
-            intervalId = setInterval(() => {
-                if (!document.hidden) pulse('online');
-            }, 30000);
-
-            // 3. Visibility Listener (inside scope to capture email)
-            const handleVisibilityChange = () => {
-                if (document.hidden) pulse('offline');
-                else pulse('online');
-            };
-
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-
-            // Return cleanup for this scope
-            return () => {
-                document.removeEventListener('visibilitychange', handleVisibilityChange);
-            };
+            if (error) {
+                console.error("[Heartbeat] Pulse Failed:", error.message);
+            } else {
+                console.log("[Heartbeat] Pulse Success: Online");
+            }
         };
 
-        // Initialize
-        const cleanupPromise = startHeartbeat();
+        // 1. Fire immediately
+        pulse();
 
-        return () => {
-            clearInterval(intervalId);
-            cleanupPromise.then(cleanup => cleanup && cleanup());
-            // Optimistic offline pulse on unmount? 
-            // Hard to do reliably in React unmount without blocking, but we try.
-            // We won't send it here to avoid race conditions with standard nav.
-        };
+        // 2. Loop every 20s
+        const intervalId = setInterval(pulse, 20000);
+
+        return () => clearInterval(intervalId);
     }, [id]);
 
 
