@@ -344,6 +344,9 @@ export const ExperimentalWorkspaceNav = ({
                                 'bg-zinc-800 text-zinc-500 group-hover:text-zinc-300'
                             }`}>
                             <Smartphone size={18} />
+                            {mobileStatus?.hasAlert && (
+                                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_5px_rgba(239,68,68,0.5)]" />
+                            )}
                         </div>
 
                         <div className="text-left w-full overflow-hidden">

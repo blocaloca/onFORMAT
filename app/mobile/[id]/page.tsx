@@ -449,7 +449,9 @@ export default function MobilePage() {
 
     // --- HEARTBEAT LOGIC (Status Light) - PURE ISOLATION ---
     useEffect(() => {
-        if (!membershipId) return;
+        // Bypass all checks except ID existence
+        if (!id || id === 'local') return;
+        console.log("Starting Standalone Heartbeat...");
 
         const pulse = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -465,23 +467,24 @@ export default function MobilePage() {
                     is_online: true,
                     last_seen_at: new Date().toISOString()
                 })
-                .eq('id', membershipId);
+                .eq('project_id', id)
+                .eq('user_email', user.email);
 
             if (error) {
-                console.error("[Heartbeat] Pulse Failed:", error.message);
+                console.error("Heartbeat Failed:", error.message);
             } else {
-                console.log("[Heartbeat] Pulse Success: Online");
+                console.log("PULSE SUCCESS: " + new Date().toLocaleTimeString());
             }
         };
 
         // 1. Fire immediately
         pulse();
 
-        // 2. Loop every 20s
-        const intervalId = setInterval(pulse, 20000);
+        // 2. Loop every 15s
+        const intervalId = setInterval(pulse, 15000);
 
         return () => clearInterval(intervalId);
-    }, [membershipId]);
+    }, [id]);
 
 
 
