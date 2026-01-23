@@ -149,6 +149,34 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         return () => { supabase.removeChannel(channel); };
     }, [metadata?.projectId]);
 
+    useEffect(() => {
+        // 3. Presence Channel (Faster than DB)
+        const presenceChannel = supabase.channel('production_pulse');
+        presenceChannel
+            .on('presence', { event: 'sync' }, () => {
+                const state = presenceChannel.presenceState();
+                const users: any[] = [];
+                for (const id in state) users.push(...state[id]);
+
+                const onlineEmails = new Set(users.map((u: any) => u.user_email?.toLowerCase()));
+
+                if (onlineEmails.size > 0) {
+                    setPresenceMap(prev => {
+                        const newMap = { ...prev };
+                        onlineEmails.forEach(email => {
+                            if (email) {
+                                newMap[email] = { isOnline: true, lastSeen: new Date().toISOString() };
+                            }
+                        });
+                        return newMap;
+                    });
+                }
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(presenceChannel); };
+    }, []);
+
     // 3. Heartbeat Check (Every 5s, calc who is timed out)
     const [now, setNow] = useState(Date.now());
     useEffect(() => {

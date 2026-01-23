@@ -176,6 +176,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
     const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
     const [navAlerts, setNavAlerts] = useState<Record<string, boolean>>({});
+    const [isStandby, setIsStandby] = useState(false);
     const stateRef = React.useRef(state);
 
     useEffect(() => {
@@ -364,6 +365,50 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             .subscribe();
         return () => { supabase.removeChannel(channel); };
     }, [projectId]);
+
+    // --- PRESENCE & STANDBY LOGIC ---
+    useEffect(() => {
+        if (!projectId || !userEmail) return;
+
+        const presenceChannel = supabase.channel('production_pulse');
+        presenceChannel
+            .on('presence', { event: 'sync' }, () => {
+                const state = presenceChannel.presenceState();
+                const users: any[] = [];
+                for (const id in state) {
+                    users.push(...state[id]);
+                }
+
+                // Filter for this project
+                const projectUsers = users.filter((u: any) => u.project_id === projectId);
+
+                // Check for Producer/Owner
+                const producerPresent = projectUsers.some((u: any) => u.role === 'Producer' || u.role === 'owner' || u.role === 'Director');
+
+                // If I am NOT a producer, and NO producer is present -> Standby
+                const amIProducer = userRole === 'Producer' || userRole === 'owner' || userRole === 'Director' || userEmail === 'casteelio@gmail.com';
+
+                if (!producerPresent && !amIProducer) {
+                    setIsStandby(true);
+                } else {
+                    setIsStandby(false);
+                }
+            })
+            .subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await presenceChannel.track({
+                        user_email: userEmail,
+                        role: userRole || 'viewer',
+                        project_id: projectId,
+                        online_at: new Date().toISOString()
+                    });
+                }
+            });
+
+        return () => {
+            supabase.removeChannel(presenceChannel);
+        };
+    }, [projectId, userEmail, userRole]);
 
     const updateMobileControl = async (newData: any) => {
         if (!mobileControlDoc) {
@@ -1583,6 +1628,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         <div className="h-screen bg-[var(--background)] flex flex-col font-sans text-[var(--foreground)]">
 
             <main className="flex-1 flex overflow-hidden relative bg-zinc-900">
+                {/* Standby Banner Removed */}
+
                 <ExperimentalWorkspaceNav
                     activeTool={state.activeTool}
                     activePhase={state.activePhase}

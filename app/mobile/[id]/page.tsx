@@ -343,41 +343,7 @@ export default function MobilePage() {
                 // We rely on the dedicated Heartbeat effect below to handle status.
                 // Re-enable this ONLY if we want to mutate the JSON blob directly (not recommended for status).
 
-                /*
-                if (match.status !== 'online') {
-                    console.log(`[Mobile] Check-In: Marking ${match.name || normalizedUserEmail} Online`);
-
-                    const newCrewList = [...crewList];
-                    newCrewList[myIndex] = { ...match, status: 'online' };
-                    const newDraftString = JSON.stringify({ ...crewData, crew: newCrewList });
-
-                    const newProjectData = {
-                        ...project.data,
-                        phases: {
-                            ...project.data.phases,
-                            PRE_PRODUCTION: {
-                                ...project.data.phases.PRE_PRODUCTION,
-                                drafts: {
-                                    ...project.data.phases.PRE_PRODUCTION.drafts,
-                                    'crew-list': newDraftString
-                                }
-                            }
-                        }
-                    };
-
-                    // Optimistic Update
-                    setProject({ ...project, data: newProjectData });
-
-                    // Save to DB
-                    await supabase
-                        .from('projects')
-                        .update({
-                            data: newProjectData,
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('id', id);
-                }
-                */
+                return;
                 return;
                 return;
             }
@@ -446,6 +412,41 @@ export default function MobilePage() {
         setAllowedTools([...new Set(allowed)]);
     }, [projectToolGroups, userGroups]);
 
+
+    // --- PRESENCE LOGIC (Status Lights & Standby) ---
+    useEffect(() => {
+        if (!id || id === 'local') return;
+
+        const channel = supabase.channel('production_pulse');
+
+        const trackPresence = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user || !user.email) return;
+
+            // Independent Role Fetch
+            let role = 'crew';
+            const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).maybeSingle();
+            if (crew) role = crew.role;
+
+            channel.subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await channel.track({
+                        user_email: user.email,
+                        role: role,
+                        project_id: id,
+                        online_at: new Date().toISOString()
+                    });
+                    console.log(`[Presence] Tracking Active: ${user.email} (${role})`);
+                }
+            });
+        };
+
+        trackPresence();
+
+        return () => {
+            channel.unsubscribe();
+        };
+    }, [id]);
 
     // --- HEARTBEAT LOGIC (Status Light) - PURE ISOLATION ---
     useEffect(() => {
