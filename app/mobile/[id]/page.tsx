@@ -439,63 +439,74 @@ export default function MobilePage() {
     }, [projectToolGroups, userGroups]);
 
 
-    // --- HEARTBEAT LOGIC (Status Light) ---
+    // --- HEARTBEAT LOGIC (Status Light) - FORCE FIX ---
     useEffect(() => {
-        if (!project || !userEmail || accessDenied) return;
-        if (id === 'local') return;
+        if (!id || id === 'local') return;
 
-        // 1. Initial ONLINE pulse
-        const pulse = async (status: 'online' | 'offline') => {
-            const normalizedEmail = userEmail.toLowerCase().trim();
-            try {
-                // Upsert logic - simpler to just Update based on verified membership
-                // We assume membership exists because checkIn() passed
-                await supabase
-                    .from('crew_membership')
-                    .update({
-                        status: status, // Keeping legacy text for now just in case
-                        is_online: status === 'online', // NEW Schema
-                        last_seen_at: new Date().toISOString()
-                    })
-                    .eq('project_id', id)
-                    .eq('user_email', normalizedEmail);
-                console.log(`Heartbeat sent for ${normalizedEmail}`);
-            } catch (err) {
-                console.error("Heartbeat Pulse Failed", err);
-            }
-        };
+        let intervalId: NodeJS.Timeout;
 
-        // Fire immediately if visible
-        if (!document.hidden) pulse('online');
+        const startHeartbeat = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user || !user.email) return;
 
-        // 2. Loop every 30s
-        const intervalId = setInterval(() => {
+            const email = user.email;
+
+            // Define Pulse Function
+            const pulse = async (status: 'online' | 'offline') => {
+                // GHOST MODE / Valid Check irrelevant here - simply announce presence if Authed.
+                // The RLS policy on the server handles the permission (User must own their row).
+
+                try {
+                    const isOnline = status === 'online';
+                    // Using .match() for cleaner syntax and standard headers
+                    const { error } = await supabase
+                        .from('crew_membership')
+                        .update({
+                            is_online: isOnline,
+                            last_seen_at: new Date().toISOString()
+                        })
+                        .match({ project_id: id, user_email: email });
+
+                    if (error) console.error("Heartbeat Error:", error);
+                    else console.log(`[Heartbeat] Sent ${status} for ${email}`);
+                } catch (e) {
+                    console.error("Heartbeat Exception", e);
+                }
+            };
+
+            // 1. Fire immediately if visible
             if (!document.hidden) pulse('online');
-        }, 30000);
 
-        // 3. Visibility Change & Cleanup
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                pulse('offline');
-            } else {
-                pulse('online');
-            }
+            // 2. Loop every 30s
+            intervalId = setInterval(() => {
+                if (!document.hidden) pulse('online');
+            }, 30000);
+
+            // 3. Visibility Listener (inside scope to capture email)
+            const handleVisibilityChange = () => {
+                if (document.hidden) pulse('offline');
+                else pulse('online');
+            };
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            // Return cleanup for this scope
+            return () => {
+                document.removeEventListener('visibilitychange', handleVisibilityChange);
+            };
         };
 
-        const handleUnload = () => {
-            pulse('offline');
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        window.addEventListener('beforeunload', handleUnload);
+        // Initialize
+        const cleanupPromise = startHeartbeat();
 
         return () => {
             clearInterval(intervalId);
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-            window.removeEventListener('beforeunload', handleUnload);
-            pulse('offline');
+            cleanupPromise.then(cleanup => cleanup && cleanup());
+            // Optimistic offline pulse on unmount? 
+            // Hard to do reliably in React unmount without blocking, but we try.
+            // We won't send it here to avoid race conditions with standard nav.
         };
-    }, [project, userEmail, accessDenied, id]);
+    }, [id]);
 
 
 
