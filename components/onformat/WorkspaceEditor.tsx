@@ -174,6 +174,13 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
     }, [projectName]);
 
+    const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
+    const stateRef = React.useRef(state);
+
+    useEffect(() => {
+        stateRef.current = state;
+    }, [state]);
+
     // Hydration fix / LocalStorage fallback if no external state management
     useEffect(() => {
         if (!initialState && !projectId) {
@@ -200,6 +207,28 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     const newCrewDraft = newData?.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
 
                     if (newCrewDraft) {
+                        // NOTIFICATION LOGIC (Signal)
+                        try {
+                            const currentDraft = stateRef.current.phases.PRE_PRODUCTION.drafts['crew-list'];
+                            if (newCrewDraft !== currentDraft) {
+                                const localData = JSON.parse(currentDraft || '{}');
+                                const remoteData = JSON.parse(newCrewDraft || '{}');
+                                if (remoteData.crew && Array.isArray(remoteData.crew)) {
+                                    remoteData.crew.forEach((r: any) => {
+                                        if (r.status === 'online') {
+                                            let local = localData.crew?.find((l: any) => l.id === r.id);
+                                            if (!local && r.email) {
+                                                local = localData.crew?.find((l: any) => l.email?.toLowerCase().trim() === r.email.toLowerCase().trim());
+                                            }
+                                            if ((local ? local.status : 'offline') !== 'online') {
+                                                setLatestNotification({ msg: `${r.name || 'Crew Member'} Came Online`, time: Date.now() });
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        } catch (e) { }
+
                         setState(current => {
                             const currentDraft = current.phases.PRE_PRODUCTION.drafts['crew-list'];
                             if (newCrewDraft !== currentDraft) {
@@ -301,12 +330,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [state, onSave, projectId])
 
     // --- Realtime Subscriptions ---
-    const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
-    const stateRef = React.useRef(state);
 
-    useEffect(() => {
-        stateRef.current = state;
-    }, [state]);
 
     // Mobile Control Integration
     const [mobileControlDoc, setMobileControlDoc] = useState<any>(null)
