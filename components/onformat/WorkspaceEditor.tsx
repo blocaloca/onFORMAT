@@ -194,7 +194,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
     }, [initialState, projectId])
 
-    // REALTIME SUBSCRIPTION FOR MOBILE UPDATES (Roll Call)
     useEffect(() => {
         if (!projectId) return;
 
@@ -303,6 +302,72 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             .subscribe();
 
         return () => { supabase.removeChannel(channel); }
+        return () => { supabase.removeChannel(channel); }
+    }, [projectId]);
+
+    // --- ROLLCALL ALERTS (New Crew Membership Listener) ---
+    const crewStatusRef = React.useRef<Record<string, string>>({});
+
+    useEffect(() => {
+        if (!projectId) return;
+
+        // 1. Initial Populate of Ref (Silent)
+        const fetchInitialStatus = async () => {
+            const { data } = await supabase.from('crew_membership').select('user_email, status').eq('project_id', projectId);
+            if (data) {
+                data.forEach((m: any) => {
+                    if (m.user_email) crewStatusRef.current[m.user_email] = m.status;
+                });
+            }
+        };
+        fetchInitialStatus();
+
+        // 2. Realtime Listener
+        const channel = supabase.channel(`crew-alerts-${projectId}`)
+            .on(
+                'postgres_changes',
+                { event: 'UPDATE', schema: 'public', table: 'crew_membership', filter: `project_id=eq.${projectId}` },
+                (payload: any) => {
+                    const { user_email, status, name } = payload.new;
+                    if (!user_email) return;
+
+                    // FOUNDER BYPASS
+                    if (user_email === 'casteelio@gmail.com') return;
+
+                    // CHECK DIFF
+                    const prevStatus = crewStatusRef.current[user_email] || 'offline';
+
+                    if (status === 'online' && prevStatus !== 'online') {
+                        // TRIGGER TRIGGER
+                        console.log(`[RollCall] ${user_email} came online`);
+                        // Try to find name from JSON if not in payload (payload only has columns, name might be in JSON but we don't have it here easily unless we added name to membership col. 
+                        // Actually crew_membership table does NOT have a name column in schema migration 002. It only has email.
+                        // We will just use the email or "Crew Member" for now unless we look it up.
+                        // Wait, looking at CrewListTemplate, name is stored in the JSON draft, not SQL column.
+                        // So payload.new.name will be undefined.
+                        // We will use "Crew Member" + email ending or lookup from local state draft.
+
+                        let displayName = user_email;
+                        try {
+                            // Try to find in current Crew List Draft
+                            const crewDraft = stateRef.current.phases.PRE_PRODUCTION.drafts['crew-list'];
+                            if (crewDraft) {
+                                const parsed = JSON.parse(crewDraft);
+                                const member = parsed.crew?.find((c: any) => c.email === user_email);
+                                if (member && member.name) displayName = member.name;
+                            }
+                        } catch { }
+
+                        setLatestNotification({ msg: `RollCall: ${displayName} is now on-set`, time: Date.now() });
+                    }
+
+                    // UPDATE REF
+                    crewStatusRef.current[user_email] = status;
+                }
+            )
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
     }, [projectId]);
 
     const [input, setInput] = useState('')
