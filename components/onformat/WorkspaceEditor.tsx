@@ -414,8 +414,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     useEffect(() => {
         if (!projectId) return;
         const fetchMobileControl = async () => {
+            // 1. Try to fetch existing
             let { data } = await supabase.from('documents').select('*').eq('project_id', projectId).eq('type', 'onset-mobile-control').single();
 
+            // 2. If missing, create default IMMEDIATELY so mobile app doesn't 400
             if (!data) {
                 console.log('Mobile Control doc missing in Dashboard, creating...');
                 const newDoc = {
