@@ -1,8 +1,8 @@
-'use client';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, FileText, Calendar, Clapperboard, Users, MapPin, Shirt, Package, File, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, FileText, Calendar, Clapperboard, Users, MapPin, Shirt, Package, File, ChevronRight, CheckCircle2, Lock } from 'lucide-react';
 import { TOOLS_BY_PHASE } from '@/components/onformat/ExperimentalNav';
 
 // --- Mobile Components ---
@@ -255,10 +255,16 @@ const getIconForTool = (key: string) => {
 
 export default function MobilePage() {
     const params = useParams();
+    const router = useRouter();
     const id = params.id as string;
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<any>(null);
     const [allowedTools, setAllowedTools] = useState<string[]>([]);
+
+    // Auth State
+    const [userEmail, setUserEmail] = useState<string | null>(null);
+    const [userRole, setUserRole] = useState<string | null>(null);
+    const [accessDenied, setAccessDenied] = useState(false);
 
     // Active Viewer State
     const [activeToolKey, setActiveToolKey] = useState<string | null>(null);
@@ -268,8 +274,107 @@ export default function MobilePage() {
         if (id) fetchProject();
     }, [id]);
 
+    // Check-In & Access Control Logic
+    useEffect(() => {
+        if (loading || !project || !userEmail) return;
+        if (id === 'local') return; // Skip check-in for local simulator
+
+        const checkIn = async () => {
+            const isOwner = userRole?.toLowerCase() === 'owner' || userRole?.toLowerCase() === 'admin';
+
+            // 1. Get Crew List from Project State
+            const crewDraftRaw = project.data?.phases?.['PRE_PRODUCTION']?.drafts?.['crew-list'];
+
+            if (!crewDraftRaw) {
+                // No crew list yet. Allow Owners, Block Others? 
+                // If list is empty, likely setup phase. Allow Owner.
+                if (!isOwner) {
+                    // setAccessDenied(true); // Optional: be strict
+                }
+                return;
+            }
+
+            let crewList: any[] = [];
+            let crewData: any = {};
+            try {
+                crewData = JSON.parse(crewDraftRaw);
+                crewList = Array.isArray(crewData.crew) ? crewData.crew : [];
+            } catch { }
+
+            // 2. Find User
+            const myIndex = crewList.findIndex((m: any) => m.email?.toLowerCase().trim() === userEmail.toLowerCase().trim());
+            const match = myIndex !== -1 ? crewList[myIndex] : null;
+
+            if (match) {
+                // Authorized
+                setAccessDenied(false);
+
+                // 3. Auto-Check-In (Update Status to Online)
+                if (match.status !== 'online') {
+                    console.log(`[Mobile] Check-In: Marking ${match.name} Online`);
+
+                    const newCrewList = [...crewList];
+                    newCrewList[myIndex] = { ...match, status: 'online' };
+                    // Re-serialize
+                    const newDraftString = JSON.stringify({ ...crewData, crew: newCrewList });
+
+                    // Update Project Data Structure
+                    const newProjectData = {
+                        ...project.data,
+                        phases: {
+                            ...project.data.phases,
+                            PRE_PRODUCTION: {
+                                ...project.data.phases.PRE_PRODUCTION,
+                                drafts: {
+                                    ...project.data.phases.PRE_PRODUCTION.drafts,
+                                    'crew-list': newDraftString
+                                }
+                            }
+                        }
+                    };
+
+                    // Optimistic Update
+                    setProject({ ...project, data: newProjectData });
+
+                    // Save to DB
+                    await supabase
+                        .from('projects')
+                        .update({
+                            data: newProjectData,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('id', id);
+                }
+
+            } else {
+                // Not in Crew List
+                if (isOwner) {
+                    setAccessDenied(false);
+                } else {
+                    console.warn(`[Mobile] Access Denied: ${userEmail} not in Crew List`);
+                    setAccessDenied(true);
+                    // Redirect Logic (Delayed to show message?)
+                    // router.push('/subscriptions?error=access_denied_mobile');
+                }
+            }
+        };
+
+        checkIn();
+
+    }, [project, userEmail, userRole, loading, id]);
+
+
     const fetchProject = async () => {
         setLoading(true);
+
+        // 1. Authenticate
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            setUserEmail(user.email || '');
+            // Fetch Role
+            const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).single();
+            if (crew) setUserRole(crew.role);
+        }
 
         // HANDLE LOCAL WORKSPACE (Simulation)
         if (id === 'local') {
@@ -282,7 +387,7 @@ export default function MobilePage() {
                         data: { ...parsedState, phases: parsedState.phases || {} }
                     });
 
-                    // Parse Allowed Tools
+                    // Parse Allowed Tools logic... (Keeping existing logic)
                     const controlRaw = parsedState.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
                     let allowed: string[] = [];
                     if (controlRaw) {
@@ -307,6 +412,7 @@ export default function MobilePage() {
 
         if (data && data.data) {
             setProject(data);
+            if (user && data.owner_id === user.id) setUserRole('Owner');
 
             // Parse Allowed Tools (from Control Panel)
             const controlRaw = data.data.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
@@ -314,11 +420,6 @@ export default function MobilePage() {
             if (controlRaw) {
                 try {
                     const parsed = JSON.parse(controlRaw);
-                    // Control Panel uses a Stack array for versions.
-                    // The actual data is in the first element of stack.
-                    // Or wait. ControlPanelTemplate uses `data.selectedTools`.
-                    // `DraftEditor` saves `JSON.stringify(currentStack)`.
-                    // So `controlRaw` is `[ { selectedTools: [...] } ]` (as string).
                     const stack = Array.isArray(parsed) ? parsed : [parsed];
                     allowed = stack[0]?.selectedTools || [];
                 } catch { }
@@ -329,11 +430,7 @@ export default function MobilePage() {
     }
 
     const handleSelectTool = (key: string) => {
-        // Fetch Tool Data from Project State
-        // Project State is in `project.data`
         const phases = project?.data?.phases || {};
-        // Find phase for tool?
-        // We know keys are unique. Search all phases.
         let toolDraftRaw = null;
         for (const pKey of Object.keys(phases)) {
             if (phases[pKey]?.drafts?.[key]) {
@@ -358,33 +455,38 @@ export default function MobilePage() {
 
     if (loading) return <div className="h-screen bg-black flex items-center justify-center text-zinc-500 font-mono text-xs animate-pulse">CONNECTING TO ONSET...</div>;
 
+    if (accessDenied) {
+        return (
+            <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
+                <div className="w-20 h-20 rounded-full bg-rose-500/10 flex items-center justify-center mb-6">
+                    <Lock size={32} className="text-rose-500" />
+                </div>
+                <h1 className="text-2xl font-black uppercase tracking-tight text-white mb-2">Access Denied</h1>
+                <p className="text-zinc-400 text-sm mb-8 leading-relaxed max-w-xs mx-auto">
+                    You are not listed in the Crew List for this project. Access to onSet Mobile is restricted.
+                </p>
+                <button
+                    onClick={() => router.push('/subscriptions')}
+                    className="w-full max-w-xs py-4 bg-zinc-100 hover:bg-white text-black font-bold uppercase tracking-widest text-xs rounded transition-colors"
+                >
+                    View Subscriptions
+                </button>
+                <div className="mt-8 text-[10px] text-zinc-600 font-mono uppercase">
+                    Logged in as {userEmail}
+                </div>
+            </div>
+        );
+    }
+
     if (!project) return (
         <div className="h-screen bg-black flex flex-col items-center justify-center text-red-500 font-mono text-xs gap-4 p-8 text-center">
-            <div className="text-2xl font-bold">PROJECT ACCESS DENIED</div>
+            <div className="text-2xl font-bold">PROJECT NOT FOUND</div>
             <div>ID: {id}</div>
-            <div className="text-zinc-500">
-                Possible causes:
-                <br />1. You are not logged in (RLS)
-                <br />2. This project does not exist
-                <br />3. Public access is disabled
-            </div>
             <div className="mt-4 p-4 border border-zinc-800 bg-zinc-900 text-zinc-300 rounded">
                 Try logging in at <a href="/login" className="text-emerald-500 underline">/login</a> then refresh.
             </div>
-
             {id === 'local' && (
-                <button
-                    onClick={() => {
-                        setProject({
-                            name: 'Demo Project (Simulator)',
-                            data: { phases: {} }
-                        });
-                        setAllowedTools(['call-sheet', 'schedule', 'storyboard']);
-                    }}
-                    className="mt-4 text-emerald-500 hover:text-emerald-400 border border-emerald-900 bg-emerald-900/20 px-4 py-2 rounded text-[10px] font-bold uppercase tracking-widest"
-                >
-                    Load Demo Data
-                </button>
+                <button onClick={() => fetchProject()} className="mt-4 text-emerald-500 underline">Retry Local</button>
             )}
         </div>
     );

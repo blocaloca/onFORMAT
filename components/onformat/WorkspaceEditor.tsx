@@ -190,7 +190,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     const [input, setInput] = useState('')
     const [isSending, setIsSending] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [accessDenied, setAccessDenied] = useState(false)
+
 
     // Persist
     useEffect(() => {
@@ -482,71 +482,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
     }, [state.activeTool]);
 
-    // Authentication & Presence Logic
-    useEffect(() => {
-        if (!userEmail) return;
 
-        // 1. Bypass for Owners/Admins
-        const isOwner = userRole?.toLowerCase() === 'owner' || userRole?.toLowerCase() === 'admin';
-
-        const crewDraftRaw = state.phases['PRE_PRODUCTION']?.drafts['crew-list'];
-
-        if (!crewDraftRaw) {
-            // If Crew List doesn't exist yet, we allow Owners to create it.
-            // For others, strictly, they are not on the list.
-            // But impeding launch of new projects (where list is empty) is bad.
-            // We'll allow access if list is missing, assuming it's being set up.
-            return;
-        }
-
-        let crewList: any[] = [];
-        let crewData: any = {};
-
-        try {
-            crewData = JSON.parse(crewDraftRaw);
-            crewList = Array.isArray(crewData.crew) ? crewData.crew : [];
-        } catch { }
-
-        // 2. Check Match
-        const myIndex = crewList.findIndex((m: any) => m.email?.toLowerCase().trim() === userEmail.toLowerCase().trim());
-        const match = myIndex !== -1 ? crewList[myIndex] : null;
-
-        if (match) {
-            // Authorized
-            setAccessDenied(false);
-
-            // Auto-Check-In Logic
-            if (match.status !== 'online') {
-                console.log(`[Presence] Marking ${match.name || match.email} as Online`);
-                const newCrewList = [...crewList];
-                newCrewList[myIndex] = { ...match, status: 'online' };
-                const newDraftString = JSON.stringify({ ...crewData, crew: newCrewList });
-
-                setState(s => ({
-                    ...s,
-                    phases: {
-                        ...s.phases,
-                        PRE_PRODUCTION: {
-                            ...s.phases.PRE_PRODUCTION,
-                            drafts: {
-                                ...s.phases.PRE_PRODUCTION.drafts,
-                                'crew-list': newDraftString
-                            }
-                        }
-                    }
-                }));
-            }
-        } else {
-            // Not in List
-            if (!isOwner) {
-                console.warn(`[Access] Denied for ${userEmail}`);
-                setAccessDenied(true);
-            } else {
-                // Owner is allowed
-                setAccessDenied(false);
-            }
-        }
-    }, [userEmail, userRole, state.phases.PRE_PRODUCTION?.drafts['crew-list']]);
 
     // Derived from state now
     const persona = state.persona || 'MOTION';
@@ -1696,27 +1632,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
 
             </main>
-            {accessDenied && (
-                <div className="fixed inset-0 z-[10000] bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-300">
-                    <div className="bg-[#1E1E20] border border-rose-500/50 shadow-[0_0_50px_rgba(225,29,72,0.3)] rounded-lg p-12 max-w-lg text-center flex flex-col items-center gap-6">
-                        <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-2">
-                            <X size={32} className="text-rose-500" />
-                        </div>
-                        <h2 className="text-2xl font-black uppercase tracking-wider text-rose-500">Access Denied</h2>
-                        <p className="text-zinc-400 font-medium leading-relaxed">
-                            Your email <strong className="text-white">{userEmail}</strong> is not listed in the Crew List.
-                            <br /><br />
-                            Please contact the shoot producer to request access.
-                        </p>
-                        <button
-                            onClick={() => window.location.href = '/dashboard'}
-                            className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold uppercase tracking-widest px-8 py-3 rounded text-xs transition-colors mt-4"
-                        >
-                            Back to Dashboard
-                        </button>
-                    </div>
-                </div>
-            )}
+
 
 
         </div>
