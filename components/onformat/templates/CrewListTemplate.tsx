@@ -101,7 +101,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     // Status is updated automatically by onSet Mobile presence
 
     // --- REALTIME PRESENCE LISTENER ---
-    const [presenceMap, setPresenceMap] = useState<Record<string, { status: string, lastSeen: string }>>({});
+    const [presenceMap, setPresenceMap] = useState<Record<string, { isOnline: boolean, lastSeen: string }>>({});
 
     useEffect(() => {
         if (!metadata?.projectId) return;
@@ -110,13 +110,16 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         const fetchStatuses = async () => {
             const { data } = await supabase
                 .from('crew_membership')
-                .select('user_email, status, last_seen_at')
+                .select('user_email, status, is_online, last_seen_at')
                 .eq('project_id', metadata.projectId);
 
             if (data) {
                 const map: any = {};
                 data.forEach((row: any) => {
-                    map[row.user_email.toLowerCase()] = { status: row.status, lastSeen: row.last_seen_at };
+                    map[row.user_email.toLowerCase()] = {
+                        isOnline: row.is_online,
+                        lastSeen: row.last_seen_at
+                    };
                 });
                 setPresenceMap(map);
             }
@@ -133,7 +136,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         setPresenceMap(prev => ({
                             ...prev,
                             [payload.new.user_email.toLowerCase()]: {
-                                status: payload.new.status,
+                                isOnline: payload.new.is_online,
                                 lastSeen: payload.new.last_seen_at
                             }
                         }));
@@ -157,12 +160,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         const p = presenceMap[email.toLowerCase().trim()];
         if (!p) return false;
 
-        if (p.status !== 'online') return false;
+        if (!p.isOnline) return false;
 
-        // Timeout Check (30s)
+        // Timeout Check (60s) for extra reliability
         if (p.lastSeen) {
             const diff = now - new Date(p.lastSeen).getTime();
-            if (diff > 30000) return false; // Timed out
+            if (diff > 60000) return false; // Timed out
         }
         return true;
     };

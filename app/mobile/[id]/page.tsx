@@ -453,7 +453,8 @@ export default function MobilePage() {
                 await supabase
                     .from('crew_membership')
                     .update({
-                        status: status,
+                        status: status, // Keeping legacy text for now just in case
+                        is_online: status === 'online', // NEW Schema
                         last_seen_at: new Date().toISOString()
                     })
                     .eq('project_id', id)
@@ -463,26 +464,33 @@ export default function MobilePage() {
             }
         };
 
-        // Fire immediately
-        pulse('online');
+        // Fire immediately if visible
+        if (!document.hidden) pulse('online');
 
-        // 2. Loop every 20s
+        // 2. Loop every 30s
         const intervalId = setInterval(() => {
-            pulse('online');
-        }, 20000);
+            if (!document.hidden) pulse('online');
+        }, 30000);
 
-        // 3. Cleanup: Set offline
+        // 3. Visibility Change & Cleanup
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                pulse('offline');
+            } else {
+                pulse('online');
+            }
+        };
+
         const handleUnload = () => {
-            // Use navigator.sendBeacon for reliability on close if possible, 
-            // but Supabase JS doesn't support beacon natively. 
-            // We'll try a best-effort sync call or standard async (which might be killed).
             pulse('offline');
         };
 
+        document.addEventListener('visibilitychange', handleVisibilityChange);
         window.addEventListener('beforeunload', handleUnload);
 
         return () => {
             clearInterval(intervalId);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             window.removeEventListener('beforeunload', handleUnload);
             pulse('offline');
         };
