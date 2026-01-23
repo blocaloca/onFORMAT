@@ -405,12 +405,32 @@ export default function MobilePage() {
 
         Object.keys(projectToolGroups).forEach(key => {
             const groupsForTool = projectToolGroups[key] || [];
-            if (groupsForTool.some(g => userGroups.includes(g))) {
+
+            // Core Logic:
+            // 1. If User has 'A', they see EVERYTHING that is enabled.
+            if (userGroups.includes('A')) {
+                // Check if tool is enabled at all (has any groups assigned)
+                if (groupsForTool.length > 0) allowed.push(key);
+                return;
+            }
+
+            // 2. Determine match
+            const hasMatch = groupsForTool.some(g => userGroups.includes(g));
+
+            if (hasMatch) {
+                // Group B Restrictions: Hide technical logs & budget
+                if (userGroups.includes('B') && !userGroups.includes('A')) {
+                    const hiddenForB = ['dit-log', 'camera-report', 'budget', 'budget-actual', 'sound-report'];
+                    if (hiddenForB.includes(key)) return;
+                }
+
+                // Group C: See specific tool only (implicit by exact match)
                 allowed.push(key);
             }
         });
 
-        setAllowedTools(allowed);
+        // Unique filter
+        setAllowedTools([...new Set(allowed)]);
     }, [projectToolGroups, userGroups]);
 
 
