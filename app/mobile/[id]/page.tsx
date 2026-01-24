@@ -297,12 +297,12 @@ export default function MobilePage() {
 
     // --- HEARTBEAT LOGIC (Status Light) - HIGHEST PRIORITY ---
     useEffect(() => {
-        // Bypass all checks except Auth
+        // Run immediately and bypass other checks
         const pulse = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user?.email) return;
 
-            console.log(`[Heartbeat] Pulse Active for ${user.email}`);
+            console.log(`Crew Pulse Active for ${user.email}`);
 
             const { error } = await supabase
                 .from('crew_membership')
@@ -313,7 +313,7 @@ export default function MobilePage() {
                 })
                 .eq('user_email', user.email);
 
-            if (error) console.error("Heartbeat Error", error);
+            if (error) console.error("Heartbeat Error:", error.message);
         };
 
         pulse();

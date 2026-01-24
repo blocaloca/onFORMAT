@@ -146,7 +146,13 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             )
             .subscribe();
 
-        return () => { supabase.removeChannel(channel); };
+        // 3. Polling Fallback (Every 10s)
+        const pollInterval = setInterval(fetchStatuses, 10000);
+
+        return () => {
+            supabase.removeChannel(channel);
+            clearInterval(pollInterval);
+        };
     }, [metadata?.projectId]);
 
     useEffect(() => {
