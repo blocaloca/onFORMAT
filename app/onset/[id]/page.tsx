@@ -98,6 +98,54 @@ export default function OnSetMobilePage() {
         };
     }, [id]);
 
+    // PRESENCE & STATUS LOGIC
+    useEffect(() => {
+        if (!id || !userEmail) return;
+
+        // 1. Update DB Status (On Join)
+        const updateStatus = async (online: boolean) => {
+            await supabase
+                .from('crew_membership')
+                .update({
+                    is_online: online,
+                    last_seen_at: new Date().toISOString()
+                })
+                .eq('project_id', id)
+                .eq('user_email', userEmail);
+        };
+
+        updateStatus(true);
+
+        // 2. Realtime Presence (Scoped to Project)
+        const presenceChannel = supabase.channel(`production_presence:${id}`);
+
+        presenceChannel
+            .on('presence', { event: 'sync' }, () => {
+                const state = presenceChannel.presenceState();
+                console.log('Presence Sync:', state);
+            })
+            .subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await presenceChannel.track({
+                        user_email: userEmail,
+                        online_at: new Date().toISOString(),
+                        role: userRole
+                    });
+                }
+            });
+
+        // 3. Heartbeat (Update last_seen_at every 30s to prevent timeout)
+        const heartbeat = setInterval(() => {
+            updateStatus(true);
+        }, 30000);
+
+        return () => {
+            clearInterval(heartbeat);
+            updateStatus(false); // Mark offline on unmount
+            presenceChannel.unsubscribe();
+        };
+    }, [id, userEmail, userRole]);
+
     const fetchData = async () => {
         try {
             // 0. Identity Check

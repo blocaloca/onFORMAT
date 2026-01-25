@@ -295,31 +295,23 @@ export default function MobilePage() {
     const [activeToolData, setActiveToolData] = useState<any>(null);
     const [membershipId, setMembershipId] = useState<string | null>(null);
 
-    // --- HEARTBEAT LOGIC (Status Light) - HIGHEST PRIORITY ---
+    // --- INDEPENDENT PRESENCE LOGIC (FIX STATUS LIGHTS) ---
     useEffect(() => {
-        // Run immediately and bypass other checks
-        const pulse = async () => {
+        const init = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user?.email) return;
 
-            console.log(`Crew Pulse Active for ${user.email}`);
-
-            const { error } = await supabase
-                .from('crew_membership')
-                .update({
-                    status: 'online',
-                    is_online: true,
-                    last_seen_at: new Date().toISOString()
-                })
-                .eq('user_email', user.email);
-
-            if (error) console.error("Heartbeat Error:", error.message);
+            const channel = supabase.channel('p_presence', { config: { presence: { key: user.email } } });
+            channel.subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') await channel.track({ online_at: new Date().toISOString() });
+            });
+            // Cleanup: cannot return cleanup from async function, but channel allows unsubscribe.
+            // Ideally we'd assign channel outside. But sticking to request structure in a way that executes.
         };
+        init();
 
-        pulse();
-        const intervalId = setInterval(pulse, 15000);
-        return () => clearInterval(intervalId);
-    }, []); // Pure mount effect
+        return () => { supabase.removeAllChannels(); };
+    }, []);
 
     useEffect(() => {
         if (id) fetchProject();

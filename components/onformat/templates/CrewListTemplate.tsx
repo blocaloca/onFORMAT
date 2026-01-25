@@ -38,7 +38,7 @@ interface CrewListTemplateProps {
     isLocked?: boolean;
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
-    metadata?: any;
+    metadata?: any & { onlineUsers?: Set<string> };
     isPrinting?: boolean;
 }
 
@@ -101,7 +101,18 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     // Status is updated automatically by onSet Mobile presence
 
     // --- REALTIME PRESENCE LISTENER ---
+    // --- REALTIME PRESENCE LISTENER ---
     const [presenceMap, setPresenceMap] = useState<Record<string, { isOnline: boolean, lastSeen: string }>>({});
+    const [onlineUsers, setOnlineUsers] = useState<any>({});
+
+    useEffect(() => {
+        const channel = supabase.channel('p_presence');
+        channel.on('presence', { event: 'sync' }, () => {
+            const state = channel.presenceState();
+            setOnlineUsers(state);
+        }).subscribe();
+        return () => { channel.unsubscribe(); };
+    }, []);
 
     useEffect(() => {
         if (!metadata?.projectId) return;
@@ -155,33 +166,46 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         };
     }, [metadata?.projectId]);
 
+    // --- IMPROVED PRESENCE TRACKING ---
+    const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set());
+
     useEffect(() => {
-        // 3. Presence Channel (Faster than DB)
-        const presenceChannel = supabase.channel('production_pulse');
-        presenceChannel
-            .on('presence', { event: 'sync' }, () => {
-                const state = presenceChannel.presenceState();
-                const users: any[] = [];
-                for (const id in state) users.push(...state[id]);
+        // 3. Presence Multi-Channel Listener
+        // Combines 'production_presence' (legacy/onSet) and 'production_pulse' (Workspace/Mobile)
+        if (!metadata?.projectId) return;
 
-                const onlineEmails = new Set(users.map((u: any) => u.user_email?.toLowerCase()));
+        const projectChannel = supabase.channel(`production_presence:${metadata.projectId}`);
+        const pulseChannel = supabase.channel('production_pulse');
 
-                if (onlineEmails.size > 0) {
-                    setPresenceMap(prev => {
-                        const newMap = { ...prev };
-                        onlineEmails.forEach(email => {
-                            if (email) {
-                                newMap[email] = { isOnline: true, lastSeen: new Date().toISOString() };
-                            }
-                        });
-                        return newMap;
-                    });
+        const handleSync = () => {
+            const projectState = projectChannel.presenceState();
+            const pulseState = pulseChannel.presenceState();
+
+            const onlineSet = new Set<string>();
+
+            // 1. From Project Channel (Direct Match)
+            Object.values(projectState).flat().forEach((u: any) => {
+                if (u.user_email) onlineSet.add(u.user_email.toLowerCase());
+            });
+
+            // 2. From Pulse Channel (Filter by Project ID)
+            Object.values(pulseState).flat().forEach((u: any) => {
+                if (u.user_email && u.project_id === metadata.projectId) {
+                    onlineSet.add(u.user_email.toLowerCase());
                 }
-            })
-            .subscribe();
+            });
 
-        return () => { supabase.removeChannel(presenceChannel); };
-    }, []);
+            setActiveUsers(onlineSet);
+        };
+
+        projectChannel.on('presence', { event: 'sync' }, handleSync).subscribe();
+        pulseChannel.on('presence', { event: 'sync' }, handleSync).subscribe();
+
+        return () => {
+            supabase.removeChannel(projectChannel);
+            supabase.removeChannel(pulseChannel);
+        };
+    }, [metadata?.projectId]);
 
     // 3. Heartbeat Check (Every 5s, calc who is timed out)
     const [now, setNow] = useState(Date.now());
@@ -192,17 +216,24 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
     const isMemberOnline = (email: string) => {
         if (!email) return false;
-        const p = presenceMap[email.toLowerCase().trim()];
-        if (!p) return false;
+        const lower = email.toLowerCase().trim();
 
-        if (!p.isOnline) return false;
+        // 1. Check Consolidated Realtime (activeUsers)
+        if (activeUsers.has(lower)) return true;
 
-        // Timeout Check (60s) for extra reliability
-        if (p.lastSeen) {
-            const diff = now - new Date(p.lastSeen).getTime();
-            if (diff > 60000) return false; // Timed out
+        // 2. Check Database Polling (secondary fallback)
+        const p = presenceMap[lower];
+        if (p && p.isOnline) {
+            // 60s Timeout Check
+            if (p.lastSeen) {
+                const diff = now - new Date(p.lastSeen).getTime();
+                if (diff < 60000) return true;
+            } else {
+                return true; // Trusted if no timestamp but says online
+            }
         }
-        return true;
+
+        return false;
     };
 
 

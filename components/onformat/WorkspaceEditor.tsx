@@ -367,6 +367,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [projectId]);
 
     // --- PRESENCE & STANDBY LOGIC ---
+    const [onlinePulseUsers, setOnlinePulseUsers] = useState<Set<string>>(new Set());
+
     useEffect(() => {
         if (!projectId || !userEmail) return;
 
@@ -381,6 +383,13 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
                 // Filter for this project
                 const projectUsers = users.filter((u: any) => u.project_id === projectId);
+
+                // Update Online Set
+                const newOnlineSet = new Set<string>();
+                projectUsers.forEach((u: any) => {
+                    if (u.user_email) newOnlineSet.add(u.user_email.toLowerCase());
+                });
+                setOnlinePulseUsers(newOnlineSet);
 
                 // Check for Producer/Owner
                 const producerPresent = projectUsers.some((u: any) => u.role === 'Producer' || u.role === 'owner' || u.role === 'Director');

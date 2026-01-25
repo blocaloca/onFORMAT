@@ -23,6 +23,24 @@ export const UserMenu = ({ email }: { email?: string }) => {
     }, []);
 
     const handleLogout = async () => {
+        // Explicit Presence Cleanup
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            // 1. Untrack from Realtime Channels
+            const channels = supabase.getChannels();
+            for (const channel of channels) {
+                await channel.untrack();
+            }
+            await supabase.removeAllChannels();
+
+            // 2. DB Status Update (Best Effort - might fail if RLS prevents cross-project update without ID)
+            // We try to update ALL memberships for this user to offline.
+            await supabase
+                .from('crew_membership')
+                .update({ is_online: false })
+                .eq('user_email', user.email);
+        }
+
         await supabase.auth.signOut();
         router.push('/login');
     };
