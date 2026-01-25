@@ -57,12 +57,32 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
     // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
 
+    const formatDate = (val: string) => {
+        const digits = val.replace(/\D/g, '');
+        const chars = digits.split('');
+        if (chars.length > 2) chars.splice(2, 0, '/');
+        if (chars.length > 5) chars.splice(5, 0, '/');
+        return chars.join('').slice(0, 10);
+    };
+
     useEffect(() => {
         // Init if empty
         if (!data.items) {
+            // Priority: Imported Schedule > Current Date
+            let initialDate = '';
+            if ((metadata as any)?.importedSchedule?.date) {
+                initialDate = (metadata as any).importedSchedule.date;
+            } else {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                initialDate = `${month}/${day}/${year}`;
+            }
+
             onUpdate({
                 items: [],
-                date: new Date().toISOString().split('T')[0],
+                date: initialDate,
                 roll: 'A001'
             });
         }
@@ -161,8 +181,8 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                     <input
                                         type="text"
                                         value={data.date || ''}
-                                        onChange={e => updateField('date', e.target.value)}
-                                        placeholder="YYYY-MM-DD"
+                                        onChange={e => updateField('date', formatDate(e.target.value))}
+                                        placeholder="MM/DD/YYYY"
                                         className={`font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                         disabled={isLocked}
                                     />

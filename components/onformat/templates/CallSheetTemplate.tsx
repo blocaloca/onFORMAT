@@ -52,9 +52,22 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
     useEffect(() => {
         if (!data.events || data.events.length === 0) {
+
+            // Priority: Imported Schedule > Current Date
+            let initialDate = '';
+            if ((metadata as any)?.importedSchedule?.date) {
+                initialDate = (metadata as any).importedSchedule.date;
+            } else {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                initialDate = `${month}/${day}/${year}`;
+            }
+
             onUpdate({
                 ...data,
-                // Leave date empty to be fillable
+                date: initialDate,
                 crewCall: data.crewCall || '',
                 events: [
                     { id: 'evt-1', time: '', type: 'Arrive', description: 'Crew Call', location: 'Basecamp' },
@@ -68,15 +81,10 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
     const formatDate = (val: string) => {
-        // Allow backspace over separators
-        if (val.length < (data.date || '').length && (val.endsWith('-'))) {
-            return val.slice(0, -1);
-        }
-
         const digits = val.replace(/\D/g, '');
         const chars = digits.split('');
-        if (chars.length > 2) chars.splice(2, 0, '-');
-        if (chars.length > 5) chars.splice(5, 0, '-');
+        if (chars.length > 2) chars.splice(2, 0, '/');
+        if (chars.length > 5) chars.splice(5, 0, '/');
         return chars.join('').slice(0, 10);
     };
 
@@ -288,7 +296,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={data.date || ''}
                                                 onChange={(e) => updateField('date', formatDate(e.target.value))}
-                                                placeholder="MM-DD-YYYY"
+                                                placeholder="MM/DD/YYYY"
                                                 className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-tighter"
                                                 disabled={isLocked}
                                             />

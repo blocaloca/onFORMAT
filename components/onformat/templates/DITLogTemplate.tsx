@@ -47,12 +47,27 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
 
     useEffect(() => {
         if (!data.items) {
+            // Priority: Imported Schedule > Current Date
+            let initialDate = '';
+
+            if ((metadata as any)?.importedSchedule?.date) {
+                initialDate = (metadata as any).importedSchedule.date;
+            } else {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                initialDate = `${month}/${day}/${year}`;
+            }
+
             onUpdate({
                 items: [],
-                date: new Date().toISOString().split('T')[0]
+                date: initialDate
             });
         }
     }, []);
+
+
 
     // ---------------------------------------------------------------------------
     // DIT ALERT SYSTEM
@@ -159,8 +174,20 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
         setDeleteConfirmIndex(null);
     };
 
+    const formatDate = (val: string) => {
+        const digits = val.replace(/\D/g, '');
+        const chars = digits.split('');
+        if (chars.length > 2) chars.splice(2, 0, '/');
+        if (chars.length > 5) chars.splice(5, 0, '/');
+        return chars.join('').slice(0, 10);
+    };
+
     const updateField = (field: keyof DITLogData, value: string) => {
-        onUpdate({ [field]: value });
+        if (field === 'date') {
+            onUpdate({ [field]: formatDate(value) });
+        } else {
+            onUpdate({ [field]: value });
+        }
     };
 
     const cycleStatus = (index: number) => {
@@ -217,7 +244,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             type="text"
                                             value={data.date || ''}
                                             onChange={e => updateField('date', e.target.value)}
-                                            placeholder="YYYY-MM-DD"
+                                            placeholder="MM/DD/YYYY"
                                             className={`font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             disabled={isLocked}
                                         />

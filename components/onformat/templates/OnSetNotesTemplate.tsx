@@ -27,14 +27,35 @@ interface OnSetNotesTemplateProps {
 export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: OnSetNotesTemplateProps) => {
 
     // State for delete confirmation popover
+    // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+
+    const formatDate = (val: string) => {
+        const digits = val.replace(/\D/g, '');
+        const chars = digits.split('');
+        if (chars.length > 2) chars.splice(2, 0, '/');
+        if (chars.length > 5) chars.splice(5, 0, '/');
+        return chars.join('').slice(0, 10);
+    };
 
     useEffect(() => {
         if (!data.items) {
+            // Priority: Imported Schedule > Current Date
+            let initialDate = '';
+            if ((metadata as any)?.importedSchedule?.date) {
+                initialDate = (metadata as any).importedSchedule.date;
+            } else {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                initialDate = `${month}/${day}/${year}`;
+            }
+
             onUpdate({
                 items: [{
                     id: `note-${Date.now()}`,
-                    date: new Date().toISOString().split('T')[0],
+                    date: initialDate,
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                     description: '',
                     body: ''
@@ -106,9 +127,9 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <input
                                                 type="text"
                                                 value={item.date}
-                                                onChange={e => handleUpdateItem(idx, { date: e.target.value })}
+                                                onChange={e => handleUpdateItem(idx, { date: formatDate(e.target.value) })}
                                                 className={`font-mono font-bold w-24 bg-transparent outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                placeholder="YYYY-MM-DD"
+                                                placeholder="MM/DD/YYYY"
                                                 disabled={isLocked}
                                             />
                                             <div className={`font-mono font-bold w-24 uppercase text-zinc-500 text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>

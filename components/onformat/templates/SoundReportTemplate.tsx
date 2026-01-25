@@ -37,12 +37,34 @@ interface SoundReportTemplateProps {
 export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: SoundReportTemplateProps) => {
 
     // State for delete confirmation popover
+    // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+
+    const formatDate = (val: string) => {
+        const digits = val.replace(/\D/g, '');
+        const chars = digits.split('');
+        if (chars.length > 2) chars.splice(2, 0, '/');
+        if (chars.length > 5) chars.splice(5, 0, '/');
+        return chars.join('').slice(0, 10);
+    };
 
     useEffect(() => {
         if (!data.takes) {
+            // Priority: Imported Schedule > Current Date
+            let initialDate = '';
+            if ((metadata as any)?.importedSchedule?.date) {
+                initialDate = (metadata as any).importedSchedule.date;
+            } else {
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                initialDate = `${month}/${day}/${year}`;
+            }
+
             onUpdate({
                 takes: [],
+                date: initialDate,
                 sampleRate: '48kHz',
                 bitDepth: '24bit',
                 fps: '23.98',
@@ -109,7 +131,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             <div className="grid grid-cols-6 gap-6">
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Date</label>
-                                    <input value={data.date || ''} onChange={e => updateField('date', e.target.value)} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="YYYY-MM-DD" disabled={isLocked} />
+                                    <input value={data.date || ''} onChange={e => updateField('date', formatDate(e.target.value))} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="MM/DD/YYYY" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.date}</div>
                                 </div>
                                 <div>
