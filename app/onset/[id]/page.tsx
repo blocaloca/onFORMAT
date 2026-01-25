@@ -579,7 +579,23 @@ export default function OnSetMobilePage() {
 
                             <div className="border-t border-zinc-800 pt-6">
                                 <button
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        // Explicit Presence Cleanup for Mobile
+                                        if (userEmail && id) {
+                                            const { error } = await supabase
+                                                .from('crew_membership')
+                                                .update({ is_online: false })
+                                                .eq('project_id', id)
+                                                .eq('user_email', userEmail);
+
+                                            // Untrack from all channels
+                                            const channels = supabase.getChannels();
+                                            for (const channel of channels) {
+                                                await channel.untrack();
+                                            }
+                                            await supabase.removeAllChannels();
+                                        }
+
                                         localStorage.removeItem('onset_user_email');
                                         window.location.reload();
                                     }}
