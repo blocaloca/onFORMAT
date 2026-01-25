@@ -488,26 +488,28 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden">
+        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe">
 
             {/* HEADER */}
-            <header className="h-16 md:h-18 border-b border-zinc-800 flex items-center justify-between px-6 bg-zinc-900/80 backdrop-blur-md sticky top-0 z-50 pt-safe transition-all">
-                <Link href="/onset" className="flex items-center gap-3 active:opacity-50 transition-opacity">
-                    <img src="/onset_logo.png" className="h-6 w-auto object-contain" alt="onSET" />
-                    <div className="h-4 w-[1px] bg-zinc-700"></div>
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
-                        <div className="flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                            <span className="text-[9px] font-mono text-emerald-500 uppercase leading-none font-bold">Live Sync</span>
+            <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50 pt-safe transition-all">
+                <div className="h-16 md:h-18 flex items-center justify-between px-6">
+                    <Link href="/onset" className="flex items-center gap-3 active:opacity-50 transition-opacity">
+                        <img src="/onset_logo.png" className="h-6 w-auto object-contain" alt="onSET" />
+                        <div className="h-4 w-[1px] bg-zinc-700"></div>
+                        <div className="flex flex-col">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                                <span className="text-[9px] font-mono text-emerald-500 uppercase leading-none font-bold">Live Sync</span>
+                            </div>
                         </div>
-                    </div>
-                </Link>
-                <button
-                    onClick={() => setShowMenu(true)}
-                    className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700">
-                    <Menu size={18} />
-                </button>
+                    </Link>
+                    <button
+                        onClick={() => setShowMenu(true)}
+                        className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700">
+                        <Menu size={18} />
+                    </button>
+                </div>
             </header>
 
             {/* GLOBAL MEDIA ALERT BANNER */}
@@ -668,7 +670,7 @@ export default function OnSetMobilePage() {
             </main>
 
             {/* BOTTOM NAV (SCROLLABLE ROWS) */}
-            <nav className="fixed bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-50 pb-safe transition-all">
+            <nav className="fixed bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-50 pb-safe transition-all pl-safe pr-safe">
                 <div className="flex items-center h-16 overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                     {(() => {
                         const mobileControl = data.docs['onset-mobile-control'];
