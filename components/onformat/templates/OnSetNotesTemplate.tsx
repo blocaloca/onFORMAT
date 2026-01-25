@@ -67,9 +67,18 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
     const items = data.items || [];
 
     const handleAdd = () => {
+        // Priority: existing item date > Imported Schedule > Current Date
+        let dateToUse = new Date().toISOString().split('T')[0];
+
+        if (items.length > 0) {
+            dateToUse = items[items.length - 1].date;
+        } else if ((metadata as any)?.importedSchedule?.date) {
+            dateToUse = (metadata as any).importedSchedule.date;
+        }
+
         const newItem: NoteItem = {
             id: `note-${Date.now()}`,
-            date: new Date().toISOString().split('T')[0],
+            date: dateToUse,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             description: '',
             body: ''

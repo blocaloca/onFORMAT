@@ -45,10 +45,16 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
     };
 
     useEffect(() => {
-        if (!data.items) {
+        // Initialize if either items are missing OR date is missing (and we have a schedule date)
+        if (!data.items || !data.date) {
+
             // Priority: Imported Schedule > Current Date
             let initialDate = '';
-            if ((metadata as any)?.importedSchedule?.date) {
+
+            // Use existing date if available (in case items missing but date set)
+            if (data.date) {
+                initialDate = data.date;
+            } else if ((metadata as any)?.importedSchedule?.date) {
                 initialDate = (metadata as any).importedSchedule.date;
             } else {
                 const now = new Date();
@@ -59,11 +65,11 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
             }
 
             onUpdate({
-                items: [],
+                items: data.items || [],
                 date: initialDate
             });
         }
-    }, []);
+    }, [metadata?.importedSchedule?.date]);
 
     const items = data.items || [];
 
