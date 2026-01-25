@@ -631,8 +631,8 @@ export default function OnSetMobilePage() {
             }
 
             {/* MAIN CONTENT SCROLLER */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden pb-24 touch-pan-y relative bg-black">
-                <div className="w-full max-w-md mx-auto px-4 py-6">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden pb-32 touch-pan-y relative bg-black">
+                <div className="w-full max-w-lg mx-auto px-6 py-8">
                     {activeTab === '' ? (
                         <MobileLanding
                             projectName={data.project?.name}
