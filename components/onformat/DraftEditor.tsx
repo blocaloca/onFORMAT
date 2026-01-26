@@ -30,6 +30,7 @@ import { StoryboardTemplate } from '@/components/onformat/templates/StoryboardTe
 import { OnSetControlPanelTemplate } from '@/components/onformat/templates/OnSetControlPanelTemplate'
 import { BudgetActualTemplate } from '@/components/onformat/templates/BudgetActualTemplate'
 import { TalentReleaseTemplate } from '@/components/onformat/templates/TalentReleaseTemplate'
+import { ReleasesManagerTemplate } from '@/components/onformat/templates/ReleasesManagerTemplate'
 import { DocumentNavBar } from './DocumentNavBar'
 
 interface DraftEditorProps {
@@ -176,9 +177,31 @@ export const DraftEditor = ({
         'script-notes',
         'camera-report',
         'sound-report',
-        'dit-log'
+        'dit-log',
+        'archive-log'
     ];
-    const navMode = COLLECTION_TOOLS.includes(activeToolKey) ? 'collection' : 'stack';
+
+    const HIDDEN_NAV_TOOLS = [
+        'onset-mobile-control',
+        'project-vision',
+        'creative-direction', // Moodboard
+        'lookbook',
+        'storyboard',
+        'crew-list',
+        'casting-talent',
+        'locations-sets',
+        'wardrobe-styling',
+        'props-list',
+        'equipment-list',
+        'client-selects',
+        'deliverables-licensing',
+        'budget-actual',
+        'releases'
+    ];
+
+    let navMode: 'stack' | 'collection' | 'hidden' = 'stack';
+    if (COLLECTION_TOOLS.includes(activeToolKey)) navMode = 'collection';
+    if (HIDDEN_NAV_TOOLS.includes(activeToolKey)) navMode = 'hidden';
 
     // Locations Import Logic (for Call Sheet Sync)
     let importedLocations = null;
@@ -445,6 +468,7 @@ export const DraftEditor = ({
         case 'budget-actual': TemplateComponent = BudgetActualTemplate; break;
         case 'onset-mobile-control': TemplateComponent = OnSetControlPanelTemplate; break;
         case 'talent-release': TemplateComponent = TalentReleaseTemplate; break;
+        case 'releases': TemplateComponent = ReleasesManagerTemplate; break;
         default: TemplateComponent = PlainTemplate;
     }
 

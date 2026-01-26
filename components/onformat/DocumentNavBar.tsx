@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ImageExportButton } from '@/components/export/ImageExportButton';
 import { RectangleVertical, RectangleHorizontal, ChevronLeft, ChevronRight, Copy, Plus, Trash2 } from 'lucide-react';
 
-export type NavMode = 'stack' | 'collection';
+export type NavMode = 'stack' | 'collection' | 'hidden';
 
 interface DocumentNavBarProps {
     versions: any[];
@@ -50,6 +50,13 @@ export const DocumentNavBar = ({
         <div className="w-full h-12 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4 select-none">
             {/* Left: Navigation Logic */}
             <div className="flex items-center gap-4">
+
+                {/* --- HIDDEN MODE (Single Source / Dashboard) --- */}
+                {navMode === 'hidden' && (
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wide text-zinc-500">{title}</span>
+                    </div>
+                )}
 
                 {/* --- COLLECTION MODE (Multi-Day) --- */}
                 {navMode === 'collection' && (
