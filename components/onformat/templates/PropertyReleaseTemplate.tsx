@@ -15,8 +15,21 @@ interface PropertyReleaseData {
     phone: string;
     signatureUrl?: string;
     signedAt?: string;
-    termsAccepted: boolean;
+    termsAccepted?: boolean;
+    isCustom?: boolean;
+    customLegalText?: string;
+    standardLegalText?: string;
 }
+
+const DEFAULT_PROPERTY_TEXT = `I, the undersigned owner or authorized agent of the property listed below (the "Property"), hereby grant permission to THE PRODUCER (the "Producer") to enter upon and use the Property for the purpose of photographing, filming, and recording in connection with the production currently known as THE PROJECT.
+
+1. Access and Use: Producer may bring necessary personnel, equipment, and props onto the Property. Producer agrees to leave the Property in substantially the same condition as found, reasonable wear and tear excepted.
+
+2. Rights: I grant Producer the right to photograph, film, and record the Property and to use such recordings in any media worldwide, in perpetuity. I waive any right to inspect or approve the finished content.
+
+3. Warranty: I warrant that I have the full right and authority to enter into this agreement and grant the rights herein.
+
+4. Compensation: I acknowledge that I have received good and valuable consideration, receipt of which is hereby acknowledged.`;
 
 interface PropertyReleaseTemplateProps {
     data: Partial<PropertyReleaseData>;
@@ -32,6 +45,12 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
 
     const sigPad = useRef<any>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [localData, setLocalData] = useState(data);
+
+    // Sync local state
+    useEffect(() => {
+        setLocalData(data);
+    }, [data.productionCompany, data.propertyName, data.address, data.ownerName, data.shootDates, data.compensation, data.email, data.phone, data.customLegalText, data.standardLegalText, data.isCustom]);
 
     // Initialize defaults
     useEffect(() => {
@@ -39,15 +58,24 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
             onUpdate({
                 productionCompany: 'CREATIVE OS PRODUCTIONS',
                 shootDates: new Date().toISOString().split('T')[0],
-                termsAccepted: false
+                termsAccepted: false,
+                isCustom: false,
+                standardLegalText: DEFAULT_PROPERTY_TEXT
             });
         }
     }, []);
 
-    const updateField = (field: keyof PropertyReleaseData, value: any) => {
-        onUpdate({ [field]: value });
+    const handleBlur = (field: keyof PropertyReleaseData) => {
+        if (localData[field] !== data[field]) {
+            onUpdate({ [field]: localData[field] });
+        }
     };
 
+    const handleChange = (field: keyof PropertyReleaseData, value: any) => {
+        setLocalData(prev => ({ ...prev, [field]: value }));
+    };
+
+    // ... Signature logic kept as is but updateField removed since we use handleChange/handleBlur now ...
     const clearSignature = () => {
         sigPad.current?.clear();
         onUpdate({ signatureUrl: undefined, signedAt: undefined });
@@ -97,101 +125,127 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
         >
             <div className={`space-y-6 text-xs font-sans h-full flex flex-col max-w-2xl mx-auto ${isPrinting ? 'text-black' : 'text-zinc-800'}`}>
 
-                {/* Header Info */}
-                <div className="border-b-2 border-black pb-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Production Company</label>
-                            <input
-                                value={data.productionCompany || ''}
-                                onChange={e => updateField('productionCompany', e.target.value)}
-                                className="font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300"
-                                placeholder="PRODUCER NAME"
-                                disabled={isLocked}
-                            />
+                {/* Compact Header & Controls */}
+                <div className="flex items-end justify-between border-b-2 border-black pb-2 mb-4 shrink-0">
+                    <div className="flex-1 max-w-[50%]">
+                        <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Production Company</label>
+                        <input
+                            value={localData.productionCompany || ''}
+                            onChange={e => handleChange('productionCompany', e.target.value)}
+                            onBlur={() => handleBlur('productionCompany')}
+                            className="font-bold text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide"
+                            placeholder="PRODUCER NAME"
+                            disabled={isLocked}
+                        />
+                    </div>
+
+                    {/* Toggle Pills */}
+                    {!isPrinting && !isLocked && (
+                        <div className="flex gap-1 mx-4">
+                            <button
+                                onClick={() => onUpdate({ isCustom: false })}
+                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${!data.isCustom ? 'bg-black text-white border-black' : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
+                            >
+                                Standard
+                            </button>
+                            <button
+                                onClick={() => onUpdate({ isCustom: true })}
+                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${data.isCustom ? 'bg-black text-white border-black' : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
+                            >
+                                Custom
+                            </button>
                         </div>
-                        <div className="text-right">
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Shoot Dates</label>
-                            <input
-                                value={data.shootDates || ''}
-                                onChange={e => updateField('shootDates', e.target.value)}
-                                className="font-mono font-bold text-sm bg-transparent outline-none text-right placeholder:text-zinc-300"
-                                placeholder="YYYY-MM-DD"
-                                disabled={isLocked}
-                            />
-                        </div>
+                    )}
+
+                    <div className="flex-1 text-right">
+                        <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Shoot Dates</label>
+                        <input
+                            value={localData.shootDates || ''}
+                            onChange={e => handleChange('shootDates', e.target.value)}
+                            onBlur={() => handleBlur('shootDates')}
+                            className="font-mono font-bold text-xs bg-transparent outline-none text-right"
+                            placeholder="YYYY-MM-DD"
+                            disabled={isLocked}
+                        />
                     </div>
                 </div>
 
-                {/* Legal Text */}
-                <div className="flex-1 overflow-y-auto text-justify leading-relaxed opacity-80 text-[10px] space-y-3 pr-2">
-                    <p>
-                        I, the undersigned owner or authorized agent of the property listed below (the "Property"), hereby grant permission to <strong>{data.productionCompany || 'THE PRODUCER'}</strong> (the "Producer") to enter upon and use the Property for the purpose of photographing, filming, and recording in connection with the production currently known as <strong>{metadata?.projectName || 'THE PROJECT'}</strong>.
-                    </p>
-                    <p>
-                        1. <strong>Access and Use:</strong> Producer may bring necessary personnel, equipment, and props onto the Property. Producer agrees to leave the Property in substantially the same condition as found, reasonable wear and tear excepted.
-                    </p>
-                    <p>
-                        2. <strong>Rights:</strong> I grant Producer the right to photograph, film, and record the Property and to use such recordings in any media worldwide, in perpetuity. I waive any right to inspect or approve the finished content.
-                    </p>
-                    <p>
-                        3. <strong>Warranty:</strong> I warrant that I have the full right and authority to enter into this agreement and grant the rights herein.
-                    </p>
-                    <p>
-                        4. <strong>Compensation:</strong> {data.compensation ? `Agreed compensation: ${data.compensation}` : 'I acknowledge that I have received good and valuable consideration, receipt of which is hereby acknowledged.'}
-                    </p>
+                {/* Legal Text - Maximized Space */}
+                <div className="flex-1 relative min-h-0 mb-4 border border-zinc-100 rounded bg-zinc-50/50 p-4">
+                    <div className="h-full overflow-y-auto pr-2 custom-scrollbar">
+                        {isLocked || isPrinting ? (
+                            <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-90 text-[10px] font-serif">
+                                {data.isCustom ? (data.customLegalText || "No custom terms provided.") : (localData.standardLegalText || DEFAULT_PROPERTY_TEXT)}
+                            </p>
+                        ) : (
+                            <textarea
+                                className="w-full h-full bg-transparent text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify"
+                                placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
+                                value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_PROPERTY_TEXT)}
+                                onChange={e => handleChange(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
+                                onBlur={() => handleBlur(data.isCustom ? 'customLegalText' : 'standardLegalText')}
+                            />
+                        )}
+                    </div>
                 </div>
 
-                {/* Property Details */}
-                <div className="border-t border-black pt-6 bg-zinc-50 p-4 rounded-sm border border-zinc-100">
-                    <div className="grid grid-cols-2 gap-6 mb-4">
+                {/* Property Details - Compact Row */}
+                <div className="border-t border-black pt-4 mb-4 shrink-0">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="col-span-2">
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Property Address</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Property Address</label>
                             <input
-                                value={data.address || ''}
-                                onChange={e => updateField('address', e.target.value)}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm font-bold"
+                                value={localData.address || ''}
+                                onChange={e => handleChange('address', e.target.value)}
+                                onBlur={() => handleBlur('address')}
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs font-bold focus:border-black outline-none transition-colors"
                                 placeholder="123 Location St, City, State"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4">
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Owner / Agent Name</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Owner Name</label>
                             <input
-                                value={data.ownerName || ''}
-                                onChange={e => updateField('ownerName', e.target.value)}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
+                                value={localData.ownerName || ''}
+                                onChange={e => handleChange('ownerName', e.target.value)}
+                                onBlur={() => handleBlur('ownerName')}
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Compensation (Optional)</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Compensation</label>
                             <input
-                                value={data.compensation || ''}
-                                onChange={e => updateField('compensation', e.target.value)}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
-                                placeholder="$ Amount or Terms"
+                                value={localData.compensation || ''}
+                                onChange={e => handleChange('compensation', e.target.value)}
+                                onBlur={() => handleBlur('compensation')}
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                placeholder="$ Amount"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Email</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Email</label>
                             <input
-                                value={data.email || ''}
-                                onChange={e => updateField('email', e.target.value)}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
-                                placeholder="email@example.com"
+                                value={localData.email || ''}
+                                onChange={e => handleChange('email', e.target.value)}
+                                onBlur={() => handleBlur('email')}
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                placeholder="Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Phone</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Phone</label>
                             <input
-                                value={data.phone || ''}
-                                onChange={e => updateField('phone', e.target.value)}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
-                                placeholder="(555) 555-5555"
+                                value={localData.phone || ''}
+                                onChange={e => handleChange('phone', e.target.value)}
+                                onBlur={() => handleBlur('phone')}
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                placeholder="Phone"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>

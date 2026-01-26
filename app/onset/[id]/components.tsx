@@ -13,6 +13,16 @@ const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to TH
 
 I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.`;
 
+const DEFAULT_PROPERTY_TEXT = `I, the undersigned owner or authorized agent of the property listed below (the "Property"), hereby grant permission to THE PRODUCER (the "Producer") to enter upon and use the Property for the purpose of photographing, filming, and recording in connection with the production currently known as THE PROJECT.
+
+1. Access and Use: Producer may bring necessary personnel, equipment, and props onto the Property. Producer agrees to leave the Property in substantially the same condition as found, reasonable wear and tear excepted.
+
+2. Rights: I grant Producer the right to photograph, film, and record the Property and to use such recordings in any media worldwide, in perpetuity. I waive any right to inspect or approve the finished content.
+
+3. Warranty: I warrant that I have the full right and authority to enter into this agreement and grant the rights herein.
+
+4. Compensation: I acknowledge that I have received good and valuable consideration, receipt of which is hereby acknowledged.`;
+
 /* --------------------------------------------------------------------------------
  * CONSTANTS & TYPES
  * -------------------------------------------------------------------------------- */
@@ -1688,7 +1698,11 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                                 <p className="whitespace-pre-wrap">
                                     {d.isCustom
                                         ? (d.customLegalText || "No custom terms provided.")
-                                        : (d.standardLegalText || DEFAULT_STANDARD_TEXT).replace(/THE PRODUCER/g, d.productionCompany || 'THE PRODUCER')
+                                        : (
+                                            activeRelease.type === 'property'
+                                                ? (d.standardLegalText || DEFAULT_PROPERTY_TEXT)
+                                                : (d.standardLegalText || DEFAULT_STANDARD_TEXT)
+                                        ).replace(/THE PRODUCER/g, d.productionCompany || 'THE PRODUCER')
                                     }
                                 </p>
                             </div>
