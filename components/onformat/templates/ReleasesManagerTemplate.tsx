@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { TalentReleaseTemplate } from './TalentReleaseTemplate';
 import { PropertyReleaseTemplate } from './PropertyReleaseTemplate';
-import { Plus, User, MapPin, ChevronRight, FileText, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
+import { Plus, User, MapPin, ChevronRight, FileText, CheckCircle, Clock, ArrowLeft, Trash2 } from 'lucide-react';
 
 interface ReleaseItem {
     id: string;
@@ -139,6 +139,14 @@ export const ReleasesManagerTemplate = ({
         }
     }
 
+    const handleDelete = (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        if (confirm('Are you sure you want to delete this release? This cannot be undone.')) {
+            const updatedReleases = releases.filter(r => r.id !== id);
+            onUpdate({ releases: updatedReleases });
+        }
+    };
+
     // List View
     const filteredReleases = releases.filter(r => r.type === activeTab);
 
@@ -185,7 +193,7 @@ export const ReleasesManagerTemplate = ({
                             <div
                                 key={item.id}
                                 onClick={() => { setActiveId(item.id); setView('detail'); }}
-                                className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer"
+                                className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
                             >
                                 <div className="flex items-center gap-3">
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-zinc-100 text-zinc-400'}`}>
@@ -210,6 +218,17 @@ export const ReleasesManagerTemplate = ({
                                             <Clock size={8} /> {new Date(item.dateCreated).toLocaleDateString()}
                                         </div>
                                     </div>
+
+                                    {!isLocked && (
+                                        <button
+                                            onClick={(e) => handleDelete(e, item.id)}
+                                            className="opacity-0 group-hover:opacity-100 p-2 hover:bg-zinc-100 rounded text-zinc-400 hover:text-red-500 transition-all"
+                                            title="Delete Release"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    )}
+
                                     <ChevronRight size={16} className="text-zinc-300 group-hover:text-black" />
                                 </div>
                             </div>
