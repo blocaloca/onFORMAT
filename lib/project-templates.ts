@@ -71,6 +71,7 @@ export const PROJECT_TEMPLATES: Record<string, ProjectTemplate> = {
         documents: [
           { type: 'call-sheet', label: 'Call Sheet', icon: '📋' },
           { type: 'on-set-notes', label: 'On-Set Notes', icon: '📝' },
+          { type: 'releases', label: 'Releases', icon: '📝' },
           { type: 'client-selects', label: 'Client Selects', icon: '⭐' }
         ]
       },
@@ -127,6 +128,7 @@ export const PROJECT_TEMPLATES: Record<string, ProjectTemplate> = {
         documents: [
           { type: 'call-sheet', label: 'Call Sheet', icon: '📋' },
           { type: 'on-set-notes', label: 'On-Set Notes', icon: '📝' },
+          { type: 'releases', label: 'Releases', icon: '📝' },
           { type: 'client-selects', label: 'Client Selects', icon: '⭐' }
         ]
       },

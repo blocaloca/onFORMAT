@@ -18,7 +18,8 @@ import {
     ScheduleView,
     MobileCameraReportView,
     MobileOnSetNotesView,
-    MobileLocationsView
+    MobileLocationsView,
+    MobileReleasesView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive } from 'lucide-react';
 
@@ -487,6 +488,29 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e) }
     }
 
+    const handleUpdateReleases = async (updatedList: any[]) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            // Assuming Releases live in ON_SET or PRE_PRODUCTION depending on setup.
+            // Based on template update, they are in 'execute' -> ON_SET likely.
+            // But we should check where it exists or default to ON_SET.
+            const phaseKey = 'ON_SET';
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
+            if (!updatedPhases[phaseKey].drafts) updatedPhases[phaseKey].drafts = {};
+
+            const releaseDoc = { releases: updatedList };
+            updatedPhases[phaseKey].drafts['releases'] = JSON.stringify(releaseDoc);
+
+            await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    }
+
     const handleCheckShot = async (shotId: string, status: string = 'COMPLETE', addToLog: boolean = true) => {
         if (!data.project) return;
 
@@ -764,9 +788,10 @@ export default function OnSetMobilePage() {
                                 onDelete={handleDeleteOnSetNote}
                             />}
                             {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
+                            {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
 
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>

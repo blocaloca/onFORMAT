@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import SignatureCanvas from 'react-signature-canvas';
 
 /* --------------------------------------------------------------------------------
  * CONSTANTS & TYPES
@@ -19,7 +20,8 @@ export const DOC_LABELS: Record<string, string> = {
     'storyboard': 'Storyboard',
     'crew-list': 'Crew List',
     'camera-report': 'Camera Report',
-    'on-set-notes': 'On-Set Notes'
+    'on-set-notes': 'On-Set Notes',
+    'releases': 'Releases'
 };
 
 /* --------------------------------------------------------------------------------
@@ -1459,6 +1461,174 @@ export const MobileLocationsView = ({ data }: { data: any }) => {
                     </div>
                 </div>
             ))}
+        </div>
+    );
+};
+
+export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (releases: any[]) => void }) => {
+    const [view, setView] = useState<'list' | 'detail'>('list');
+    const [activeId, setActiveId] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+    const sigPad = React.useRef<any>(null);
+
+    const releases = data?.releases || [];
+    const activeRelease = releases.find((r: any) => r.id === activeId);
+
+    const handleSaveSignature = async () => {
+        if (!activeRelease || !sigPad.current || sigPad.current.isEmpty() || !onUpdate) return;
+
+        setIsSaving(true);
+        try {
+            const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
+            const res = await fetch(dataUrl);
+            const blob = await res.blob();
+            const fileName = `signatures/mobile-${activeRelease.type}-${Date.now()}.png`;
+
+            const { error } = await supabase.storage
+                .from('documents')
+                .upload(fileName, blob);
+
+            if (error) throw error;
+
+            const { data: list } = supabase.storage.from('documents').getPublicUrl(fileName);
+
+            // Update local object
+            const updatedReleases = releases.map((r: any) => {
+                if (r.id === activeId) {
+                    return {
+                        ...r,
+                        status: 'signed',
+                        data: {
+                            ...r.data,
+                            signatureUrl: list.publicUrl,
+                            signedAt: new Date().toISOString()
+                        }
+                    };
+                }
+                return r;
+            });
+
+            onUpdate(updatedReleases);
+            setView('list');
+            setActiveId(null);
+
+        } catch (e) {
+            console.error(e);
+            alert('Failed to save signature.');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    if (view === 'detail' && activeRelease) {
+        const d = activeRelease.data || {};
+        const isSigned = !!d.signatureUrl;
+
+        return (
+            <div className="space-y-6">
+                <button
+                    onClick={() => { setView('list'); setActiveId(null); }}
+                    className="flex items-center gap-2 text-zinc-400 font-bold uppercase text-[10px] tracking-widest hover:text-white"
+                >
+                    <X size={14} /> Back to List
+                </button>
+
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden p-6 space-y-6">
+                    <div>
+                        <span className="bg-zinc-800 text-zinc-400 text-[9px] font-black uppercase px-2 py-1 rounded inline-block mb-2">
+                            {activeRelease.type} Release
+                        </span>
+                        <h2 className="text-2xl font-black uppercase text-white leading-none mb-1">
+                            {activeRelease.name || 'Untitled'}
+                        </h2>
+                        <p className="text-sm text-zinc-400">{activeRelease.description}</p>
+                    </div>
+
+                    {/* Quick Meta */}
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <label className="text-[9px] font-bold uppercase text-zinc-600 block">Producer</label>
+                            <span className="text-white">{d.productionCompany}</span>
+                        </div>
+                        <div>
+                            <label className="text-[9px] font-bold uppercase text-zinc-600 block">Date</label>
+                            <span className="text-white">{d.shootDate || d.shootDates}</span>
+                        </div>
+                    </div>
+
+                    {/* Status */}
+                    {isSigned ? (
+                        <div className="bg-emerald-900/20 border border-emerald-500/50 p-4 rounded-lg flex flex-col items-center justify-center text-center">
+                            <Check size={24} className="text-emerald-500 mb-2" />
+                            <p className="text-emerald-400 font-black uppercase text-xs tracking-wider">Signed & Valid</p>
+                            <p className="text-[9px] text-zinc-500 font-mono mt-1">{new Date(d.signedAt).toLocaleString()}</p>
+                            <img src={d.signatureUrl} className="h-12 mt-3 opacity-80 filter invert" alt="Sig" />
+                        </div>
+                    ) : (
+                        <div className="space-y-4 pt-4 border-t border-zinc-800">
+                            <p className="text-[10px] uppercase font-bold text-zinc-400 text-center tracking-widest mb-2">Sign Here</p>
+                            <div className="bg-white rounded overflow-hidden">
+                                <SignatureCanvas
+                                    ref={sigPad}
+                                    penColor="black"
+                                    canvasProps={{
+                                        width: 300,
+                                        height: 150,
+                                        className: 'w-full h-[150px] cursor-crosshair'
+                                    }}
+                                />
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => sigPad.current?.clear()}
+                                    className="flex-1 bg-zinc-800 text-zinc-400 py-3 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                >
+                                    Clear
+                                </button>
+                                <button
+                                    onClick={handleSaveSignature}
+                                    disabled={isSaving}
+                                    className="flex-[2] bg-emerald-500 text-black py-3 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-400"
+                                >
+                                    {isSaving ? 'Saving...' : 'Accept & Sign'}
+                                </button>
+                            </div>
+                            <p className="text-[9px] text-zinc-600 text-center leading-relaxed px-4">
+                                By signing, I agree to the terms listed in the full release document held by production.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-4">
+            {releases.length === 0 ? (
+                <EmptyState label="Releases" />
+            ) : (
+                releases.map((r: any) => (
+                    <div
+                        key={r.id}
+                        onClick={() => { setActiveId(r.id); setView('detail'); }}
+                        className="bg-zinc-900 border border-zinc-800 rounded-lg p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${r.status === 'signed' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800 text-zinc-500'}`}>
+                                {r.status === 'signed' ? <Check size={16} /> : <Edit2 size={16} />}
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-bold text-white leading-none mb-1">{r.name || 'Untitled'}</h3>
+                                <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wide">{r.description || r.type}</p>
+                            </div>
+                        </div>
+                        <div className={`px-2 py-1 rounded text-[9px] font-black uppercase tracking-wider ${r.status === 'signed' ? 'text-emerald-500 bg-emerald-500/10' : 'text-amber-500 bg-amber-500/10'}`}>
+                            {r.status || 'Draft'}
+                        </div>
+                    </div>
+                ))
+            )}
         </div>
     );
 };
