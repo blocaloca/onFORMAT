@@ -18,7 +18,8 @@ export const DOC_LABELS: Record<string, string> = {
     'wardrobe': 'Wardrobe',
     'storyboard': 'Storyboard',
     'crew-list': 'Crew List',
-    'camera-report': 'Camera Report'
+    'camera-report': 'Camera Report',
+    'on-set-notes': 'On-Set Notes'
 };
 
 /* --------------------------------------------------------------------------------
@@ -1134,6 +1135,123 @@ export const ScheduleView = ({ data }: { data: any }) => {
             </div>
 
             <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-8">End of Day</div>
+        </div>
+    );
+};
+
+export const MobileOnSetNotesView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => void }) => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [form, setForm] = useState({
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+        description: '',
+        body: ''
+    });
+
+    const items = data?.items || [];
+
+    const handleSubmit = () => {
+        if (!onAdd) return;
+        if (!form.description && !form.body) return; // Prevent empty
+
+        const newItem = {
+            id: `note-${Date.now()}`,
+            date: new Date().toLocaleDateString(), // reliable local date for mobile
+            ...form
+        };
+
+        onAdd(newItem);
+        setForm({
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+            description: '',
+            body: ''
+        });
+        setIsAdding(false);
+    };
+
+    return (
+        <div className="space-y-4">
+            {/* Header Actions */}
+            {onAdd && !isAdding && (
+                <button
+                    onClick={() => setIsAdding(true)}
+                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                >
+                    <Plus size={16} />
+                    <span>Add Note</span>
+                </button>
+            )}
+
+            {/* Add Form */}
+            {isAdding && (
+                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
+                        <span className="text-xs font-bold uppercase text-white">New Note</span>
+                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-400" /></button>
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Time</label>
+                        <input
+                            type="time"
+                            value={form.time}
+                            onChange={e => setForm({ ...form, time: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Subject</label>
+                        <input
+                            placeholder="Topic (e.g. Safety Meeting)"
+                            value={form.description}
+                            onChange={e => setForm({ ...form, description: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-600 font-bold"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Body</label>
+                        <textarea
+                            placeholder="Enter details..."
+                            value={form.body}
+                            onChange={e => setForm({ ...form, body: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[120px] placeholder:text-zinc-600 resize-none leading-relaxed"
+                        />
+                    </div>
+
+                    <button
+                        onClick={handleSubmit}
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
+                    >
+                        <Save size={16} />
+                        <span>Save Note</span>
+                    </button>
+                </div>
+            )}
+
+            {/* List */}
+            <div className="space-y-3">
+                {items.length === 0 && !isAdding ? (
+                    <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No notes recorded.</p></div>
+                ) : (
+                    items.slice().reverse().map((item: any, i: number) => (
+                        <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
+                            <div className="flex justify-between items-center mb-2 border-b border-zinc-800 pb-2">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-mono text-emerald-500 text-xs font-bold">{item.time}</span>
+                                    <span className="text-[10px] text-zinc-500 font-mono">{item.date}</span>
+                                </div>
+                            </div>
+                            {item.description && (
+                                <h4 className="text-sm font-black text-white uppercase mb-2 leading-tight">{item.description}</h4>
+                            )}
+                            <p className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">{item.body}</p>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-4">End of Notes</div>
         </div>
     );
 };
