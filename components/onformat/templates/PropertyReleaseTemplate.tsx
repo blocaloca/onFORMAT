@@ -97,7 +97,11 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
 
             if (error) {
                 console.error('Upload Error', error);
-                alert('Failed to save signature. Please try again.');
+                if (error.message?.includes("Bucket not found") || error.message?.toLowerCase().includes("row not found")) {
+                    alert("Configuration Error: The 'documents' storage bucket is missing. Please run the 'create_documents_bucket.sql' migration.");
+                } else {
+                    alert(`Failed to save signature: ${error.message}`);
+                }
                 return;
             }
 

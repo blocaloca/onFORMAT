@@ -1630,7 +1630,11 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
 
         } catch (e: any) {
             console.error("Signature Save Error:", e);
-            alert(`Failed to save signature: ${e.message || "Unknown error"}`);
+            if (e.message?.includes("Bucket not found") || e.message?.toLowerCase().includes("row not found")) {
+                alert("Configuration Error: The 'documents' storage bucket is missing. Please run the 'create_documents_bucket.sql' migration.");
+            } else {
+                alert(`Failed to save signature: ${e.message || "Unknown error"}`);
+            }
         } finally {
             setIsSaving(false);
         }
