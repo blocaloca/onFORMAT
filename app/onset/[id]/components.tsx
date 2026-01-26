@@ -1519,24 +1519,42 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
     };
 
     const handleSaveSignature = async () => {
-        if (!activeRelease || !sigPad.current || sigPad.current.isEmpty() || !onUpdate) return;
+        if (!activeRelease || !sigPad.current || sigPad.current.isEmpty() || !onUpdate) {
+            if (sigPad.current?.isEmpty()) alert("Please sign before saving.");
+            return;
+        }
 
         setIsSaving(true);
         try {
+            // 1. Convert signature to blob
             const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
             const res = await fetch(dataUrl);
             const blob = await res.blob();
+
+            // 2. Generate filename
             const fileName = `signatures/mobile-${activeRelease.type}-${Date.now()}.png`;
 
-            const { error } = await supabase.storage
+            // 3. Upload to Supabase
+            const { error: uploadError } = await supabase.storage
                 .from('documents')
-                .upload(fileName, blob);
+                .upload(fileName, blob, {
+                    cacheControl: '3600',
+                    upsert: true,
+                    contentType: 'image/png'
+                });
 
-            if (error) throw error;
+            if (uploadError) {
+                console.error("Supabase Upload Error:", uploadError);
+                throw new Error(`Upload failed: ${uploadError.message}`);
+            }
 
-            const { data: list } = supabase.storage.from('documents').getPublicUrl(fileName);
+            // 4. Get Public URL
+            const { data } = supabase.storage.from('documents').getPublicUrl(fileName);
+            if (!data || !data.publicUrl) {
+                throw new Error("Failed to retrieve public URL");
+            }
 
-            // Update local object
+            // 5. Update local object
             const updatedReleases = releases.map((r: any) => {
                 if (r.id === activeId) {
                     return {
@@ -1544,7 +1562,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                         status: 'signed',
                         data: {
                             ...r.data,
-                            signatureUrl: list.publicUrl,
+                            signatureUrl: data.publicUrl,
                             signedAt: new Date().toISOString()
                         }
                     };
@@ -1556,9 +1574,9 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
             setView('list');
             setActiveId(null);
 
-        } catch (e) {
-            console.error(e);
-            alert('Failed to save signature.');
+        } catch (e: any) {
+            console.error("Signature Save Error:", e);
+            alert(`Failed to save signature: ${e.message || "Unknown error"}`);
         } finally {
             setIsSaving(false);
         }

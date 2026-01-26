@@ -133,64 +133,63 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
         >
             <div className={`space-y-6 text-xs font-sans h-full flex flex-col max-w-2xl mx-auto ${isPrinting ? 'text-black' : 'text-zinc-800'}`}>
 
-                {/* Header Info */}
-                <div className="border-b-2 border-black pb-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Production Company / Producer</label>
-                            <input
-                                value={localData.productionCompany || ''}
-                                onChange={e => handleChange('productionCompany', e.target.value)}
-                                onBlur={() => handleBlur('productionCompany')}
-                                className="font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300"
-                                placeholder="PRODUCER NAME"
-                                disabled={isLocked}
-                            />
+                {/* Compact Header & Controls */}
+                <div className="flex items-end justify-between border-b-2 border-black pb-2 mb-4 shrink-0">
+                    <div className="flex-1 max-w-[50%]">
+                        <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Producer / Production Company</label>
+                        <input
+                            value={localData.productionCompany || ''}
+                            onChange={e => handleChange('productionCompany', e.target.value)}
+                            onBlur={() => handleBlur('productionCompany')}
+                            className="font-bold text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide"
+                            placeholder="PRODUCER NAME"
+                            disabled={isLocked}
+                        />
+                    </div>
+
+                    {/* Toggle Pills - Centered or aligned */}
+                    {!isPrinting && !isLocked && (
+                        <div className="flex gap-1 mx-4">
+                            <button
+                                onClick={() => onUpdate({ isCustom: false })}
+                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${!data.isCustom ? 'bg-black text-white border-black' : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
+                            >
+                                Standard
+                            </button>
+                            <button
+                                onClick={() => onUpdate({ isCustom: true })}
+                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${data.isCustom ? 'bg-black text-white border-black' : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
+                            >
+                                Custom
+                            </button>
                         </div>
-                        <div className="text-right">
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Date</label>
-                            <input
-                                type="date"
-                                value={localData.shootDate || ''}
-                                onChange={e => {
-                                    handleChange('shootDate', e.target.value);
-                                    onUpdate({ shootDate: e.target.value }); // Date picker doesn't always blur nicely
-                                }}
-                                className="font-mono font-bold text-sm bg-transparent outline-none text-right"
-                                disabled={isLocked}
-                            />
-                        </div>
+                    )}
+
+                    <div className="flex-1 text-right">
+                        <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Date</label>
+                        <input
+                            type="date"
+                            value={localData.shootDate || ''}
+                            onChange={e => {
+                                handleChange('shootDate', e.target.value);
+                                onUpdate({ shootDate: e.target.value });
+                            }}
+                            className="font-mono font-bold text-xs bg-transparent outline-none text-right"
+                            disabled={isLocked}
+                        />
                     </div>
                 </div>
 
-                {/* Custom Toggle Pills */}
-                {!isPrinting && !isLocked && (
-                    <div className="flex justify-end mb-2 gap-2">
-                        <button
-                            onClick={() => onUpdate({ isCustom: false })}
-                            className={`text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border transition-all ${!data.isCustom ? 'bg-black text-white border-black' : 'bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
-                        >
-                            Standard Release
-                        </button>
-                        <button
-                            onClick={() => onUpdate({ isCustom: true })}
-                            className={`text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border transition-all ${data.isCustom ? 'bg-black text-white border-black' : 'bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
-                        >
-                            Custom Release
-                        </button>
-                    </div>
-                )}
-
-                {/* Legal Text */}
-                <div className="flex-1 overflow-y-auto pr-2 relative">
-                    <div className="h-full">
+                {/* Legal Text - Maximized Space */}
+                <div className="flex-1 relative min-h-0 mb-4 border border-zinc-100 rounded bg-zinc-50/50 p-4">
+                    <div className="h-full overflow-y-auto pr-2 custom-scrollbar">
                         {isLocked || isPrinting ? (
-                            <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-80 text-[10px]">
+                            <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-90 text-[10px] font-serif">
                                 {data.isCustom ? (data.customLegalText || "No custom terms provided.") : (localData.standardLegalText || DEFAULT_STANDARD_TEXT)}
                             </p>
                         ) : (
                             <textarea
-                                className="w-full h-full min-h-[300px] p-2 bg-zinc-50 border border-dashed border-zinc-200 rounded text-[10px] leading-relaxed resize-none outline-none focus:border-black placeholder:text-zinc-400"
+                                className="w-full h-full bg-transparent text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify"
                                 placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
                                 value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_STANDARD_TEXT)}
                                 onChange={e => handleChange(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
@@ -200,50 +199,50 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                     </div>
                 </div>
 
-                {/* Talent Details */}
-                <div className="border-t border-black pt-6 bg-zinc-50 p-4 rounded-sm border border-zinc-100">
-                    <div className="grid grid-cols-2 gap-6 mb-4">
+                {/* Talent Details - Compact Row */}
+                <div className="border-t border-black pt-4 mb-4 shrink-0">
+                    <div className="grid grid-cols-4 gap-4">
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Talent Name</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Talent Name</label>
                             <input
                                 value={localData.talentName || ''}
                                 onChange={e => handleChange('talentName', e.target.value)}
                                 onBlur={() => handleBlur('talentName')}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm font-bold"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs font-bold focus:border-black outline-none transition-colors"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Role / Character</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Role</label>
                             <input
                                 value={localData.role || ''}
                                 onChange={e => handleChange('role', e.target.value)}
                                 onBlur={() => handleBlur('role')}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
-                                placeholder="e.g. Hero, Extra"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                placeholder="Role"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Email</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Email</label>
                             <input
                                 value={localData.email || ''}
                                 onChange={e => handleChange('email', e.target.value)}
                                 onBlur={() => handleBlur('email')}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
-                                placeholder="email@example.com"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                placeholder="Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
                         <div>
-                            <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Phone</label>
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Phone</label>
                             <input
                                 value={localData.phone || ''}
                                 onChange={e => handleChange('phone', e.target.value)}
                                 onBlur={() => handleBlur('phone')}
-                                className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
-                                placeholder="(555) 555-5555"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                placeholder="Phone"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
