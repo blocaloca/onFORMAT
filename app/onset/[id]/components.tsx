@@ -1466,13 +1466,47 @@ export const MobileLocationsView = ({ data }: { data: any }) => {
 };
 
 export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (releases: any[]) => void }) => {
-    const [view, setView] = useState<'list' | 'detail'>('list');
+    const [view, setView] = useState<'list' | 'detail' | 'create'>('list');
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const sigPad = React.useRef<any>(null);
 
+    // Create Form State
+    const [newReleaseType, setNewReleaseType] = useState<'talent' | 'property'>('talent');
+    const [newReleaseName, setNewReleaseName] = useState('');
+
     const releases = data?.releases || [];
     const activeRelease = releases.find((r: any) => r.id === activeId);
+
+    const handleCreateWrapper = () => {
+        setNewReleaseName('');
+        setNewReleaseType('talent');
+        setView('create');
+    };
+
+    const submitCreate = () => {
+        if (!newReleaseName || !onUpdate) return;
+
+        const id = `rev-${Date.now()}`;
+        const newRelease = {
+            id,
+            type: newReleaseType,
+            name: newReleaseName, // This will map to talentName or ownerName
+            description: '',
+            status: 'draft',
+            dateCreated: new Date().toISOString(),
+            data: {
+                productionCompany: 'CREATIVE OS PRODUCTIONS',
+                shootDate: new Date().toISOString().split('T')[0],
+                // Pre-populate specific fields
+                ...(newReleaseType === 'talent' ? { talentName: newReleaseName } : { ownerName: newReleaseName })
+            }
+        };
+
+        onUpdate([...releases, newRelease]);
+        setActiveId(id);
+        setView('detail');
+    };
 
     const handleSaveSignature = async () => {
         if (!activeRelease || !sigPad.current || sigPad.current.isEmpty() || !onUpdate) return;
@@ -1519,6 +1553,61 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
             setIsSaving(false);
         }
     };
+
+    if (view === 'create') {
+        return (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                <button
+                    onClick={() => setView('list')}
+                    className="flex items-center gap-2 text-zinc-400 font-bold uppercase text-[10px] tracking-widest hover:text-white"
+                >
+                    <X size={14} /> Back to List
+                </button>
+
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                    <h2 className="text-lg font-black uppercase text-white mb-6">New Release</h2>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-2">Type</label>
+                        <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                            <button
+                                onClick={() => setNewReleaseType('talent')}
+                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'talent' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500'}`}
+                            >
+                                Talent
+                            </button>
+                            <button
+                                onClick={() => setNewReleaseType('property')}
+                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'property' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-500'}`}
+                            >
+                                Property
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mb-6">
+                        <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-2">
+                            {newReleaseType === 'talent' ? 'Talent Name' : 'Owner Name'}
+                        </label>
+                        <input
+                            value={newReleaseName}
+                            onChange={(e) => setNewReleaseName(e.target.value)}
+                            placeholder={newReleaseType === 'talent' ? "Enter full name..." : "Enter owner name..."}
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-4 text-white font-bold outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
+                        />
+                    </div>
+
+                    <button
+                        onClick={submitCreate}
+                        disabled={!newReleaseName}
+                        className="w-full bg-emerald-500 text-black font-black uppercase text-xs py-4 rounded-lg hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Create Release
+                    </button>
+                </div>
+            </div>
+        )
+    }
 
     if (view === 'detail' && activeRelease) {
         const d = activeRelease.data || {};
@@ -1605,6 +1694,16 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
 
     return (
         <div className="space-y-4">
+            {onUpdate && (
+                <button
+                    onClick={handleCreateWrapper}
+                    className="w-full bg-emerald-500 text-black font-black uppercase text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                >
+                    <Plus size={16} />
+                    <span>New Release</span>
+                </button>
+            )}
+
             {releases.length === 0 ? (
                 <EmptyState label="Releases" />
             ) : (

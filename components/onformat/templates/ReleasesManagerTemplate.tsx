@@ -102,43 +102,39 @@ export const ReleasesManagerTemplate = ({
             isLocked,
             plain,
             orientation,
-            metadata: { ...metadata, backAction: () => setView('list') } // Pass back action via metadata or handle separate? 
-            // Note: Talent/Property templates don't currently have a "Back" button. 
-            // We might need to wrap them or inject a back button.
+            metadata: { ...metadata, backAction: () => setView('list') }
         };
 
-        // Wrapper to add Back Button
-        const LayoutWrapper = ({ children }: { children: React.ReactNode }) => (
-            <div className="relative h-full">
-                <button
-                    onClick={() => setView('list')}
-                    className="absolute top-4 left-4 z-50 flex items-center gap-1 text-xs font-bold uppercase text-zinc-500 hover:text-black bg-white/80 px-2 py-1 rounded backdrop-blur-sm shadow-sm"
-                >
-                    <ArrowLeft size={12} /> Back to List
-                </button>
-                {children}
-            </div>
+        const BackButton = (
+            <button
+                onClick={() => setView('list')}
+                className="absolute top-4 left-4 z-50 flex items-center gap-1 text-xs font-bold uppercase text-zinc-500 hover:text-black bg-white/80 px-2 py-1 rounded backdrop-blur-sm shadow-sm"
+            >
+                <ArrowLeft size={12} /> Back to List
+            </button>
         );
 
         if (activeItem.type === 'talent') {
             return (
-                <LayoutWrapper>
+                <div className="relative h-full">
+                    {BackButton}
                     <TalentReleaseTemplate
                         data={activeItem.data}
                         onUpdate={(d) => handleItemUpdate(activeItem.id, d)}
                         {...CommonProps}
                     />
-                </LayoutWrapper>
+                </div>
             );
         } else {
             return (
-                <LayoutWrapper>
+                <div className="relative h-full">
+                    {BackButton}
                     <PropertyReleaseTemplate
                         data={activeItem.data}
                         onUpdate={(d) => handleItemUpdate(activeItem.id, d)}
                         {...CommonProps}
                     />
-                </LayoutWrapper>
+                </div>
             );
         }
     }

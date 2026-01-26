@@ -13,7 +13,9 @@ interface TalentReleaseData {
     phone: string;
     signatureUrl?: string; // Stored URL after upload
     signedAt?: string;
-    termsAccepted: boolean;
+    isCustom?: boolean;
+    customLegalText?: string;
+    termsAccepted?: boolean;
 }
 
 interface TalentReleaseTemplateProps {
@@ -28,8 +30,14 @@ interface TalentReleaseTemplateProps {
 
 export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: TalentReleaseTemplateProps) => {
 
+    const [localData, setLocalData] = useState(data);
     const sigPad = useRef<any>(null);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Sync local state when props change (externally)
+    React.useEffect(() => {
+        setLocalData(data);
+    }, [data.talentName, data.role, data.email, data.phone, data.productionCompany, data.shootDate, data.customLegalText, data.isCustom]);
 
     // Initialize defaults
     React.useEffect(() => {
@@ -37,13 +45,27 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
             onUpdate({
                 productionCompany: 'CREATIVE OS PRODUCTIONS',
                 shootDate: new Date().toISOString().split('T')[0],
-                termsAccepted: false
+                termsAccepted: false,
+                isCustom: false,
+                customLegalText: ''
             });
         }
     }, []);
 
-    const updateField = (field: keyof TalentReleaseData, value: any) => {
-        onUpdate({ [field]: value });
+    const handleBlur = (field: keyof TalentReleaseData) => {
+        if (localData[field] !== data[field]) {
+            onUpdate({ [field]: localData[field] });
+        }
+    };
+
+    const handleChange = (field: keyof TalentReleaseData, value: any) => {
+        setLocalData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const toggleCustomLegal = () => {
+        if (isLocked) return;
+        const newVal = !data.isCustom;
+        onUpdate({ isCustom: newVal });
     };
 
     const clearSignature = () => {
@@ -106,8 +128,9 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div>
                             <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Production Company / Producer</label>
                             <input
-                                value={data.productionCompany || ''}
-                                onChange={e => updateField('productionCompany', e.target.value)}
+                                value={localData.productionCompany || ''}
+                                onChange={e => handleChange('productionCompany', e.target.value)}
+                                onBlur={() => handleBlur('productionCompany')}
                                 className="font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300"
                                 placeholder="PRODUCER NAME"
                                 disabled={isLocked}
@@ -117,8 +140,11 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Date</label>
                             <input
                                 type="date"
-                                value={data.shootDate || ''}
-                                onChange={e => updateField('shootDate', e.target.value)}
+                                value={localData.shootDate || ''}
+                                onChange={e => {
+                                    handleChange('shootDate', e.target.value);
+                                    onUpdate({ shootDate: e.target.value }); // Date picker doesn't always blur nicely
+                                }}
                                 className="font-mono font-bold text-sm bg-transparent outline-none text-right"
                                 disabled={isLocked}
                             />
@@ -127,22 +153,54 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                 </div>
 
                 {/* Legal Text */}
-                <div className="flex-1 overflow-y-auto text-justify leading-relaxed opacity-80 text-[10px] space-y-3 pr-2">
-                    <p>
-                        I, the undersigned, hereby grant permission to <strong>{data.productionCompany || 'THE PRODUCER'}</strong> and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as <strong>{metadata?.projectName || 'THE PROJECT'}</strong>.
-                    </p>
-                    <p>
-                        1. <strong>Usage Rights:</strong> I grant Producer the irrevocable, perpetual, worldwide right to use, reproduce, modify, distribute, and display the Materials in any media now known or hereafter created, including but not limited to television, theatrical, digital, streaming, and social media platforms, for any purpose, including advertising, promotion, and trade.
-                    </p>
-                    <p>
-                        2. <strong>Compensation:</strong> I acknowledge that I have received all agreed-upon compensation (if any) and that no further payment is due.
-                    </p>
-                    <p>
-                        3. <strong>Waiver:</strong> I waive any right to inspect or approve the finished product or any advertising copy or printed matter that may be used in connection therewith. I release Producer from any liability associated with the use of the Materials, including claims for invasion of privacy or right of publicity.
-                    </p>
-                    <p>
-                        I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.
-                    </p>
+                <div className="flex-1 overflow-y-auto pr-2 relative group">
+                    {/* Toggle Switch (Hidden on Print) */}
+                    {!isPrinting && !isLocked && (
+                        <div className="absolute top-0 right-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                onClick={toggleCustomLegal}
+                                className="text-[9px] font-bold uppercase bg-zinc-100 px-2 py-1 rounded hover:bg-zinc-200 text-zinc-500"
+                            >
+                                {data.isCustom ? 'Use Standard Template' : 'Use Custom Text'}
+                            </button>
+                        </div>
+                    )}
+
+                    {data.isCustom ? (
+                        <div className="h-full">
+                            {isLocked || isPrinting ? (
+                                <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-80 text-[10px]">
+                                    {data.customLegalText || "No custom terms provided."}
+                                </p>
+                            ) : (
+                                <textarea
+                                    className="w-full h-full min-h-[300px] p-2 bg-zinc-50 border border-dashed border-zinc-200 rounded text-[10px] leading-relaxed resize-none outline-none focus:border-black placeholder:text-zinc-400"
+                                    placeholder="Paste custom legal release text here..."
+                                    value={localData.customLegalText || ''}
+                                    onChange={e => handleChange('customLegalText', e.target.value)}
+                                    onBlur={() => handleBlur('customLegalText')}
+                                />
+                            )}
+                        </div>
+                    ) : (
+                        <div className="text-justify leading-relaxed opacity-80 text-[10px] space-y-3">
+                            <p>
+                                I, the undersigned, hereby grant permission to <strong>{localData.productionCompany || 'THE PRODUCER'}</strong>{metadata?.clientName ? `, and <strong>{metadata.clientName}</strong>` : ''} and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as <strong>{metadata?.projectName || 'THE PROJECT'}</strong>.
+                            </p>
+                            <p>
+                                1. <strong>Usage Rights:</strong> I grant Producer the irrevocable, perpetual, worldwide right to use, reproduce, modify, distribute, and display the Materials in any media now known or hereafter created, including but not limited to television, theatrical, digital, streaming, and social media platforms, for any purpose, including advertising, promotion, and trade.
+                            </p>
+                            <p>
+                                2. <strong>Compensation:</strong> I acknowledge that I have received all agreed-upon compensation (if any) and that no further payment is due.
+                            </p>
+                            <p>
+                                3. <strong>Waiver:</strong> I waive any right to inspect or approve the finished product or any advertising copy or printed matter that may be used in connection therewith. I release Producer from any liability associated with the use of the Materials, including claims for invasion of privacy or right of publicity.
+                            </p>
+                            <p>
+                                I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.
+                            </p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Talent Details */}
@@ -151,8 +209,9 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div>
                             <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Talent Name</label>
                             <input
-                                value={data.talentName || ''}
-                                onChange={e => updateField('talentName', e.target.value)}
+                                value={localData.talentName || ''}
+                                onChange={e => handleChange('talentName', e.target.value)}
+                                onBlur={() => handleBlur('talentName')}
                                 className="w-full bg-white border border-zinc-200 p-2 rounded text-sm font-bold"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
@@ -161,8 +220,9 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div>
                             <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Role / Character</label>
                             <input
-                                value={data.role || ''}
-                                onChange={e => updateField('role', e.target.value)}
+                                value={localData.role || ''}
+                                onChange={e => handleChange('role', e.target.value)}
+                                onBlur={() => handleBlur('role')}
                                 className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
                                 placeholder="e.g. Hero, Extra"
                                 disabled={isLocked || !!data.signatureUrl}
@@ -171,8 +231,9 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div>
                             <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Email</label>
                             <input
-                                value={data.email || ''}
-                                onChange={e => updateField('email', e.target.value)}
+                                value={localData.email || ''}
+                                onChange={e => handleChange('email', e.target.value)}
+                                onBlur={() => handleBlur('email')}
                                 className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
                                 placeholder="email@example.com"
                                 disabled={isLocked || !!data.signatureUrl}
@@ -181,8 +242,9 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div>
                             <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Phone</label>
                             <input
-                                value={data.phone || ''}
-                                onChange={e => updateField('phone', e.target.value)}
+                                value={localData.phone || ''}
+                                onChange={e => handleChange('phone', e.target.value)}
+                                onBlur={() => handleBlur('phone')}
                                 className="w-full bg-white border border-zinc-200 p-2 rounded text-sm"
                                 placeholder="(555) 555-5555"
                                 disabled={isLocked || !!data.signatureUrl}
