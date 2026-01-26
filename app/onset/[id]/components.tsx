@@ -3,6 +3,16 @@ import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } f
 import { supabase } from '@/lib/supabase';
 import SignatureCanvas from 'react-signature-canvas';
 
+const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to THE PRODUCER and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as THE PROJECT.
+
+1. Usage Rights: I grant Producer the irrevocable, perpetual, worldwide right to use, reproduce, modify, distribute, and display the Materials in any media now known or hereafter created, including but not limited to television, theatrical, digital, streaming, and social media platforms, for any purpose, including advertising, promotion, and trade.
+
+2. Compensation: I acknowledge that I have received all agreed-upon compensation (if any) and that no further payment is due.
+
+3. Waiver: I waive any right to inspect or approve the finished product or any advertising copy or printed matter that may be used in connection therewith. I release Producer from any liability associated with the use of the Materials, including claims for invasion of privacy or right of publicity.
+
+I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.`;
+
 /* --------------------------------------------------------------------------------
  * CONSTANTS & TYPES
  * -------------------------------------------------------------------------------- */
@@ -1655,8 +1665,19 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                         </div>
                     ) : (
                         <div className="space-y-4 pt-4 border-t border-zinc-800">
-                            <p className="text-[10px] uppercase font-bold text-zinc-400 text-center tracking-widest mb-2">Sign Here</p>
-                            <div className="bg-white rounded overflow-hidden">
+                            {/* Full Legal Text Display for Mobile */}
+                            <div className="bg-zinc-950 p-4 rounded-lg border border-zinc-900 text-[10px] text-zinc-400 leading-relaxed max-h-[200px] overflow-y-auto mb-4 text-justify">
+                                <p className="whitespace-pre-wrap">
+                                    {d.isCustom
+                                        ? (d.customLegalText || "No custom terms provided.")
+                                        : (d.standardLegalText || DEFAULT_STANDARD_TEXT).replace(/THE PRODUCER/g, d.productionCompany || 'THE PRODUCER')
+                                    }
+                                </p>
+                            </div>
+
+                            <p className="text-[10px] uppercase font-bold text-zinc-400 text-center tracking-widest mb-2">Sign Below</p>
+
+                            <div className="bg-white rounded overflow-hidden mb-4">
                                 <SignatureCanvas
                                     ref={sigPad}
                                     penColor="black"
@@ -1681,30 +1702,6 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                                 >
                                     {isSaving ? 'Saving...' : 'Accept & Sign'}
                                 </button>
-                            </div>
-                            {/* Full Legal Text Display for Mobile */}
-                            <div className="bg-zinc-950 p-4 rounded-lg border border-zinc-900 text-[10px] text-zinc-400 leading-relaxed max-h-[200px] overflow-y-auto mb-4 text-justify">
-                                {d.isCustom ? (
-                                    <p className="whitespace-pre-wrap">{d.customLegalText || "No custom terms provided."}</p>
-                                ) : (
-                                    <div className="space-y-3">
-                                        <p>
-                                            I, the undersigned, hereby grant permission to <strong>{d.productionCompany || 'THE PRODUCER'}</strong> and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production.
-                                        </p>
-                                        <p>
-                                            1. <strong>Usage Rights:</strong> I grant Producer the irrevocable, perpetual, worldwide right to use, reproduce, modify, distribute, and display the Materials in any media now known or hereafter created, including but not limited to television, theatrical, digital, streaming, and social media platforms, for any purpose, including advertising, promotion, and trade.
-                                        </p>
-                                        <p>
-                                            2. <strong>Compensation:</strong> I acknowledge that I have received all agreed-upon compensation (if any) and that no further payment is due.
-                                        </p>
-                                        <p>
-                                            3. <strong>Waiver:</strong> I waive any right to inspect or approve the finished product or any advertising copy or printed matter that may be used in connection therewith. I release Producer from any liability associated with the use of the Materials, including claims for invasion of privacy or right of publicity.
-                                        </p>
-                                        <p>
-                                            I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.
-                                        </p>
-                                    </div>
-                                )}
                             </div>
 
                             <p className="text-[10px] uppercase font-bold text-zinc-400 text-center tracking-widest mb-2">Sign Above</p>

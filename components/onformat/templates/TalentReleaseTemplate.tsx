@@ -15,8 +15,19 @@ interface TalentReleaseData {
     signedAt?: string;
     isCustom?: boolean;
     customLegalText?: string;
+    standardLegalText?: string; // Editable standard text
     termsAccepted?: boolean;
 }
+
+const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to THE PRODUCER and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as THE PROJECT.
+
+1. Usage Rights: I grant Producer the irrevocable, perpetual, worldwide right to use, reproduce, modify, distribute, and display the Materials in any media now known or hereafter created, including but not limited to television, theatrical, digital, streaming, and social media platforms, for any purpose, including advertising, promotion, and trade.
+
+2. Compensation: I acknowledge that I have received all agreed-upon compensation (if any) and that no further payment is due.
+
+3. Waiver: I waive any right to inspect or approve the finished product or any advertising copy or printed matter that may be used in connection therewith. I release Producer from any liability associated with the use of the Materials, including claims for invasion of privacy or right of publicity.
+
+I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.`;
 
 interface TalentReleaseTemplateProps {
     data: Partial<TalentReleaseData>;
@@ -37,7 +48,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
     // Sync local state when props change (externally)
     React.useEffect(() => {
         setLocalData(data);
-    }, [data.talentName, data.role, data.email, data.phone, data.productionCompany, data.shootDate, data.customLegalText, data.isCustom]);
+    }, [data.talentName, data.role, data.email, data.phone, data.productionCompany, data.shootDate, data.customLegalText, data.standardLegalText, data.isCustom]);
 
     // Initialize defaults
     React.useEffect(() => {
@@ -172,42 +183,21 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                 {/* Legal Text */}
                 <div className="flex-1 overflow-y-auto pr-2 relative">
-
-                    {data.isCustom ? (
-                        <div className="h-full">
-                            {isLocked || isPrinting ? (
-                                <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-80 text-[10px]">
-                                    {data.customLegalText || "No custom terms provided."}
-                                </p>
-                            ) : (
-                                <textarea
-                                    className="w-full h-full min-h-[300px] p-2 bg-zinc-50 border border-dashed border-zinc-200 rounded text-[10px] leading-relaxed resize-none outline-none focus:border-black placeholder:text-zinc-400"
-                                    placeholder="Paste custom legal release text here..."
-                                    value={localData.customLegalText || ''}
-                                    onChange={e => handleChange('customLegalText', e.target.value)}
-                                    onBlur={() => handleBlur('customLegalText')}
-                                />
-                            )}
-                        </div>
-                    ) : (
-                        <div className="text-justify leading-relaxed opacity-80 text-[10px] space-y-3">
-                            <p>
-                                I, the undersigned, hereby grant permission to <strong>{localData.productionCompany || 'THE PRODUCER'}</strong>{metadata?.clientName ? `, and <strong>{metadata.clientName}</strong>` : ''} and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as <strong>{metadata?.projectName || 'THE PROJECT'}</strong>.
+                    <div className="h-full">
+                        {isLocked || isPrinting ? (
+                            <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-80 text-[10px]">
+                                {data.isCustom ? (data.customLegalText || "No custom terms provided.") : (localData.standardLegalText || DEFAULT_STANDARD_TEXT)}
                             </p>
-                            <p>
-                                1. <strong>Usage Rights:</strong> I grant Producer the irrevocable, perpetual, worldwide right to use, reproduce, modify, distribute, and display the Materials in any media now known or hereafter created, including but not limited to television, theatrical, digital, streaming, and social media platforms, for any purpose, including advertising, promotion, and trade.
-                            </p>
-                            <p>
-                                2. <strong>Compensation:</strong> I acknowledge that I have received all agreed-upon compensation (if any) and that no further payment is due.
-                            </p>
-                            <p>
-                                3. <strong>Waiver:</strong> I waive any right to inspect or approve the finished product or any advertising copy or printed matter that may be used in connection therewith. I release Producer from any liability associated with the use of the Materials, including claims for invasion of privacy or right of publicity.
-                            </p>
-                            <p>
-                                I represent that I am over 18 years of age and have the right to enter into this agreement. If under 18, a parent or guardian must sign below.
-                            </p>
-                        </div>
-                    )}
+                        ) : (
+                            <textarea
+                                className="w-full h-full min-h-[300px] p-2 bg-zinc-50 border border-dashed border-zinc-200 rounded text-[10px] leading-relaxed resize-none outline-none focus:border-black placeholder:text-zinc-400"
+                                placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
+                                value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_STANDARD_TEXT)}
+                                onChange={e => handleChange(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
+                                onBlur={() => handleBlur(data.isCustom ? 'customLegalText' : 'standardLegalText')}
+                            />
+                        )}
+                    </div>
                 </div>
 
                 {/* Talent Details */}
