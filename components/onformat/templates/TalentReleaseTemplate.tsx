@@ -152,14 +152,20 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                     </div>
                 </div>
 
-                {/* Toggle Switch (Hidden on Print) */}
+                {/* Custom Toggle Pills */}
                 {!isPrinting && !isLocked && (
-                    <div className="flex justify-end mb-2">
+                    <div className="flex justify-end mb-2 gap-2">
                         <button
-                            onClick={toggleCustomLegal}
-                            className="text-[9px] font-bold uppercase bg-zinc-100 px-2 py-1 rounded hover:bg-zinc-200 text-zinc-500 border border-zinc-200"
+                            onClick={() => onUpdate({ isCustom: false })}
+                            className={`text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border transition-all ${!data.isCustom ? 'bg-black text-white border-black' : 'bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
                         >
-                            {data.isCustom ? 'Revert to Standard Template' : 'Switch to Custom Text'}
+                            Standard Release
+                        </button>
+                        <button
+                            onClick={() => onUpdate({ isCustom: true })}
+                            className={`text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border transition-all ${data.isCustom ? 'bg-black text-white border-black' : 'bg-zinc-50 text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
+                        >
+                            Custom Release
                         </button>
                     </div>
                 )}
