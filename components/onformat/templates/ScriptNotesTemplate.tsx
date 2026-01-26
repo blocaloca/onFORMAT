@@ -159,26 +159,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             </div>
                         )}
 
-                        {!isLocked && !isPrinting && (
-                            <div className="flex items-center justify-start gap-4 pb-2 print:hidden w-full">
-                                <button
-                                    onClick={handleAddItem}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
-                                >
-                                    <Plus size={10} /> Add Scene
-                                </button>
 
-                                {metadata?.importedAVScript && (
-                                    <button
-                                        onClick={handleImportScript}
-                                        className="text-[10px] text-zinc-300 hover:text-blue-500 hover:underline transition-colors"
-                                        title="Import AV Script"
-                                    >
-                                        or import script
-                                    </button>
-                                )}
-                            </div>
-                        )}
 
                         {/* Table Header */}
                         <div className="grid grid-cols-[60px_1fr_1fr_100px_1.5fr_30px] gap-6 border-b border-black pb-2 items-end">
@@ -306,8 +287,30 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                 )
                             })}
                         </div>
+
+                        {/* Pagination / Add Button Footer */}
+                        {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
+                            <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
+                                <button
+                                    onClick={handleAddItem}
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                >
+                                    <Plus size={10} /> Add Scene
+                                </button>
+
+                                {metadata?.importedAVScript && (
+                                    <button
+                                        onClick={handleImportScript}
+                                        className="text-[10px] text-zinc-300 hover:text-blue-500 hover:underline transition-colors"
+                                        title="Import AV Script"
+                                    >
+                                        or import script
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
-                </DocumentLayout>
+                </DocumentLayout >
             ))}
         </>
     );
