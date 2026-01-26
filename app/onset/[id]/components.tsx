@@ -41,7 +41,9 @@ export const DOC_LABELS: Record<string, string> = {
     'crew-list': 'Crew List',
     'camera-report': 'Camera Report',
     'on-set-notes': 'On-Set Notes',
-    'releases': 'Releases'
+    'releases': 'Releases',
+    'script-notes': 'Script Notes',
+    'sound-report': 'Sound Report'
 };
 
 /* --------------------------------------------------------------------------------
@@ -1813,6 +1815,475 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     </div>
                 ))
             )}
+        </div>
+    );
+};
+
+/* --------------------------------------------------------------------------------
+ * SCRIPT NOTES VIEW
+ * -------------------------------------------------------------------------------- */
+
+export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) => {
+    const items = data?.items || [];
+    const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    const [form, setForm] = useState({
+        scene: '',
+        visual: '',
+        audio: '',
+        bestTake: '',
+        notes: ''
+    });
+
+    const handleStartEdit = (item: any) => {
+        setForm({
+            scene: item.scene || '',
+            visual: item.visual || '',
+            audio: item.audio || '',
+            bestTake: item.bestTake || '',
+            notes: item.notes || ''
+        });
+        setEditingId(item.id);
+        setIsAdding(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancel = () => {
+        setIsAdding(false);
+        setEditingId(null);
+        setForm({
+            scene: '',
+            visual: '',
+            audio: '',
+            bestTake: '',
+            notes: ''
+        });
+    };
+
+    const handleSubmit = () => {
+        const payload = { ...form };
+
+        if (editingId && onUpdate) {
+            const updatedItem = {
+                id: editingId,
+                ...payload
+            };
+            onUpdate(updatedItem);
+        } else if (onAdd) {
+            const newItem = {
+                id: `note-${Date.now()}`,
+                ...payload
+            };
+            onAdd(newItem);
+        }
+        handleCancel();
+    };
+
+    // Use a local EmptyState if imported one is not available or reuse the one in scope? 
+    // EmptyState is defined earlier in this file at line 132. It should be available if these components are at the end.
+
+    return (
+        <div className="space-y-4 max-w-lg mx-auto pb-10">
+            {/* Header / Add Button */}
+            {!isAdding && (
+                <button
+                    onClick={() => setIsAdding(true)}
+                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                >
+                    <Plus size={16} />
+                    <span>Add Scene Note</span>
+                </button>
+            )}
+
+            {/* Form */}
+            {isAdding && (
+                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
+                        <span className="text-xs font-bold uppercase text-white">{editingId ? 'Edit Note' : 'New Note'}</span>
+                        <button onClick={handleCancel}><X size={16} className="text-zinc-400" /></button>
+                    </div>
+
+                    <div className="flex gap-4 mb-4">
+                        <div className="flex-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Scene</label>
+                            <input
+                                value={form.scene}
+                                onChange={e => setForm({ ...form, scene: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded text-center font-bold"
+                                placeholder="#"
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Best Take</label>
+                            <input
+                                value={form.bestTake}
+                                onChange={e => setForm({ ...form, bestTake: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded text-center font-bold"
+                                placeholder="1"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Visual</label>
+                        <textarea
+                            value={form.visual}
+                            onChange={e => setForm({ ...form, visual: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded h-20 text-sm"
+                            placeholder="Description..."
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Audio</label>
+                        <textarea
+                            value={form.audio}
+                            onChange={e => setForm({ ...form, audio: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded h-20 text-sm"
+                            placeholder="Dialogue/Sound..."
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Supervisor Notes</label>
+                        <textarea
+                            value={form.notes}
+                            onChange={e => setForm({ ...form, notes: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded h-20 text-sm italic text-zinc-400"
+                            placeholder="Notes..."
+                        />
+                    </div>
+
+                    <div className="flex gap-2">
+                        {editingId && (
+                            <button onClick={handleCancel} className="flex-1 bg-zinc-800 text-white font-bold uppercase text-xs py-3 rounded">
+                                Cancel
+                            </button>
+                        )}
+                        <button onClick={handleSubmit} className="flex-1 bg-emerald-600 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2">
+                            <Save size={14} />
+                            <span>{editingId ? 'Update' : 'Save'}</span>
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* List */}
+            <div className="space-y-3">
+                {items.length === 0 && !isAdding ? (
+                    <EmptyState label="Script Notes" />
+                ) : (
+                    items.slice().reverse().map((item: any, i: number) => {
+                        const isConfirming = deleteConfirmId === item.id;
+                        return (
+                            <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 relative group">
+                                <div className="flex justify-between items-start mb-3 border-b border-zinc-800 pb-2">
+                                    <div className="flex items-center gap-3">
+                                        <div className="bg-zinc-800 px-2 py-1 rounded border border-zinc-700">
+                                            <span className="text-[9px] uppercase font-bold text-zinc-500 block text-center leading-none mb-0.5">Scene</span>
+                                            <span className="text-sm font-black text-white block text-center leading-none">{item.scene || '-'}</span>
+                                        </div>
+                                        {item.bestTake && (
+                                            <div className="bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/30">
+                                                <span className="text-[9px] uppercase font-bold text-emerald-500 block text-center leading-none mb-0.5">Best Take</span>
+                                                <span className="text-sm font-black text-white block text-center leading-none">{item.bestTake}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {onUpdate && !isConfirming && (
+                                            <button onClick={() => handleStartEdit(item)} className="text-zinc-500 hover:text-white"><Edit2 size={14} /></button>
+                                        )}
+                                        {onDelete && !isConfirming && (
+                                            <button onClick={() => setDeleteConfirmId(item.id)} className="text-zinc-500 hover:text-red-500"><Trash2 size={14} /></button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {isConfirming ? (
+                                    <div className="bg-red-900/10 border border-red-500/20 p-3 rounded mb-2">
+                                        <p className="text-[10px] text-red-400 font-bold uppercase mb-2 text-center">Delete Note?</p>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => setDeleteConfirmId(null)} className="flex-1 bg-zinc-800 text-xs py-2 rounded">Cancel</button>
+                                            <button onClick={() => { onDelete && onDelete(item.id); setDeleteConfirmId(null); }} className="flex-1 bg-red-500 text-black font-bold text-xs py-2 rounded">Delete</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-3">
+                                        {item.visual && (
+                                            <div>
+                                                <span className="text-[9px] uppercase font-bold text-zinc-500">Visual</span>
+                                                <p className="text-xs text-zinc-300 whitespace-pre-wrap">{item.visual}</p>
+                                            </div>
+                                        )}
+                                        {item.audio && (
+                                            <div>
+                                                <span className="text-[9px] uppercase font-bold text-zinc-500">Audio</span>
+                                                <p className="text-xs text-zinc-300 whitespace-pre-wrap">{item.audio}</p>
+                                            </div>
+                                        )}
+                                        {item.notes && (
+                                            <div className="bg-black/20 p-2 rounded">
+                                                <p className="text-xs text-zinc-400 italic whitespace-pre-wrap">{item.notes}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })
+                )}
+            </div>
+            {!isAdding && items.length > 5 && (
+                <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-4">End of Script Notes</div>
+            )}
+        </div>
+    );
+};
+
+/* --------------------------------------------------------------------------------
+ * SOUND REPORT VIEW
+ * -------------------------------------------------------------------------------- */
+
+export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) => {
+    const takes = data?.takes || [];
+    const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    // Initial constants for pre-filling
+    const [lastScene, setLastScene] = useState('');
+    const [lastTakeNum, setLastTakeNum] = useState(0);
+
+    const [form, setForm] = useState({
+        scene: '',
+        take: '',
+        timecode: '',
+        description: '',
+        tracks: '',
+        notes: '',
+        circled: false
+    });
+
+    // Auto-increment logic
+    useEffect(() => {
+        if (takes.length > 0) {
+            const last = takes[takes.length - 1];
+            setLastScene(last.scene || '');
+            const tNum = parseInt(last.take) || 0;
+            setLastTakeNum(tNum);
+        }
+    }, [takes]);
+
+    const handleStartAdd = () => {
+        setForm({
+            scene: lastScene,
+            take: String(lastTakeNum + 1),
+            timecode: '',
+            description: '',
+            tracks: '',
+            notes: '',
+            circled: false
+        });
+        setIsAdding(true);
+        setEditingId(null);
+    };
+
+    const handleStartEdit = (item: any) => {
+        setForm({
+            scene: item.scene || '',
+            take: item.take || '',
+            timecode: item.timecode || '',
+            description: item.description || '',
+            tracks: item.tracks || '',
+            notes: item.notes || '',
+            circled: item.circled || false
+        });
+        setEditingId(item.id);
+        setIsAdding(true);
+    };
+
+    const handleCancel = () => {
+        setIsAdding(false);
+        setEditingId(null);
+    };
+
+    const handleSubmit = () => {
+        const payload = { ...form };
+        if (editingId && onUpdate) {
+            onUpdate({ id: editingId, ...payload });
+        } else if (onAdd) {
+            onAdd({ id: `snd-${Date.now()}`, ...payload });
+        }
+        handleCancel();
+    };
+
+    return (
+        <div className="space-y-4 max-w-lg mx-auto pb-10">
+            {/* Header / Add Button */}
+            {!isAdding && (
+                <div className="space-y-4">
+                    {/* Mini Header Stats */}
+                    <div className="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-zinc-500 mb-2">
+                        <div className="bg-zinc-900 border border-zinc-800 p-2 rounded text-center">
+                            Roll: <span className="text-white ml-1">{data?.roll || '1'}</span>
+                        </div>
+                        <div className="bg-zinc-900 border border-zinc-800 p-2 rounded text-center">
+                            SR: <span className="text-white ml-1">{data?.sampleRate || '48k'}</span>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={handleStartAdd}
+                        className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+                    >
+                        <Plus size={16} />
+                        <span>Log Take</span>
+                    </button>
+                </div>
+            )}
+
+            {/* Form */}
+            {isAdding && (
+                <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
+                        <span className="text-xs font-bold uppercase text-white">{editingId ? 'Edit Take' : 'Log Take'}</span>
+                        <button onClick={handleCancel}><X size={16} className="text-zinc-400" /></button>
+                    </div>
+
+                    <div className="flex gap-4 mb-3">
+                        <div className="flex-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Scene</label>
+                            <input
+                                value={form.scene}
+                                onChange={e => setForm({ ...form, scene: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded text-center font-bold"
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Take</label>
+                            <input
+                                value={form.take}
+                                onChange={e => setForm({ ...form, take: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded text-center font-bold"
+                            />
+                        </div>
+                        <div className="flex-[2]">
+                            <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Timecode</label>
+                            <input
+                                value={form.timecode}
+                                onChange={e => setForm({ ...form, timecode: e.target.value })}
+                                className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded text-center font-mono"
+                                placeholder="00:00:00:00"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 mb-3 bg-zinc-950 p-2 rounded border border-zinc-800 cursor-pointer" onClick={() => setForm({ ...form, circled: !form.circled })}>
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${form.circled ? 'bg-emerald-500 border-emerald-500 text-black' : 'border-zinc-600'}`}>
+                            {form.circled && <Check size={10} />}
+                        </div>
+                        <span className="text-[10px] uppercase font-bold text-zinc-400 select-none">Circle Take (Best)</span>
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Description</label>
+                        <input
+                            value={form.description}
+                            onChange={e => setForm({ ...form, description: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded"
+                            placeholder="Action description..."
+                        />
+                    </div>
+
+                    <div className="mb-3">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Tracks</label>
+                        <input
+                            value={form.tracks}
+                            onChange={e => setForm({ ...form, tracks: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded text-xs font-mono"
+                            placeholder="Boom, Lav 1, etc"
+                        />
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Notes</label>
+                        <textarea
+                            value={form.notes}
+                            onChange={e => setForm({ ...form, notes: e.target.value })}
+                            className="w-full bg-zinc-950 border border-zinc-800 text-white p-2 rounded h-16 text-xs italic"
+                            placeholder="Sound issues, planes, etc"
+                        />
+                    </div>
+
+                    <div className="flex gap-2">
+                        <button onClick={handleSubmit} className="w-full bg-emerald-600 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2">
+                            <Save size={14} />
+                            <span>{editingId ? 'Update Take' : 'Save Take'}</span>
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* List */}
+            <div className="space-y-2">
+                {takes.length === 0 && !isAdding ? (
+                    <EmptyState label="Takes" />
+                ) : (
+                    takes.slice().reverse().map((take: any, i: number) => {
+                        const isConfirming = deleteConfirmId === take.id;
+                        return (
+                            <div key={take.id || i} className={`bg-zinc-900 p-3 rounded-lg border relative flex items-center gap-3 ${take.circled ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.1)]' : 'border-zinc-800'}`}>
+
+                                {/* Scene/Take Badge */}
+                                <div className="flex flex-col items-center justify-center min-w-[50px] bg-zinc-950 rounded border border-zinc-800 p-1">
+                                    <span className="text-[10px] font-bold text-zinc-500 leading-none">SCN</span>
+                                    <span className="text-base font-black text-white leading-tight">{take.scene}</span>
+                                    <div className="w-full h-px bg-zinc-800 my-0.5" />
+                                    <span className="text-[10px] font-bold text-zinc-500 leading-none">TK</span>
+                                    <span className={`text-base font-black leading-tight ${take.circled ? 'text-emerald-500' : 'text-white'}`}>{take.take}</span>
+                                </div>
+
+                                {/* Details */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-mono text-emerald-500 text-xs font-bold">{take.timecode}</span>
+                                        {take.circled && <span className="text-[9px] bg-emerald-500 text-black font-bold px-1 rounded-sm">CIRCLED</span>}
+                                    </div>
+                                    <p className="text-xs font-bold text-white truncate mb-0.5">{take.description || 'No Description'}</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {take.tracks && <span className="text-[9px] bg-zinc-800 px-1 rounded text-zinc-400 font-mono border border-zinc-700">{take.tracks}</span>}
+                                        {take.notes && <span className="text-[9px] text-zinc-500 italic truncate">{take.notes}</span>}
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex flex-col gap-2">
+                                    {onUpdate && !isConfirming && (
+                                        <button onClick={() => handleStartEdit(take)} className="text-zinc-600 hover:text-white"><Edit2 size={16} /></button>
+                                    )}
+                                    {onDelete && !isConfirming && (
+                                        <button onClick={() => setDeleteConfirmId(take.id)} className="text-zinc-600 hover:text-red-500"><Trash2 size={16} /></button>
+                                    )}
+                                </div>
+
+                                {isConfirming && (
+                                    <div className="absolute inset-0 bg-zinc-900 flex items-center justify-between px-4 rounded-lg z-10 border border-red-500">
+                                        <span className="text-xs font-bold text-red-500 uppercase">Delete?</span>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-400 bg-zinc-800 px-3 py-1 rounded">No</button>
+                                            <button onClick={() => { onDelete && onDelete(take.id); setDeleteConfirmId(null); }} className="text-xs text-white bg-red-600 px-3 py-1 rounded">Yes</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })
+                )}
+            </div>
         </div>
     );
 };

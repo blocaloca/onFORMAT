@@ -19,7 +19,9 @@ import {
     MobileCameraReportView,
     MobileOnSetNotesView,
     MobileLocationsView,
-    MobileReleasesView
+    MobileReleasesView,
+    MobileScriptNotesView,
+    MobileSoundReportView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive } from 'lucide-react';
 
@@ -587,9 +589,87 @@ export default function OnSetMobilePage() {
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
             fetchData();
 
-        } catch (e) {
-            console.error(e);
-        }
+        } catch (e) { console.error(e); }
+    };
+
+    const handleUpdateScriptNotes = async (action: 'add' | 'update' | 'delete', payload: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const logPhaseKey = phases.ON_SET ? 'ON_SET' : 'PRODUCTION'; // Fallback check
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let raw = updatedPhases[logPhaseKey].drafts['script-notes'];
+            let doc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(doc)) {
+                if (doc.length > 0) history = doc.slice(1);
+                doc = doc[0];
+            }
+            if (!doc) doc = {};
+            if (!doc.items) doc.items = [];
+
+            let list = [...doc.items];
+            if (action === 'add') list.push(payload);
+            else if (action === 'update') {
+                const idx = list.findIndex((i: any) => i.id === payload.id);
+                if (idx >= 0) list[idx] = payload;
+            } else if (action === 'delete') {
+                list = list.filter((i: any) => i.id !== payload);
+            }
+
+            doc.items = list;
+            updatedPhases[logPhaseKey].drafts['script-notes'] = JSON.stringify([doc, ...history]);
+
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    };
+
+    const handleUpdateSoundReport = async (action: 'add' | 'update' | 'delete', payload: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const logPhaseKey = phases.ON_SET ? 'ON_SET' : 'PRODUCTION';
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let raw = updatedPhases[logPhaseKey].drafts['sound-report'];
+            let doc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(doc)) {
+                if (doc.length > 0) history = doc.slice(1);
+                doc = doc[0];
+            }
+            if (!doc) doc = {};
+            if (!doc.takes) doc.takes = [];
+
+            let list = [...doc.takes];
+            if (action === 'add') list.push(payload);
+            else if (action === 'update') {
+                const idx = list.findIndex((i: any) => i.id === payload.id);
+                if (idx >= 0) list[idx] = payload;
+            } else if (action === 'delete') {
+                list = list.filter((i: any) => i.id !== payload);
+            }
+
+            doc.takes = list;
+            updatedPhases[logPhaseKey].drafts['sound-report'] = JSON.stringify([doc, ...history]);
+
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
     };
 
     if (showLogin) {
@@ -793,9 +873,21 @@ export default function OnSetMobilePage() {
                             />}
                             {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
                             {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
+                            {activeTab === 'script-notes' && <MobileScriptNotesView
+                                data={data.docs['script-notes']}
+                                onAdd={(item: any) => handleUpdateScriptNotes('add', item)}
+                                onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
+                                onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
+                            />}
+                            {activeTab === 'sound-report' && <MobileSoundReportView
+                                data={data.docs['sound-report']}
+                                onAdd={(item: any) => handleUpdateSoundReport('add', item)}
+                                onUpdate={(item: any) => handleUpdateSoundReport('update', item)}
+                                onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
+                            />}
 
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>
