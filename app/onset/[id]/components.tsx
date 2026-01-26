@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Save, Check, HardDrive, AlertCircle } from 'lucide-react';
+import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 /* --------------------------------------------------------------------------------
@@ -347,7 +347,31 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
             <div>
                 <h3 className="text-xs font-black uppercase text-zinc-500 mb-2 pl-1">Schedule</h3>
                 <div className="space-y-0.5">
-                    {data.events && data.events.length > 0 ? (
+                    {(scheduleData?.items && scheduleData.items.length > 0) ? (
+                        scheduleData.items.map((item: any, i: number) => (
+                            <div key={i} className="bg-zinc-900 p-3 rounded-sm border-l-2 border-emerald-500 flex gap-3">
+                                <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{item.time || '00:00'}</span>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <span className="text-[10px] font-black uppercase text-zinc-300">
+                                            {item.scene ? `SCENE ${item.scene}` : (item.type || 'EVENT')}
+                                        </span>
+                                        <span className="text-[9px] font-mono text-zinc-600 uppercase truncate max-w-[80px]">
+                                            {item.set || item.location}
+                                        </span>
+                                    </div>
+                                    {(item.intExt || item.dayNight) && (
+                                        <div className="flex items-center gap-1 text-[9px] text-zinc-500 uppercase font-bold mb-0.5">
+                                            {item.intExt && <span>{item.intExt}</span>}
+                                            {item.intExt && item.dayNight && <span>•</span>}
+                                            {item.dayNight && <span>{item.dayNight}</span>}
+                                        </div>
+                                    )}
+                                    <p className="text-xs text-zinc-400 truncate">{item.description}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (data.events && data.events.length > 0 ? (
                         data.events.map((evt: any, i: number) => (
                             <div key={i} className="bg-zinc-900 p-3 rounded-sm border-l-2 border-emerald-500 flex gap-3">
                                 <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{evt.time || '00:00'}</span>
@@ -364,7 +388,7 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
                         <div className="bg-zinc-900 p-3 rounded-sm border-l-2 border-zinc-500">
                             <span className="text-xs text-zinc-400">No events scheduled.</span>
                         </div>
-                    )}
+                    ))}
                 </div>
             </div>
 
@@ -1139,8 +1163,11 @@ export const ScheduleView = ({ data }: { data: any }) => {
     );
 };
 
-export const MobileOnSetNotesView = ({ data, onAdd }: { data: any, onAdd?: (item: any) => void }) => {
+export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
     const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
         description: '',
@@ -1149,29 +1176,61 @@ export const MobileOnSetNotesView = ({ data, onAdd }: { data: any, onAdd?: (item
 
     const items = data?.items || [];
 
-    const handleSubmit = () => {
-        if (!onAdd) return;
-        if (!form.description && !form.body) return; // Prevent empty
+    const handleStartEdit = (item: any) => {
+        setForm({
+            time: item.time,
+            description: item.description,
+            body: item.body
+        });
+        setEditingId(item.id);
+        setIsAdding(true);
+        // Scroll to top? (Form is at top)
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-        const newItem = {
-            id: `note-${Date.now()}`,
-            date: new Date().toLocaleDateString(), // reliable local date for mobile
-            ...form
-        };
-
-        onAdd(newItem);
+    const handleCancel = () => {
+        setIsAdding(false);
+        setEditingId(null);
         setForm({
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
             description: '',
             body: ''
         });
-        setIsAdding(false);
+    };
+
+    const handleSubmit = () => {
+        if (!form.description && !form.body) return; // Prevent empty
+
+        if (editingId && onUpdate) {
+            // Update Existing
+            const updatedItem = {
+                id: editingId,
+                // Keep original date or allow update? Usually keep original unless editable.
+                // We'll trust the form content. Date isn't in form, so we grab it from original item?
+                // The item ID lookup handled by parent or we find it here to preserve other fields?
+                // For simplicity, we pass back the fields we edit. The parent merges.
+                // Actually, let's find the original to be safe about date.
+                date: items.find((i: any) => i.id === editingId)?.date || new Date().toLocaleDateString(),
+                ...form
+            };
+            onUpdate(updatedItem);
+        } else if (onAdd) {
+            // Create New
+            const newItem = {
+                id: `note-${Date.now()}`,
+                date: new Date().toLocaleDateString(),
+                ...form
+            };
+            onAdd(newItem);
+        }
+
+        handleCancel();
     };
 
     return (
         <div className="space-y-4">
             {/* Header Actions */}
-            {onAdd && !isAdding && (
+            {(onAdd || onUpdate) && !isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
                     className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
@@ -1181,12 +1240,12 @@ export const MobileOnSetNotesView = ({ data, onAdd }: { data: any, onAdd?: (item
                 </button>
             )}
 
-            {/* Add Form */}
+            {/* Add/Edit Form */}
             {isAdding && (
                 <div className="bg-zinc-900 border border-zinc-700 rounded-xl p-4 mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-white">New Note</span>
-                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-400" /></button>
+                        <span className="text-xs font-bold uppercase text-white">{editingId ? 'Edit Note' : 'New Note'}</span>
+                        <button onClick={handleCancel}><X size={16} className="text-zinc-400" /></button>
                     </div>
 
                     <div className="mb-3">
@@ -1219,13 +1278,23 @@ export const MobileOnSetNotesView = ({ data, onAdd }: { data: any, onAdd?: (item
                         />
                     </div>
 
-                    <button
-                        onClick={handleSubmit}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
-                    >
-                        <Save size={16} />
-                        <span>Save Note</span>
-                    </button>
+                    <div className="flex gap-2">
+                        {editingId && (
+                            <button
+                                onClick={handleCancel}
+                                className="flex-1 bg-zinc-800 text-white font-bold uppercase text-xs py-3 rounded"
+                            >
+                                Cancel
+                            </button>
+                        )}
+                        <button
+                            onClick={handleSubmit}
+                            className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
+                        >
+                            <Save size={16} />
+                            <span>{editingId ? 'Update Note' : 'Save Note'}</span>
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -1234,20 +1303,69 @@ export const MobileOnSetNotesView = ({ data, onAdd }: { data: any, onAdd?: (item
                 {items.length === 0 && !isAdding ? (
                     <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No notes recorded.</p></div>
                 ) : (
-                    items.slice().reverse().map((item: any, i: number) => (
-                        <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800">
-                            <div className="flex justify-between items-center mb-2 border-b border-zinc-800 pb-2">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-mono text-emerald-500 text-xs font-bold">{item.time}</span>
-                                    <span className="text-[10px] text-zinc-500 font-mono">{item.date}</span>
+                    items.slice().reverse().map((item: any, i: number) => {
+                        const isConfirming = deleteConfirmId === item.id;
+                        return (
+                            <div key={item.id || i} className="bg-zinc-900 p-4 rounded-xl border border-zinc-800 group relative">
+                                <div className="flex justify-between items-center mb-2 border-b border-zinc-800 pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-mono text-emerald-500 text-xs font-bold">{item.time}</span>
+                                        <span className="text-[10px] text-zinc-500 font-mono">{item.date}</span>
+                                    </div>
+                                    <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {/* Edit Button */}
+                                        {onUpdate && !isConfirming && (
+                                            <button
+                                                onClick={() => handleStartEdit(item)}
+                                                className="text-zinc-500 hover:text-white"
+                                            >
+                                                <Edit2 size={14} />
+                                            </button>
+                                        )}
+                                        {/* Delete Button */}
+                                        {onDelete && !isConfirming && (
+                                            <button
+                                                onClick={() => setDeleteConfirmId(item.id)}
+                                                className="text-zinc-500 hover:text-red-500"
+                                            >
+                                                <Trash2 size={14} />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
+
+                                {isConfirming ? (
+                                    <div className="bg-red-900/10 border border-red-500/20 p-3 rounded mb-2 animate-in fade-in">
+                                        <p className="text-[10px] text-red-400 font-bold uppercase mb-2 text-center">Delete this note?</p>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => setDeleteConfirmId(null)}
+                                                className="flex-1 bg-zinc-800 text-xs font-bold py-2 rounded uppercase"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    onDelete && onDelete(item.id);
+                                                    setDeleteConfirmId(null);
+                                                }}
+                                                className="flex-1 bg-red-500 text-xs font-bold py-2 rounded uppercase text-black"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        {item.description && (
+                                            <h4 className="text-sm font-black text-white uppercase mb-2 leading-tight">{item.description}</h4>
+                                        )}
+                                        <p className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">{item.body}</p>
+                                    </>
+                                )}
                             </div>
-                            {item.description && (
-                                <h4 className="text-sm font-black text-white uppercase mb-2 leading-tight">{item.description}</h4>
-                            )}
-                            <p className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">{item.body}</p>
-                        </div>
-                    ))
+                        )
+                    })
                 )}
             </div>
 

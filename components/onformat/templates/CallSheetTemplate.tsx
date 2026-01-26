@@ -52,11 +52,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
     useEffect(() => {
         if (!data.events || data.events.length === 0) {
+            const schedule = (metadata as any)?.importedSchedule;
 
             // Priority: Imported Schedule > Current Date
             let initialDate = '';
-            if ((metadata as any)?.importedSchedule?.date) {
-                initialDate = (metadata as any).importedSchedule.date;
+            if (schedule?.date) {
+                initialDate = schedule.date;
             } else {
                 const now = new Date();
                 const day = String(now.getDate()).padStart(2, '0');
@@ -65,14 +66,26 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                 initialDate = `${month}/${day}/${year}`;
             }
 
+            let newEvents = [
+                { id: 'evt-1', time: '', type: 'Arrive', description: 'Crew Call', location: 'Basecamp' },
+                { id: 'evt-2', time: '', type: 'Shoot', description: 'Scene 1', location: 'Set' }
+            ];
+
+            if (schedule?.items && schedule.items.length > 0) {
+                newEvents = schedule.items.map((item: any, i: number) => ({
+                    id: `evt-imp-${Date.now()}-${i}`,
+                    time: item.time || '',
+                    type: item.type || 'Shoot',
+                    description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                    location: item.set || item.location || ''
+                }));
+            }
+
             onUpdate({
                 ...data,
                 date: initialDate,
-                crewCall: data.crewCall || '',
-                events: [
-                    { id: 'evt-1', time: '', type: 'Arrive', description: 'Crew Call', location: 'Basecamp' },
-                    { id: 'evt-2', time: '', type: 'Shoot', description: 'Scene 1', location: 'Set' }
-                ]
+                crewCall: data.crewCall || schedule?.callTime || '',
+                events: newEvents
             });
         }
     }, []);
@@ -338,7 +351,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest mb-1">General Call</span>
                                             <input
                                                 type="text"
-                                                value={data.crewCall || ''}
+                                                value={data.crewCall || (metadata as any)?.importedSchedule?.callTime || ''}
                                                 onChange={e => updateField('crewCall', formatTime(e.target.value))}
                                                 className="w-full bg-transparent font-mono text-4xl font-black outline-none text-white placeholder:text-zinc-800 tracking-tighter"
                                                 placeholder="00:00"

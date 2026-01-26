@@ -390,7 +390,7 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e) }
     }
 
-    const handleUpdateOnSetNotes = async (item: any) => {
+    const handleAddOnSetNote = async (item: any) => {
         if (!data.project) return;
         try {
             const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
@@ -422,6 +422,62 @@ export default function OnSetMobilePage() {
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    }
+
+    const handleEditOnSetNote = async (updatedItem: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const logPhaseKey = 'ON_SET';
+            let updatedPhases = { ...phases };
+
+            let raw = updatedPhases[logPhaseKey]?.drafts?.['on-set-notes'];
+            let logDoc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(logDoc)) {
+                if (logDoc.length > 0) history = logDoc.slice(1);
+                logDoc = logDoc[0];
+            }
+            if (!logDoc || !logDoc.items) return;
+
+            const idx = logDoc.items.findIndex((i: any) => i.id === updatedItem.id);
+            if (idx >= 0) {
+                logDoc.items[idx] = { ...logDoc.items[idx], ...updatedItem };
+                updatedPhases[logPhaseKey].drafts['on-set-notes'] = JSON.stringify([logDoc, ...history]);
+                await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+                fetchData();
+            }
+        } catch (e) { console.error(e) }
+    }
+
+    const handleDeleteOnSetNote = async (itemId: string) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const logPhaseKey = 'ON_SET';
+            let updatedPhases = { ...phases };
+
+            let raw = updatedPhases[logPhaseKey]?.drafts?.['on-set-notes'];
+            let logDoc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(logDoc)) {
+                if (logDoc.length > 0) history = logDoc.slice(1);
+                logDoc = logDoc[0];
+            }
+            if (!logDoc || !logDoc.items) return;
+
+            logDoc.items = logDoc.items.filter((i: any) => i.id !== itemId);
+            updatedPhases[logPhaseKey].drafts['on-set-notes'] = JSON.stringify([logDoc, ...history]);
+
+            await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
             fetchData();
         } catch (e) { console.error(e) }
     }
@@ -696,7 +752,12 @@ export default function OnSetMobilePage() {
                             {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
                             {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
                             {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
-                            {activeTab === 'on-set-notes' && <MobileOnSetNotesView data={data.docs['on-set-notes']} onAdd={handleUpdateOnSetNotes} />}
+                            {activeTab === 'on-set-notes' && <MobileOnSetNotesView
+                                data={data.docs['on-set-notes']}
+                                onAdd={handleAddOnSetNote}
+                                onUpdate={handleEditOnSetNote}
+                                onDelete={handleDeleteOnSetNote}
+                            />}
 
                             {/* Fallback for other docs */}
                             {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes'].includes(activeTab) && (
