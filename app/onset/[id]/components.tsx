@@ -10,7 +10,7 @@ export const DOC_LABELS: Record<string, string> = {
     'av-script': 'AV Script',
     'shot-scene-book': 'Shot List',
     'call-sheet': 'Call Sheet',
-    'production-schedule': 'Schedule',
+    'schedule': 'Schedule',
     'dit-log': 'DIT Log',
     'budget': 'Budget',
     'casting': 'Casting',
@@ -312,7 +312,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
     );
 };
 
-export const CallSheetView = ({ data }: { data: any }) => {
+export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?: any }) => {
     if (!data) return <EmptyState label="Call Sheet" />;
 
     return (
@@ -320,7 +320,7 @@ export const CallSheetView = ({ data }: { data: any }) => {
             {/* Vitals */}
             <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-6 text-center">
                 <p className="text-[10px] text-zinc-400 uppercase font-bold tracking-widest mb-1">General Call Time</p>
-                <h2 className="text-5xl font-black text-white tracking-tighter mb-4">{data.crewCall || "TBD"}</h2>
+                <h2 className="text-5xl font-black text-white tracking-tighter mb-4">{data.crewCall || scheduleData?.callTime || "TBD"}</h2>
 
                 <div className="grid grid-cols-2 gap-4 border-t border-zinc-800 pt-4 text-left">
                     <div>

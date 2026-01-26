@@ -648,7 +648,7 @@ export default function OnSetMobilePage() {
                         <>
                             {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                             {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
-                            {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} />}
+                            {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} scheduleData={data.docs['schedule']} />}
                             {activeTab === 'dit-log' && <MobileDITLogView
                                 data={data.docs['dit-log']}
                                 onAdd={handleUpdateDIT}
@@ -658,10 +658,10 @@ export default function OnSetMobilePage() {
                             />}
                             {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
                             {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
-                            {activeTab === 'production-schedule' && <ScheduleView data={data.docs['production-schedule']} />}
+                            {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
 
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'production-schedule'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>
