@@ -17,7 +17,8 @@ import {
     CrewListView,
     ScheduleView,
     MobileCameraReportView,
-    MobileOnSetNotesView
+    MobileOnSetNotesView,
+    MobileLocationsView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive } from 'lucide-react';
 
@@ -758,9 +759,10 @@ export default function OnSetMobilePage() {
                                 onUpdate={handleEditOnSetNote}
                                 onDelete={handleDeleteOnSetNote}
                             />}
+                            {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
 
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>

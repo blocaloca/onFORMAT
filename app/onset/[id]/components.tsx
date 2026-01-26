@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2 } from 'lucide-react';
+import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 /* --------------------------------------------------------------------------------
@@ -1370,6 +1370,95 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
             </div>
 
             <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-4">End of Notes</div>
+        </div>
+    );
+};
+
+export const MobileLocationsView = ({ data }: { data: any }) => {
+    const items = data?.items || [];
+
+    // Assuming EmptyState is a component that exists and is accessible
+    // If not, you might need to define it or import it.
+    const EmptyState = ({ label }: { label: string }) => (
+        <div className="text-center py-8 opacity-50">
+            <p className="text-xs text-zinc-500">No {label} recorded.</p>
+        </div>
+    );
+
+    if (items.length === 0) return <EmptyState label="Locations" />;
+
+    return (
+        <div className="space-y-6 pb-8">
+            {items.map((loc: any, i: number) => (
+                <div key={loc.id || i} className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-sm">
+                    {/* Main Image Banner */}
+                    <div className="w-full aspect-video bg-zinc-800 relative">
+                        {loc.mainImage ? (
+                            <img src={loc.mainImage} className="w-full h-full object-cover" alt={loc.name} />
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600">
+                                <HardDrive size={24} className="mb-2 opacity-50" />
+                                <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
+                            <h3 className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1">{loc.name || 'Unknown Location'}</h3>
+                            {loc.address && (
+                                <a
+                                    href={`https://maps.google.com/?q=${encodeURIComponent(loc.address)}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-wide w-fit"
+                                >
+                                    <MapPin size={12} />
+                                    <span>Open Map</span>
+                                </a>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Details Body */}
+                    <div className="p-4 space-y-4">
+                        {/* Meta Grid */}
+                        <div className="grid grid-cols-2 gap-4 border-b border-zinc-800 pb-4">
+                            <div>
+                                <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Address</span>
+                                <p className="text-xs text-zinc-300 leading-snug">{loc.address || 'TBD'}</p>
+                            </div>
+                            <div>
+                                <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Contact</span>
+                                <p className="text-xs text-zinc-300 leading-snug">{loc.contact || '-'}</p>
+                            </div>
+                        </div>
+
+                        {/* Logistics Notes */}
+                        {loc.notes && (
+                            <div>
+                                <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-1">Logistics & Notes</span>
+                                <p className="text-xs text-zinc-400 whitespace-pre-wrap leading-relaxed bg-black/30 p-3 rounded-lg border border-white/5">
+                                    {loc.notes}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Secondary Images (Grid) */}
+                        {(loc.smallImage1 || loc.smallImage2) && (
+                            <div className="grid grid-cols-2 gap-2 pt-2">
+                                {loc.smallImage1 && (
+                                    <div className="aspect-video bg-zinc-800 rounded overflow-hidden border border-zinc-800">
+                                        <img src={loc.smallImage1} className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                                {loc.smallImage2 && (
+                                    <div className="aspect-video bg-zinc-800 rounded overflow-hidden border border-zinc-800">
+                                        <img src={loc.smallImage2} className="w-full h-full object-cover" />
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
