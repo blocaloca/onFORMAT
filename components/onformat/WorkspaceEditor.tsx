@@ -506,6 +506,19 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         } catch { }
                     }
 
+                    // Check for On-Set Notes Updates
+                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'];
+                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'];
+
+                    if (newNotes && newNotes !== currentNotes) {
+                        console.log("🔔 On-Set Notes Change Detected!");
+                        updatedDrafts['on-set-notes'] = newNotes;
+                        hasUpdates = true;
+                        notifMsg = 'New On-Set Note Received';
+                        setNavAlerts(prev => ({ ...prev, 'on-set-notes': true }));
+                        setTimeout(() => setNavAlerts(prev => ({ ...prev, 'on-set-notes': false })), 10000);
+                    }
+
                     if (newCameraReport && newCameraReport !== currentCameraReport) {
                         console.log("🔔 Camera Report Change Detected!");
                         updatedDrafts['camera-report'] = newCameraReport;
