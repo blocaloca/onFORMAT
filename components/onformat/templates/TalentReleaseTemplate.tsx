@@ -17,6 +17,7 @@ interface TalentReleaseData {
     customLegalText?: string;
     standardLegalText?: string; // Editable standard text
     termsAccepted?: boolean;
+    address?: string;
 }
 
 const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to THE PRODUCER and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as THE PROJECT.
@@ -42,8 +43,9 @@ interface TalentReleaseTemplateProps {
 export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: TalentReleaseTemplateProps) => {
 
     const [localData, setLocalData] = useState(data);
-    const sigPad = useRef<any>(null);
+    const sigPad = useRef<any>(null); // Kept for type compatibility if needed, though we removed usage? No, I see ref usage removed.
     const [isSaving, setIsSaving] = useState(false);
+    const [typedName, setTypedName] = useState('');
 
     // Sync local state when props change (externally)
     React.useEffect(() => {
@@ -81,26 +83,57 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
 
     const clearSignature = () => {
         sigPad.current?.clear();
+        setTypedName('');
         onUpdate({ signatureUrl: undefined, signedAt: undefined });
     };
 
+    const updateField = (field: keyof TalentReleaseData, value: any) => {
+        onUpdate({ [field]: value });
+    };
+
+    // Helper to convert base64 dataURL to Blob directly
+    const dataURLToBlob = (dataURL: string) => {
+        const arr = dataURL.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    };
+
     const saveSignature = async () => {
-        if (sigPad.current?.isEmpty()) return;
+        if (!typedName.trim()) {
+            alert("Please type your name to sign.");
+            return;
+        }
 
         setIsSaving(true);
         try {
-            // 1. Get Base64
-            const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
-
-            // 2. Convert to Blob
-            const res = await fetch(dataUrl);
-            const blob = await res.blob();
+            // Generate image from typed name
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, 400, 100);
+                ctx.font = 'italic bold 48px "Style Script", cursive, sans-serif';
+                ctx.fillStyle = 'black';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(typedName, 200, 50);
+            }
+            const dataUrl = canvas.toDataURL('image/png');
+            const blob = dataURLToBlob(dataUrl);
 
             // 3. Upload to Supabase Storage
             const fileName = `signatures/talent-${Date.now()}.png`;
             const { data: uploadData, error } = await supabase.storage
-                .from('documents') // Ensure this bucket exists or use 'public'
-                .upload(fileName, blob);
+                .from('documents')
+                .upload(fileName, blob, { upsert: true, contentType: 'image/png' });
 
             if (error) {
                 console.error('Upload Error', error);
@@ -142,16 +175,15 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                     <div className="flex-1 max-w-[50%]">
                         <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Producer / Production Company</label>
                         <input
-                            value={localData.productionCompany || ''}
-                            onChange={e => handleChange('productionCompany', e.target.value)}
-                            onBlur={() => handleBlur('productionCompany')}
+                            value={data.productionCompany || ''}
+                            onChange={e => updateField('productionCompany', e.target.value)}
                             className="font-bold text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide"
                             placeholder="PRODUCER NAME"
                             disabled={isLocked}
                         />
                     </div>
 
-                    {/* Toggle Pills - Centered or aligned */}
+                    {/* Toggle Pills */}
                     {!isPrinting && !isLocked && (
                         <div className="flex gap-1 mx-4">
                             <button
@@ -173,12 +205,10 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Date</label>
                         <input
                             type="date"
-                            value={localData.shootDate || ''}
-                            onChange={e => {
-                                handleChange('shootDate', e.target.value);
-                                onUpdate({ shootDate: e.target.value });
-                            }}
+                            value={data.shootDate || ''}
+                            onChange={e => updateField('shootDate', e.target.value)}
                             className="font-mono font-bold text-xs bg-transparent outline-none text-right"
+                            placeholder="YYYY-MM-DD"
                             disabled={isLocked}
                         />
                     </div>
@@ -196,57 +226,42 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 className="w-full h-full bg-transparent text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify"
                                 placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
                                 value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_STANDARD_TEXT)}
-                                onChange={e => handleChange(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
-                                onBlur={() => handleBlur(data.isCustom ? 'customLegalText' : 'standardLegalText')}
+                                onChange={e => updateField(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
                             />
                         )}
                     </div>
                 </div>
 
-                {/* Talent Details - Compact Row */}
+                {/* Talent Details */}
                 <div className="border-t border-black pt-4 mb-4 shrink-0">
-                    <div className="grid grid-cols-4 gap-4">
-                        <div>
+                    <div className="grid grid-cols-3 gap-4 mb-4">
+                        <div className="col-span-1">
                             <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Talent Name</label>
                             <input
-                                value={localData.talentName || ''}
-                                onChange={e => handleChange('talentName', e.target.value)}
-                                onBlur={() => handleBlur('talentName')}
+                                value={data.talentName || ''}
+                                onChange={e => updateField('talentName', e.target.value)}
                                 className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs font-bold focus:border-black outline-none transition-colors"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
-                        <div>
-                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Role</label>
+                        <div className="col-span-1">
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Role / Character</label>
                             <input
-                                value={localData.role || ''}
-                                onChange={e => handleChange('role', e.target.value)}
-                                onBlur={() => handleBlur('role')}
+                                value={data.role || ''}
+                                onChange={e => updateField('role', e.target.value)}
                                 className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
                                 placeholder="Role"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
-                        <div>
-                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Email</label>
+                        <div className="col-span-1">
+                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Address / Contact</label>
                             <input
-                                value={localData.email || ''}
-                                onChange={e => handleChange('email', e.target.value)}
-                                onBlur={() => handleBlur('email')}
+                                value={data.address || ''}
+                                onChange={e => updateField('address', e.target.value)}
                                 className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
-                                placeholder="Email"
-                                disabled={isLocked || !!data.signatureUrl}
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-[8px] font-bold uppercase text-zinc-400 mb-1">Phone</label>
-                            <input
-                                value={localData.phone || ''}
-                                onChange={e => handleChange('phone', e.target.value)}
-                                onBlur={() => handleBlur('phone')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
-                                placeholder="Phone"
+                                placeholder="Address or Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
                         </div>
@@ -255,7 +270,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                 {/* Signature Section */}
                 <div className="border-t-2 border-black pt-4">
-                    <label className="block text-[10px] font-bold uppercase text-center mb-2 tracking-widest text-zinc-500">Signature</label>
+                    <label className="block text-[10px] font-bold uppercase text-center mb-2 tracking-widest text-zinc-500">Talent Signature</label>
 
                     {data.signatureUrl ? (
                         <div className="flex flex-col items-center">
@@ -273,23 +288,24 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         </div>
                     ) : (
                         <div className={`flex flex-col items-center gap-2 ${isPrinting ? 'hidden' : 'block'}`}>
-                            <div className="border border-zinc-300 rounded bg-white shadow-sm overflow-hidden w-full max-w-[400px]">
-                                <SignatureCanvas
-                                    ref={sigPad}
-                                    penColor="black"
-                                    canvasProps={{
-                                        width: 400,
-                                        height: 150,
-                                        className: 'sigCanvas cursor-crosshair'
-                                    }}
+                            <div className="border border-zinc-300 rounded bg-white shadow-sm overflow-hidden w-full max-w-[400px] p-4 flex flex-col items-center">
+                                <label className="text-[9px] uppercase font-bold text-zinc-400 mb-2 w-full text-center">Type Name to Sign</label>
+                                <input
+                                    value={typedName}
+                                    onChange={e => setTypedName(e.target.value)}
+                                    className="w-full text-center font-bold text-lg bg-zinc-50 border-b-2 border-zinc-200 outline-none focus:border-emerald-500 transition-colors py-2 mb-2 font-mono"
+                                    placeholder="Type Full Name"
                                 />
+                                <p className="text-[9px] text-zinc-400 text-center max-w-xs">
+                                    By typing your name, you acknowledge this as your legal electronic signature.
+                                </p>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 mt-2">
                                 <button
-                                    onClick={() => sigPad.current?.clear()}
+                                    onClick={() => setTypedName('')}
                                     className="flex items-center gap-1 text-[10px] font-bold uppercase text-zinc-400 hover:text-black px-3 py-1 bg-zinc-100 rounded"
                                 >
-                                    <Trash2 size={12} /> Clear
+                                    Clear
                                 </button>
                                 <button
                                     onClick={saveSignature}

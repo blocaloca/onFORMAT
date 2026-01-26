@@ -75,25 +75,57 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
         setLocalData(prev => ({ ...prev, [field]: value }));
     };
 
+    // Helper to convert base64 dataURL to Blob directly
+    const dataURLToBlob = (dataURL: string) => {
+        const arr = dataURL.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    };
+
+    const [typedName, setTypedName] = useState('');
+
     // ... Signature logic kept as is but updateField removed since we use handleChange/handleBlur now ...
     const clearSignature = () => {
-        sigPad.current?.clear();
+        setTypedName('');
         onUpdate({ signatureUrl: undefined, signedAt: undefined });
     };
 
     const saveSignature = async () => {
-        if (sigPad.current?.isEmpty()) return;
+        if (!typedName.trim()) {
+            alert("Please type your name to sign.");
+            return;
+        }
 
         setIsSaving(true);
         try {
-            const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
-            const res = await fetch(dataUrl);
-            const blob = await res.blob();
+            // Generate image from typed name
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, 400, 100);
+                ctx.font = 'italic bold 48px "Style Script", cursive, sans-serif';
+                ctx.fillStyle = 'black';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(typedName, 200, 50);
+            }
+            const dataUrl = canvas.toDataURL('image/png');
+            const blob = dataURLToBlob(dataUrl);
+
             const fileName = `signatures/property-${Date.now()}.png`;
 
             const { error } = await supabase.storage
                 .from('documents')
-                .upload(fileName, blob);
+                .upload(fileName, blob, { upsert: true, contentType: 'image/png' });
 
             if (error) {
                 console.error('Upload Error', error);
@@ -276,20 +308,21 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                         </div>
                     ) : (
                         <div className={`flex flex-col items-center gap-2 ${isPrinting ? 'hidden' : 'block'}`}>
-                            <div className="border border-zinc-300 rounded bg-white shadow-sm overflow-hidden w-full max-w-[400px]">
-                                <SignatureCanvas
-                                    ref={sigPad}
-                                    penColor="black"
-                                    canvasProps={{
-                                        width: 400,
-                                        height: 150,
-                                        className: 'sigCanvas cursor-crosshair'
-                                    }}
+                            <div className="border border-zinc-300 rounded bg-white shadow-sm overflow-hidden w-full max-w-[400px] p-4 flex flex-col items-center">
+                                <label className="text-[9px] uppercase font-bold text-zinc-400 mb-2 w-full text-center">Type Name to Sign</label>
+                                <input
+                                    value={typedName}
+                                    onChange={e => setTypedName(e.target.value)}
+                                    className="w-full text-center font-bold text-lg bg-zinc-50 border-b-2 border-zinc-200 outline-none focus:border-emerald-500 transition-colors py-2 mb-2 font-mono"
+                                    placeholder="Type Full Name"
                                 />
+                                <p className="text-[9px] text-zinc-400 text-center max-w-xs">
+                                    By typing your name, you acknowledge this as your legal electronic signature.
+                                </p>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 mt-2">
                                 <button
-                                    onClick={() => sigPad.current?.clear()}
+                                    onClick={() => setTypedName('')}
                                     className="flex items-center gap-1 text-[10px] font-bold uppercase text-zinc-400 hover:text-black px-3 py-1 bg-zinc-100 rounded"
                                 >
                                     <Trash2 size={12} /> Clear
