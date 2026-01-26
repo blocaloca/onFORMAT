@@ -1528,18 +1528,61 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
         setView('detail');
     };
 
+    // Helper to convert base64 dataURL to Blob directly (avoids fetch issues on mobile)
+    const dataURLToBlob = (dataURL: string) => {
+        const arr = dataURL.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    };
+
+    // State for signature mode
+    const [signMode, setSignMode] = useState<'draw' | 'type'>('draw');
+    const [typedName, setTypedName] = useState('');
+
     const handleSaveSignature = async () => {
-        if (!activeRelease || !sigPad.current || sigPad.current.isEmpty() || !onUpdate) {
-            if (sigPad.current?.isEmpty()) alert("Please sign before saving.");
+        if (!activeRelease || !onUpdate) return;
+
+        // Validation
+        if (signMode === 'draw' && (!sigPad.current || sigPad.current.isEmpty())) {
+            alert("Please sign before saving.");
+            return;
+        }
+        if (signMode === 'type' && !typedName.trim()) {
+            alert("Please type your name.");
             return;
         }
 
         setIsSaving(true);
         try {
-            // 1. Convert signature to blob
-            const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
-            const res = await fetch(dataUrl);
-            const blob = await res.blob();
+            let blob: Blob;
+
+            if (signMode === 'draw') {
+                const dataUrl = sigPad.current.getTrimmedCanvas().toDataURL('image/png');
+                blob = dataURLToBlob(dataUrl);
+            } else {
+                // Generate image from typed name
+                const canvas = document.createElement('canvas');
+                canvas.width = 400;
+                canvas.height = 100;
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, 400, 100);
+                    ctx.font = 'italic bold 48px "Style Script", cursive, sans-serif'; // Fallback font
+                    ctx.fillStyle = 'black';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(typedName, 200, 50);
+                }
+                const dataUrl = canvas.toDataURL('image/png');
+                blob = dataURLToBlob(dataUrl);
+            }
 
             // 2. Generate filename
             const fileName = `signatures/mobile-${activeRelease.type}-${Date.now()}.png`;
@@ -1573,7 +1616,8 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                         data: {
                             ...r.data,
                             signatureUrl: data.publicUrl,
-                            signedAt: new Date().toISOString()
+                            signedAt: new Date().toISOString(),
+                            signedByMethod: signMode // Track method just in case
                         }
                     };
                 }
@@ -1707,26 +1751,57 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                                 </p>
                             </div>
 
-                            <p className="text-[10px] uppercase font-bold text-zinc-400 text-center tracking-widest mb-2">Sign Below</p>
-
-                            <div className="bg-white rounded overflow-hidden mb-4">
-                                <SignatureCanvas
-                                    ref={sigPad}
-                                    penColor="black"
-                                    canvasProps={{
-                                        width: 300,
-                                        height: 150,
-                                        className: 'w-full h-[150px] cursor-crosshair'
-                                    }}
-                                />
-                            </div>
-                            <div className="flex gap-2">
+                            <div className="flex justify-center gap-4 mb-4">
                                 <button
-                                    onClick={() => sigPad.current?.clear()}
-                                    className="flex-1 bg-zinc-800 text-zinc-400 py-3 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                    onClick={() => setSignMode('draw')}
+                                    className={`text-[10px] font-bold uppercase px-4 py-2 rounded-full border transition-all ${signMode === 'draw' ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-zinc-900 text-zinc-500 border-zinc-800'}`}
                                 >
-                                    Clear
+                                    Draw Signature
                                 </button>
+                                <button
+                                    onClick={() => setSignMode('type')}
+                                    className={`text-[10px] font-bold uppercase px-4 py-2 rounded-full border transition-all ${signMode === 'type' ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-zinc-900 text-zinc-500 border-zinc-800'}`}
+                                >
+                                    Type Name
+                                </button>
+                            </div>
+
+                            {signMode === 'draw' ? (
+                                <div className="bg-white rounded overflow-hidden mb-4">
+                                    <SignatureCanvas
+                                        ref={sigPad}
+                                        penColor="black"
+                                        canvasProps={{
+                                            width: 300,
+                                            height: 150,
+                                            className: 'w-full h-[150px] cursor-crosshair'
+                                        }}
+                                    />
+                                </div>
+                            ) : (
+                                <div className="bg-zinc-900 p-4 rounded-lg mb-4 border border-zinc-800">
+                                    <label className="block text-[9px] font-bold uppercase text-zinc-500 mb-2">Type Full Name (Legal Signature)</label>
+                                    <input
+                                        value={typedName}
+                                        onChange={(e) => setTypedName(e.target.value)}
+                                        className="w-full bg-black border border-zinc-700 p-3 rounded text-white font-mono text-center outline-none focus:border-emerald-500 transition-colors"
+                                        placeholder="John Doe"
+                                    />
+                                    <p className="text-[9px] text-zinc-600 mt-2 text-center">
+                                        By typing your name, you acknowledge this as your legal electronic signature.
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="flex gap-2">
+                                {signMode === 'draw' && (
+                                    <button
+                                        onClick={() => sigPad.current?.clear()}
+                                        className="flex-1 bg-zinc-800 text-zinc-400 py-3 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+                                    >
+                                        Clear
+                                    </button>
+                                )}
                                 <button
                                     onClick={handleSaveSignature}
                                     disabled={isSaving}
