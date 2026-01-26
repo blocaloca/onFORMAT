@@ -14,6 +14,8 @@ interface LocationPage {
     rate: string;
     permit: string;
     notes: string;
+    usageType?: string;  // 'Basecamp' | 'Set' | 'Hospital'
+    activeDays?: string; // 'Day 1', '10/25', etc.
 }
 
 interface LocationTemplateData {
@@ -156,6 +158,44 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                         )}
 
                         <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+                            {/* Updated Logic: Row 1 = Usage & Days */}
+                            <div className="col-span-2 grid grid-cols-2 gap-8 border-b border-zinc-100 pb-4 mb-2">
+                                {/* Type Selector */}
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5"><MapPin size={10} /> Usage Type</span>
+                                    {isPrinting ? (
+                                        <div className="text-sm font-bold text-black border-b border-zinc-100 py-1">{loc.usageType || 'General'}</div>
+                                    ) : (
+                                        <select
+                                            value={loc.usageType || 'Set'}
+                                            onChange={(e) => updateLocation(index, 'usageType', e.target.value)}
+                                            className="w-full text-sm font-bold text-black bg-transparent border-b border-zinc-200 focus:border-black outline-none py-1 cursor-pointer"
+                                            disabled={isLocked}
+                                        >
+                                            <option value="Set">Set / Location</option>
+                                            <option value="Basecamp">Basecamp</option>
+                                            <option value="Hospital">Hospital</option>
+                                        </select>
+                                    )}
+                                </div>
+                                {/* Active Days (Text Input for flexibility) */}
+                                <div className="space-y-1">
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5"><FileText size={10} /> Active Dates</span>
+                                    {isPrinting ? (
+                                        <div className="text-sm font-medium text-zinc-700 border-b border-zinc-100 py-1">{loc.activeDays || 'All Days'}</div>
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value={loc.activeDays || ''}
+                                            onChange={(e) => updateLocation(index, 'activeDays', e.target.value)}
+                                            placeholder="e.g. Day 1, 10/24"
+                                            className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-black outline-none py-1 placeholder:text-zinc-300"
+                                            disabled={isLocked}
+                                        />
+                                    )}
+                                </div>
+                            </div>
+
                             {renderField('Address', <MapPin size={12} />, loc.address, 'address', index, '123 Example St')}
                             {renderField('Contacts', <Phone size={12} />, loc.contact, 'contact', index, 'Name / Phone')}
                             {renderField('Day Rate', <DollarSign size={12} />, loc.rate, 'rate', index, '$1,500 / day')}

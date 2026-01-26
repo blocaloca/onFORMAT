@@ -169,6 +169,27 @@ export const DraftEditor = ({
         } catch { }
     }
 
+    // --- Nav Mode Logic ---
+    const COLLECTION_TOOLS = [
+        'call-sheet',
+        'on-set-notes',
+        'script-notes',
+        'camera-report',
+        'sound-report',
+        'dit-log'
+    ];
+    const navMode = COLLECTION_TOOLS.includes(activeToolKey) ? 'collection' : 'stack';
+
+    // Locations Import Logic (for Call Sheet Sync)
+    let importedLocations = null;
+    if (phases?.['PRE_PRODUCTION']?.drafts?.['locations-sets']) {
+        try {
+            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['locations-sets']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedLocations = arr[0];
+        } catch { }
+    }
+
     // --- Document Stack Logic ---
     const [activeVersionIndex, setActiveVersionIndex] = useState(0);
 
@@ -202,16 +223,35 @@ export const DraftEditor = ({
 
     // --- Nav Bar Actions ---
     const handleNew = () => {
-        const newVersions = [{}, ...versions];
-        setActiveVersionIndex(0); // Jump to new
-        onDraftChange(JSON.stringify(newVersions));
+        if (navMode === 'collection') {
+            // Collection Mode: Append to End (Day 1, Day 2...)
+            const newVersions = [...versions, {}];
+            setActiveVersionIndex(newVersions.length - 1); // Jump to new last item
+            onDraftChange(JSON.stringify(newVersions));
+        } else {
+            // Stack Mode: Prepend to Start (v2, v1...)
+            const newVersions = [{}, ...versions];
+            setActiveVersionIndex(0); // Jump to new first item
+            onDraftChange(JSON.stringify(newVersions));
+        }
     };
 
     const handleDuplicate = () => {
         const copy = { ...activeData };
-        const newVersions = [copy, ...versions];
-        setActiveVersionIndex(0); // Jump to new copy
-        onDraftChange(JSON.stringify(newVersions));
+
+        if (navMode === 'collection') {
+            // Collection Mode: Append Copy to End
+            // Remove ID to avoid conflicts if present
+            if (copy.id) delete copy.id;
+            const newVersions = [...versions, copy];
+            setActiveVersionIndex(newVersions.length - 1);
+            onDraftChange(JSON.stringify(newVersions));
+        } else {
+            // Stack Mode: Prepend Copy to Start
+            const newVersions = [copy, ...versions];
+            setActiveVersionIndex(0);
+            onDraftChange(JSON.stringify(newVersions));
+        }
     };
 
     const handleClear = () => {
@@ -429,6 +469,7 @@ export const DraftEditor = ({
                 onExportPdf={handleExportPdf}
                 isExportingPdf={isExportingPdf}
                 projectId={projectId}
+                navMode={navMode}
             />
 
             <div className="flex-1 overflow-y-auto bg-transparent p-8 flex flex-col items-center" id="document-preview-area">
@@ -459,6 +500,7 @@ export const DraftEditor = ({
                                 importedBrief,
                                 importedVision,
                                 importedLookbook,
+                                importedLocations,
                                 projectId,
                                 latestNotification
                             }}

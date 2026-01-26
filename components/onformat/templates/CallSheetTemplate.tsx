@@ -66,29 +66,65 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                 initialDate = `${month}/${day}/${year}`;
             }
 
+
+            const locs = (metadata as any)?.importedLocations?.items || [];
+
             let newEvents = [
                 { id: 'evt-1', time: '', type: 'Arrive', description: 'Crew Call', location: 'Basecamp' },
                 { id: 'evt-2', time: '', type: 'Shoot', description: 'Scene 1', location: 'Set' }
             ];
 
             if (schedule?.items && schedule.items.length > 0) {
-                newEvents = schedule.items.map((item: any, i: number) => ({
-                    id: `evt-imp-${Date.now()}-${i}`,
-                    time: item.time || '',
-                    type: item.type || 'Shoot',
-                    description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
-                    location: item.set || item.location || ''
-                }));
+                newEvents = schedule.items.map((item: any, i: number) => {
+                    // Smart Location Lookup
+                    let locName = item.set || item.location || '';
+                    if (locs && locs.length > 0) {
+                        // Find a location doc that matches the set name
+                        const match = locs.find((l: any) =>
+                            l.name && locName && l.name.toLowerCase().includes(locName.toLowerCase())
+                        );
+                        if (match && match.address) {
+                            locName = `${locName} (${match.address})`;
+                        }
+                    }
+
+                    return {
+                        id: `evt-imp-${Date.now()}-${i}`,
+                        time: item.time || '',
+                        type: item.type || 'Shoot',
+                        description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                        location: locName
+                    };
+                });
+            }
+
+            // Smart Basecamp & Hospital Fill
+            let basecamp = data.basecamp || '';
+            let hospital = data.hospital || '';
+
+            if (locs && locs.length > 0) {
+                // Try to find active basecamp for this date
+                const activeBasecamp = locs.find((l: any) =>
+                    l.usageType === 'Basecamp' &&
+                    (!l.activeDays || l.activeDays.includes(initialDate) || l.activeDays.toLowerCase().includes('day 1'))
+                );
+                if (activeBasecamp) basecamp = `${activeBasecamp.name} - ${activeBasecamp.address}`;
+
+                // Try to find Hospital
+                const activeHospital = locs.find((l: any) => l.usageType === 'Hospital');
+                if (activeHospital) hospital = `${activeHospital.name} - ${activeHospital.address}`;
             }
 
             onUpdate({
                 ...data,
                 date: initialDate,
                 crewCall: data.crewCall || schedule?.callTime || '',
-                events: newEvents
+                events: newEvents,
+                basecamp,
+                hospital
             });
         }
-    }, []);
+    }, [metadata?.importedSchedule, metadata?.importedLocations]);
 
     const scheduleItems = (metadata as any)?.importedSchedule?.items;
     const scheduleCallTime = (metadata as any)?.importedSchedule?.callTime;
