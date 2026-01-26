@@ -419,9 +419,12 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                 )
                             })}
                             {!isLocked && pageIndex === totalPages - 1 && (
-                                <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
-                                        <Plus size={10} className="mr-1" /> Add Log Entry
+                                <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
+                                    <button
+                                        onClick={handleAddItem}
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                    >
+                                        <Plus size={10} /> Add Log Entry
                                     </button>
                                 </div>
                             )}

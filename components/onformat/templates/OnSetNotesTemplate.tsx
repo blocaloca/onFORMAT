@@ -219,12 +219,12 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                 )
                             })}
                             {!isLocked && pageIndex === totalPages - 1 && (
-                                <div className="pt-2 print-hidden">
+                                <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAdd}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
-                                        <Plus size={10} className="mr-1" /> Add Report Entry
+                                        <Plus size={10} /> Add Report Entry
                                     </button>
                                 </div>
                             )}

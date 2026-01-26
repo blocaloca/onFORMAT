@@ -237,13 +237,13 @@ export const ReleasesManagerTemplate = ({
                 </div>
 
                 {/* Footer Action */}
-                <div className="pt-4 mt-4 border-t border-zinc-100 flex justify-end">
+                <div className="pt-4 mt-4 border-t border-zinc-100 flex justify-start">
                     <button
                         onClick={handleCreate}
                         disabled={isLocked}
-                        className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-zinc-800 transition-colors shadow-lg"
+                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                     >
-                        <Plus size={14} /> Add {activeTab} Release
+                        <Plus size={10} /> Add {activeTab} Release
                     </button>
                 </div>
 
