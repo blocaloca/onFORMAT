@@ -245,19 +245,23 @@ export default function OnSetMobilePage() {
                 const myGroups = me?.onSetGroups || [];
                 const isOwner = role === 'Owner';
 
-                // Filter available tools based on intersection of groups
-                computedAvailableKeys = Object.entries(mobileControl.toolGroups)
-                    .filter(([_, allowedGroups]: any) => {
-                        if (!Array.isArray(allowedGroups)) return false;
-                        if (allowedGroups.length === 0) return false; // Tool not assigned to any group -> Hidden
-
-                        // Owner sees everything active
-                        if (isOwner) return true;
-
-                        // Crew sees only matching groups
-                        return allowedGroups.some((g: string) => myGroups.includes(g));
-                    })
-                    .map(([key]) => key === 'shot-log' ? 'camera-report' : key);
+                if (isOwner) {
+                    // Owner sees ALL supported tools that exist in drafts
+                    const MOBILE_SUPPORTED = [
+                        'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
+                        'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases'
+                    ];
+                    computedAvailableKeys = MOBILE_SUPPORTED.filter(k => allDrafts[k]);
+                } else {
+                    // Crew sees only tools matching their groups
+                    computedAvailableKeys = Object.entries(mobileControl.toolGroups)
+                        .filter(([_, allowedGroups]: any) => {
+                            if (!Array.isArray(allowedGroups)) return false;
+                            if (allowedGroups.length === 0) return false;
+                            return allowedGroups.some((g: string) => myGroups.includes(g));
+                        })
+                        .map(([key]) => key === 'shot-log' ? 'camera-report' : key);
+                }
             } else {
                 computedAvailableKeys = (mobileControl?.selectedTools || []).map((k: string) => k === 'shot-log' ? 'camera-report' : k);
             }
