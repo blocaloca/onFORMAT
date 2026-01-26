@@ -214,6 +214,10 @@ export default function OnSetMobilePage() {
             if (allDrafts['shot-log'] && !allDrafts['camera-report']) {
                 allDrafts['camera-report'] = allDrafts['shot-log'];
             }
+            // VIRTUAL MIGRATION: Alias 'locations-sets' to 'locations'
+            if (allDrafts['locations-sets'] && !allDrafts['locations']) {
+                allDrafts['locations'] = allDrafts['locations-sets'];
+            }
 
             setData({
                 project: projectData,
@@ -808,7 +812,11 @@ export default function OnSetMobilePage() {
                             return null;
                         }
 
-                        const mappedKeys = Array.from(new Set(availableKeys.map(k => k === 'shot-log' ? 'camera-report' : k)));
+                        const mappedKeys = Array.from(new Set(availableKeys.map(k => {
+                            if (k === 'shot-log') return 'camera-report';
+                            if (k === 'locations-sets') return 'locations';
+                            return k;
+                        })));
 
                         return mappedKeys.map((key: string) => (
                             <button
