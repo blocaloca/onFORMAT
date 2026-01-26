@@ -90,7 +90,23 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
         }
     }, []);
 
-    const events = data.events || [];
+    const scheduleItems = (metadata as any)?.importedSchedule?.items;
+    const scheduleCallTime = (metadata as any)?.importedSchedule?.callTime;
+
+    // Live Link: If schedule exists, use it. Otherwise use local events.
+    const isLinked = !!(scheduleItems && scheduleItems.length > 0);
+
+    const linkedEvents: CallSheetEvent[] = isLinked ? scheduleItems.map((item: any, i: number) => ({
+        id: item.id || `imp-${i}`,
+        time: item.time || '',
+        type: 'Shoot',
+        description: item.scene ? `Scene ${item.scene} - ${item.description}` : item.description,
+        location: item.set ? `${item.intExt} ${item.set}` : (item.location || '')
+    })) : [];
+
+    const events = isLinked ? linkedEvents : (data.events || []);
+    const displayedCrewCall = scheduleCallTime || data.crewCall || '';
+
     const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
     const formatDate = (val: string) => {
@@ -103,7 +119,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
     const formatTime = (value: string) => {
         // Allow deletion
-        if (value.length < (data.crewCall || '').length && value.endsWith(':')) {
+        if (value.length < (displayedCrewCall || '').length && value.endsWith(':')) {
             return value.slice(0, -1);
         }
 
@@ -129,6 +145,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     };
 
     const handleAddEvent = () => {
+        if (isLinked) return; // Cannot add to linked schedule directly here
         const newEvent: CallSheetEvent = {
             id: `evt-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             time: '',
@@ -140,16 +157,19 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     };
 
     const handleUpdateEvent = (index: number, updates: Partial<CallSheetEvent>) => {
+        if (isLinked) return; // Read-only view of schedule
         const newEvents = [...events];
         newEvents[index] = { ...newEvents[index], ...updates };
         onUpdate({ events: newEvents });
     };
 
     const handleDeleteEvent = (id: string) => {
+        if (isLinked) return;
         setEventToDelete(id);
     };
 
     const confirmDeleteEvent = (id: string) => {
+        if (isLinked) return;
         const newEvents = events.filter(e => e.id !== id);
         onUpdate({ events: newEvents });
         setEventToDelete(null);
@@ -478,8 +498,15 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 {/* Events List */}
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between border-b border-black pb-1 mb-3">
-                                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Schedule</h3>
-                                        {!isLocked && metadata?.importedSchedule && (
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Schedule</h3>
+                                            {isLinked && (
+                                                <span className="text-[9px] font-bold uppercase bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-sm flex items-center gap-1">
+                                                    Linked
+                                                </span>
+                                            )}
+                                        </div>
+                                        {!isLocked && !isLinked && metadata?.importedSchedule && (
                                             <button onClick={handleImportSchedule} className="text-[9px] font-bold uppercase text-indigo-500 hover:text-indigo-700">
                                                 Add from Schedule
                                             </button>
@@ -570,7 +597,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         </div>
                                                     </div>
 
-                                                    {!isLocked && (
+                                                    {!isLocked && !isLinked && (
                                                         <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                             {eventToDelete === item.id ? (
                                                                 <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
@@ -589,7 +616,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         })}
 
                                         {/* Actions */}
-                                        {!isLocked && (pageIndex === totalPages - 1) && (
+                                        {!isLocked && !isLinked && (pageIndex === totalPages - 1) && (
                                             <div className="mt-2">
                                                 <button onClick={handleAddEvent} className="text-[10px] font-bold uppercase text-zinc-400 hover:text-black flex items-center gap-1 group">
                                                     <Plus size={12} />
@@ -692,7 +719,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     )}
                                                 </div>
 
-                                                {!isLocked && (
+                                                {!isLocked && !isLinked && (
                                                     <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                         {eventToDelete === item.id ? (
                                                             <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
@@ -710,7 +737,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )
                                     })}
 
-                                    {!isLocked && (pageIndex === totalPages - 1) && (
+                                    {!isLocked && !isLinked && (pageIndex === totalPages - 1) && (
                                         <div className="mt-2">
                                             <button onClick={handleAddEvent} className="text-[10px] font-bold uppercase text-zinc-400 hover:text-black flex items-center gap-1 group">
                                                 <Plus size={12} />
