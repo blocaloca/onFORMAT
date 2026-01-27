@@ -66,7 +66,7 @@ const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
         { key: 'props-list', label: 'Props' },
     ],
     ON_SET: [
-        { key: 'schedule', label: 'SCHEDULE' },
+        { key: 'schedule', label: 'Schedule' },
         { key: 'call-sheet', label: 'Call Sheet' },
         { key: 'on-set-notes', label: 'On-Set Notes' },
         { key: 'camera-report', label: 'Camera Report' },
