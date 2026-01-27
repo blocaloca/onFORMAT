@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { Trash2, Plus, GripVertical } from 'lucide-react';
 
-type EventType = 'Arrive' | 'Set Up' | 'Shoot' | 'Break' | 'Meal' | 'Strike' | 'Move' | 'Other';
+type EventType = 'Arrive' | 'Set Up' | 'Shoot' | 'Break' | 'Meal' | 'Strike' | 'Wrap' | 'Move' | 'Other';
 
 interface CallSheetEvent {
     id: string;
@@ -28,9 +28,13 @@ interface CallSheetData {
     sunriseSunset: string;
 }
 
+interface MultiDayData extends Partial<CallSheetData> {
+    days?: CallSheetData[];
+}
+
 interface CallSheetTemplateProps {
-    data: Partial<CallSheetData>;
-    onUpdate: (data: Partial<CallSheetData>) => void;
+    data: MultiDayData;
+    onUpdate: (data: MultiDayData) => void;
     isLocked?: boolean;
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
@@ -48,10 +52,42 @@ const WEATHER_CODES: Record<number, string> = {
     95: 'Thunderstorm', 96: 'Thunderstorm with hail', 99: 'Thunderstorm with heavy hail'
 };
 
+const DEFAULT_EVENT: CallSheetEvent = {
+    id: 'evt-init', time: '', type: 'Shoot', description: '', location: ''
+};
+
 export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: CallSheetTemplateProps) => {
 
+    // --- Multi-Day Logic ---
+    const [activeDayIdx, setActiveDayIdx] = useState(0);
+
+    // Normalize: Check if legacy flat data or multi-day
+    const rawDays: CallSheetData[] = (data.days && Array.isArray(data.days) && data.days.length > 0)
+        ? data.days
+        : [data as CallSheetData]; // self as Day 1 if no days array
+
+    // Current Day Accessor
+    const currentDayData = rawDays[activeDayIdx] || rawDays[0] || {};
+
+    // Ensure vital fields exist
+    const events = currentDayData.events || [];
+
+    // Helper to push updates to the correct day
+    const updateActiveDay = (changes: Partial<CallSheetData>) => {
+        const newDays = [...rawDays];
+        newDays[activeDayIdx] = { ...newDays[activeDayIdx], ...changes };
+        // Flatten first day to root for backwards compat if needed, but primarily store 'days'
+        // We will store everything in 'days' AND keep the root flat fields as a mirror of Day 1 (optional, but safe).
+        // Actually, let's just commit active structure.
+        onUpdate({
+            ...newDays[0], // Mirror Day 0 to root for simple viewers
+            days: newDays
+        });
+    };
+
+    // Initialize Logic (Only if empty)
     useEffect(() => {
-        if (!data.events || data.events.length === 0) {
+        if (!currentDayData.events || currentDayData.events.length === 0) {
             const schedule = (metadata as any)?.importedSchedule;
 
             // Priority: Imported Schedule > Current Date
@@ -63,12 +99,10 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                 const day = String(now.getDate()).padStart(2, '0');
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const year = now.getFullYear();
-                initialDate = `${month}/${day}/${year}`;
+                initialDate = `${month} /${day}/${year} `;
             }
 
-
             const locs = (metadata as any)?.importedLocations?.items || [];
-
             let newEvents = [
                 { id: 'evt-1', time: '', type: 'Arrive', description: 'Crew Call', location: 'Basecamp' },
                 { id: 'evt-2', time: '', type: 'Shoot', description: 'Scene 1', location: 'Set' }
@@ -76,58 +110,83 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
             if (schedule?.items && schedule.items.length > 0) {
                 newEvents = schedule.items.map((item: any, i: number) => {
-                    // Smart Location Lookup
                     let locName = item.set || item.location || '';
                     if (locs && locs.length > 0) {
-                        // Find a location doc that matches the set name
                         const match = locs.find((l: any) =>
                             l.name && locName && l.name.toLowerCase().includes(locName.toLowerCase())
                         );
-                        if (match && match.address) {
-                            locName = `${locName} (${match.address})`;
-                        }
+                        if (match && match.address) locName = `${locName} (${match.address})`;
                     }
-
                     return {
-                        id: `evt-imp-${Date.now()}-${i}`,
+                        id: `evt - imp - ${Date.now()} -${i} `,
                         time: item.time || '',
                         type: item.type || 'Shoot',
-                        description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                        description: item.description || (item.scene ? `Scene ${item.scene} ` : ''),
                         location: locName
                     };
                 });
             }
 
-            // Smart Basecamp & Hospital Fill
-            let basecamp = data.basecamp || '';
-            let hospital = data.hospital || '';
+            // Smart Fill Basecamp/Hospital
+            let basecamp = currentDayData.basecamp || '';
+            let hospital = currentDayData.hospital || '';
 
             if (locs && locs.length > 0) {
-                // Try to find active basecamp for this date
                 const activeBasecamp = locs.find((l: any) =>
                     l.usageType === 'Basecamp' &&
-                    (!l.activeDays || l.activeDays.includes(initialDate) || l.activeDays.toLowerCase().includes('day 1'))
+                    (!l.activeDays || l.activeDays.includes(initialDate))
                 );
-                if (activeBasecamp) basecamp = `${activeBasecamp.name} - ${activeBasecamp.address}`;
-
-                // Try to find Hospital
+                if (activeBasecamp) basecamp = `${activeBasecamp.name} - ${activeBasecamp.address} `;
                 const activeHospital = locs.find((l: any) => l.usageType === 'Hospital');
-                if (activeHospital) hospital = `${activeHospital.name} - ${activeHospital.address}`;
+                if (activeHospital) hospital = `${activeHospital.name} - ${activeHospital.address} `;
             }
 
-            onUpdate({
-                ...data,
+            // Update
+            updateActiveDay({
                 date: initialDate,
-                crewCall: data.crewCall || schedule?.callTime || '',
+                crewCall: currentDayData.crewCall || schedule?.callTime || '',
                 events: newEvents,
                 basecamp,
                 hospital
             });
         }
-    }, [metadata?.importedSchedule, metadata?.importedLocations]);
+    }, [metadata?.importedSchedule, metadata?.importedLocations, activeDayIdx, rawDays.length]); // Re-run if day changes and is empty
 
-    const events = data.events || [];
-    const displayedCrewCall = data.crewCall || (metadata as any)?.importedSchedule?.callTime || '';
+
+    // Add New Day Logic
+    const handleAddDay = () => {
+        const lastDay = rawDays[rawDays.length - 1];
+        // Try to increment date
+        let nextDate = '';
+        if (lastDay.date) {
+            try {
+                const [mm, dd, yyyy] = lastDay.date.split('/').map(Number);
+                const d = new Date(yyyy, mm - 1, dd); // Month is 0-indexed
+                d.setDate(d.getDate() + 1);
+                nextDate = `${String(d.getMonth() + 1).padStart(2, '0')} /${String(d.getDate()).padStart(2, '0')}/${d.getFullYear()} `;
+            } catch (e) {
+                console.error("Error incrementing date:", e);
+            }
+        }
+
+        const newDay: CallSheetData = {
+            date: nextDate,
+            crewCall: lastDay.crewCall || '07:00',
+            breakfastTime: lastDay.breakfastTime || '', lunchTime: lastDay.lunchTime || '',
+            weather: '', hospital: lastDay.hospital || '',
+            events: [{ id: `evt - ${Date.now()} `, time: lastDay.crewCall || '07:00', type: 'Arrive', description: 'Crew Call', location: lastDay.basecamp || 'Basecamp' }],
+            notes: '',
+            basecamp: lastDay.basecamp || '',
+            sunriseSunset: ''
+        };
+
+        const newDays = [...rawDays, newDay];
+        setActiveDayIdx(newDays.length - 1);
+        onUpdate({
+            ...newDays[0],
+            days: newDays
+        });
+    };
 
     const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
@@ -148,8 +207,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
         const nums = value.replace(/[^\d]/g, '');
         if (nums.length <= 2) return nums;
-        if (nums.length <= 4) return `${nums.slice(0, 2)}:${nums.slice(2)}`;
-        return `${nums.slice(0, 2)}:${nums.slice(2, 4)}`;
+        if (nums.length <= 4) return `${nums.slice(0, 2)}:${nums.slice(2)} `;
+        return `${nums.slice(0, 2)}:${nums.slice(2, 4)} `;
     };
 
     // Handle click outside to close delete popup
@@ -164,12 +223,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     }, [eventToDelete]);
 
     const updateField = (field: keyof CallSheetData, value: any) => {
-        onUpdate({ [field]: value });
+        updateActiveDay({ [field]: value });
     };
 
     const handleAddEvent = () => {
         const newEvent: CallSheetEvent = {
-            id: `evt-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            id: `evt - ${Date.now()} -${Math.random().toString(36).substr(2, 9)} `,
             time: '',
             type: 'Shoot',
             description: '',
@@ -197,11 +256,11 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     const handleImportSchedule = () => {
         if (!metadata?.importedSchedule?.items) return;
         const count = metadata.importedSchedule.items.length;
-        if (!confirm(`Add ${count} items from Schedule?`)) return;
+        if (!confirm(`Add ${count} items from Schedule ? `)) return;
 
         const schedItems = metadata.importedSchedule.items as any[];
         const newEvents: CallSheetEvent[] = schedItems.map((item, i) => ({
-            id: `evt-imp-${Date.now()}-${i}`,
+            id: `evt - imp - ${Date.now()} -${i} `,
             time: item.time || '',
             type: 'Shoot',
             description: item.description || '',
@@ -325,6 +384,30 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
     return (
         <>
+            {/* Day Tabs Navigation (Screen Only) */}
+            {!isPrinting && (data.days && data.days.length > 0 || rawDays.length > 1) && (
+                <div className="flex items-center gap-1 mb-4 print:hidden px-1 overflow-x-auto">
+                    {rawDays.map((day, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setActiveDayIdx(idx)}
+                            className={`px-3 py-1.5 rounded-t-sm text-[10px] font-bold uppercase tracking-wider transition-colors border-b-2 ${activeDayIdx === idx
+                                    ? 'bg-zinc-100 text-black border-black'
+                                    : 'text-zinc-400 border-transparent hover:text-zinc-600 hover:bg-zinc-50'
+                                }`}
+                        >
+                            Day {idx + 1} {day.date ? `(${day.date.slice(0, 5)})` : ''}
+                        </button>
+                    ))}
+                    <button
+                        onClick={handleAddDay}
+                        className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-500 hover:text-indigo-700 hover:bg-indigo-50 rounded-sm ml-2 flex items-center gap-1 transition-colors"
+                    >
+                        <Plus size={10} /> Add Day
+                    </button>
+                </div>
+            )}
+
             {pages.map((pageItems, pageIndex) => (
                 <DocumentLayout
                     key={pageIndex}
@@ -665,6 +748,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             <option value="Break">Break</option>
                                                             <option value="Meal">Meal</option>
                                                             <option value="Strike">Strike</option>
+                                                            <option value="Wrap">Wrap</option>
                                                             <option value="Move">Move</option>
                                                             <option value="Other">Other</option>
                                                         </select>
