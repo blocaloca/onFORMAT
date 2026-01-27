@@ -392,8 +392,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             key={idx}
                             onClick={() => setActiveDayIdx(idx)}
                             className={`px-3 py-1.5 rounded-t-sm text-[10px] font-bold uppercase tracking-wider transition-colors border-b-2 ${activeDayIdx === idx
-                                    ? 'bg-zinc-100 text-black border-black'
-                                    : 'text-zinc-400 border-transparent hover:text-zinc-600 hover:bg-zinc-50'
+                                ? 'bg-zinc-100 text-black border-black'
+                                : 'text-zinc-400 border-transparent hover:text-zinc-600 hover:bg-zinc-50'
                                 }`}
                         >
                             Day {idx + 1} {day.date ? `(${day.date.slice(0, 5)})` : ''}
@@ -440,24 +440,24 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     </div>
 
                                     {/* Vitals Grid: General Call & QR */}
-                                    <div className="grid grid-cols-[1fr_auto] bg-black text-white border border-black rounded-sm overflow-hidden p-1">
-                                        <div className="p-3 flex flex-col justify-center">
+                                    <div className="grid grid-cols-[1fr_auto] border border-zinc-200 rounded-sm overflow-hidden bg-white h-24">
+                                        <div className="p-4 flex flex-col justify-center">
                                             <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest mb-1">General Call</span>
                                             <input
                                                 type="text"
                                                 value={data.crewCall || (metadata as any)?.importedSchedule?.callTime || ''}
                                                 onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                className="w-full bg-transparent font-mono text-4xl font-black outline-none text-white placeholder:text-zinc-800 tracking-tighter"
+                                                className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-tighter leading-none"
                                                 placeholder="00:00"
                                                 disabled={isLocked}
                                             />
                                         </div>
-                                        <div className="p-1.5 bg-white flex flex-col items-center justify-center w-28">
-                                            <span className="text-[9px] font-black uppercase text-black mb-1 tracking-tighter leading-none">onSET Mobile</span>
+                                        <div className="w-24 bg-zinc-50 border-l border-zinc-100 p-2 flex flex-col items-center justify-center gap-1">
+                                            <span className="text-[8px] font-bold uppercase text-zinc-400 tracking-tight leading-none text-center whitespace-nowrap">GET onSET MOBILE</span>
                                             <img
                                                 src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
                                                 alt="Set QR"
-                                                className="w-full flex-1 object-contain"
+                                                className="w-full h-full object-contain opacity-80 mix-blend-multiply"
                                             />
                                         </div>
                                     </div>
