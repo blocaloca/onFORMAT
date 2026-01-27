@@ -172,6 +172,7 @@ export const DraftEditor = ({
 
     // --- Nav Mode Logic ---
     const COLLECTION_TOOLS = [
+        'schedule',
         'call-sheet',
         'on-set-notes',
         'script-notes',
@@ -248,7 +249,26 @@ export const DraftEditor = ({
     const handleNew = () => {
         if (navMode === 'collection') {
             // Collection Mode: Append to End (Day 1, Day 2...)
-            const newVersions = [...versions, {}];
+            // Smart Date Increment Logic
+            const lastItem = versions[versions.length - 1] || {};
+            let newItem: any = {};
+
+            if (lastItem.date) {
+                try {
+                    // Try to parse MM/DD/YYYY
+                    const [m, d, y] = lastItem.date.split('/').map((n: string) => parseInt(n));
+                    if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
+                        const dateObj = new Date(y, m - 1, d);
+                        dateObj.setDate(dateObj.getDate() + 1);
+                        const nextDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
+                        newItem.date = nextDate;
+                    }
+                } catch (e) {
+                    console.warn("Could not increment date", e);
+                }
+            }
+
+            const newVersions = [...versions, newItem];
             setActiveVersionIndex(newVersions.length - 1); // Jump to new last item
             onDraftChange(JSON.stringify(newVersions));
         } else {

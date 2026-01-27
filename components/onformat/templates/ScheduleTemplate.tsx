@@ -26,12 +26,13 @@ interface ScheduleTemplateProps {
     orientation?: 'portrait' | 'landscape';
     metadata?: any;
     isPrinting?: boolean;
+    onAddDay?: () => void;
 }
 
 const INT_EXT_OPTIONS = ['INT', 'EXT', 'I/E', 'BREAK'];
 const TIME_OF_DAY_OPTIONS = ['DAY', 'NIGHT', 'MAGIC', 'DAWN', 'DUSK'];
 
-export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: ScheduleTemplateProps) => {
+export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting, onAddDay }: ScheduleTemplateProps) => {
 
     const formatDate = (val: string) => {
         const digits = val.replace(/\D/g, '');
@@ -94,6 +95,12 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             description: ''
         };
         onUpdate({ items: [...items, newItem] });
+
+        if (validBreak && onAddDay) {
+            if (confirm("End of day added. Create next day's schedule?")) {
+                onAddDay();
+            }
+        }
     };
 
     const handleUpdateItem = (index: number, updates: Partial<ScheduleItem>) => {
@@ -130,7 +137,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             {pages.map((pageItems, pageIndex) => (
                 <DocumentLayout
                     key={pageIndex}
-                    title="Shooting Schedule"
+                    title="SCHEDULE"
                     hideHeader={false}
                     plain={plain}
                     orientation={orientation}
