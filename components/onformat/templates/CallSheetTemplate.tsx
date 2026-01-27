@@ -440,25 +440,29 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     </div>
 
                                     {/* Vitals Grid: General Call & QR */}
-                                    <div className="grid grid-cols-[1fr_auto] border border-zinc-200 rounded-sm overflow-hidden bg-white h-32">
-                                        <div className="p-6 flex flex-col justify-center">
-                                            <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest mb-1">General Call</span>
-                                            <input
-                                                type="text"
-                                                value={data.crewCall || (metadata as any)?.importedSchedule?.callTime || ''}
-                                                onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                className="w-full bg-transparent font-sans text-6xl font-black outline-none text-black placeholder:text-zinc-100 tracking-tighter leading-none"
-                                                placeholder="00:00"
-                                                disabled={isLocked}
-                                            />
+                                    <div>
+                                        <div className="flex justify-between items-end mb-1">
+                                            <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest">General Call</span>
+                                            <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-widest w-32 text-center">GET onSET MOBILE</span>
                                         </div>
-                                        <div className="w-32 bg-zinc-50 border-l border-zinc-100 p-3 flex flex-col items-center justify-center gap-2">
-                                            <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-tight leading-none text-center whitespace-nowrap">GET onSET MOBILE</span>
-                                            <img
-                                                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
-                                                alt="Set QR"
-                                                className="w-full h-full object-contain opacity-80 mix-blend-multiply"
-                                            />
+                                        <div className="grid grid-cols-[1fr_auto] border border-zinc-200 rounded-sm overflow-hidden bg-white h-32">
+                                            <div className="p-6 flex items-center">
+                                                <input
+                                                    type="text"
+                                                    value={data.crewCall || (metadata as any)?.importedSchedule?.callTime || ''}
+                                                    onChange={e => updateField('crewCall', formatTime(e.target.value))}
+                                                    className="w-full bg-transparent font-sans text-6xl font-black outline-none text-black placeholder:text-zinc-100 tracking-tighter leading-none"
+                                                    placeholder="00:00"
+                                                    disabled={isLocked}
+                                                />
+                                            </div>
+                                            <div className="w-32 bg-zinc-50 border-l border-zinc-100 p-3 flex items-center justify-center">
+                                                <img
+                                                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
+                                                    alt="Set QR"
+                                                    className="w-full h-full object-contain opacity-90 mix-blend-multiply"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
