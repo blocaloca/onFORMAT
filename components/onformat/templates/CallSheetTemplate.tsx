@@ -126,22 +126,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
         }
     }, [metadata?.importedSchedule, metadata?.importedLocations]);
 
-    const scheduleItems = (metadata as any)?.importedSchedule?.items;
-    const scheduleCallTime = (metadata as any)?.importedSchedule?.callTime;
-
-    // Live Link: If schedule exists, use it. Otherwise use local events.
-    const isLinked = !!(scheduleItems && scheduleItems.length > 0);
-
-    const linkedEvents: CallSheetEvent[] = isLinked ? scheduleItems.map((item: any, i: number) => ({
-        id: item.id || `imp-${i}`,
-        time: item.time || '',
-        type: 'Shoot',
-        description: item.scene ? `Scene ${item.scene} - ${item.description}` : item.description,
-        location: item.set ? `${item.intExt} ${item.set}` : (item.location || '')
-    })) : [];
-
-    const events = isLinked ? linkedEvents : (data.events || []);
-    const displayedCrewCall = scheduleCallTime || data.crewCall || '';
+    const events = data.events || [];
+    const displayedCrewCall = data.crewCall || (metadata as any)?.importedSchedule?.callTime || '';
 
     const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
@@ -155,8 +141,9 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
     const formatTime = (value: string) => {
         // Allow deletion
-        if (value.length < (displayedCrewCall || '').length && value.endsWith(':')) {
-            return value.slice(0, -1);
+        // Allow simple backspace handling
+        if (value.length < 3 && value.includes(':')) {
+            return value.replace(':', '');
         }
 
         const nums = value.replace(/[^\d]/g, '');
@@ -181,7 +168,6 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     };
 
     const handleAddEvent = () => {
-        if (isLinked) return; // Cannot add to linked schedule directly here
         const newEvent: CallSheetEvent = {
             id: `evt-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             time: '',
@@ -193,19 +179,16 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     };
 
     const handleUpdateEvent = (index: number, updates: Partial<CallSheetEvent>) => {
-        if (isLinked) return; // Read-only view of schedule
         const newEvents = [...events];
         newEvents[index] = { ...newEvents[index], ...updates };
         onUpdate({ events: newEvents });
     };
 
     const handleDeleteEvent = (id: string) => {
-        if (isLinked) return;
         setEventToDelete(id);
     };
 
     const confirmDeleteEvent = (id: string) => {
-        if (isLinked) return;
         const newEvents = events.filter(e => e.id !== id);
         onUpdate({ events: newEvents });
         setEventToDelete(null);
@@ -281,8 +264,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
             const { lat, lon } = geoData[0];
 
-            // 2. Format Date: MM-DD-YYYY -> YYYY-MM-DD
-            const [mm, dd, yyyy] = data.date.split('-');
+            // 2. Format Date: MM/DD/YYYY -> YYYY-MM-DD
+            const [mm, dd, yyyy] = data.date.split('/');
             const isoDate = `${yyyy}-${mm}-${dd}`;
 
             // 3. Weather via Open-Meteo
@@ -370,35 +353,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 disabled={isLocked}
                                             />
                                         </div>
-                                        <div className="flex items-center gap-2 bg-zinc-100 px-2 py-1.5 rounded-sm w-fit mt-2">
-                                            <span className="text-xs font-bold uppercase text-zinc-400">Day</span>
-                                            {isPrinting ? (
-                                                <div className="w-8 text-center text-xs font-bold uppercase text-zinc-900 border-b border-zinc-300 pt-0.5 pb-0.5 leading-normal block">{data.currentDay}</div>
-                                            ) : (
-                                                <input
-                                                    type="text"
-                                                    value={data.currentDay || ''}
-                                                    onChange={(e) => updateField('currentDay', e.target.value)}
-                                                    className="w-8 text-center bg-transparent text-xs font-bold uppercase text-zinc-900 outline-none border-b border-zinc-300 focus:border-zinc-900 transition-colors"
-                                                    placeholder="X"
-                                                    disabled={isLocked}
-                                                />
-                                            )}
 
-                                            <span className="text-xs font-bold uppercase text-zinc-400">of</span>
-                                            {isPrinting ? (
-                                                <div className="w-8 text-center text-xs font-bold uppercase text-zinc-900 border-b border-zinc-300 pt-0.5 pb-0.5 leading-normal block">{data.totalDays}</div>
-                                            ) : (
-                                                <input
-                                                    type="text"
-                                                    value={data.totalDays || ''}
-                                                    onChange={(e) => updateField('totalDays', e.target.value)}
-                                                    className="w-8 text-center bg-transparent text-xs font-bold uppercase text-zinc-900 outline-none border-b border-zinc-300 focus:border-zinc-900 transition-colors"
-                                                    placeholder="Y"
-                                                    disabled={isLocked}
-                                                />
-                                            )}
-                                        </div>
                                     </div>
 
                                     {/* Vitals Grid: General Call & QR */}
@@ -536,13 +491,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="flex items-center justify-between border-b border-black pb-1 mb-3">
                                         <div className="flex items-center gap-2">
                                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Schedule</h3>
-                                            {isLinked && (
-                                                <span className="text-[9px] font-bold uppercase bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-sm flex items-center gap-1">
-                                                    Linked
-                                                </span>
-                                            )}
                                         </div>
-                                        {!isLocked && !isLinked && metadata?.importedSchedule && (
+                                        {!isLocked && metadata?.importedSchedule && (
                                             <button onClick={handleImportSchedule} className="text-[9px] font-bold uppercase text-indigo-500 hover:text-indigo-700">
                                                 Add from Schedule
                                             </button>
@@ -633,7 +583,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         </div>
                                                     </div>
 
-                                                    {!isLocked && !isLinked && (
+                                                    {!isLocked && (
                                                         <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                             {eventToDelete === item.id ? (
                                                                 <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
@@ -652,11 +602,13 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         })}
 
                                         {/* Actions */}
-                                        {!isLocked && !isLinked && (pageIndex === totalPages - 1) && (
-                                            <div className="mt-2">
-                                                <button onClick={handleAddEvent} className="text-[10px] font-bold uppercase text-zinc-400 hover:text-black flex items-center gap-1 group">
-                                                    <Plus size={12} />
-                                                    <span>Add Item</span>
+                                        {!isLocked && (pageIndex === totalPages - 1) && (
+                                            <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
+                                                <button
+                                                    onClick={handleAddEvent}
+                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                >
+                                                    <Plus size={10} /> Add Item
                                                 </button>
                                             </div>
                                         )}
@@ -755,7 +707,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     )}
                                                 </div>
 
-                                                {!isLocked && !isLinked && (
+                                                {!isLocked && (
                                                     <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                         {eventToDelete === item.id ? (
                                                             <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
@@ -773,11 +725,13 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )
                                     })}
 
-                                    {!isLocked && !isLinked && (pageIndex === totalPages - 1) && (
-                                        <div className="mt-2">
-                                            <button onClick={handleAddEvent} className="text-[10px] font-bold uppercase text-zinc-400 hover:text-black flex items-center gap-1 group">
-                                                <Plus size={12} />
-                                                <span>Add Item</span>
+                                    {!isLocked && (pageIndex === totalPages - 1) && (
+                                        <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
+                                            <button
+                                                onClick={handleAddEvent}
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                            >
+                                                <Plus size={10} /> Add Item
                                             </button>
                                         </div>
                                     )}

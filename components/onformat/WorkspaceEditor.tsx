@@ -648,7 +648,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             ...s.chat,
                             'project-vision': [{
                                 role: 'assistant',
-                                content: "I'm ready to dive in. How can I help shape the vision?",
+                                content: "I'm ready to dive in. How can I help shape the vision? What's on your mind?",
                                 actions: [
                                     { label: "Let's brainstorm", type: "suggestion", payload: "I have a seed of an idea. Let's flesh it out.", prominence: "primary" },
                                     { label: "Help with Brief", type: "suggestion", payload: "I need help structuring my thoughts into a Creative Brief.", prominence: "primary" },
@@ -1619,6 +1619,13 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     const toggleAiDock = () => {
         setIsAiDocked(!isAiDocked);
     };
+
+    // Auto-Open AI for Project Vision
+    useEffect(() => {
+        if (state.activeTool === 'project-vision') {
+            setIsAiDocked(false);
+        }
+    }, [state.activeTool]);
 
 
 
