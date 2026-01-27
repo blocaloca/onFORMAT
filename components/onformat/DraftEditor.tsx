@@ -532,6 +532,8 @@ export const DraftEditor = ({
                             onGenerateFromVision={onGenerateFromVision}
                             // @ts-ignore
                             onOpenAi={onOpenAi}
+                            // @ts-ignore
+                            onAddDay={handleNew}
                         />
                     </div>
                 </div>
