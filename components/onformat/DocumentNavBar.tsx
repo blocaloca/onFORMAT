@@ -98,9 +98,7 @@ export const DocumentNavBar = ({
                         <button onClick={onNew} className="p-1.5 text-zinc-400 hover:text-emerald-400 transition-colors" title="Add Day">
                             <Plus size={14} />
                         </button>
-                        <button onClick={onDuplicate} className="p-1.5 text-zinc-400 hover:text-white transition-colors" title="Duplicate Day">
-                            <Copy size={12} />
-                        </button>
+
                         <button onClick={onClear} className="p-1.5 text-zinc-400 hover:text-red-500 transition-colors" title="Clear/Delete Day">
                             <Trash2 size={12} />
                         </button>
