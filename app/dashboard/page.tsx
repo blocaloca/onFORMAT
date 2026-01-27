@@ -10,7 +10,9 @@ import { FolderActionsDialog } from '@/components/dashboard/FolderActionsDialog'
 
 import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav';
 import { UserMenu } from '@/components/onformat/UserMenu';
-import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone } from 'lucide-react';
+import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone, CalendarClock } from 'lucide-react';
+import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
+import { buildGridRows } from '@/lib/production-grid/parser';
 
 import { DEMO_PROJECT_DATA } from '@/lib/demoProject';
 
@@ -31,7 +33,7 @@ interface Project {
 export default function DashboardPage() {
     const router = useRouter();
     const [user, setUser] = useState<string | null>(null);
-    const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [view, setView] = useState<'grid' | 'list' | 'timeline'>('grid');
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -372,6 +374,13 @@ export default function DashboardPage() {
                         >
                             <ListIcon size={16} />
                         </button>
+                        <button
+                            onClick={() => setView('timeline')}
+                            className={`p-2 transition-colors ${view === 'timeline' ? 'bg-black text-white' : 'text-zinc-400 hover:text-black'}`}
+                            title="Timeline View"
+                        >
+                            <CalendarClock size={16} />
+                        </button>
                     </div>
                 </div>
 
@@ -400,6 +409,16 @@ export default function DashboardPage() {
 
                 {loading ? (
                     <div className="text-center py-20 text-zinc-400 animate-pulse font-mono text-sm uppercase">Loading Projects...</div>
+                ) : view === 'timeline' ? (
+                    <div className="w-full h-full overflow-hidden">
+                        <GlobalGridContainer
+                            rows={buildGridRows(filteredProjects.map(p => ({
+                                id: p.id,
+                                name: p.name,
+                                data: p.data
+                            })))}
+                        />
+                    </div>
                 ) : (
                     <div className={`
                         ${view === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6' : 'flex flex-col gap-4'}

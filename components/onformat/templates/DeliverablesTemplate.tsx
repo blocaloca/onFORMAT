@@ -6,6 +6,7 @@ interface DeliverableItem {
     id: string;
     thumbnailUrl: string;
     fileNumber: string;
+    dueDate: string; // YYYY-MM-DD
     description: string;
     format: string; // Aspect Ratio
     type: string;   // File Type (Codec)
@@ -63,6 +64,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
             id: `del-${Date.now()}`,
             thumbnailUrl: '',
             fileNumber: '',
+            dueDate: '',
             description: '',
             format: '',
             type: '',
@@ -102,9 +104,10 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                     <div className="space-y-6 text-xs font-sans h-full flex flex-col">
 
                         {/* Table Header */}
-                        <div className="grid grid-cols-[60px_80px_1fr_80px_100px_1fr_30px] gap-4 border-b border-black pb-2 items-end">
+                        <div className="grid grid-cols-[60px_80px_110px_1fr_80px_100px_1fr_30px] gap-4 border-b border-black pb-2 items-end">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Thumb</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">File #</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Due Date</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Description</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Aspect</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Type</span>
@@ -117,7 +120,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_80px_1fr_80px_100px_1fr_30px] gap-4 py-4 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_80px_110px_1fr_80px_100px_1fr_30px] gap-4 py-4 items-start hover:bg-zinc-50 transition-colors group">
 
                                         {/* Thumbnail */}
                                         <div className="relative w-full aspect-square bg-zinc-100 border border-zinc-200 overflow-hidden flex items-center justify-center group/image">
@@ -163,6 +166,21 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 disabled={isLocked}
                                             />
                                         )}
+
+                                        {/* Due Date */}
+                                        <div className="pt-1">
+                                            {isPrinting ? (
+                                                <div className="font-mono font-bold text-xs uppercase block">{item.dueDate}</div>
+                                            ) : (
+                                                <input
+                                                    type="date"
+                                                    value={item.dueDate}
+                                                    onChange={e => handleUpdateItem(globalIdx, { dueDate: e.target.value })}
+                                                    className="font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white rounded px-1 w-full text-zinc-600 uppercase"
+                                                    disabled={isLocked}
+                                                />
+                                            )}
+                                        </div>
 
                                         {/* Description */}
                                         <div className="min-w-0">
