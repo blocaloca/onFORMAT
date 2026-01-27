@@ -648,11 +648,11 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             ...s.chat,
                             'project-vision': [{
                                 role: 'assistant',
-                                content: "Welcome. I’m in DEVELOP mode. I’m ready to collaborate on concepts or parse your project logic into a Brief. How are we starting?",
+                                content: "I'm ready to dive in. How can I help shape the vision?",
                                 actions: [
-                                    { label: "Conceptualize", type: "suggestion", payload: "I have a subject or product. Give me 3 narrative directions.", prominence: "primary" },
-                                    { label: "Visual Style", type: "suggestion", payload: "I have a mood in mind. Help me build a visual metaphor.", prominence: "primary" },
-                                    { label: "Project Logic", type: "suggestion", payload: "I know what I’m making. Help me scope the budget and crew.", prominence: "secondary" }
+                                    { label: "Let's brainstorm", type: "suggestion", payload: "I have a seed of an idea. Let's flesh it out.", prominence: "primary" },
+                                    { label: "Help with Brief", type: "suggestion", payload: "I need help structuring my thoughts into a Creative Brief.", prominence: "primary" },
+                                    { label: "Surprise Me", type: "suggestion", payload: "I'm looking for inspiration. Pitch me a random, wild idea (like a documentary about shoelaces).", prominence: "secondary" }
                                 ]
                             }]
                         }
