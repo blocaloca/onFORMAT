@@ -25,7 +25,7 @@ export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onP
     const PHASE_LABELS: Record<string, string> = {
         DEVELOPMENT: 'Development',
         PRE_PRODUCTION: 'Pre-Production',
-        ON_SET: 'onSET',
+        ON_SET: 'Production',
         POST: 'Post-Production'
     };
 

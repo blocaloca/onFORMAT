@@ -31,7 +31,6 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
     ],
     PRE_PRODUCTION: [
         { key: 'shot-scene-book', label: 'Shot List' },
-        { key: 'schedule', label: 'Schedule' },
         { key: 'budget', label: 'Budget' },
         { key: 'crew-list', label: 'Crew List' },
         { key: 'casting-talent', label: 'Talent' },
@@ -41,6 +40,7 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
         { key: 'props-list', label: 'Props' },
     ],
     ON_SET: [
+        { key: 'schedule', label: 'SCHEDULE' },
         { key: 'call-sheet', label: 'Call Sheet' },
         { key: 'releases', label: 'Releases' },
         { key: 'on-set-notes', label: 'On-Set Notes' },
