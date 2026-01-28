@@ -91,6 +91,7 @@ type PhaseState = {
 export type WorkspaceState = {
     activePhase: Phase
     activeTool: ToolKey
+    lastActiveTool?: ToolKey
     phases: Record<Phase, PhaseState>
     chat: Partial<Record<ToolKey, ChatMsg[]>>
     clientName?: string
@@ -1752,7 +1753,23 @@ Context:\n"${fullContext}"`;
                     activeTool={state.activeTool}
                     activePhase={state.activePhase}
                     onToolSelect={(toolKey, phase) => {
-                        // Removed intercept for mobile-control to allow normal selection
+                        // Toggle Logic for Mobile Control
+                        if (toolKey === 'onset-mobile-control') {
+                            setState(s => {
+                                // If already open -> Close (Toggle Back)
+                                if (s.activeTool === 'onset-mobile-control' && s.lastActiveTool) {
+                                    return { ...s, activeTool: s.lastActiveTool };
+                                }
+                                // If closed -> Open & Save State
+                                return {
+                                    ...s,
+                                    activePhase: phase,
+                                    activeTool: toolKey as ToolKey,
+                                    lastActiveTool: s.activeTool // Capture underlying doc
+                                };
+                            });
+                            return;
+                        }
 
                         // Direct state update to handle simultaneous phase+tool switch
                         // @ts-ignore
