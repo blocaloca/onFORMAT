@@ -50,6 +50,7 @@ interface DraftEditorProps {
     onGenerateFromVision?: (targetTool: any, visionText: string, promptPrefix: string) => void
     onOpenAi?: () => void
     latestNotification?: { msg: string, time: number } | null
+    onMagicImport?: (sourceData: any) => void
 }
 
 // Helper Template for Plain Text
@@ -95,7 +96,8 @@ export const DraftEditor = ({
     onToggleLock,
     onGenerateFromVision,
     onOpenAi,
-    latestNotification
+    latestNotification,
+    onMagicImport
 }: DraftEditorProps) => {
 
     // Schedule Import Logic
@@ -552,6 +554,8 @@ export const DraftEditor = ({
                             onGenerateFromVision={onGenerateFromVision}
                             // @ts-ignore
                             onOpenAi={onOpenAi}
+                            // @ts-ignore
+                            onMagicImport={onMagicImport}
                             // @ts-ignore
                             onAddDay={handleNew}
                         />

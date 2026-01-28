@@ -80,6 +80,10 @@ export const CreativeConceptTemplate = ({
         if (action === 'workshop') {
             onUpdate({ activePageId: page.id });
             if (onOpenAi) onOpenAi();
+        } else if (action === 'brief' && onGenerateFromVision) {
+            if (onOpenAi) onOpenAi();
+            // "Creative brief becomes the single source of truth"
+            onGenerateFromVision('brief', page.content, "Create a creative brief based on this vision");
         }
     };
 
@@ -136,6 +140,13 @@ export const CreativeConceptTemplate = ({
                                 >
                                     <Sparkles size={12} />
                                     Workshop with AI
+                                </button>
+
+                                <button
+                                    onClick={() => handleAction(page, 'brief')}
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black hover:bg-zinc-100 px-3 py-2 rounded transition-colors"
+                                >
+                                    Create Brief <ArrowRight size={12} />
                                 </button>
                             </div>
                         )}

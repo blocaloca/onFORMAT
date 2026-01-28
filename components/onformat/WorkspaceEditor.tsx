@@ -648,11 +648,12 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             ...s.chat,
                             'project-vision': [{
                                 role: 'assistant',
-                                content: "Let's capture the big picture. What is the core feeling or message of this project?",
+                                content: "Let's capture the big picture. What type of project are you creating?",
                                 actions: [
-                                    { label: "Define Example", type: "suggestion", payload: "For example: Authentic, Gritty, High-Energy...", prominence: "secondary" },
-                                    { label: "Define the Emotion", type: "suggestion", payload: "The core emotion is...", prominence: "primary" },
-                                    { label: "Define the Visual Style", type: "suggestion", payload: "Visually, I want it to look...", prominence: "primary" }
+                                    { label: "Commercial", type: "suggestion", payload: "I am making a Commercial for...", prominence: "primary" },
+                                    { label: "Music Video", type: "suggestion", payload: "I am making a Music Video for...", prominence: "primary" },
+                                    { label: "Short Film", type: "suggestion", payload: "I am making a Short Film about...", prominence: "primary" },
+                                    { label: "Documentary", type: "suggestion", payload: "I am making a Documentary about...", prominence: "secondary" }
                                 ]
                             }]
                         }
@@ -1444,14 +1445,86 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         setIsAiDocked(false);
 
         // 3. Trigger AI Assistant with Handoff Instruction
-        let prompt = `${promptPrefix}:\n\n"${visionText}"`;
+        const chatHistory = state.chat['project-vision'] || [];
+        const chatContext = chatHistory
+            .filter(m => m.role === 'user' || (m.role === 'assistant' && !m.content.includes("Let's capture")))
+            .map(m => `${m.role.toUpperCase()}: ${m.content}`)
+            .join('\n');
+
+        const fullContext = `${visionText}\n\n[Context from Conversation]:\n${chatContext}`;
+
+        let prompt = `${promptPrefix}:\n\n"${fullContext}"`;
         if (targetTool === 'brief') {
-            prompt = `I have started a new Brief based on this Vision. I've pre-filled the 'Vision' field. Please help me refine the **Target Audience** and **Key Message**. Once we have a solid brief, please ask me if I want to proceed to the **AV Script** or **Storyboard**.\n\nVision:\n"${visionText}"`;
+            prompt = `I have started a new Brief based on this Vision. I've pre-filled the 'Vision' field. Please help me refine the **Target Audience** and **Key Message**. Once we have a solid brief, please ask me if I want to proceed to the **AV Script** or **Storyboard**.\n\nVision & Context:\n"${fullContext}"`;
         } else if (targetTool === 'directors-treatment') {
-            prompt = `I have started a new Treatment. Please analyze the Vision text below and ask me questions to help flesh out the **Visual Language** and **Character Philosophy**.\n\nVision:\n"${visionText}"`;
+            prompt = `I have started a new Treatment. Please analyze the Vision text below and ask me questions to help flesh out the **Visual Language** and **Character Philosophy**.\n\nVision & Context:\n"${fullContext}"`;
         }
 
         send(prompt, targetTool);
+    };
+
+    const handleMagicImport = (sourceData: any) => {
+        if (!sourceData || !Array.isArray(sourceData.rows)) return;
+
+        const newShots = sourceData.rows.map((row: any, i: number) => {
+            const visual = (row.visual || '').toLowerCase();
+
+            // Heuristic Analysis (Simulated AI)
+            let size = 'Wide';
+            if (visual.match(/(close|cu|detail|face|eyes)/)) size = 'Close Up';
+            else if (visual.match(/(med|waist|torso)/)) size = 'Medium';
+            else if (visual.match(/(extreme|macro)/)) size = 'Extreme CU';
+            else if (visual.match(/(full|body)/)) size = 'Full';
+
+            let angle = 'Eye Level';
+            if (visual.match(/(low|up)/)) angle = 'Low Angle';
+            else if (visual.match(/(high|down|bird)/)) angle = 'High Angle';
+            else if (visual.match(/(over|top)/)) angle = 'Overhead';
+
+            let movement = 'Static';
+            if (visual.match(/(pan|scan)/)) movement = 'Pan';
+            else if (visual.match(/(track|dolly|follow|walk)/)) movement = 'Tracking';
+            else if (visual.match(/(hand|shaky|run)/)) movement = 'Handheld';
+
+            return {
+                id: `shot-magic-${Date.now()}-${i}`,
+                sourceId: row.id,
+                scene: row.scene || '',
+                size,
+                angle,
+                movement,
+                description: row.visual || ''
+            };
+        });
+
+        // Save
+        const targetTool = 'shot-scene-book';
+        const currentDraftRaw = activePhaseState.drafts[targetTool] || '[]';
+        let currentStack: any[] = [];
+        try {
+            const parsed = JSON.parse(currentDraftRaw);
+            if (Array.isArray(parsed)) currentStack = parsed;
+            else currentStack = [parsed];
+        } catch { currentStack = [{}]; }
+
+        if (currentStack.length === 0) currentStack.push({});
+
+        const currentHead = currentStack[0];
+        const existingShots = currentHead.shots || [];
+        const updatedHead = { ...currentHead, shots: [...existingShots, ...newShots] };
+        currentStack[0] = updatedHead;
+
+        const nextDrafts = { ...activePhaseState.drafts, [targetTool]: JSON.stringify(currentStack) };
+        const nextPhaseState = { ...state.phases[state.activePhase], drafts: nextDrafts };
+
+        setState(s => ({
+            ...s,
+            phases: {
+                ...s.phases,
+                [state.activePhase]: nextPhaseState
+            }
+        }));
+        setLatestNotification({ msg: `AI: Analyzed & Generated ${newShots.length} Shots`, time: Date.now() });
     };
 
     const handleGenerateFromBrief = (targetTool: ToolKey) => {
@@ -1822,6 +1895,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     }}
                     // @ts-ignore
                     latestNotification={latestNotification}
+                    // @ts-ignore
+                    onMagicImport={handleMagicImport}
 
                 />
 

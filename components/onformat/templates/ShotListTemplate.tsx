@@ -25,13 +25,14 @@ interface ShotListTemplateProps {
     orientation?: 'portrait' | 'landscape';
     metadata?: any;
     isPrinting?: boolean;
+    onMagicImport?: (data: any) => void;
 }
 
 const SHOT_SIZES = ['Wide', 'Full', 'Medium', 'Cowboy', 'Close Up', 'Extreme CU'];
 const SHOT_ANGLES = ['Eye Level', 'Low Angle', 'High Angle', 'Overhead', 'Dutch'];
 const SHOT_MOVEMENTS = ['Static', 'Pan', 'Tilt', 'Tracking', 'Steadicam', 'Handheld', 'Zoom'];
 
-export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: ShotListTemplateProps) => {
+export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting, onMagicImport }: ShotListTemplateProps) => {
     // Migration/Init
     useEffect(() => {
         if (!data.shots) {
@@ -83,6 +84,13 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const handleImportAVScript = () => {
         if (!metadata?.importedAVScript?.rows) return;
         if (confirm(`Import ${metadata.importedAVScript.rows.length} scenes from AV Script?`)) {
+            // "Magic" AI Path
+            if (onMagicImport) {
+                onMagicImport(metadata.importedAVScript);
+                return;
+            }
+
+            // Legacy Path
             const importedRows = metadata.importedAVScript.rows;
             const newShots = importedRows.map((row: any, i: number) => ({
                 id: `shot-import-${Date.now()}-${i}`,
