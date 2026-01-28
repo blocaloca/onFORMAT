@@ -1449,7 +1449,23 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
         let prompt = `${promptPrefix}:\n\n"${fullContext}"`;
         if (targetTool === 'brief') {
-            prompt = `I have started a new Brief based on this Vision. I've pre-filled the 'Vision' field. Please help me refine the **Target Audience** and **Key Message**. Once we have a solid brief, please ask me if I want to proceed to the **AV Script** or **Storyboard**.\n\nVision & Context:\n"${fullContext}"`;
+            prompt = `Based on our previous conversation, please generate a structured "First Draft" of the Creative Brief by acting as a "Silent Scribe".
+            
+EXTRACT and SYNTHESIZE the following fields from our chat context. Use this EXACT format (bold keys) so the system can auto-populate the document:
+
+**Product:** [Project Name/Brand]
+**Objective:** [Primary Goal]
+**Target Audience:** [Who is this for?]
+**Tone:** [Adjectives]
+**Key Message:** [Core Takeaway]
+**Narrative:** [The Story/Concept Arc]
+**Talent:** [Characters/Casting Notes]
+**Location:** [Setting/Environment]
+**Deliverables:** [Formats/Assets]
+
+If any info is missing, make a creative best guess based on the "Vibe" of our chat.
+
+Context:\n"${fullContext}"`;
         } else if (targetTool === 'directors-treatment') {
             prompt = `I have started a new Treatment. Please analyze the Vision text below and ask me questions to help flesh out the **Visual Language** and **Character Philosophy**.\n\nVision & Context:\n"${fullContext}"`;
         }
