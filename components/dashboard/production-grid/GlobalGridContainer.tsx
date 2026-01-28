@@ -102,7 +102,7 @@ export const GlobalGridContainer = ({ rows }: GlobalGridContainerProps) => {
             </div>
 
             {/* Rows Container */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden relative">
+            <div className="flex-1 overflow-y-auto overflow-x-visible relative">
                 {/* Background Grid Lines (Absolute) */}
                 <div className="absolute inset-0 flex pointer-events-none pl-48">
                     {dateHeaders.map((d, i) => (
