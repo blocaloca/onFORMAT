@@ -648,13 +648,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             ...s.chat,
                             'project-vision': [{
                                 role: 'assistant',
-                                content: "Let's capture the big picture. What type of project are you creating?",
-                                actions: [
-                                    { label: "Commercial", type: "suggestion", payload: "I am making a Commercial for...", prominence: "primary" },
-                                    { label: "Music Video", type: "suggestion", payload: "I am making a Music Video for...", prominence: "primary" },
-                                    { label: "Short Film", type: "suggestion", payload: "I am making a Short Film about...", prominence: "primary" },
-                                    { label: "Documentary", type: "suggestion", payload: "I am making a Documentary about...", prominence: "secondary" }
-                                ]
+                                content: "I can help you realize your vision. Just ask."
                             }]
                         }
                     };
@@ -1825,8 +1819,12 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                         const audienceMatch = payload.match(/\*\*(?:Target )?Audience:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
                                         const toneMatch = payload.match(/\*\*Tone(?: [&/\\,]+ Style)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
                                         const messageMatch = payload.match(/\*\*(?:Key )?Message:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const narrativeMatch = payload.match(/\*\*(?:Narrative|Creative Approach|Story):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const talentMatch = payload.match(/\*\*(?:Talent|Casting|Characters):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const locationMatch = payload.match(/\*\*(?:Location|Setting):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                        const deliverablesMatch = payload.match(/\*\*(?:Deliverables|Assets):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
-                                        if (subjectMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch) {
+                                        if (subjectMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch || narrativeMatch || talentMatch || locationMatch || deliverablesMatch) {
                                             const existingDraftJSON = newState.phases[foundPhase!].drafts[targetTool] || '[]';
                                             let currentStack: any[] = [{}];
 
@@ -1843,24 +1841,18 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                             if (objectiveMatch) update.objective = objectiveMatch[1].trim();
                                             if (audienceMatch) update.targetAudience = audienceMatch[1].trim();
                                             if (toneMatch) update.tone = toneMatch[1].trim();
-                                            if (messageMatch) update.keyMessage = messageMatch[1].trim();
+                                            if (messageMatch) update.keyMessage = messageMatch[1].trim(); // Assuming keyMessage key
+                                            if (narrativeMatch) update.narrative = narrativeMatch[1].trim();
+                                            if (talentMatch) update.talent = talentMatch[1].trim();
+                                            if (locationMatch) update.location = locationMatch[1].trim();
+                                            if (deliverablesMatch) update.deliverables = deliverablesMatch[1].trim();
 
-                                            // Update the head of the stack
                                             currentStack[0] = { ...currentStack[0], ...update };
 
-                                            // Deep Update State
-                                            newState.phases = {
-                                                ...newState.phases,
-                                                [foundPhase!]: {
-                                                    ...newState.phases[foundPhase!],
-                                                    drafts: {
-                                                        ...newState.phases[foundPhase!].drafts,
-                                                        [targetTool]: JSON.stringify(currentStack, null, 2)
-                                                    }
-                                                }
-                                            };
+                                            // Commit Update
+                                            newState.phases[foundPhase!].drafts[targetTool] = JSON.stringify(currentStack);
                                         }
-                                    }
+                                    } // End of Brief Parsing
                                 }
                                 return newState;
                             });
