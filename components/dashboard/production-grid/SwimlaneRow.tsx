@@ -1,5 +1,5 @@
 import React from 'react';
-import { GridRow } from '@/lib/production-grid/types';
+import { GridRow, ProductionEvent } from '@/lib/production-grid/types';
 import { EventPill } from './EventPill';
 import { tokens } from '@/lib/theme/tokens';
 
@@ -9,9 +9,10 @@ interface SwimlaneRowProps {
     dayWidth: number; // Pixels per day
     onEventClick: (eventId: string) => void;
     clashingIds?: Set<string>;
+    onHoverEvent?: (event: ProductionEvent | null, target?: HTMLElement) => void;
 }
 
-export const SwimlaneRow = ({ row, dateRange, dayWidth, onEventClick, clashingIds }: SwimlaneRowProps) => {
+export const SwimlaneRow = ({ row, dateRange, dayWidth, onEventClick, clashingIds, onHoverEvent }: SwimlaneRowProps) => {
 
     // Helper: Position calculation
     const getPosition = (dateStr: string) => {
@@ -57,6 +58,8 @@ export const SwimlaneRow = ({ row, dateRange, dayWidth, onEventClick, clashingId
                             width={width}
                             onClick={() => onEventClick(evt.id)}
                             isClashing={clashingIds?.has(evt.id)}
+                            onMouseEnter={(e) => onHoverEvent?.(evt, e.currentTarget)}
+                            onMouseLeave={() => onHoverEvent?.(null)}
                         />
                     )
                 })}

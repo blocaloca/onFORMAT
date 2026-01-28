@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { GridRow } from '@/lib/production-grid/types';
+import { GridRow, ProductionEvent } from '@/lib/production-grid/types';
 import { SwimlaneRow } from './SwimlaneRow';
 import { tokens } from '@/lib/theme/tokens';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
@@ -14,6 +14,18 @@ export const GlobalGridContainer = ({ rows }: GlobalGridContainerProps) => {
     const router = useRouter();
 
     const clashingIds = useMemo(() => detectClashes(rows), [rows]);
+
+    // Tooltip State
+    const [tooltip, setTooltip] = useState<{ event: ProductionEvent, rect: DOMRect } | null>(null);
+
+    const handleHover = (event: ProductionEvent | null, target?: HTMLElement) => {
+        if (!event || !target) {
+            setTooltip(null);
+        } else {
+            const rect = target.getBoundingClientRect();
+            setTooltip({ event, rect });
+        }
+    };
 
     // Viewport State
     const [startDate, setStartDate] = useState(new Date()); // Defaults to today
@@ -39,10 +51,8 @@ export const GlobalGridContainer = ({ rows }: GlobalGridContainerProps) => {
         dateHeaders.push(d);
     }
 
-    // Auto-scroll to today on mount? handled by default state.
-
     return (
-        <div className={`flex flex-col h-full rounded-md border ${tokens.border.default} bg-white dark:bg-zinc-950 shadow-sm overflow-hidden`}>
+        <div className={`flex flex-col h-full rounded-md border ${tokens.border.default} bg-white dark:bg-zinc-950 shadow-sm overflow-hidden relative`}>
 
             {/* Toolbar */}
             <div className={`h-12 border-b ${tokens.border.subtle} flex items-center justify-between px-4 bg-zinc-50 dark:bg-zinc-900`}>
@@ -102,7 +112,7 @@ export const GlobalGridContainer = ({ rows }: GlobalGridContainerProps) => {
             </div>
 
             {/* Rows Container */}
-            <div className="flex-1 overflow-y-auto overflow-x-visible relative">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden relative">
                 {/* Background Grid Lines (Absolute) */}
                 <div className="absolute inset-0 flex pointer-events-none pl-48">
                     {dateHeaders.map((d, i) => (
@@ -122,6 +132,7 @@ export const GlobalGridContainer = ({ rows }: GlobalGridContainerProps) => {
                         dateRange={{ start: startDate, end: endDate }}
                         dayWidth={DAY_WIDTH}
                         clashingIds={clashingIds}
+                        onHoverEvent={handleHover}
                         onEventClick={(eventId) => {
                             const event = row.events.find(e => e.id === eventId);
                             if (event?.linkedDocument) {
@@ -138,6 +149,34 @@ export const GlobalGridContainer = ({ rows }: GlobalGridContainerProps) => {
                     </div>
                 )}
             </div>
+
+            {/* Fixed Tooltip Layer */}
+            {tooltip && (
+                <div
+                    className="fixed z-[9999] pointer-events-none flex flex-col bg-black/95 backdrop-blur-md text-white text-[10px] px-3 py-2 rounded-md shadow-2xl border border-white/10 min-w-[140px] animate-in fade-in zoom-in-95 duration-100"
+                    style={{
+                        top: tooltip.rect.top - 8,
+                        left: tooltip.rect.left + (tooltip.rect.width / 2),
+                        transform: 'translate(-50%, -100%)'
+                    }}
+                >
+                    <span className="font-bold uppercase tracking-wider mb-1 text-xs">{tooltip.event.title}</span>
+                    {tooltip.event.description && (
+                        <span className="text-zinc-400 font-mono text-[9px] leading-relaxed max-w-[200px] break-words">
+                            {tooltip.event.description}
+                        </span>
+                    )}
+                    {clashingIds.has(tooltip.event.id) && (
+                        <div className="flex items-center gap-1 mt-2 text-red-400 font-bold bg-red-950/30 p-1 rounded">
+                            <span className="animate-pulse">⚠️</span>
+                            <span>CONFLICT DETECTED</span>
+                        </div>
+                    )}
+
+                    {/* Arrow */}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black/95"></div>
+                </div>
+            )}
         </div>
     );
 };
