@@ -37,7 +37,7 @@ export const SwimlaneRow = ({ row, dateRange, dayWidth, onEventClick, clashingId
             </div>
 
             {/* Timeline Area */}
-            <div className="relative flex-1 h-full overflow-hidden">
+            <div className="relative flex-1 h-full">
                 {/* Grid Lines (Vertical) - Rendered by parent or CSS BG? Let's render absolute pills for now */}
 
                 {row.events.map(evt => {
