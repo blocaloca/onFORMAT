@@ -40,7 +40,7 @@ export const EventPill = ({ event, width, left, onClick, isClashing }: EventPill
             className={`
                 group
                 absolute top-1 bottom-1 rounded-sm text-[10px] font-bold uppercase tracking-wide
-                flex items-center gap-2 px-2 overflow-hidden whitespace-nowrap shadow-sm hover:brightness-110 transition-all z-10
+                flex items-center gap-2 px-2 whitespace-nowrap shadow-sm hover:brightness-110 transition-all z-10 hover:z-[60]
                 ${bgClass} ${textClass}
                 ${isClashing ? 'ring-2 ring-white ring-offset-2 ring-offset-red-500 z-50' : ''}
             `}
