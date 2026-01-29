@@ -1,36 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
-// Templates
-import { DocumentLayout } from '@/components/onformat/templates/DocumentLayout'
-import { BriefTemplate } from '@/components/onformat/templates/BriefTemplate'
-import { DirectorsTreatmentTemplate } from '@/components/onformat/templates/DirectorsTreatmentTemplate'
-import { MoodBoardTemplate } from '@/components/onformat/templates/MoodBoardTemplate'
-import { LookbookTemplate } from '@/components/onformat/templates/LookbookTemplate'
-import { ShotListTemplate } from '@/components/onformat/templates/ShotListTemplate'
-import { CameraReportTemplate } from '@/components/onformat/templates/CameraReportTemplate'
-import { BudgetTemplate } from '@/components/onformat/templates/BudgetTemplate'
-import { ScheduleTemplate } from '@/components/onformat/templates/ScheduleTemplate'
-import { LocationsTemplate } from '@/components/onformat/templates/LocationsTemplate'
-import { CrewListTemplate } from '@/components/onformat/templates/CrewListTemplate'
-import { CastingTemplate } from '@/components/onformat/templates/CastingTemplate'
-import { CallSheetTemplate } from '@/components/onformat/templates/CallSheetTemplate'
-import { OnSetNotesTemplate } from '@/components/onformat/templates/OnSetNotesTemplate'
-import { ScriptNotesTemplate } from '@/components/onformat/templates/ScriptNotesTemplate'
-import { DITLogTemplate } from '@/components/onformat/templates/DITLogTemplate'
-import { ClientSelectsTemplate } from '@/components/onformat/templates/ClientSelectsTemplate'
-import { DeliverablesTemplate } from '@/components/onformat/templates/DeliverablesTemplate'
-import { ArchiveLogTemplate } from '@/components/onformat/templates/ArchiveLogTemplate'
-import { WardrobeTemplate } from '@/components/onformat/templates/WardrobeTemplate'
-import { PropsListTemplate } from '@/components/onformat/templates/PropsListTemplate'
-import { AVScriptTemplate } from '@/components/onformat/templates/AVScriptTemplate'
-import { SoundReportTemplate } from '@/components/onformat/templates/SoundReportTemplate'
-import { EquipmentListTemplate } from '@/components/onformat/templates/EquipmentListTemplate'
-import { CreativeConceptTemplate } from '@/components/onformat/templates/CreativeConceptTemplate'
-import { StoryboardTemplate } from '@/components/onformat/templates/StoryboardTemplate'
-import { OnSetControlPanelTemplate } from '@/components/onformat/templates/OnSetControlPanelTemplate'
-import { BudgetActualTemplate } from '@/components/onformat/templates/BudgetActualTemplate'
-import { TalentReleaseTemplate } from '@/components/onformat/templates/TalentReleaseTemplate'
-import { ReleasesManagerTemplate } from '@/components/onformat/templates/ReleasesManagerTemplate'
+import { getTemplateForTool } from '@/components/onformat/TemplateRegistry'
 import { DocumentNavBar } from './DocumentNavBar'
 
 interface DraftEditorProps {
@@ -51,34 +21,10 @@ interface DraftEditorProps {
     onOpenAi?: () => void
     latestNotification?: { msg: string, time: number } | null
     onMagicImport?: (sourceData: any) => void
+    onOpenPrintRoom?: () => void
 }
 
-// Helper Template for Plain Text
-const PlainTemplate = ({ data, onUpdate, isLocked, activeToolLabel, orientation }: any) => {
-    // If data is object, stringify it, else use it as string
-    const text = typeof data === 'string' ? data : (data?.text || JSON.stringify(data, null, 2));
 
-    // Safety for empty object string "{}"
-    const displayText = text === '{}' ? '' : text;
-
-    return (
-        <DocumentLayout
-            title={activeToolLabel || "Notes"}
-            hideHeader={false}
-            plain={true}
-            orientation={orientation}
-        >
-            <textarea
-                className="w-full h-full bg-transparent p-0 resize-none outline-none font-mono text-xs leading-relaxed text-zinc-800 border-none"
-                placeholder="// Start writing..."
-                value={displayText}
-                onChange={(e) => onUpdate(e.target.value)}
-                disabled={isLocked}
-                spellCheck={false}
-            />
-        </DocumentLayout>
-    )
-}
 
 export const DraftEditor = ({
     draft,
@@ -97,7 +43,8 @@ export const DraftEditor = ({
     onGenerateFromVision,
     onOpenAi,
     latestNotification,
-    onMagicImport
+    onMagicImport,
+    onOpenPrintRoom
 }: DraftEditorProps) => {
 
     // Schedule Import Logic
@@ -460,39 +407,7 @@ export const DraftEditor = ({
     };
 
     // --- Template Switcher ---
-    let TemplateComponent = PlainTemplate // Default to PlainTemplate
-    switch (activeToolKey) {
-        case 'brief': TemplateComponent = BriefTemplate; break;
-        case 'directors-treatment': TemplateComponent = DirectorsTreatmentTemplate; break;
-        case 'lookbook': TemplateComponent = LookbookTemplate; break;
-        case 'creative-direction': TemplateComponent = MoodBoardTemplate; break;
-        case 'shot-scene-book': TemplateComponent = ShotListTemplate; break;
-        case 'budget': TemplateComponent = BudgetTemplate; break;
-        case 'schedule': TemplateComponent = ScheduleTemplate; break;
-        case 'locations-sets': TemplateComponent = LocationsTemplate; break;
-        case 'crew-list': TemplateComponent = CrewListTemplate; break;
-        case 'casting-talent': TemplateComponent = CastingTemplate; break;
-        case 'call-sheet': TemplateComponent = CallSheetTemplate; break;
-        case 'camera-report': TemplateComponent = CameraReportTemplate; break;
-        case 'on-set-notes': TemplateComponent = OnSetNotesTemplate; break;
-        case 'script-notes': TemplateComponent = ScriptNotesTemplate; break;
-        case 'dit-log': TemplateComponent = DITLogTemplate; break;
-        case 'client-selects': TemplateComponent = ClientSelectsTemplate; break;
-        case 'deliverables-licensing': TemplateComponent = DeliverablesTemplate; break;
-        case 'archive-log': TemplateComponent = ArchiveLogTemplate; break;
-        case 'wardrobe-styling': TemplateComponent = WardrobeTemplate; break;
-        case 'props-list': TemplateComponent = PropsListTemplate; break;
-        case 'av-script': TemplateComponent = AVScriptTemplate; break;
-        case 'sound-report': TemplateComponent = SoundReportTemplate; break;
-        case 'equipment-list': TemplateComponent = EquipmentListTemplate; break;
-        case 'project-vision': TemplateComponent = CreativeConceptTemplate; break;
-        case 'storyboard': TemplateComponent = StoryboardTemplate; break;
-        case 'budget-actual': TemplateComponent = BudgetActualTemplate; break;
-        case 'onset-mobile-control': TemplateComponent = OnSetControlPanelTemplate; break;
-        case 'talent-release': TemplateComponent = TalentReleaseTemplate; break;
-        case 'releases': TemplateComponent = ReleasesManagerTemplate; break;
-        default: TemplateComponent = PlainTemplate;
-    }
+    const TemplateComponent = getTemplateForTool(activeToolKey);
 
     const containerStyle = orientation === 'landscape'
         ? "w-[1056px] h-[816px]"
@@ -516,6 +431,7 @@ export const DraftEditor = ({
                 isExportingPdf={isExportingPdf}
                 projectId={projectId}
                 navMode={navMode}
+                onOpenPrintRoom={onOpenPrintRoom}
             />
 
             <div className="flex-1 overflow-y-auto bg-transparent p-8 flex flex-col items-center" id="document-preview-area">

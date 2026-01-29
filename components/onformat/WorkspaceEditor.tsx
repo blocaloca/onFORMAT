@@ -5,7 +5,9 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Header } from '@/components/onformat/Header'
 import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
 import { ChatInterface } from '@/components/onformat/ChatInterface'
+import { ProjectOverview } from '@/components/onformat/ProjectOverview'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
+import { PrintDashboard } from '@/components/onformat/print/PrintDashboard'
 import { supabase } from '@/lib/supabase'
 import { Smartphone, X } from 'lucide-react'
 
@@ -40,6 +42,7 @@ type ToolKey =
     | 'budget-actual'
     | 'supervising-producer'
     | 'talent-release'
+    | 'project-export'
 
 type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
 
@@ -1898,32 +1901,61 @@ Context:\n"${fullContext}"`;
                 {/* Floating Mobile Control (Simulator) Removed */}
 
 
-                <DraftEditor
-                    draft={currentDraft}
-                    onDraftChange={saveDraftForActiveTool}
-                    isLocked={isToolLocked}
-                    activeToolLabel={activeToolLabel}
-                    // @ts-ignore
-                    activeToolKey={state.activeTool}
-                    persona={persona}
-                    projectId={projectId}
-                    // @ts-ignore
-                    projectName={state.projectName}
-                    clientName={state.clientName}
-                    producer={state.producer}
-                    activePhase={state.activePhase}
-                    phases={state.phases}
-                    onToggleLock={() => activePhaseState.locked ? unlockPhase() : lockPhase()}
-                    onGenerateFromVision={handleGenerateFromVision}
-                    onOpenAi={() => {
-                        setIsAiDocked(false);
-                    }}
-                    // @ts-ignore
-                    latestNotification={latestNotification}
-                    // @ts-ignore
-                    onMagicImport={handleMagicImport}
-
-                />
+                {/* --- Main Content Area --- */}
+                {state.activeTool === 'project-export' ? (
+                    <PrintDashboard
+                        onClose={() => setState(s => ({ ...s, activeTool: 'brief' }))}
+                        phases={state.phases}
+                        projectName={state.projectName}
+                        clientName={state.clientName}
+                        producer={state.producer}
+                    />
+                ) : state.activeTool === 'project-overview' ? (
+                    <ProjectOverview
+                        phases={state.phases}
+                        activePhaseKey={state.activePhase}
+                        onOpenTool={(phaseKey) => {
+                            const DEFAULTS: any = {
+                                'STRATEGY': 'project-vision',
+                                'DEVELOPMENT': 'brief',
+                                'PRE_PRODUCTION': 'shot-scene-book',
+                                'PRODUCTION': 'call-sheet',
+                                'POST_PRODUCTION': 'client-selects',
+                                'WRAP': 'archive-log'
+                            };
+                            const targetTool = DEFAULTS[phaseKey] || 'brief';
+                            setState(s => ({ ...s, activePhase: phaseKey as Phase, activeTool: targetTool }));
+                        }}
+                    />
+                ) : (
+                    <DraftEditor
+                        draft={currentDraft}
+                        onDraftChange={saveDraftForActiveTool}
+                        isLocked={isToolLocked}
+                        activeToolLabel={activeToolLabel}
+                        // @ts-ignore
+                        activeToolKey={state.activeTool}
+                        persona={persona}
+                        projectId={projectId}
+                        // @ts-ignore
+                        projectName={state.projectName}
+                        clientName={state.clientName}
+                        producer={state.producer}
+                        activePhase={state.activePhase}
+                        phases={state.phases}
+                        onToggleLock={() => activePhaseState.locked ? unlockPhase() : lockPhase()}
+                        onGenerateFromVision={handleGenerateFromVision}
+                        onOpenAi={() => {
+                            setIsAiDocked(false);
+                        }}
+                        // @ts-ignore
+                        latestNotification={latestNotification}
+                        // @ts-ignore
+                        onMagicImport={handleMagicImport}
+                        // @ts-ignore
+                        onOpenPrintRoom={() => setState(s => ({ ...s, activeTool: 'project-export' }))}
+                    />
+                )}
 
 
             </main>

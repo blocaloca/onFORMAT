@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ImageExportButton } from '@/components/export/ImageExportButton';
-import { RectangleVertical, RectangleHorizontal, ChevronLeft, ChevronRight, Copy, Plus, Trash2 } from 'lucide-react';
+
+import { RectangleVertical, RectangleHorizontal, ChevronLeft, ChevronRight, Copy, Plus, Trash2, Printer } from 'lucide-react';
 
 export type NavMode = 'stack' | 'collection' | 'hidden';
 
@@ -19,6 +19,7 @@ interface DocumentNavBarProps {
     isExportingPdf?: boolean;
     projectId?: string;
     navMode?: NavMode;
+    onOpenPrintRoom?: () => void;
 }
 
 export const DocumentNavBar = ({
@@ -35,7 +36,8 @@ export const DocumentNavBar = ({
     onExportPdf,
     isExportingPdf,
     projectId,
-    navMode = 'stack'
+    navMode = 'stack',
+    onOpenPrintRoom
 }: DocumentNavBarProps) => {
     const [showVersionMenu, setShowVersionMenu] = useState(false);
 
@@ -167,32 +169,15 @@ export const DocumentNavBar = ({
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3">
-                {onToggleOrientation && (
-                    <div className="flex bg-zinc-800 rounded-sm p-0.5 gap-0.5 print-hidden">
-                        <button
-                            onClick={() => onToggleOrientation('portrait')}
-                            className={`p-1 rounded-sm transition-all ${orientation === 'portrait' ? 'bg-zinc-600 shadow-sm text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
-                            title="Portrait (8.5 x 11)"
-                        >
-                            <RectangleVertical size={14} />
-                        </button>
-                        <button
-                            onClick={() => onToggleOrientation('landscape')}
-                            className={`p-1 rounded-sm transition-all ${orientation === 'landscape' ? 'bg-zinc-600 shadow-sm text-white' : 'text-zinc-500 hover:text-zinc-300'}`}
-                            title="Landscape (11 x 8.5)"
-                        >
-                            <RectangleHorizontal size={14} />
-                        </button>
-                    </div>
+                {onOpenPrintRoom && (
+                    <button
+                        onClick={onOpenPrintRoom}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border border-zinc-200 shadow-sm"
+                    >
+                        <Printer size={14} />
+                        <span>Print Room</span>
+                    </button>
                 )}
-
-                <ImageExportButton
-                    title={`${title} ${navMode === 'collection' ? dayLabel : 'v' + (versions.length - activeVersionIndex)}`}
-                    onNewVersion={onNew}
-                    nextVersionLabel={navMode === 'collection' ? "Add Day" : `V${versions.length + 1}`}
-                    onExportPdf={onExportPdf}
-                    isExportingPdf={isExportingPdf}
-                />
             </div>
         </div >
     );
