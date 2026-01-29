@@ -363,7 +363,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.date || ''}
                                                 onChange={(e) => updateField('date', formatDate(e.target.value))}
                                                 placeholder="MM/DD/YYYY"
-                                                className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-tight"
+                                                className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
                                                 disabled={isLocked}
                                             />
                                         </div>
@@ -382,7 +382,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     type="text"
                                                     value={data.crewCall || (metadata as any)?.importedSchedule?.callTime || ''}
                                                     onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                    className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-tight"
+                                                    className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
                                                     placeholder="00:00"
                                                     disabled={isLocked}
                                                 />

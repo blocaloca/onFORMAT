@@ -152,7 +152,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
         const TitleBlock = (
             <div className="mb-4">
                 <input
-                    className="w-full bg-transparent text-xl font-black uppercase tracking-tight outline-none placeholder-zinc-300"
+                    className="w-full bg-transparent text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300"
                     value={slide.title}
                     onChange={(e) => updateSlide(slide.id, { title: e.target.value })}
                     placeholder="SLIDE TITLE"

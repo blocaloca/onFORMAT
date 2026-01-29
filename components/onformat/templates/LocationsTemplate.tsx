@@ -153,7 +153,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 onChange={(e) => updateLocation(index, 'name', e.target.value)}
                                 placeholder="LOCATION NAME"
                                 disabled={isLocked}
-                                className="w-full text-2xl font-black uppercase tracking-tight text-black bg-transparent border-none outline-none placeholder:text-zinc-200"
+                                className="w-full text-2xl font-black uppercase tracking-normal text-black bg-transparent border-none outline-none placeholder:text-zinc-200"
                             />
                         )}
 

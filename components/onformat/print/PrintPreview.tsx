@@ -58,7 +58,7 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
 
                     {/* Footer / Branding */}
                     <div className="absolute bottom-16 left-0 right-0 text-center">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">Created with Creative OS</p>
+                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">Created with onFORMAT</p>
                     </div>
                 </div>
             )}
