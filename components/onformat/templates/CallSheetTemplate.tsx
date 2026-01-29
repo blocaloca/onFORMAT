@@ -120,14 +120,16 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
             }
 
             // Update
-            onUpdate({
-                ...data,
-                date: initialDate,
-                crewCall: data.crewCall || schedule?.callTime || '',
-                events: newEvents,
-                basecamp,
-                hospital
-            });
+            if (onUpdate) {
+                onUpdate({
+                    ...data,
+                    date: initialDate,
+                    crewCall: data.crewCall || schedule?.callTime || '',
+                    events: newEvents,
+                    basecamp,
+                    hospital
+                });
+            }
         }
     }, [metadata?.importedSchedule, metadata?.importedLocations]); // Re-run if day changes and is empty
 

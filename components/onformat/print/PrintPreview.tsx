@@ -84,6 +84,7 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
                                     projectName: coverSettings.title,
                                     date: coverSettings.date
                                 }}
+                                onUpdate={() => { }} // No-op for read-only preview
                             />
                         </div>
 
