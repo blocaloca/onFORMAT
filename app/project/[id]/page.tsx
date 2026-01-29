@@ -37,7 +37,7 @@ export default function ProjectPage() {
       }
 
       // 1b. Get Crew Role
-      const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).single();
+      const { data: crew } = await supabase.from('crew_membership').select('role').eq('project_id', id).eq('user_email', user.email).maybeSingle();
       if (crew) setUserRole(crew.role);
     }
 
