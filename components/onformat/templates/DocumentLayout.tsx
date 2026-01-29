@@ -73,7 +73,7 @@ export const DocumentLayout = ({
                     {!hideHeader && (
                         <div>
                             <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-6">
-                                <h1 className="text-3xl font-black uppercase tracking-tighter leading-none">{title}</h1>
+                                <h1 className="text-3xl font-black uppercase tracking-tight leading-none">{title}</h1>
                                 {metadata && metadata.date && (
                                     <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pb-1">
                                         {metadata.date}
