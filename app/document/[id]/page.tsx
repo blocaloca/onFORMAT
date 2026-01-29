@@ -28,6 +28,7 @@ import {
   parseBrief
 } from '@/lib/ai-parsers'
 
+import { PDFExportButton } from '@/components/pdf/PDFExportButton'
 import { Smartphone } from 'lucide-react'
 // import { exportAsPDF } from '@/lib/export-documents'
 // DEPRECATED: exportAsDOCX, exportAsExcel - hidden in UI but kept in lib for future use
@@ -557,16 +558,11 @@ export default function DocumentEditorPage() {
 
                 {showExportMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
-                    <button
-                      onClick={() => {
-                        // exportAsPDF(document)
-                        alert('PDF Export is momentarily disabled for maintenance. Please use the Print feature.')
-                        setShowExportMenu(false)
-                      }}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2"
-                    >
-                      <span>📄</span> Export as PDF
-                    </button>
+                    <PDFExportButton
+                      document={document}
+                      project={project}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 no-underline text-inherit"
+                    />
                     {/* DEPRECATED - Phase 1 Cleanup (2025-12-26)
                         DOCX and Excel exports hidden per onFORMAT_CORE.md
                         Functions remain in lib/export-documents.ts for future use
@@ -601,7 +597,7 @@ export default function DocumentEditorPage() {
       <div className="flex-1 flex overflow-hidden h-[calc(100vh-73px)]">
         {/* Left: Content Editor (65%) */}
         <div className="flex-1 w-[65%] p-6 overflow-auto">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto document-viewport">
             {/* Smart form system - automatically selects the right form based on document type */}
             {(() => {
               const handleContentChange = (newContent: any) => {

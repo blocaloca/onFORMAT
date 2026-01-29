@@ -75,11 +75,11 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
                 return (
                     <div
                         key={item.id}
-                        className={`bg-white shadow-2xl ${widthClass} ${heightClass} relative overflow-hidden shrink-0 group`}
+                        className="flex flex-col shrink-0 relative group print:block"
                         id={`print-node-${item.id}`}
                     >
                         {/* Render Template */}
-                        <div className="w-full h-full p-0">
+                        <div>
                             <Template
                                 data={data}
                                 plain={false}
@@ -94,8 +94,8 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
                         </div>
 
                         {/* Hover Overlay info */}
-                        <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                            Page {index + 1}
+                        <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none print:hidden z-50">
+                            {item.label}
                         </div>
                     </div>
                 );

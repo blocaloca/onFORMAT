@@ -1,0 +1,196 @@
+/* 
+  Global Stylesheet for Documents
+  -------------------------------
+  This sheet provides a centralized place to manage styles for all document types
+  (Budgets, Call Sheets, Scripts, etc.).
+  
+  To use: Ensure the document content is wrapped in a container with class 'document-viewport'.
+*/
+
+/* Variables */
+.document-viewport {
+    --doc-bg: #ffffff;
+    --doc-text: #111827;
+    /* gray-900 */
+    --doc-text-muted: #6b7280;
+    /* gray-500 */
+    --doc-border: #e5e7eb;
+    /* gray-200 */
+    --doc-primary: #9333ea;
+    /* purple-600 */
+    --doc-surface: #f9fafb;
+    /* gray-50 */
+    --doc-focus-ring: rgba(147, 51, 234, 0.2);
+
+    --font-heading: var(--font-inter, system-ui, sans-serif);
+    --font-body: var(--font-inter, system-ui, sans-serif);
+}
+
+/* Base resets & Typography within Documents */
+.document-viewport {
+    font-family: var(--font-body);
+    color: var(--doc-text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.document-viewport h1,
+.document-viewport h2,
+.document-viewport h3,
+.document-viewport h4 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--doc-text);
+    margin-bottom: 0.75rem;
+}
+
+/* Tables - Global styling for all document tables */
+.document-viewport table {
+    width: 100%;
+    border-collapse: separate;
+    /* Allows border-radius on rows/cells if needed */
+    border-spacing: 0;
+    margin-bottom: 1.5rem;
+}
+
+.document-viewport thead th {
+    background-color: var(--doc-surface);
+    color: var(--doc-text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--doc-border);
+    text-align: left;
+}
+
+.document-viewport tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--doc-border);
+    vertical-align: middle;
+}
+
+.document-viewport tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Form Elements within Documents */
+.document-viewport input[type="text"],
+.document-viewport input[type="number"],
+.document-viewport input[type="email"],
+.document-viewport input[type="date"],
+.document-viewport select,
+.document-viewport textarea {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: var(--doc-text);
+    background-color: var(--doc-surface);
+    border: 1px solid var(--doc-border);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover & Focus states */
+.document-viewport input:hover,
+.document-viewport select:hover,
+.document-viewport textarea:hover {
+    background-color: #fff;
+}
+
+.document-viewport input:focus,
+.document-viewport select:focus,
+.document-viewport textarea:focus {
+    outline: none;
+    background-color: #fff;
+    border-color: var(--doc-primary);
+    box-shadow: 0 0 0 3px var(--doc-focus-ring);
+}
+
+/* Placeholder styling */
+.document-viewport ::placeholder {
+    color: #9ca3af;
+    /* gray-400 */
+}
+
+/* Standard specialized classes for reuse */
+
+/* Card / Section container */
+.doc-card {
+    background: white;
+    border: 1px solid var(--doc-border);
+    border-radius: 0.75rem;
+    /* xl */
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.doc-card-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--doc-border);
+    background-color: var(--doc-surface);
+}
+
+.doc-card-body {
+    padding: 0;
+    /* Let tables go edge-to-edge usually, or add p-4 */
+}
+
+/* Status Badges */
+.doc-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.doc-badge-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.doc-badge-warning {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.doc-badge-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.doc-badge-neutral {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+
+/* Print Optimization */
+@media print {
+    .document-viewport {
+        background: white;
+        width: 100%;
+    }
+
+    /* Remove form-like borders for clean reading */
+    .document-viewport input,
+    .document-viewport select,
+    .document-viewport textarea {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        resize: none;
+        /* Force show full value if possible, though scrolling inputs are hard in print */
+    }
+
+    /* Hide UI elements that might have been missed */
+    .document-viewport button {
+        display: none !important;
+    }
+}

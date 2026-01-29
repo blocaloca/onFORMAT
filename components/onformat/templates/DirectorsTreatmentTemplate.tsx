@@ -169,13 +169,19 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="flex flex-col h-full relative group">
                     {TitleBlock}
                     {renderLayoutControls(slide)}
-                    <textarea
-                        className="w-full h-full bg-transparent text-lg leading-relaxed outline-none resize-none placeholder-zinc-200 font-serif whitespace-pre-wrap"
-                        value={slide.content}
-                        onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
-                        placeholder="Write your narrative here..."
-                        readOnly={isLocked || isPrinting}
-                    />
+                    {isPrinting ? (
+                        <div className="w-full h-full bg-transparent text-lg leading-relaxed font-serif whitespace-pre-wrap text-black">
+                            {slide.content}
+                        </div>
+                    ) : (
+                        <textarea
+                            className="w-full h-full bg-transparent text-lg leading-relaxed outline-none resize-none placeholder-zinc-200 font-serif whitespace-pre-wrap"
+                            value={slide.content}
+                            onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
+                            placeholder="Write your narrative here..."
+                            readOnly={isLocked}
+                        />
+                    )}
                 </div>
             );
         }
@@ -186,21 +192,27 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="flex flex-col h-full relative group">
                     {TitleBlock}
                     {renderLayoutControls(slide)}
-                    <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative min-h-0">
+                    <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative min-h-0 print:border-none print:bg-white">
                         <ImageUploader
                             currentUrl={slide.modules.image1 || ''}
                             onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
-                            className="w-full h-full object-contain bg-black"
+                            className="w-full h-full object-contain bg-black print:bg-transparent"
                         />
                     </div>
                     <div className="mt-4 h-24 shrink-0">
-                        <textarea
-                            className="w-full h-full bg-transparent text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans"
-                            value={slide.content}
-                            onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
-                            placeholder="Add a caption or brief description..."
-                            readOnly={isLocked || isPrinting}
-                        />
+                        {isPrinting ? (
+                            <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black">
+                                {slide.content}
+                            </div>
+                        ) : (
+                            <textarea
+                                className="w-full h-full bg-transparent text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans"
+                                value={slide.content}
+                                onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
+                                placeholder="Add a caption or brief description..."
+                                readOnly={isLocked}
+                            />
+                        )}
                     </div>
                 </div>
             );
@@ -214,14 +226,14 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
                     {/* Left: Images */}
                     <div className="flex flex-col gap-4 h-full">
-                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative">
+                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white">
                             <ImageUploader
                                 currentUrl={slide.modules.image1 || ''}
                                 onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative">
+                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white">
                             <ImageUploader
                                 currentUrl={slide.modules.image2 || ''}
                                 onUpload={(url) => updateSlide(slide.id, { modules: { image2: url } })}
@@ -231,13 +243,19 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     </div>
                     {/* Right: Text */}
                     <div className="h-full">
-                        <textarea
-                            className="w-full h-full bg-transparent text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans whitespace-pre-wrap"
-                            value={slide.content}
-                            onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
-                            placeholder="Describe the visual approach, key beat, or character note..."
-                            readOnly={isLocked || isPrinting}
-                        />
+                        {isPrinting ? (
+                            <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black">
+                                {slide.content}
+                            </div>
+                        ) : (
+                            <textarea
+                                className="w-full h-full bg-transparent text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans whitespace-pre-wrap"
+                                value={slide.content}
+                                onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
+                                placeholder="Describe the visual approach, key beat, or character note..."
+                                readOnly={isLocked}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
