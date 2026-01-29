@@ -10,6 +10,7 @@ interface PrintPreviewProps {
         title: string;
         subtitle: string;
         date: string;
+        orientation?: 'portrait' | 'landscape';
     };
 }
 
@@ -34,6 +35,10 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
 
     const selectedItems = items.filter(i => i.isSelected);
 
+    const isCoverLandscape = coverSettings.orientation === 'landscape';
+    const coverWidth = isCoverLandscape ? "w-[1056px]" : "w-[816px]";
+    const coverHeight = isCoverLandscape ? "h-[816px]" : "h-[1056px]";
+
     return (
         <div className="flex flex-col gap-8 items-center py-10 w-full">
 
@@ -41,14 +46,14 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
             {coverSettings.showCover && (
                 <div
                     id="print-node-COVER"
-                    className="bg-white shadow-2xl w-[816px] h-[1056px] relative flex flex-col items-center justify-center text-black shrink-0"
+                    className={`bg-white shadow-2xl ${coverWidth} ${coverHeight} relative flex flex-col items-center justify-center text-black shrink-0`}
                     style={{ transformOrigin: 'top center' }}
                 >
-                    <div className="text-center space-y-6">
-                        <h1 className="text-6xl font-serif font-bold tracking-tight text-zinc-900">{coverSettings.title}</h1>
-                        <div className="w-24 h-1 bg-zinc-900 mx-auto rounded-full" />
-                        <h2 className="text-2xl font-light tracking-widest uppercase text-zinc-500">{coverSettings.subtitle}</h2>
-                        <p className="pt-12 font-mono text-sm text-zinc-400">{coverSettings.date}</p>
+                    <div className="text-center space-y-8">
+                        <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">{coverSettings.title}</h1>
+                        <div className="w-24 h-1.5 bg-black mx-auto" />
+                        <h2 className="text-lg font-bold tracking-[0.3em] uppercase text-zinc-500">{coverSettings.subtitle}</h2>
+                        <p className="pt-8 font-mono text-xs text-zinc-400 font-bold tracking-widest">{coverSettings.date}</p>
                     </div>
 
                     {/* Footer / Branding */}

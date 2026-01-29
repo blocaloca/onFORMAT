@@ -12,14 +12,14 @@ interface PrintDashboardProps {
 }
 
 const TOOL_META: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape' }> = {
-    'brief': { label: 'Creative Brief', defaultOrient: 'portrait' },
+    'brief': { label: 'Creative Brief', defaultOrient: 'landscape' },
     'directors-treatment': { label: 'Director\'s Treatment', defaultOrient: 'landscape' },
     'lookbook': { label: 'Lookbook', defaultOrient: 'landscape' },
     'schedule': { label: 'Production Schedule', defaultOrient: 'landscape' },
-    'budget': { label: 'Budget', defaultOrient: 'portrait' },
+    'budget': { label: 'Budget', defaultOrient: 'landscape' },
     'shot-scene-book': { label: 'Shot List', defaultOrient: 'landscape' },
-    'script-notes': { label: 'Script Notes', defaultOrient: 'portrait' },
-    'call-sheet': { label: 'Call Sheet', defaultOrient: 'portrait' },
+    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape' },
+    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape' },
 };
 
 
@@ -41,7 +41,8 @@ export const PrintDashboard = ({
         showCover: true,
         title: projectName,
         subtitle: 'Production Package',
-        date: new Date().toLocaleDateString()
+        date: new Date().toLocaleDateString(),
+        orientation: 'landscape' as 'portrait' | 'landscape'
     });
 
     const handleExport = async () => {
@@ -153,11 +154,22 @@ export const PrintDashboard = ({
                                 <Settings size={14} />
                                 <span>Cover Page</span>
                             </div>
-                            <div
-                                onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
-                                className={`w-8 h-4 rounded-full cursor-pointer relative transition-colors ${coverSettings.showCover ? 'bg-emerald-600' : 'bg-zinc-800'}`}
-                            >
-                                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${coverSettings.showCover ? 'left-4.5' : 'left-0.5'}`} style={{ left: coverSettings.showCover ? '18px' : '2px' }} />
+                            <div className="flex items-center gap-2">
+                                {coverSettings.showCover && (
+                                    <button
+                                        onClick={() => setCoverSettings(s => ({ ...s, orientation: s.orientation === 'portrait' ? 'landscape' : 'portrait' }))}
+                                        className="p-1 rounded bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white"
+                                        title="Toggle Cover Orientation"
+                                    >
+                                        {coverSettings.orientation === 'portrait' ? <RectangleVertical size={12} /> : <RectangleHorizontal size={12} />}
+                                    </button>
+                                )}
+                                <div
+                                    onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
+                                    className={`w-8 h-4 rounded-full cursor-pointer relative transition-colors ${coverSettings.showCover ? 'bg-emerald-600' : 'bg-zinc-800'}`}
+                                >
+                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${coverSettings.showCover ? 'left-4.5' : 'left-0.5'}`} style={{ left: coverSettings.showCover ? '18px' : '2px' }} />
+                                </div>
                             </div>
                         </div>
 

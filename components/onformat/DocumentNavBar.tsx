@@ -172,7 +172,7 @@ export const DocumentNavBar = ({
                 {onOpenPrintRoom && (
                     <button
                         onClick={onOpenPrintRoom}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border border-zinc-200 shadow-sm"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border border-zinc-700 shadow-sm"
                     >
                         <Printer size={14} />
                         <span>Print Room</span>
