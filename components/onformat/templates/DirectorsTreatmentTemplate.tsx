@@ -53,8 +53,12 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
 
     // --- 3. Migration Logic (Legacy -> Slides) ---
     useEffect(() => {
+        // Safe-guard: If we already have slides, do absolutely nothing.
+        // This prevents overwriting valid data.
+        if (data.slides && data.slides.length > 0) return;
+
         // If we have legacy scenes but no slides, migrate them.
-        if ((!data.slides || data.slides.length === 0) && data.scenes && data.scenes.length > 0) {
+        if (data.scenes && data.scenes.length > 0) {
             const migratedSlides: TreatmentSlide[] = data.scenes.map((scene: any) => ({
                 id: scene.id,
                 category: scene.type === 'Narrative' ? 'Story/Narrative' : 'Cinematography/Editing', // Rough mapping
@@ -82,7 +86,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
 
             onUpdate?.({ slides: migratedSlides });
         }
-    }, []); // Run once on mount to check
+    }, [data.scenes, data.slides]); // Re-run if data loads asynchronously
 
     const updateSlides = (newSlides: TreatmentSlide[]) => {
         onUpdate?.({ ...data, slides: newSlides });
