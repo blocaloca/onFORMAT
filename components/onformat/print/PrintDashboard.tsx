@@ -116,10 +116,10 @@ export const PrintDashboard = ({
     };
 
     return (
-        <div className="flex flex-col h-full bg-zinc-950 text-zinc-200 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex flex-col h-full bg-zinc-950 text-zinc-200 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 print:h-auto print:overflow-visible print:bg-white">
 
             {/* --- Header (Dark Mode) --- */}
-            <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20">
+            <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20 print:hidden">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800 text-emerald-500">
                         <Printer size={16} />
@@ -142,10 +142,10 @@ export const PrintDashboard = ({
             </header>
 
             {/* --- Main Content Area --- */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden print:overflow-visible print:h-auto print:block">
 
                 {/* 1. Sidebar (Playlist & Settings) */}
-                <aside className="w-80 border-r border-zinc-900 bg-zinc-950/50 flex flex-col overflow-y-auto">
+                <aside className="w-80 border-r border-zinc-900 bg-zinc-950/50 flex flex-col overflow-y-auto print:hidden">
 
                     {/* Cover Page Settings */}
                     <div className="p-4 border-b border-zinc-900">
@@ -259,28 +259,21 @@ export const PrintDashboard = ({
                     <div className="p-4 border-t border-zinc-900 mt-auto">
                         <button
                             onClick={handleExport}
-                            disabled={isExporting}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest text-xs rounded-sm shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase tracking-widest text-xs rounded-sm shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
                         >
-                            {isExporting ? (
-                                <>
-                                    <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    <span>Generating...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Printer size={14} />
-                                    <span>Export Package</span>
-                                </>
-                            )}
+                            <Printer size={14} />
+                            <span>System Print</span>
                         </button>
+                        <p className="text-[9px] text-zinc-500 text-center mt-2">
+                            Use system dialog to Save as PDF
+                        </p>
                     </div>
 
                 </aside>
 
                 {/* 2. Preview Area (Stage) */}
-                <main className="flex-1 bg-zinc-900/50 relative overflow-y-auto flex flex-col items-center py-12">
-                    <div className="transform scale-[0.65] origin-top pb-20">
+                <main className="flex-1 bg-zinc-900/50 relative overflow-y-auto flex flex-col items-center py-12 print:bg-white print:p-0 print:block print:overflow-visible">
+                    <div className="transform scale-[0.65] origin-top pb-20 print:transform-none print:pb-0 print:w-full">
                         <PrintPreview
                             items={playlist}
                             phases={phases}

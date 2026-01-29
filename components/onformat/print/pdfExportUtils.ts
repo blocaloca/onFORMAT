@@ -50,7 +50,9 @@ export const generatePdfFromDom = async (
         const canvas = await html2canvas(node, {
             scale: 2, // 2x scale for Retina-like quality
             useCORS: true, // Allow loading remote images
-            logging: false
+            logging: false,
+            letterRendering: true, // Fixes font kerning/smashing issues
+            allowTaint: true
         });
 
         const imgData = canvas.toDataURL('image/jpeg', 0.95);
