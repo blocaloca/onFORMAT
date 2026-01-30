@@ -121,7 +121,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     };
 
     return (
-        <div className="absolute inset-0 flex flex-col bg-zinc-950 text-zinc-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 print:h-auto print:overflow-visible print:bg-white">
+        <div className="flex flex-col h-full bg-zinc-950 text-zinc-200 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 print:h-auto print:overflow-visible print:bg-white">
 
             {/* Header */}
             <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20 print:hidden">
@@ -142,7 +142,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </button>
             </header>
 
-            <div className="flex-1 flex overflow-hidden min-h-0 print:overflow-visible print:h-auto print:block">
+            <div className="flex-1 flex overflow-hidden print:overflow-visible print:h-auto print:block">
 
                 {/* --- Sidebar: The "List" --- */}
                 <aside className="w-80 border-r border-zinc-900 bg-zinc-950/50 flex flex-col overflow-y-auto print:hidden">
@@ -268,9 +268,9 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </aside>
 
                 {/* --- Preview Pane --- */}
-                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-hidden min-h-0 print:bg-white print:p-0 print:block print:overflow-visible">
-                    {/* Render Active Preview */}
-                    <div className="w-full h-full">
+                <main className="flex-1 bg-zinc-900/50 relative overflow-y-auto flex flex-col items-center py-12 print:bg-white print:p-0 print:block print:overflow-visible">
+                    <div className="transform scale-[0.65] origin-top pb-20 print:transform-none print:pb-0 print:w-full transition-transform duration-300">
+                        {/* Render Active Preview */}
                         <PrintPreview
                             key={previewId || 'cover'}
                             targetToolId={previewId}
