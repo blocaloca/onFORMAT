@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { X, Printer, Settings, Layers, RectangleVertical, RectangleHorizontal, GripVertical, Check, Eye, AlertCircle, FileText } from 'lucide-react';
-import { PrintItem } from './types';
+import { PrintItem, TOOL_TYPES } from './types';
 import { PrintPreview } from './PrintPreview';
-import { ProjectProvider, useProject } from '../ProjectContext'; // Adjust path if needed
+import { ProjectProvider, useProject } from '../ProjectContext';
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import { GlobalPdfDocument } from './pdf-factory/PdfDocumentFactory';
@@ -14,46 +14,6 @@ interface PrintDashboardProps {
     clientName?: string;
     producer?: string;
 }
-
-// ---------------------------------------------------------------------------
-// Tool Metadata Registry (Expanded)
-// ---------------------------------------------------------------------------
-const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape' }> = {
-    // Development
-    'project-vision': { label: 'Project Vision', defaultOrient: 'portrait' },
-    'brief': { label: 'Creative Brief', defaultOrient: 'landscape' },
-    'directors-treatment': { label: 'Director\'s Treatment', defaultOrient: 'landscape' },
-    'lookbook': { label: 'Lookbook', defaultOrient: 'landscape' },
-    'storyboard': { label: 'Storyboard', defaultOrient: 'landscape' },
-    'av-script': { label: 'AV Script', defaultOrient: 'portrait' },
-
-    // Pre-Production
-    'shot-scene-book': { label: 'Shot List', defaultOrient: 'landscape' },
-    'budget': { label: 'Budget', defaultOrient: 'landscape' },
-    'schedule': { label: 'Production Schedule', defaultOrient: 'landscape' },
-    'crew-list': { label: 'Crew List', defaultOrient: 'portrait' },
-    'locations-sets': { label: 'Locations', defaultOrient: 'landscape' },
-    'casting-talent': { label: 'Talent', defaultOrient: 'portrait' },
-    'wardrobe-styling': { label: 'Wardrobe', defaultOrient: 'portrait' },
-    'props-list': { label: 'Props', defaultOrient: 'portrait' },
-
-    // On-Set
-    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape' },
-    'dit-log': { label: 'DIT Log', defaultOrient: 'landscape' },
-    'sound-report': { label: 'Sound Report', defaultOrient: 'portrait' },
-    'camera-report': { label: 'Camera Report', defaultOrient: 'landscape' },
-    'on-set-notes': { label: 'On-Set Notes', defaultOrient: 'portrait' },
-    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape' },
-
-    // Post
-    'budget-actual': { label: 'Actuals', defaultOrient: 'landscape' },
-    'deliverables-licensing': { label: 'Deliverables', defaultOrient: 'portrait' },
-    'client-selects': { label: 'Client Selects', defaultOrient: 'landscape' },
-    'archive-log': { label: 'Archive Log', defaultOrient: 'portrait' },
-};
-
-
-// ---------------------------------------------------------------------------
 // Inner Component (Accesses Context)
 // ---------------------------------------------------------------------------
 const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, projectName: string }) => {
@@ -87,10 +47,16 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 label: meta.label,
                 defaultOrient: meta.defaultOrient,
                 hasData: hasData,
-                status: hasData ? 'Drafted' : 'Empty'
+                status: hasData ? 'Ready' : 'Empty'
             };
         });
     }, [activeProject, getToolData]);
+
+    useEffect(() => {
+        console.log("[PrintDashboard] Active Project:", activeProject);
+        console.log("[PrintDashboard] Document List Length:", documentList.length);
+        console.log("[PrintDashboard] Tool Types Keys:", Object.keys(TOOL_TYPES));
+    }, [activeProject, documentList]);
 
     // Initial Selection (Start Empty, Show Cover)
     useEffect(() => {
@@ -155,7 +121,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     };
 
     return (
-        <div className="flex flex-col h-full bg-zinc-950 text-zinc-200 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 print:h-auto print:overflow-visible print:bg-white">
+        <div className="absolute inset-0 flex flex-col bg-zinc-950 text-zinc-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200 print:h-auto print:overflow-visible print:bg-white">
 
             {/* Header */}
             <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20 print:hidden">
@@ -176,7 +142,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </button>
             </header>
 
-            <div className="flex-1 flex overflow-hidden print:overflow-visible print:h-auto print:block">
+            <div className="flex-1 flex overflow-hidden min-h-0 print:overflow-visible print:h-auto print:block">
 
                 {/* --- Sidebar: The "List" --- */}
                 <aside className="w-80 border-r border-zinc-900 bg-zinc-950/50 flex flex-col overflow-y-auto print:hidden">
@@ -244,6 +210,11 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                         </div>
 
                         <div className="flex flex-col gap-1">
+                            {documentList.length === 0 && (
+                                <div className="p-4 text-xs text-zinc-500 italic text-center border border-zinc-800 border-dashed rounded bg-zinc-900/20">
+                                    No document types loaded.<br />Check TOOL_TYPES registry.
+                                </div>
+                            )}
                             {documentList.map(doc => {
                                 const isSelected = selectedTools.has(doc.id);
                                 const isPreviewing = previewId === doc.id;
@@ -297,11 +268,11 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </aside>
 
                 {/* --- Preview Pane --- */}
-                <main className="flex-1 bg-zinc-900/50 relative overflow-y-auto flex flex-col items-center py-12 print:bg-white print:p-0 print:block print:overflow-visible">
-                    <div className="transform scale-[0.65] origin-top pb-20 print:transform-none print:pb-0 print:w-full transition-transform duration-300">
-
-                        {/* Render Active Preview */}
+                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-hidden min-h-0 print:bg-white print:p-0 print:block print:overflow-visible">
+                    {/* Render Active Preview */}
+                    <div className="w-full h-full">
                         <PrintPreview
+                            key={previewId || 'cover'}
                             targetToolId={previewId}
                             coverSettings={{
                                 ...coverSettings,
@@ -309,7 +280,6 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                             }}
                             orientationOverride={masterOrientation}
                         />
-
                     </div>
                 </main>
 

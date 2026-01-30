@@ -8,6 +8,7 @@ interface FactoryProps {
     items: any[]; // Playlist items
     phases: any;  // Global data store
     coverSettings: any;
+    producer?: string;
 }
 
 // --- Universal Unwrapper (Factory Version) ---
@@ -15,25 +16,42 @@ const getDataForTool = (toolId: string, phases: any) => {
     if (!phases) return {};
 
     let foundData: any = null;
-    // 1. Search all phases
-    for (const phase of Object.values(phases)) {
-        // @ts-ignore
+    let foundPhase: string | null = null;
+    const searchOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+
+    // 1. Search all phases (Reverse Priority)
+    for (const phaseKey of searchOrder) {
+        const phase = phases[phaseKey];
         if (phase?.drafts?.[toolId]) {
-            // @ts-ignore
             foundData = phase.drafts[toolId];
+            foundPhase = phaseKey;
             break;
+        }
+    }
+
+    // 2. Fallback: Check ALL keys if not found (handling casing or custom keys)
+    if (!foundData) {
+        for (const key of Object.keys(phases)) {
+            const phase = phases[key];
+            if (phase?.drafts?.[toolId]) {
+                foundData = phase.drafts[toolId];
+                foundPhase = key;
+                console.warn(`[PdfFactory] Found ${toolId} via fallback search in ${key}`);
+                break;
+            }
         }
     }
 
     if (!foundData) return {};
 
-    // 2. Parse & Extract
+    // 3. Parse & Extract
     try {
         const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
 
-        // 3. Array Extraction Rule
-        // "If the data is an array... extract the first item."
-        const data = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+        // 4. Array Extraction Rule (Last Item = Most Recent)
+        const data = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
+
+        console.log(`[PdfFactory] Unwrapped Data for ${toolId}:`, data);
         return data;
 
     } catch (e) {
@@ -56,7 +74,7 @@ const CoverPage = ({ settings }: { settings: any }) => (
         </View>
 
         <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
-            <Text style={{ fontSize: 10, fontFamily: 'Helvetica', color: '#9CA3AF', letterSpacing: 2 }}>
+            <Text style={{ fontSize: 10, fontFamily: 'Inter', color: '#9CA3AF', letterSpacing: 2 }}>
                 {settings.date}
             </Text>
         </View>
@@ -66,6 +84,8 @@ const CoverPage = ({ settings }: { settings: any }) => (
 import { PdfCallSheet } from './templates/PdfCallSheet';
 import { PdfCreativeBrief } from './templates/PdfCreativeBrief';
 import { PdfDirectorsTreatment } from './templates/PdfDirectorsTreatment';
+import { PdfLookbook } from './templates/PdfLookbook';
+import { PdfProjectVision } from './templates/PdfProjectVision';
 
 // --- Content Renderer Swouter ---
 const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
@@ -79,6 +99,12 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     }
     if (toolId === 'directors-treatment') {
         return <PdfDirectorsTreatment data={data} />;
+    }
+    if (toolId === 'lookbook') {
+        return <PdfLookbook data={data} />;
+    }
+    if (toolId === 'project-vision') {
+        return <PdfProjectVision data={data} />;
     }
 
     // 2. Fallback for unmapped tools (Simple Dump)
@@ -110,15 +136,13 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     // 3. Fallback / Empty Data
     return (
         <View style={globalStyles.inputBox}>
-            <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+            <Text style={[globalStyles.text, { color: COLORS.placeholder, fontStyle: 'italic' }]}>
                 Content placeholder (No data found, or template not implemented for {toolId})
             </Text>
         </View>
     );
 };
-
-// --- Main Document ---
-export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps) => {
+export const GlobalPdfDocument = ({ items, phases, coverSettings, producer }: FactoryProps) => {
     return (
         <Document>
             {/* Cover Page */}
@@ -126,15 +150,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps
 
             {/* Document Playlist */}
             {items.filter(item => item.isSelected).map((item, index) => {
-                const rawData = getDataForTool(item.id, phases);
-                let data = rawData;
-
-                // Try to parse if string
-                if (typeof rawData === 'string' && (rawData.startsWith('{') || rawData.startsWith('['))) {
-                    try { data = JSON.parse(rawData); } catch (e) { }
-                }
-
-                console.log("PDF Data Received:", { toolId: item.id, data });
+                const data = getDataForTool(item.id, phases);
 
                 return (
                     <Page
@@ -148,7 +164,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps
                             title={item.label.toUpperCase()} // "CREATIVE BRIEF"
                             projectName={coverSettings.title} // "PROJECT NAME"
                             date={coverSettings.date}
-                        // producer={/* TODO: Pass from Dashboard */}
+                            producer={producer}
                         />
 
                         <ContentRenderer toolId={item.id} data={data} />

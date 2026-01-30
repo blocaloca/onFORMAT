@@ -12,22 +12,34 @@ interface PdfHeaderProps {
 
 export const PdfHeader = ({ title, projectName, clientName, producer, date }: PdfHeaderProps) => (
     <View style={{ marginBottom: 24 }} fixed>
-        {/* Top Row: Doc Title + Date */}
+        {/* Top Row: Doc Title + QR Code + Date */}
         <View style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            borderBottomWidth: 3,
+            alignItems: 'flex-start', // Align to top
+            borderBottomWidth: 0.5, // Tactical thin line
             borderBottomColor: COLORS.charcoal,
             paddingBottom: 12,
             marginBottom: 0
         }}>
+            {/* Title */}
             <Text style={globalStyles.h1}>{title}</Text>
-            {date && (
-                <Text style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText, marginBottom: 4 }}>
-                    {date}
-                </Text>
-            )}
+
+            {/* Right Side: QR + Date */}
+            <View style={{ alignItems: 'flex-end' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+                    <Text style={{ fontSize: 6, fontWeight: 900, color: COLORS.charcoal, marginRight: 4 }}>GET ONSET MOBILE</Text>
+                    <Image
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://creative-os.vercel.app/onset"
+                        style={{ width: 24, height: 24 }}
+                    />
+                </View>
+                {date && (
+                    <Text style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText }}>
+                        {date}
+                    </Text>
+                )}
+            </View>
         </View>
 
         {/* Metadata Row: Client/Project + Producer */}
@@ -36,7 +48,7 @@ export const PdfHeader = ({ title, projectName, clientName, producer, date }: Pd
             justifyContent: 'space-between',
             alignItems: 'center',
             paddingVertical: 8,
-            borderBottomWidth: 1,
+            borderBottomWidth: 0.5,
             borderBottomColor: COLORS.slate
         }}>
             {/* Left: Client // Project */}

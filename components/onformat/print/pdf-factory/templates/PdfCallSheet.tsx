@@ -34,6 +34,16 @@ const renderPlaceholder = (value: any, placeholder: string) => {
 };
 
 export const PdfCallSheet = ({ data }: PdfCallSheetProps) => {
+    if (!data || Object.keys(data).length === 0) {
+        return (
+            <View style={globalStyles.inputBox}>
+                <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                    Loading production data...
+                </Text>
+            </View>
+        );
+    }
+
     // Columns for the schedule
     const scheduleColumns = [
         { header: 'TIME', accessor: 'time', width: '15%' },

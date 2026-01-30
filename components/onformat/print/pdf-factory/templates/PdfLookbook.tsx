@@ -14,7 +14,7 @@ interface Slide {
     };
 }
 
-interface PdfDirectorsTreatmentProps {
+interface PdfLookbookProps {
     data: any;
 }
 
@@ -50,7 +50,17 @@ const styles = StyleSheet.create({
     }
 });
 
-export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
+export const PdfLookbook = ({ data }: PdfLookbookProps) => {
+    if (!data || Object.keys(data).length === 0) {
+        return (
+            <View style={globalStyles.inputBox}>
+                <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                    Loading production data...
+                </Text>
+            </View>
+        );
+    }
+
     // Content is unwrapped by the Factory
     const slides: Slide[] = data?.slides || [];
 
@@ -58,7 +68,7 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
         return (
             <View style={globalStyles.inputBox}>
                 <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
-                    No treatment slides found.
+                    No lookbook slides found.
                 </Text>
             </View>
         );

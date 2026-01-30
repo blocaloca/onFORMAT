@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
 import { globalStyles, COLORS } from '../PdfTheme';
 
-interface PdfCreativeBriefProps {
+interface PdfProjectVisionProps {
     data: any;
 }
 
@@ -29,17 +29,15 @@ const renderField = (label: string, value: string, placeholder: string = "Data n
     );
 };
 
-export const PdfCreativeBrief = ({ data }: PdfCreativeBriefProps) => {
-    if (!data) return null; // Should be handled by parent content renderer
-
+export const PdfProjectVision = ({ data }: PdfProjectVisionProps) => {
     // Data is unwrapped by the Factory
-    const briefData = data;
+    const visionData = data;
 
-    if (!briefData || Object.keys(briefData).length === 0) {
+    if (!visionData || Object.keys(visionData).length === 0) {
         return (
             <View style={globalStyles.inputBox}>
                 <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
-                    No Creative Brief data found.
+                    Loading production data...
                 </Text>
             </View>
         );
@@ -48,18 +46,15 @@ export const PdfCreativeBrief = ({ data }: PdfCreativeBriefProps) => {
     return (
         <View>
             <Text style={[globalStyles.h2, { marginBottom: 12, borderBottomWidth: 1, borderBottomColor: COLORS.slate, paddingBottom: 6 }]}>
-                PROJECT OVERVIEW
+                VISION SUMMARY
             </Text>
 
-            {renderField("SUBJECT / PRODUCT", briefData.product, "Describe the product or subject...")}
-            {renderField("OBJECTIVE", briefData.objective, "What is the main goal?")}
-            {renderField("TARGET AUDIENCE", briefData.targetAudience, "Who is this for?")}
-            {renderField("TONE & STYLE", briefData.tone, "Visual style and tone...")}
-            {renderField("KEY MESSAGE", briefData.keyMessage, "Core takeaway...")}
-            {renderField("NARRATIVE / STORY", briefData.narrative, "Story outline...")}
-            {renderField("TALENT / CHARACTERS", briefData.talent, "Cast requirements...")}
-            {renderField("LOCATIONS", briefData.location, "Setting/Location details...")}
-            {renderField("DELIVERABLES", briefData.deliverables, "List of final assets...")}
+            {/* Depending on Project Vision Structure. Assuming simple fields or 'content' */}
+            {/* If Vision is just 'title' and 'content' */}
+            {renderField("LOGLINE", visionData.logline, "Short summary...")}
+            {renderField("THEME", visionData.theme, "Core theme...")}
+            {renderField("VISUAL STYLE", visionData.visualStyle, "Visual approach...")}
+            {renderField("NOTES", visionData.notes, "Additional notes...")}
         </View>
     );
 };
