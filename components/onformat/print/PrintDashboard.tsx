@@ -301,7 +301,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     <div className="w-full h-full">
                         {/* Render Active Preview */}
                         <PrintPreview
-                            key={previewId || 'cover'}
+                            key={`${previewId || 'cover'}-${masterOrientation}`}
                             targetToolId={previewId}
                             coverSettings={{
                                 ...coverSettings,
