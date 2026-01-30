@@ -29,7 +29,7 @@ const CoverPage = ({ settings }: { settings: any }) => (
                 {settings.title}
             </Text>
             <View style={{ width: 60, height: 4, backgroundColor: COLORS.charcoal, marginVertical: 24 }} />
-            <Text style={{ fontSize: 14, fontWeight: 500, textTransform: 'uppercase', letterSpacing: 3, color: COLORS.charcoal, textAlign: 'center' }}>
+            <Text style={{ fontSize: 14, fontWeight: 400, textTransform: 'uppercase', letterSpacing: 3, color: COLORS.charcoal, textAlign: 'center' }}>
                 {settings.subtitle}
             </Text>
         </View>
@@ -80,7 +80,14 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
         );
     }
 
-    return null;
+    // 3. Fallback / Empty Data
+    return (
+        <View style={globalStyles.inputBox}>
+            <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                Content placeholder (No data found for {toolId})
+            </Text>
+        </View>
+    );
 };
 
 // --- Main Document ---
@@ -99,6 +106,8 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps
                 if (typeof rawData === 'string' && (rawData.startsWith('{') || rawData.startsWith('['))) {
                     try { data = JSON.parse(rawData); } catch (e) { }
                 }
+
+                console.log("PDF Data Received:", { toolId: item.id, data });
 
                 return (
                     <Page

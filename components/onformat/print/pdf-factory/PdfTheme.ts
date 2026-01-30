@@ -1,16 +1,9 @@
-import { Font, StyleSheet } from '@react-pdf/renderer';
+import { StyleSheet } from '@react-pdf/renderer';
 
 // --- 1. Font Registration ---
-// Attempting to register Inter with reliable TTF sources.
-// If these fail, React-PDF usually falls back or errors.
-Font.register({
-    family: 'Inter',
-    fonts: [
-        { src: 'https://cdn.jsdelivr.net/fontsource/fonts/inter@5.0.19/latin-400-normal.ttf', fontWeight: 400 },
-        { src: 'https://cdn.jsdelivr.net/fontsource/fonts/inter@5.0.19/latin-700-normal.ttf', fontWeight: 700 }, // Bold
-        { src: 'https://cdn.jsdelivr.net/fontsource/fonts/inter@5.0.19/latin-900-normal.ttf', fontWeight: 900 }  // Black
-    ]
-});
+// Using standard PDF fonts (Helvetica) for maximum stability.
+// External font fetches were causing "Unknown font format" crashes.
+// To use Inter, we must bundle the TTF files locally in the project.
 
 // --- 2. Color Palette ---
 export const COLORS = {
@@ -37,7 +30,7 @@ export const globalStyles = StyleSheet.create({
         paddingBottom: LAYOUT.padding,
         paddingLeft: LAYOUT.padding,
         paddingRight: LAYOUT.padding,
-        fontFamily: 'Inter', // Switching back to Inter
+        fontFamily: 'Helvetica', // Standard, Crash-Proof
         fontSize: 9,
         color: COLORS.obsidian,
         backgroundColor: COLORS.white,
