@@ -52,15 +52,28 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
             if (!activeProject?.data?.phases) return {};
 
             let foundData: any = null;
-            const phasesData = activeProject.data.phases;
+            const phases = activeProject.data.phases;
 
-            // Search Strategy: Iterate all phases to find the tool draft
-            // Order: DEVELOPMENT -> PRE_PRODUCTION -> ON_SET -> POST (implicit order of keys)
-            for (const phaseKey of Object.keys(phasesData)) {
-                const phase = phasesData[phaseKey];
+            // Search Priority: POST > ON_SET > PRE_PRODUCTION > DEVELOPMENT
+            const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+
+            // 1. Priority Search
+            for (const phaseKey of priorityOrder) {
+                // Try exact casing first, then fallback to lowercase match if custom keys exist
+                const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
                 if (phase?.drafts?.[toolId]) {
                     foundData = phase.drafts[toolId];
                     break;
+                }
+            }
+
+            // 2. Fallback Search (if not found in priority phases)
+            if (!foundData) {
+                for (const key of Object.keys(phases)) {
+                    if (phases[key]?.drafts?.[toolId]) {
+                        foundData = phases[key].drafts[toolId];
+                        break;
+                    }
                 }
             }
 
@@ -69,18 +82,11 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
             try {
                 if (foundData) {
                     const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
-                    // Array Extraction: If array, take first item
-                    result = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+                    // Array Extraction: Take LAST item (Most Recent Save)
+                    result = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
                 }
             } catch (e) {
                 console.error(`[ProjectContext] Error parsing data for ${toolId}`, e);
-            }
-
-            // Console Proof: Handshake Verification (Log only if data exists to avoid spam, or log empty as 'Empty')
-            if (Object.keys(result).length > 0) {
-                console.log(`[PrintRoom] Injecting data for [${toolId}]:`, result);
-            } else {
-                console.log(`[PrintRoom] Injecting data for [${toolId}]: Empty`);
             }
 
             return result;

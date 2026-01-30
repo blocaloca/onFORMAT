@@ -15,25 +15,37 @@ const getDataForTool = (toolId: string, phases: any) => {
     if (!phases) return {};
 
     let foundData: any = null;
-    // 1. Search all phases
-    for (const phase of Object.values(phases)) {
+    const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+
+    // 1. Priority Search
+    for (const phaseKey of priorityOrder) {
         // @ts-ignore
+        const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
         if (phase?.drafts?.[toolId]) {
-            // @ts-ignore
             foundData = phase.drafts[toolId];
             break;
         }
     }
 
+    // 2. Fallback Search
+    if (!foundData) {
+        for (const phase of Object.values(phases)) {
+            // @ts-ignore
+            if (phase?.drafts?.[toolId]) {
+                // @ts-ignore
+                foundData = phase.drafts[toolId];
+                break;
+            }
+        }
+    }
+
     if (!foundData) return {};
 
-    // 2. Parse & Extract
+    // 3. Parse & Extract
     try {
         const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
-
-        // 3. Array Extraction Rule
-        // "If the data is an array... extract the first item."
-        const data = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+        // Array Extraction Rule (Last Item = Most Recent)
+        const data = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
         return data;
 
     } catch (e) {
@@ -66,6 +78,8 @@ const CoverPage = ({ settings }: { settings: any }) => (
 import { PdfCallSheet } from './templates/PdfCallSheet';
 import { PdfCreativeBrief } from './templates/PdfCreativeBrief';
 import { PdfDirectorsTreatment } from './templates/PdfDirectorsTreatment';
+import { PdfLookbook } from './templates/PdfLookbook';
+import { PdfProjectVision } from './templates/PdfProjectVision';
 
 // --- Content Renderer Swouter ---
 const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
@@ -79,6 +93,12 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     }
     if (toolId === 'directors-treatment') {
         return <PdfDirectorsTreatment data={data} />;
+    }
+    if (toolId === 'lookbook') {
+        return <PdfLookbook data={data} />;
+    }
+    if (toolId === 'project-vision') {
+        return <PdfProjectVision data={data} />;
     }
 
     // 2. Fallback for unmapped tools (Simple Dump)
