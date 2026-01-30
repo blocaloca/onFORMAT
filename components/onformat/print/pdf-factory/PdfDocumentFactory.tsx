@@ -45,6 +45,7 @@ const CoverPage = ({ settings }: { settings: any }) => (
 
 import { PdfCallSheet } from './templates/PdfCallSheet';
 import { PdfCreativeBrief } from './templates/PdfCreativeBrief';
+import { PdfDirectorsTreatment } from './templates/PdfDirectorsTreatment';
 
 // --- Content Renderer Swouter ---
 const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
@@ -56,6 +57,9 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     if (toolId === 'brief') {
         const briefData = Array.isArray(data) ? data[0] : data;
         return <PdfCreativeBrief data={briefData} />;
+    }
+    if (toolId === 'directors-treatment') {
+        return <PdfDirectorsTreatment data={data} />;
     }
 
     // 2. Text Content (Brief, Script, Treatment usually strings or simple objects)
