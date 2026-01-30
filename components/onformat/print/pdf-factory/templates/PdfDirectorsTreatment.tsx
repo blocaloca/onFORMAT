@@ -51,10 +51,8 @@ const styles = StyleSheet.create({
 });
 
 export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
-    // Handle potential array wrapper or direct object
-    const rawv = Array.isArray(data) ? data[0] : data;
-    // content might be stored in 'slides' array inside the object
-    const slides: Slide[] = rawv?.slides || [];
+    // Content is unwrapped by the Factory
+    const slides: Slide[] = data?.slides || [];
 
     if (!slides || slides.length === 0) {
         return (

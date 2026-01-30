@@ -32,8 +32,8 @@ const renderField = (label: string, value: string, placeholder: string = "Data n
 export const PdfCreativeBrief = ({ data }: PdfCreativeBriefProps) => {
     if (!data) return null; // Should be handled by parent content renderer
 
-    // Handle Array structure (WorkspaceEditor saves brief as [{...}])
-    const briefData = Array.isArray(data) ? data[0] : data;
+    // Data is unwrapped by the Factory
+    const briefData = data;
 
     if (!briefData || Object.keys(briefData).length === 0) {
         return (

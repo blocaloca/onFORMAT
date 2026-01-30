@@ -1,9 +1,15 @@
-import { StyleSheet } from '@react-pdf/renderer';
+import { StyleSheet, Font } from '@react-pdf/renderer';
 
 // --- 1. Font Registration ---
-// Using standard PDF fonts (Helvetica) for maximum stability.
-// External font fetches were causing "Unknown font format" crashes.
-// To use Inter, we must bundle the TTF files locally in the project.
+// Registering Inter from Google Fonts CDN for consistency
+Font.register({
+    family: 'Inter',
+    fonts: [
+        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.ttf', fontWeight: 400 }, // Regular
+        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hjp-Ek-_EeA.ttf', fontWeight: 700 }, // Bold
+        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuWaXAZ9hjp-Ek-_EeA.ttf', fontWeight: 900 }, // Black
+    ]
+});
 
 // --- 2. Color Palette ---
 export const COLORS = {
@@ -12,6 +18,7 @@ export const COLORS = {
     slate: '#E5E7EB',    // Borders
     lightGrey: '#F9FAF7', // Updated "Tactical" Input Background
     mutedText: '#6B7280', // Gray-500
+    placeholder: '#9CA3AF', // Gray-400
     emerald: '#059669',  // Accents
     white: '#FFFFFF'
 };
@@ -30,18 +37,18 @@ export const globalStyles = StyleSheet.create({
         paddingBottom: LAYOUT.padding,
         paddingLeft: LAYOUT.padding,
         paddingRight: LAYOUT.padding,
-        fontFamily: 'Helvetica', // Standard, Crash-Proof
+        fontFamily: 'Inter', // Tactical Luxury Font
         fontSize: 9,
         color: COLORS.obsidian,
         backgroundColor: COLORS.white,
     },
     // Typography
     h1: {
-        fontSize: 24,
+        fontSize: 18,
         fontWeight: 900,
         textTransform: 'uppercase',
-        marginBottom: 0,
-        letterSpacing: -1
+        marginBottom: 4,
+        letterSpacing: -0.5
     },
     h2: {
         fontSize: 10,
@@ -52,8 +59,8 @@ export const globalStyles = StyleSheet.create({
         letterSpacing: 0.5
     },
     text: {
-        fontSize: 10,
-        lineHeight: 1.5,
+        fontSize: 9,
+        lineHeight: 1.4,
         color: COLORS.obsidian
     },
     label: {
@@ -61,17 +68,22 @@ export const globalStyles = StyleSheet.create({
         textTransform: 'uppercase',
         color: COLORS.mutedText,
         fontWeight: 700,
-        marginBottom: 4,
+        marginBottom: 2,
         letterSpacing: 0.5
     },
     // UI Elements
-    inputBox: {
-        backgroundColor: COLORS.lightGrey,
-        borderWidth: 1,
+    inputBox: { // Tactical Field Look
+        backgroundColor: '#F9FAF7', // Very subtle off-white
+        borderWidth: 0.5,
         borderColor: COLORS.slate,
-        padding: 10,
-        marginBottom: 16,
-        minHeight: 40
+        padding: 6,
+        marginBottom: 12,
+        minHeight: 24,
+        borderRadius: 2
+    },
+    placeholder: {
+        color: '#9CA3AF',
+        fontStyle: 'italic'
     },
     // Utility
     row: {
@@ -82,7 +94,7 @@ export const globalStyles = StyleSheet.create({
         flexDirection: 'column'
     },
     borderBottom: {
-        borderBottomWidth: 1,
+        borderBottomWidth: 0.5,
         borderBottomColor: COLORS.slate
     }
 });

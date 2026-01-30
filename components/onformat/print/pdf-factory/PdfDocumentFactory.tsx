@@ -8,6 +8,7 @@ interface FactoryProps {
     items: any[]; // Playlist items
     phases: any;  // Global data store
     coverSettings: any;
+    producer?: string;
 }
 
 // --- Universal Unwrapper (Factory Version) ---
@@ -15,12 +16,14 @@ const getDataForTool = (toolId: string, phases: any) => {
     if (!phases) return {};
 
     let foundData: any = null;
-    // 1. Search all phases
-    for (const phase of Object.values(phases)) {
-        // @ts-ignore
+    const searchOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+
+    // 1. Search all phases (Reverse Priority)
+    for (const phaseKey of searchOrder) {
+        const phase = phases[phaseKey];
         if (phase?.drafts?.[toolId]) {
-            // @ts-ignore
             foundData = phase.drafts[toolId];
+            console.log(`[PdfFactory] Found ${toolId} in ${phaseKey}`);
             break;
         }
     }
@@ -31,9 +34,8 @@ const getDataForTool = (toolId: string, phases: any) => {
     try {
         const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
 
-        // 3. Array Extraction Rule
-        // "If the data is an array... extract the first item."
-        const data = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+        // 3. Array Extraction Rule (Last Item = Most Recent)
+        const data = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
         return data;
 
     } catch (e) {
@@ -56,7 +58,7 @@ const CoverPage = ({ settings }: { settings: any }) => (
         </View>
 
         <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
-            <Text style={{ fontSize: 10, fontFamily: 'Helvetica', color: '#9CA3AF', letterSpacing: 2 }}>
+            <Text style={{ fontSize: 10, fontFamily: 'Inter', color: '#9CA3AF', letterSpacing: 2 }}>
                 {settings.date}
             </Text>
         </View>
@@ -110,15 +112,13 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     // 3. Fallback / Empty Data
     return (
         <View style={globalStyles.inputBox}>
-            <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+            <Text style={[globalStyles.text, { color: COLORS.placeholder, fontStyle: 'italic' }]}>
                 Content placeholder (No data found, or template not implemented for {toolId})
             </Text>
         </View>
     );
 };
-
-// --- Main Document ---
-export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps) => {
+export const GlobalPdfDocument = ({ items, phases, coverSettings, producer }: FactoryProps) => {
     return (
         <Document>
             {/* Cover Page */}
@@ -148,7 +148,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps
                             title={item.label.toUpperCase()} // "CREATIVE BRIEF"
                             projectName={coverSettings.title} // "PROJECT NAME"
                             date={coverSettings.date}
-                        // producer={/* TODO: Pass from Dashboard */}
+                            producer={producer}
                         />
 
                         <ContentRenderer toolId={item.id} data={data} />
