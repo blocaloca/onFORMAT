@@ -66,7 +66,7 @@ export const PrintPreview = ({ targetToolId, coverSettings, orientationOverride 
     }
 
     return (
-        <div className="w-full h-full flex flex-col bg-zinc-900/50" style={{ flex: 1 }}>
+        <div className="w-full h-full flex flex-col bg-zinc-900/50" style={{ flex: 1, minHeight: '60vh' }}>
             <PDFViewer width="100%" height="100%" className="w-full h-full border-none" showToolbar={true}>
                 <GlobalPdfDocument
                     items={previewItems}
