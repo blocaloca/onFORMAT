@@ -47,19 +47,24 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
 
     // Universal Unwrapper
     // Searches all phases for the toolId and extracts the data
+    // Universal Unwrapper
+    // Searches all phases for the toolId and extracts the data
     const getToolData = useMemo(() => {
         return (toolId: string) => {
             if (!activeProject?.data?.phases) return {};
 
             let foundData: any = null;
+            let foundPhase: string | null = null;
             const phasesData = activeProject.data.phases;
 
-            // Search Strategy: Iterate all phases to find the tool draft
-            // Order: DEVELOPMENT -> PRE_PRODUCTION -> ON_SET -> POST (implicit order of keys)
-            for (const phaseKey of Object.keys(phasesData)) {
+            // Search Strategy: Reverse Priority (POST -> ON_SET -> PRE_PRODUCTION -> DEVELOPMENT)
+            const searchOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+
+            for (const phaseKey of searchOrder) {
                 const phase = phasesData[phaseKey];
                 if (phase?.drafts?.[toolId]) {
                     foundData = phase.drafts[toolId];
+                    foundPhase = phaseKey;
                     break;
                 }
             }
@@ -69,19 +74,18 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
             try {
                 if (foundData) {
                     const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
-                    // Array Extraction: If array, take first item
-                    result = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+                    // Array Extraction: If array, take the LAST item (most recent save)
+                    result = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
+
+                    if (foundPhase) {
+                        console.log(`[PrintRoom] Connected: toolId [${toolId}] from phase [${foundPhase}]`);
+                    }
                 }
             } catch (e) {
                 console.error(`[ProjectContext] Error parsing data for ${toolId}`, e);
             }
 
-            // Console Proof: Handshake Verification (Log only if data exists to avoid spam, or log empty as 'Empty')
-            if (Object.keys(result).length > 0) {
-                console.log(`[PrintRoom] Injecting data for [${toolId}]:`, result);
-            } else {
-                console.log(`[PrintRoom] Injecting data for [${toolId}]: Empty`);
-            }
+            // Console Proof was requested in Phase 1 Logging, handling via foundPhase check above.
 
             return result;
         };
