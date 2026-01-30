@@ -63,8 +63,21 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     const [selectedTools, setSelectedTools] = useState<Set<string>>(new Set());
     const [previewId, setPreviewId] = useState<string | null>(null);
 
-    // Master Orientation State (Default to Portrait)
-    const [masterOrientation, setMasterOrientation] = useState<'portrait' | 'landscape'>('portrait');
+    // Master Orientation State (Default to Landscape)
+    const [masterOrientation, setMasterOrientation] = useState<'portrait' | 'landscape'>('landscape');
+
+    // Persistence: Load preference on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('printroom_orientation');
+        if (saved === 'portrait' || saved === 'landscape') {
+            setMasterOrientation(saved);
+        }
+    }, []);
+
+    // Persistence: Save preference on change
+    useEffect(() => {
+        localStorage.setItem('printroom_orientation', masterOrientation);
+    }, [masterOrientation]);
 
     // UI State
     const [isExporting, setIsExporting] = useState(false);
@@ -73,7 +86,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
         title: projectName,
         subtitle: 'Production Package',
         date: new Date().toLocaleDateString(),
-        orientation: 'portrait' as 'portrait' | 'landscape'
+        orientation: 'landscape' as 'portrait' | 'landscape' // Will be overridden by masterOrientation in preview
     });
 
     // 1. Build List regarding Context Data
