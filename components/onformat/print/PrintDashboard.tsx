@@ -272,6 +272,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     {/* Render Active Preview */}
                     <div className="w-full h-full">
                         <PrintPreview
+                            key={previewId || 'cover'}
                             targetToolId={previewId}
                             coverSettings={{
                                 ...coverSettings,
