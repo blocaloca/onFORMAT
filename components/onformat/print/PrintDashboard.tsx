@@ -52,6 +52,12 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
         });
     }, [activeProject, getToolData]);
 
+    useEffect(() => {
+        console.log("[PrintDashboard] Active Project:", activeProject);
+        console.log("[PrintDashboard] Document List Length:", documentList.length);
+        console.log("[PrintDashboard] Tool Types Keys:", Object.keys(TOOL_TYPES));
+    }, [activeProject, documentList]);
+
     // Initial Selection (Start Empty, Show Cover)
     useEffect(() => {
         // No auto-selection of tools
@@ -204,6 +210,11 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                         </div>
 
                         <div className="flex flex-col gap-1">
+                            {documentList.length === 0 && (
+                                <div className="p-4 text-xs text-zinc-500 italic text-center border border-zinc-800 border-dashed rounded bg-zinc-900/20">
+                                    No document types loaded.<br />Check TOOL_TYPES registry.
+                                </div>
+                            )}
                             {documentList.map(doc => {
                                 const isSelected = selectedTools.has(doc.id);
                                 const isPreviewing = previewId === doc.id;

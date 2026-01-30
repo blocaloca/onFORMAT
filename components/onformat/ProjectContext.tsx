@@ -47,15 +47,19 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
 
     // Universal Unwrapper
     // Searches all phases for the toolId and extracts the data
-    // Universal Unwrapper
-    // Searches all phases for the toolId and extracts the data
     const getToolData = useMemo(() => {
         return (toolId: string) => {
-            if (!activeProject?.data?.phases) return {};
+            if (!activeProject?.data?.phases) {
+                console.warn("[ProjectContext] No phases data found");
+                return {};
+            }
 
             let foundData: any = null;
             let foundPhase: string | null = null;
             const phasesData = activeProject.data.phases;
+
+            // Debug Phases Structure
+            // console.log("[ProjectContext] Phases Available:", Object.keys(phasesData));
 
             // Search Strategy: Reverse Priority (POST -> ON_SET -> PRE_PRODUCTION -> DEVELOPMENT)
             const searchOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
@@ -66,6 +70,19 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
                     foundData = phase.drafts[toolId];
                     foundPhase = phaseKey;
                     break;
+                }
+            }
+
+            // Fallback: Check ALL keys if not found (handling casing or custom keys)
+            if (!foundData) {
+                for (const key of Object.keys(phasesData)) {
+                    const phase = phasesData[key];
+                    if (phase?.drafts?.[toolId]) {
+                        foundData = phase.drafts[toolId];
+                        foundPhase = key;
+                        console.warn(`[ProjectContext] Found data via fallback search in phase: [${key}]`);
+                        break;
+                    }
                 }
             }
 
