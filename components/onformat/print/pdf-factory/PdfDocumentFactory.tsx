@@ -44,6 +44,7 @@ const CoverPage = ({ settings }: { settings: any }) => (
 );
 
 import { PdfCallSheet } from './templates/PdfCallSheet';
+import { PdfCreativeBrief } from './templates/PdfCreativeBrief';
 
 // --- Content Renderer Swouter ---
 const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
@@ -51,6 +52,10 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     // 1. Specific Templates
     if (toolId === 'call-sheet') {
         return <PdfCallSheet data={data} />;
+    }
+    if (toolId === 'brief') {
+        const briefData = Array.isArray(data) ? data[0] : data;
+        return <PdfCreativeBrief data={briefData} />;
     }
 
     // 2. Text Content (Brief, Script, Treatment usually strings or simple objects)

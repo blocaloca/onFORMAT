@@ -33,6 +33,8 @@ export const PrintPreview = ({ items, phases, coverSettings }: PrintPreviewProps
         return {};
     };
 
+    console.log("Print Preview Items:", items);
+
     const selectedItems = items.filter(i => i.isSelected);
 
     const isCoverLandscape = coverSettings.orientation === 'landscape';
