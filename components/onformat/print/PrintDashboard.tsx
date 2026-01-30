@@ -23,7 +23,10 @@ const TOOL_META: Record<string, { label: string, defaultOrient: 'portrait' | 'la
 };
 
 
-import { generatePdfFromDom } from './pdfExportUtils';
+import { pdf } from '@react-pdf/renderer';
+import { saveAs } from 'file-saver';
+import { GlobalPdfDocument } from './pdf-factory/PdfDocumentFactory';
+// import { generatePdfFromDom } from './pdfExportUtils'; // Deprecated for new factory
 
 // ...
 
@@ -47,22 +50,26 @@ export const PrintDashboard = ({
 
     const handleExport = async () => {
         setIsExporting(true);
-        // Small delay to let UI show spinner
-        setTimeout(async () => {
-            try {
-                const selectedItems = playlist.filter(i => i.isSelected);
-                await generatePdfFromDom(
-                    selectedItems,
-                    coverSettings,
-                    `${projectName || 'Project'} - Package.pdf`
-                );
-            } catch (e) {
-                console.error("Export Failed", e);
-                alert('Export failed. See console.');
-            } finally {
-                setIsExporting(false);
-            }
-        }, 100);
+        try {
+            const selectedItems = playlist.filter(i => i.isSelected);
+
+            // Generate PDF Blob using the Factory
+            const blob = await pdf(
+                <GlobalPdfDocument
+                    items={selectedItems}
+                    phases={phases}
+                    coverSettings={coverSettings}
+                />
+            ).toBlob();
+
+            saveAs(blob, `${coverSettings.title || 'Project'} - Package.pdf`);
+
+        } catch (e) {
+            console.error("Factory Export Failed", e);
+            alert('Export failed. See console.');
+        } finally {
+            setIsExporting(false);
+        }
     };
 
     // --- 1. Initialization Logic ---
@@ -259,14 +266,22 @@ export const PrintDashboard = ({
                     <div className="p-4 border-t border-zinc-900 mt-auto">
                         <button
                             onClick={handleExport}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold uppercase tracking-widest text-xs rounded-sm shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
+                            disabled={isExporting}
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest text-xs rounded-sm shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
                         >
-                            <Printer size={14} />
-                            <span>System Print</span>
+                            {isExporting ? (
+                                <>
+                                    <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    <span>Generating PDF...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Printer size={14} />
+                                    <span>Export PDF Package</span>
+                                </>
+                            )}
                         </button>
-                        <p className="text-[9px] text-zinc-500 text-center mt-2">
-                            Use system dialog to Save as PDF
-                        </p>
+
                     </div>
 
                 </aside>
