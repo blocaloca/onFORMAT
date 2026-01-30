@@ -16,6 +16,7 @@ const getDataForTool = (toolId: string, phases: any) => {
     if (!phases) return {};
 
     let foundData: any = null;
+    let foundPhase: string | null = null;
     const searchOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
 
     // 1. Search all phases (Reverse Priority)
@@ -23,19 +24,34 @@ const getDataForTool = (toolId: string, phases: any) => {
         const phase = phases[phaseKey];
         if (phase?.drafts?.[toolId]) {
             foundData = phase.drafts[toolId];
-            console.log(`[PdfFactory] Found ${toolId} in ${phaseKey}`);
+            foundPhase = phaseKey;
             break;
+        }
+    }
+
+    // 2. Fallback: Check ALL keys if not found (handling casing or custom keys)
+    if (!foundData) {
+        for (const key of Object.keys(phases)) {
+            const phase = phases[key];
+            if (phase?.drafts?.[toolId]) {
+                foundData = phase.drafts[toolId];
+                foundPhase = key;
+                console.warn(`[PdfFactory] Found ${toolId} via fallback search in ${key}`);
+                break;
+            }
         }
     }
 
     if (!foundData) return {};
 
-    // 2. Parse & Extract
+    // 3. Parse & Extract
     try {
         const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
 
-        // 3. Array Extraction Rule (Last Item = Most Recent)
+        // 4. Array Extraction Rule (Last Item = Most Recent)
         const data = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
+
+        console.log(`[PdfFactory] Unwrapped Data for ${toolId}:`, data);
         return data;
 
     } catch (e) {
@@ -126,15 +142,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings, producer }: Fa
 
             {/* Document Playlist */}
             {items.filter(item => item.isSelected).map((item, index) => {
-                const rawData = getDataForTool(item.id, phases);
-                let data = rawData;
-
-                // Try to parse if string
-                if (typeof rawData === 'string' && (rawData.startsWith('{') || rawData.startsWith('['))) {
-                    try { data = JSON.parse(rawData); } catch (e) { }
-                }
-
-                console.log("PDF Data Received:", { toolId: item.id, data });
+                const data = getDataForTool(item.id, phases);
 
                 return (
                     <Page
