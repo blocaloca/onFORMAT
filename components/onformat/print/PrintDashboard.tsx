@@ -268,10 +268,9 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </aside>
 
                 {/* --- Preview Pane --- */}
-                <main className="flex-1 bg-zinc-900/50 relative overflow-y-auto flex flex-col items-center py-12 print:bg-white print:p-0 print:block print:overflow-visible">
-                    <div className="transform scale-[0.65] origin-top pb-20 print:transform-none print:pb-0 print:w-full transition-transform duration-300">
-
-                        {/* Render Active Preview */}
+                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-hidden print:bg-white print:p-0 print:block print:overflow-visible">
+                    {/* Render Active Preview */}
+                    <div className="w-full h-full">
                         <PrintPreview
                             targetToolId={previewId}
                             coverSettings={{
@@ -280,7 +279,6 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                             }}
                             orientationOverride={masterOrientation}
                         />
-
                     </div>
                 </main>
 
