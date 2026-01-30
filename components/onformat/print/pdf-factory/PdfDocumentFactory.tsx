@@ -10,15 +10,36 @@ interface FactoryProps {
     coverSettings: any;
 }
 
-// --- Helper to extract data ---
+// --- Universal Unwrapper (Factory Version) ---
 const getDataForTool = (toolId: string, phases: any) => {
-    if (!phases) return null;
+    if (!phases) return {};
+
+    let foundData: any = null;
+    // 1. Search all phases
     for (const phase of Object.values(phases)) {
-        if ((phase as any).drafts && (phase as any).drafts[toolId]) {
-            return (phase as any).drafts[toolId]; // This is often a JSON string or object
+        // @ts-ignore
+        if (phase?.drafts?.[toolId]) {
+            // @ts-ignore
+            foundData = phase.drafts[toolId];
+            break;
         }
     }
-    return null;
+
+    if (!foundData) return {};
+
+    // 2. Parse & Extract
+    try {
+        const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
+
+        // 3. Array Extraction Rule
+        // "If the data is an array... extract the first item."
+        const data = Array.isArray(parsed) ? (parsed[0] || {}) : (parsed || {});
+        return data;
+
+    } catch (e) {
+        console.error(`Error parsing PDF data for ${toolId}`, e);
+        return {};
+    }
 };
 
 // --- Cover Page Component ---
@@ -39,7 +60,6 @@ const CoverPage = ({ settings }: { settings: any }) => (
                 {settings.date}
             </Text>
         </View>
-        {/* <Image src="https://onformat.io/logo-dark.png" style={{ width: 80, height: 20, position: 'absolute', bottom: 40, opacity: 0.5 }} /> */}
     </Page>
 );
 
@@ -55,36 +75,34 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
         return <PdfCallSheet data={data} />;
     }
     if (toolId === 'brief') {
-        const briefData = Array.isArray(data) ? data[0] : data;
-        return <PdfCreativeBrief data={briefData} />;
+        return <PdfCreativeBrief data={data} />;
     }
     if (toolId === 'directors-treatment') {
         return <PdfDirectorsTreatment data={data} />;
     }
 
-    // 2. Text Content (Brief, Script, Treatment usually strings or simple objects)
-    if (typeof data === 'string') {
-        const isLongText = data.length > 100;
-        return (
-            <View style={globalStyles.inputBox}>
-                <Text style={globalStyles.text}>{data}</Text>
-            </View>
-        );
-    }
-
-    // 2. Object Content (complex tools)
-    if (typeof data === 'object') {
-        // Fallback: Dump keys/values
+    // 2. Fallback for unmapped tools (Simple Dump)
+    if (data && Object.keys(data).length > 0) {
         return (
             <View>
-                {Object.keys(data).map(key => (
-                    <View key={key} style={{ marginBottom: 16 }} wrap={false}>
-                        <Text style={[globalStyles.label, { marginBottom: 4 }]}>{key.toUpperCase()}</Text>
-                        <View style={globalStyles.inputBox}>
-                            <Text style={globalStyles.text}>{JSON.stringify(data[key]).slice(0, 500)}</Text>
+                <View style={[globalStyles.inputBox, { marginBottom: 20 }]}>
+                    <Text style={[globalStyles.text, { fontSize: 14, fontWeight: 'bold' }]}>
+                        {toolId.toUpperCase().replace(/-/g, ' ')}
+                    </Text>
+                </View>
+
+                {Object.keys(data).map(key => {
+                    const val = data[key];
+                    if (typeof val === 'object') return null; // Skip nested for legacy dump
+                    return (
+                        <View key={key} style={{ marginBottom: 16 }} wrap={false}>
+                            <Text style={[globalStyles.label, { marginBottom: 4 }]}>{key.toUpperCase()}</Text>
+                            <View style={globalStyles.inputBox}>
+                                <Text style={globalStyles.text}>{String(val)}</Text>
+                            </View>
                         </View>
-                    </View>
-                ))}
+                    );
+                })}
             </View>
         );
     }
@@ -93,7 +111,7 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     return (
         <View style={globalStyles.inputBox}>
             <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
-                Content placeholder (No data found for {toolId})
+                Content placeholder (No data found, or template not implemented for {toolId})
             </Text>
         </View>
     );
