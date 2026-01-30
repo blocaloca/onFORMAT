@@ -3,6 +3,7 @@ const nextConfig = {
     config.resolve.alias.canvas = false;
     return config;
   },
+  transpilePackages: ['@react-pdf/renderer'],
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
