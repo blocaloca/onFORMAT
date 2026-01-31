@@ -311,7 +311,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
                 {/* --- Preview Pane --- */}
                 <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-hidden">
-                    <div className="w-full h-full">
+                    <div className="w-full h-full p-8 md:p-12">
                         {/* Render Active Preview */}
                         <PrintPreview
                             key={`${previewId || 'cover'}-${masterOrientation}`}
