@@ -310,12 +310,21 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </aside>
 
                 {/* --- Preview Pane --- */}
-                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-hidden">
-                    <div className="w-full h-full p-8 md:p-12">
+                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-y-auto">
+                    <div className="w-full min-h-full p-8 md:p-12 flex flex-col items-center gap-8 pb-32">
                         {/* Render Active Preview */}
                         <PrintPreview
-                            key={`${previewId || 'cover'}-${masterOrientation}`}
-                            targetToolId={previewId}
+                            key={`preview-${selectedTools.size}-${masterOrientation}`}
+                            items={documentList
+                                .filter(doc => selectedTools.has(doc.id))
+                                .map(doc => ({
+                                    id: doc.id,
+                                    toolKey: doc.id,
+                                    label: doc.label,
+                                    isSelected: true,
+                                    orientation: masterOrientation,
+                                    pageCountEstimate: 1
+                                }))}
                             coverSettings={{
                                 ...coverSettings,
                                 orientation: masterOrientation
