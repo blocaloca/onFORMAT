@@ -1952,9 +1952,8 @@ Context:\n"${fullContext}"`;
                         phases={state.phases}
                         onToggleLock={() => activePhaseState.locked ? unlockPhase() : lockPhase()}
                         onGenerateFromVision={handleGenerateFromVision}
-                        onOpenAi={() => {
-                            setIsAiDocked(false);
-                        }}
+                        onOpenAi={toggleAiDock}
+                        isAiDocked={isAiDocked}
                         // @ts-ignore
                         latestNotification={latestNotification}
                         // @ts-ignore

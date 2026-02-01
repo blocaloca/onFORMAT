@@ -314,7 +314,11 @@ export const ExperimentalWorkspaceNav = ({
 
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors ${darkMode ? 'bg-zinc-950 border-zinc-900' : 'bg-white border-zinc-100'}`}>
-            <NavHeader darkMode={darkMode} onToggleAi={onToggleAi} isAiDocked={isAiDocked} />
+            <NavHeader
+                darkMode={darkMode}
+                onToggleAi={(activePhase === 'DEVELOPMENT' || activePhase === 'PRE_PRODUCTION') ? onToggleAi : undefined}
+                isAiDocked={isAiDocked}
+            />
 
             <div className="px-8 mb-6">
                 <Link href="/dashboard" className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-colors ${darkMode ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-black'}`}>

@@ -22,9 +22,8 @@ interface DraftEditorProps {
     latestNotification?: { msg: string, time: number } | null
     onMagicImport?: (sourceData: any) => void
     onOpenPrintRoom?: () => void
+    isAiDocked?: boolean
 }
-
-
 
 export const DraftEditor = ({
     draft,
@@ -44,7 +43,8 @@ export const DraftEditor = ({
     onOpenAi,
     latestNotification,
     onMagicImport,
-    onOpenPrintRoom
+    onOpenPrintRoom,
+    isAiDocked
 }: DraftEditorProps) => {
 
     // Schedule Import Logic
@@ -432,6 +432,8 @@ export const DraftEditor = ({
                 projectId={projectId}
                 navMode={navMode}
                 onOpenPrintRoom={onOpenPrintRoom}
+                onToggleAi={onOpenAi}
+                isAiDocked={isAiDocked}
             />
 
             <div className="flex-1 overflow-y-auto bg-transparent p-8 flex flex-col items-center" id="document-preview-area">

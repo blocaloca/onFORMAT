@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { RectangleVertical, RectangleHorizontal, ChevronLeft, ChevronRight, Copy, Plus, Trash2, Printer } from 'lucide-react';
+import { RectangleVertical, RectangleHorizontal, ChevronLeft, ChevronRight, Copy, Plus, Trash2, Printer, Sparkles } from 'lucide-react';
 
 export type NavMode = 'stack' | 'collection' | 'hidden';
 
@@ -20,6 +20,8 @@ interface DocumentNavBarProps {
     projectId?: string;
     navMode?: NavMode;
     onOpenPrintRoom?: () => void;
+    onToggleAi?: () => void;
+    isAiDocked?: boolean;
 }
 
 export const DocumentNavBar = ({
@@ -37,7 +39,9 @@ export const DocumentNavBar = ({
     isExportingPdf,
     projectId,
     navMode = 'stack',
-    onOpenPrintRoom
+    onOpenPrintRoom,
+    onToggleAi,
+    isAiDocked
 }: DocumentNavBarProps) => {
     const [showVersionMenu, setShowVersionMenu] = useState(false);
 
@@ -169,13 +173,35 @@ export const DocumentNavBar = ({
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3">
+                {onToggleAi && (
+                    <button
+                        onClick={onToggleAi}
+                        className={`
+                            flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border shadow-sm
+                            ${isAiDocked
+                                ? 'bg-zinc-800 text-emerald-500 border-zinc-700 hover:bg-zinc-700 hover:text-emerald-400' // Active/Docked/Shown? Actually "Docked" usually means hidden side panel in some contexts, or shown. In WorkspaceEditor: isAiDocked=true means HIDDEN (docked away). 
+                                // Let's check WorkspaceEditor logic: 
+                                // const aiMode = isAiDocked ? 'OFF' : ...
+                                // So isAiDocked = TRUE means AI is OFF.
+                                // isAiDocked = FALSE means AI is OPEN.
+                                // So if !isAiDocked (AI Open), we want it bright.
+                                : 'bg-emerald-900/30 text-emerald-400 border-emerald-800/50 hover:bg-emerald-900/50'
+                            }
+                            ${!isAiDocked ? '' : 'opacity-60 hover:opacity-100'} 
+                        `}
+                    >
+                        <Sparkles size={14} className={!isAiDocked ? "text-emerald-400 fill-emerald-400/20" : "text-zinc-500"} />
+                        <span>AI Liaison</span>
+                    </button>
+                )}
+
                 {onOpenPrintRoom && (
                     <button
                         onClick={onOpenPrintRoom}
                         className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border border-zinc-700 shadow-sm"
                     >
                         <Printer size={14} />
-                        <span>Print Room</span>
+                        <span>Export</span>
                     </button>
                 )}
             </div>
