@@ -195,55 +195,41 @@ export const DraftEditor = ({
     };
 
     // --- Nav Bar Actions ---
+    // --- Nav Bar Actions ---
     const handleNew = () => {
-        if (navMode === 'collection') {
-            // Collection Mode: Append to End (Day 1, Day 2...)
-            // Smart Date Increment Logic
-            const lastItem = versions[versions.length - 1] || {};
-            let newItem: any = {};
+        // Universal "Collection/Day" Mode: Append to End (Day 1, Day 2...)
+        // Smart Date Increment Logic
+        const lastItem = versions[versions.length - 1] || {};
+        let newItem: any = {};
 
-            if (lastItem.date) {
-                try {
-                    // Try to parse MM/DD/YYYY
-                    const [m, d, y] = lastItem.date.split('/').map((n: string) => parseInt(n));
-                    if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
-                        const dateObj = new Date(y, m - 1, d);
-                        dateObj.setDate(dateObj.getDate() + 1);
-                        const nextDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
-                        newItem.date = nextDate;
-                    }
-                } catch (e) {
-                    console.warn("Could not increment date", e);
+        if (lastItem.date) {
+            try {
+                // Try to parse MM/DD/YYYY
+                const [m, d, y] = lastItem.date.split('/').map((n: string) => parseInt(n));
+                if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
+                    const dateObj = new Date(y, m - 1, d);
+                    dateObj.setDate(dateObj.getDate() + 1);
+                    const nextDate = `${String(dateObj.getMonth() + 1).padStart(2, '0')}/${String(dateObj.getDate()).padStart(2, '0')}/${dateObj.getFullYear()}`;
+                    newItem.date = nextDate;
                 }
+            } catch (e) {
+                console.warn("Could not increment date", e);
             }
-
-            const newVersions = [...versions, newItem];
-            setActiveVersionIndex(newVersions.length - 1); // Jump to new last item
-            onDraftChange(JSON.stringify(newVersions));
-        } else {
-            // Stack Mode: Prepend to Start (v2, v1...)
-            const newVersions = [{}, ...versions];
-            setActiveVersionIndex(0); // Jump to new first item
-            onDraftChange(JSON.stringify(newVersions));
         }
+
+        const newVersions = [...versions, newItem];
+        setActiveVersionIndex(newVersions.length - 1); // Jump to new last item
+        onDraftChange(JSON.stringify(newVersions));
     };
 
     const handleDuplicate = () => {
+        // Universal "Collection/Day" Mode: Append Copy to End
         const copy = { ...activeData };
-
-        if (navMode === 'collection') {
-            // Collection Mode: Append Copy to End
-            // Remove ID to avoid conflicts if present
-            if (copy.id) delete copy.id;
-            const newVersions = [...versions, copy];
-            setActiveVersionIndex(newVersions.length - 1);
-            onDraftChange(JSON.stringify(newVersions));
-        } else {
-            // Stack Mode: Prepend Copy to Start
-            const newVersions = [copy, ...versions];
-            setActiveVersionIndex(0);
-            onDraftChange(JSON.stringify(newVersions));
-        }
+        // Remove ID to avoid conflicts if present
+        if (copy.id) delete copy.id;
+        const newVersions = [...versions, copy];
+        setActiveVersionIndex(newVersions.length - 1);
+        onDraftChange(JSON.stringify(newVersions));
     };
 
     const handleClear = () => {
@@ -430,7 +416,6 @@ export const DraftEditor = ({
                 onExportPdf={handleExportPdf}
                 isExportingPdf={isExportingPdf}
                 projectId={projectId}
-                navMode={navMode}
                 onOpenPrintRoom={onOpenPrintRoom}
                 onToggleAi={onOpenAi}
                 isAiDocked={isAiDocked}

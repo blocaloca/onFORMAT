@@ -43,6 +43,7 @@ type ToolKey =
     | 'supervising-producer'
     | 'talent-release'
     | 'project-export'
+    | 'project-overview'
 
 type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
 
@@ -1790,8 +1791,8 @@ Context:\n"${fullContext}"`;
                     alerts={navAlerts}
                 />
 
-                {/* HIDE AI LIAISON IN ON_SET / POST */}
-                {(state.activePhase === 'DEVELOPMENT' || state.activePhase === 'PRE_PRODUCTION') && (
+                {/* HIDE AI LIAISON IN ALL PHASES EXCEPT DEVELOPMENT */}
+                {(state.activePhase === 'DEVELOPMENT') && (
                     <ChatInterface
                         messages={activeChat}
                         input={input}
@@ -1817,14 +1818,6 @@ Context:\n"${fullContext}"`;
                         onModeChange={() => { }}
                         onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
                         onNavigate={(targetTool, payload) => {
-                            // ... logic same as before ...
-                            // But since the code inside the prop is long and I'm replacing the whole block, I need to copy the logic.
-                            // WAIT: I should use the existing logic inside onNavigate.
-                            // To avoid copying huge blocks, let's just use the boolean.
-
-                            // Note: Since I can't "use existing logic" without writing it out in replace_file_content,
-                            // I will copy the logic from the Read (Step 116).
-
                             // Find the phase for this tool
                             let foundPhase: Phase | undefined;
                             for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
@@ -1952,7 +1945,7 @@ Context:\n"${fullContext}"`;
                         phases={state.phases}
                         onToggleLock={() => activePhaseState.locked ? unlockPhase() : lockPhase()}
                         onGenerateFromVision={handleGenerateFromVision}
-                        onOpenAi={toggleAiDock}
+                        onOpenAi={state.activePhase === 'DEVELOPMENT' ? toggleAiDock : undefined}
                         isAiDocked={isAiDocked}
                         // @ts-ignore
                         latestNotification={latestNotification}

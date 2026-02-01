@@ -74,23 +74,11 @@ export const getPhaseLabel = (key: Phase): string => {
 
 // --- Shared Components ---
 
-const NavHeader = ({ isAiDocked = true, darkMode = false, onToggleAi }: { isAiDocked?: boolean, darkMode?: boolean, onToggleAi?: () => void }) => (
+const NavHeader = ({ darkMode = false }: { darkMode?: boolean }) => (
     <div className={`p-8 pb-4 ${darkMode ? 'text-white' : 'text-black'}`}>
         <Link href="/" className="block w-32 mb-10 hover:opacity-80 transition-opacity">
             <img src="/logo-white.png" alt="onFORMAT" className="w-full h-auto object-contain bg-black p-1" />
         </Link>
-
-        {onToggleAi && (
-            <button
-                onClick={onToggleAi}
-                className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest rounded-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 mb-6 group ${darkMode
-                    ? (isAiDocked ? 'bg-emerald-900/80 text-emerald-100 border border-emerald-800 hover:bg-emerald-800' : 'bg-transparent text-emerald-500 border border-emerald-500/50 hover:bg-emerald-900/30')
-                    : (isAiDocked ? 'bg-gradient-to-r from-zinc-900 to-zinc-800 text-white' : 'bg-white text-black border border-black hover:bg-zinc-100')
-                    }`}>
-                <Sparkles size={14} className={`group-hover:rotate-12 transition-transform ${darkMode ? 'text-emerald-300' : 'text-yellow-400'}`} />
-                {isAiDocked ? 'AI Liaison' : 'Close AI'}
-            </button>
-        )}
 
         <div className="h-px w-full bg-gradient-to-r from-transparent via-zinc-300 to-transparent opacity-50 mb-0" />
     </div>
@@ -210,7 +198,7 @@ export const ExperimentalDashboardNav = ({
 
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors ${darkMode ? 'bg-zinc-950 border-zinc-900' : 'bg-white border-zinc-100'}`}>
-            <NavHeader darkMode={darkMode} onToggleAi={onToggleAi} isAiDocked={isAiDocked} />
+            <NavHeader darkMode={darkMode} />
 
             {/* AI Slot (Preserving Dashboard Chat functionality) */}
             {AiComponent && (
@@ -316,8 +304,6 @@ export const ExperimentalWorkspaceNav = ({
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors ${darkMode ? 'bg-zinc-950 border-zinc-900' : 'bg-white border-zinc-100'}`}>
             <NavHeader
                 darkMode={darkMode}
-                onToggleAi={(activePhase === 'DEVELOPMENT' || activePhase === 'PRE_PRODUCTION') ? onToggleAi : undefined}
-                isAiDocked={isAiDocked}
             />
 
             <div className="px-8 mb-6">
