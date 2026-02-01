@@ -1790,113 +1790,120 @@ Context:\n"${fullContext}"`;
                     alerts={navAlerts}
                 />
 
-                <ChatInterface
-                    messages={activeChat}
-                    input={input}
-                    isSending={isSending}
-                    error={error}
-                    onInputChange={setInput}
-                    onSend={send}
-                    activeToolLabel={activeToolLabel}
-                    activeToolKey={state.activeTool}
-                    placeholderHint={chatPlaceholderHint} // Pass the hint
-                    onInsertToDraft={saveDraftForActiveTool}
-                    onClear={() => setState(s => ({
-                        ...s,
-                        chat: { ...s.chat, [s.activeTool]: [] }
-                    }))}
-                    isLocked={activePhaseState.locked}
-                    // @ts-ignore
-                    activePhase={state.activePhase}
-                    persona={persona}
-                    isDocked={isAiDocked}
-                    onDock={() => setIsAiDocked(true)}
-                    activeMode={aiMode}
-                    onModeChange={() => { }}
-                    onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
-                    onNavigate={(targetTool, payload) => {
-                        // SPECIAL CASE: Mobile Control Toggle
-                        // Removed intercept
+                {/* HIDE AI LIAISON IN ON_SET / POST */}
+                {(state.activePhase === 'DEVELOPMENT' || state.activePhase === 'PRE_PRODUCTION') && (
+                    <ChatInterface
+                        messages={activeChat}
+                        input={input}
+                        isSending={isSending}
+                        error={error}
+                        onInputChange={setInput}
+                        onSend={send}
+                        activeToolLabel={activeToolLabel}
+                        activeToolKey={state.activeTool}
+                        placeholderHint={chatPlaceholderHint} // Pass the hint
+                        onInsertToDraft={saveDraftForActiveTool}
+                        onClear={() => setState(s => ({
+                            ...s,
+                            chat: { ...s.chat, [s.activeTool]: [] }
+                        }))}
+                        isLocked={activePhaseState.locked}
+                        // @ts-ignore
+                        activePhase={state.activePhase}
+                        persona={persona}
+                        isDocked={isAiDocked}
+                        onDock={() => setIsAiDocked(true)}
+                        activeMode={aiMode}
+                        onModeChange={() => { }}
+                        onCreateBrief={(text) => handleGenerateFromVision('brief', text, 'Create a brief based on this Project Vision')}
+                        onNavigate={(targetTool, payload) => {
+                            // ... logic same as before ...
+                            // But since the code inside the prop is long and I'm replacing the whole block, I need to copy the logic.
+                            // WAIT: I should use the existing logic inside onNavigate.
+                            // To avoid copying huge blocks, let's just use the boolean.
 
+                            // Note: Since I can't "use existing logic" without writing it out in replace_file_content,
+                            // I will copy the logic from the Read (Step 116).
 
-                        // Find the phase for this tool
-                        let foundPhase: Phase | undefined;
-                        for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
-                            if (tools.some(t => t.key === targetTool)) {
-                                foundPhase = p as Phase;
-                                break;
+                            // Find the phase for this tool
+                            let foundPhase: Phase | undefined;
+                            for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
+                                if (tools.some(t => t.key === targetTool)) {
+                                    foundPhase = p as Phase;
+                                    break;
+                                }
                             }
-                        }
-                        if (foundPhase) {
-                            setState(s => {
-                                const newState = {
-                                    ...s,
-                                    activePhase: foundPhase!,
-                                    activeTool: targetTool as ToolKey
-                                };
-
-                                // Data Carrier: Inject payload as AI message in new tool to trigger Auto-Parse
-                                if (payload) {
-                                    // 1. Add to Chat History
-                                    const existingChat = newState.chat[targetTool as ToolKey] || [];
-                                    newState.chat = {
-                                        ...newState.chat,
-                                        [targetTool]: [
-                                            ...existingChat,
-                                            { role: 'assistant', content: `Transferring context...\n\n${payload}` }
-                                        ]
+                            if (foundPhase) {
+                                setState(s => {
+                                    const newState = {
+                                        ...s,
+                                        activePhase: foundPhase!,
+                                        activeTool: targetTool as ToolKey
                                     };
 
-                                    // 2. Direct Draft Update (SPECIAL HANDLING FOR BRIEF)
-                                    // This ensures the fields are populated immediately upon landing.
-                                    if (targetTool === 'brief') {
-                                        const subjectMatch = payload.match(/\*\*(?:Subject|Product)(?:\/Product)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const objectiveMatch = payload.match(/\*\*Objective:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const audienceMatch = payload.match(/\*\*(?:Target )?Audience:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const toneMatch = payload.match(/\*\*Tone(?: [&/\\,]+ Style)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const messageMatch = payload.match(/\*\*(?:Key )?Message:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const narrativeMatch = payload.match(/\*\*(?:Narrative|Creative Approach|Story):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const talentMatch = payload.match(/\*\*(?:Talent|Casting|Characters):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const locationMatch = payload.match(/\*\*(?:Location|Setting):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
-                                        const deliverablesMatch = payload.match(/\*\*(?:Deliverables|Assets):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                    // Data Carrier: Inject payload as AI message in new tool to trigger Auto-Parse
+                                    if (payload) {
+                                        // 1. Add to Chat History
+                                        const existingChat = newState.chat[targetTool as ToolKey] || [];
+                                        newState.chat = {
+                                            ...newState.chat,
+                                            [targetTool]: [
+                                                ...existingChat,
+                                                { role: 'assistant', content: `Transferring context...\n\n${payload}` }
+                                            ]
+                                        };
 
-                                        if (subjectMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch || narrativeMatch || talentMatch || locationMatch || deliverablesMatch) {
-                                            const existingDraftJSON = newState.phases[foundPhase!].drafts[targetTool] || '[]';
-                                            let currentStack: any[] = [{}];
+                                        // 2. Direct Draft Update (SPECIAL HANDLING FOR BRIEF)
+                                        if (targetTool === 'brief') {
+                                            // ... Brief Parsing Logic ...
+                                            const subjectMatch = payload.match(/\*\*(?:Subject|Product)(?:\/Product)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const objectiveMatch = payload.match(/\*\*Objective:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const audienceMatch = payload.match(/\*\*(?:Target )?Audience:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const toneMatch = payload.match(/\*\*Tone(?: [&/\\,]+ Style)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const messageMatch = payload.match(/\*\*(?:Key )?Message:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const narrativeMatch = payload.match(/\*\*(?:Narrative|Creative Approach|Story):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const talentMatch = payload.match(/\*\*(?:Talent|Casting|Characters):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const locationMatch = payload.match(/\*\*(?:Location|Setting):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+                                            const deliverablesMatch = payload.match(/\*\*(?:Deliverables|Assets):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
-                                            try {
-                                                const parsed = JSON.parse(existingDraftJSON);
-                                                if (Array.isArray(parsed)) currentStack = parsed;
-                                                else if (typeof parsed === 'object') currentStack = [parsed];
-                                            } catch (e) { /* ignore */ }
+                                            if (subjectMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch || narrativeMatch || talentMatch || locationMatch || deliverablesMatch) {
+                                                const existingDraftJSON = newState.phases[foundPhase!].drafts[targetTool] || '[]';
+                                                let currentStack: any[] = [{}];
 
-                                            if (currentStack.length === 0) currentStack.push({});
+                                                try {
+                                                    const parsed = JSON.parse(existingDraftJSON);
+                                                    if (Array.isArray(parsed)) currentStack = parsed;
+                                                    else if (typeof parsed === 'object') currentStack = [parsed];
+                                                } catch (e) { /* ignore */ }
 
-                                            const update: any = {};
-                                            if (subjectMatch) update.product = subjectMatch[1].trim();
-                                            if (objectiveMatch) update.objective = objectiveMatch[1].trim();
-                                            if (audienceMatch) update.targetAudience = audienceMatch[1].trim();
-                                            if (toneMatch) update.tone = toneMatch[1].trim();
-                                            if (messageMatch) update.keyMessage = messageMatch[1].trim(); // Assuming keyMessage key
-                                            if (narrativeMatch) update.narrative = narrativeMatch[1].trim();
-                                            if (talentMatch) update.talent = talentMatch[1].trim();
-                                            if (locationMatch) update.location = locationMatch[1].trim();
-                                            if (deliverablesMatch) update.deliverables = deliverablesMatch[1].trim();
+                                                if (currentStack.length === 0) currentStack.push({});
 
-                                            currentStack[0] = { ...currentStack[0], ...update };
+                                                const update: any = {};
+                                                if (subjectMatch) update.product = subjectMatch[1].trim();
+                                                if (objectiveMatch) update.objective = objectiveMatch[1].trim();
+                                                if (audienceMatch) update.targetAudience = audienceMatch[1].trim();
+                                                if (toneMatch) update.tone = toneMatch[1].trim();
+                                                if (messageMatch) update.keyMessage = messageMatch[1].trim();
+                                                if (narrativeMatch) update.narrative = narrativeMatch[1].trim();
+                                                if (talentMatch) update.talent = talentMatch[1].trim();
+                                                if (locationMatch) update.location = locationMatch[1].trim();
+                                                if (deliverablesMatch) update.deliverables = deliverablesMatch[1].trim();
 
-                                            // Commit Update
-                                            newState.phases[foundPhase!].drafts[targetTool] = JSON.stringify(currentStack);
+                                                currentStack[0] = { ...currentStack[0], ...update };
+
+                                                // Commit Update
+                                                newState.phases[foundPhase!].drafts[targetTool] = JSON.stringify(currentStack);
+                                            }
                                         }
-                                    } // End of Brief Parsing
-                                }
-                                return newState;
-                            });
-                        } else {
-                            console.warn(`Could not find phase for tool: ${targetTool}`);
-                        }
-                    }}
-                />
+                                    }
+                                    return newState;
+                                });
+                            } else {
+                                console.warn(`Could not find phase for tool: ${targetTool}`);
+                            }
+                        }}
+                    />
+                )}
 
                 {/* Floating Mobile Control (Simulator) Removed */}
 
