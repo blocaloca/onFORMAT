@@ -108,8 +108,98 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
         return () => { supabase.removeChannel(channel); };
     }, [metadata?.projectId]);
 
-    const handleStartIngest = (alert: any) => {
-        // Create new log entry from alert
+    // ---------------------------------------------------------------------------
+    // REALTIME SYNC (Fix for "Cancelling" / "Ghosting")
+    // ---------------------------------------------------------------------------
+    useEffect(() => {
+        if (!metadata?.projectId) return;
+
+        const channel = supabase.channel(`dit-sync-${metadata.projectId}`)
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${metadata.projectId}` },
+                (payload) => {
+                    const newProjectData = payload.new?.data;
+                    if (!newProjectData?.phases) return;
+
+                    // 1. Extract Remote DIT Log
+                    let remoteItems: DITLogItem[] = [];
+                    let remoteHead: any = {};
+                    const raw = newProjectData.phases?.ON_SET?.drafts?.['dit-log'];
+
+                    if (raw) {
+                        try {
+                            const parsed = JSON.parse(raw);
+                            const head = Array.isArray(parsed) ? parsed[0] : parsed;
+                            remoteItems = head.items || [];
+                            remoteHead = head;
+                        } catch { }
+                    }
+
+                    // 2. Compare with Local
+                    // We only want to "Merge" if we find items we don't have.
+                    // We avoid overwriting "Editing" state by only Appending or filling gaps?
+                    // For now, simpler: If remote has MORE items, we take them.
+                    // Or specifically check for "Mobile" created items (which might be missing locally).
+
+                    const localIds = new Set((data.items || []).map(i => i.id));
+                    const newItems = remoteItems.filter(i => !localIds.has(i.id));
+
+                    if (newItems.length > 0) {
+                        console.log("Syncing New Items from Mobile:", newItems);
+                        // Merge: Remote items usually come sorted (or we preserve remote order? Mobile prepends.)
+                        // Let's trust Remote as source of truth for the LIST structure if it's longer?
+                        // Safe Blend: Keep local edits to existing items, add new items.
+
+                        const mergedItems = [...(data.items || [])];
+                        // Add new items (Prepend or Append based on timestamp/logic? Mobile prepends.)
+                        // If Mobile prepends, they should be at the top.
+                        // Let's just create a combined map.
+                        const mergedMap = new Map();
+                        [...newItems, ...(data.items || [])].forEach(i => mergedMap.set(i.id, i));
+
+                        // Sort by Time? Or just rely on array.
+                        // Let's just use the Remote List but preserve Local Edits? 
+                        // Too complex. Just append new items for now to avoid re-ordering jumpiness.
+                        onUpdate({
+                            items: [...newItems, ...(data.items || [])]
+                        });
+                    }
+                }
+            )
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }, [metadata?.projectId, data.items]); // Dep on data.items to compare
+
+    const handleStartIngest = async (alert: any) => {
+        // 1. Fetch Latest State (Safe Sync)
+        let currentItems = [...(data.items || [])];
+
+        if (metadata?.projectId) {
+            const { data: latest } = await supabase.from('projects').select('data').eq('id', metadata.projectId).single();
+            const raw = latest?.data?.phases?.ON_SET?.drafts?.['dit-log'];
+            if (raw) {
+                try {
+                    const parsed = JSON.parse(raw);
+                    const head = Array.isArray(parsed) ? parsed[0] : parsed;
+                    if (head.items) currentItems = head.items;
+                } catch { }
+            }
+        }
+
+        // 2. Check Duplicate (Idempotency)
+        // Check if a roll with same name (source) was added recently (last 10 mins?) or just exists
+        // Roll Check: alert.roll
+        const alreadyExists = currentItems.some(i => i.source?.includes(alert.roll));
+
+        if (alreadyExists) {
+            console.log("Item already exists (synced from mobile). Skipping duplicate add.");
+            // Just update local view to match Safe Sync
+            onUpdate({ items: currentItems });
+            setMediaAlerts(prev => prev.filter(a => a.roll !== alert.roll));
+            return;
+        }
+
+        // 3. Create new log entry
         const newItem: DITLogItem = {
             id: `dit-${Date.now()}`,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -121,8 +211,8 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
             description: `Start Ingest: ${alert.mediaType} / ${alert.fps}fps / ${alert.iso}ISO`,
             status: 'pending'
         };
-        // Add to list
-        onUpdate({ items: [...(data.items || []), newItem] });
+        // Add to SAFE list
+        onUpdate({ items: [newItem, ...currentItems] }); // Prepend
 
         // Remove from alerts
         setMediaAlerts(prev => prev.filter(a => a.roll !== alert.roll));

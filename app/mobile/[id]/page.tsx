@@ -656,7 +656,7 @@ export default function MobilePage() {
         const channel = supabase.channel('production_pulse');
         await channel.send({
             type: 'broadcast',
-            event: 'NEW_ROLL',
+            event: 'NEW_ROLL_PULLED',
             payload: { roll: rollName, user: userEmail }
         });
 
