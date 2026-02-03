@@ -23,7 +23,7 @@ interface PrintPreviewProps {
 }
 
 export const PrintPreview = ({ items = [], coverSettings, orientationOverride }: PrintPreviewProps) => {
-    const { getToolData, activeProject } = useProject();
+    const { getToolData, getToolStack, activeProject } = useProject();
 
     // Dimensions
     const getDims = (isLandscape: boolean) => ({
@@ -59,34 +59,54 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
             )}
 
             {/* 2. Sequence of Items */}
-            {items.map((item) => {
+            {items.flatMap((item) => {
                 const Template = getTemplateForTool(item.id);
-                const toolData = getToolData(item.id);
+                // Use getToolStack from context to get all versions
+                // @ts-ignore
+                const stack = getToolStack ? getToolStack(item.id) : [getToolData(item.id)];
 
-                const injectedMetadata = {
-                    projectName: activeProject?.name || coverSettings.title,
-                    date: coverSettings.date,
-                    producer: activeProject?.owner_name,
-                };
+                // Determine indices to render
+                let indices = item.selectedVersions;
+                // Fallback: If no explicit selection, default to Latest (last item) if stack exists
+                if (!indices || indices.length === 0) {
+                    if (Array.isArray(stack) && stack.length > 0) {
+                        indices = [stack.length - 1];
+                    } else {
+                        indices = [0];
+                    }
+                }
 
-                return (
-                    <div key={item.id} className="flex flex-col items-center w-full">
-                        {Template ? (
-                            <Template
-                                data={toolData}
-                                plain={false}
-                                orientation={orientationOverride || 'portrait'}
-                                isPrinting={true}
-                                metadata={injectedMetadata}
-                                onUpdate={() => { }}
-                            />
-                        ) : (
-                            <div className={`bg-white shadow-xl ${masterDims.widthClass} ${masterDims.heightClass} flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest`}>
-                                Template Not Found for {item.label}
-                            </div>
-                        )}
-                    </div>
-                );
+                // Render each selected day/version
+                // @ts-ignore
+                return indices.sort((a, b) => a - b).map((idx) => {
+                    const versionData = stack[idx] || {};
+                    const uniqueKey = `${item.id}-${idx}`;
+
+                    const injectedMetadata = {
+                        projectName: activeProject?.name || coverSettings.title,
+                        date: coverSettings.date,
+                        producer: activeProject?.owner_name,
+                    };
+
+                    return (
+                        <div key={uniqueKey} className="flex flex-col items-center w-full">
+                            {Template ? (
+                                <Template
+                                    data={versionData}
+                                    plain={false}
+                                    orientation={orientationOverride || 'portrait'}
+                                    isPrinting={true}
+                                    metadata={injectedMetadata}
+                                    onUpdate={() => { }}
+                                />
+                            ) : (
+                                <div className={`bg-white shadow-xl ${masterDims.widthClass} ${masterDims.heightClass} flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest`}>
+                                    Template Not Found for {item.label}
+                                </div>
+                            )}
+                        </div>
+                    );
+                });
             })}
 
             {/* Empty State Help Text */}

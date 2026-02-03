@@ -10,14 +10,13 @@ interface FactoryProps {
     coverSettings: any;
 }
 
-// --- Universal Unwrapper (Factory Version) ---
-const getDataForTool = (toolId: string, phases: any) => {
-    if (!phases) return {};
+// --- Universal Unwrapper (Factory Version - Returns Array) ---
+const getStackForTool = (toolId: string, phases: any) => {
+    if (!phases) return [];
 
     let foundData: any = null;
     const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
 
-    // 1. Priority Search
     for (const phaseKey of priorityOrder) {
         // @ts-ignore
         const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
@@ -27,7 +26,7 @@ const getDataForTool = (toolId: string, phases: any) => {
         }
     }
 
-    // 2. Fallback Search
+    // Fallback Search
     if (!foundData) {
         for (const phase of Object.values(phases)) {
             // @ts-ignore
@@ -39,18 +38,14 @@ const getDataForTool = (toolId: string, phases: any) => {
         }
     }
 
-    if (!foundData) return {};
+    if (!foundData) return [];
 
-    // 3. Parse & Extract
     try {
         const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
-        // Array Extraction Rule (Last Item = Most Recent)
-        const data = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
-        return data;
-
+        return Array.isArray(parsed) ? parsed : [parsed];
     } catch (e) {
         console.error(`Error parsing PDF data for ${toolId}`, e);
-        return {};
+        return [];
     }
 };
 
@@ -145,37 +140,49 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings }: FactoryProps
             {coverSettings.showCover && <CoverPage settings={coverSettings} />}
 
             {/* Document Playlist */}
-            {items.filter(item => item.isSelected).map((item, index) => {
-                const rawData = getDataForTool(item.id, phases);
-                let data = rawData;
+            {items.map(item => {
+                // Fetch Stack
+                const stack = getStackForTool(item.id, phases);
 
-                // Try to parse if string
-                if (typeof rawData === 'string' && (rawData.startsWith('{') || rawData.startsWith('['))) {
-                    try { data = JSON.parse(rawData); } catch (e) { }
+                // Determine Indices
+                // @ts-ignore
+                let indices = item.selectedVersions;
+                if (!indices || indices.length === 0) {
+                    if (Array.isArray(stack) && stack.length > 0) {
+                        indices = [stack.length - 1];
+                    } else {
+                        indices = [0];
+                    }
                 }
 
-                console.log("PDF Data Received:", { toolId: item.id, data });
+                // Render Pages
+                // @ts-ignore
+                return indices.sort((a, b) => a - b).map((idx) => {
+                    const data = stack && stack[idx] ? stack[idx] : {};
+                    const uniqueKey = `${item.id}-${idx}`;
 
-                return (
-                    <Page
-                        key={item.id}
-                        size="LETTER"
-                        orientation={item.orientation}
-                        style={globalStyles.page}
-                        wrap
-                    >
-                        <PdfHeader
-                            title={item.label.toUpperCase()} // "CREATIVE BRIEF"
-                            projectName={coverSettings.title} // "PROJECT NAME"
-                            date={coverSettings.date}
-                        // producer={/* TODO: Pass from Dashboard */}
-                        />
+                    console.log("PDF Generating:", { toolId: item.id, index: idx, dataKeys: Object.keys(data) });
 
-                        <ContentRenderer toolId={item.id} data={data} />
+                    return (
+                        <Page
+                            key={uniqueKey}
+                            size="LETTER"
+                            orientation={item.orientation}
+                            style={globalStyles.page}
+                            wrap
+                        >
+                            <PdfHeader
+                                title={item.label.toUpperCase()}
+                                projectName={coverSettings.title}
+                                date={coverSettings.date}
+                            />
 
-                        <PdfFooter />
-                    </Page>
-                );
+                            <ContentRenderer toolId={item.id} data={data} />
+
+                            <PdfFooter />
+                        </Page>
+                    );
+                });
             })}
         </Document>
     );
