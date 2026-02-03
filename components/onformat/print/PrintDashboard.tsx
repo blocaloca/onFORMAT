@@ -18,7 +18,7 @@ interface PrintDashboardProps {
 // ---------------------------------------------------------------------------
 // Tool Metadata Registry (Expanded)
 // ---------------------------------------------------------------------------
-const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape', multiDay?: boolean }> = {
+const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape' }> = {
     // Development
     'project-vision': { label: 'Project Vision', defaultOrient: 'portrait' },
     'brief': { label: 'Creative Brief', defaultOrient: 'landscape' },
@@ -37,13 +37,13 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
     'wardrobe-styling': { label: 'Wardrobe', defaultOrient: 'portrait' },
     'props-list': { label: 'Props', defaultOrient: 'portrait' },
 
-    // On-Set (Multi-Day capable)
-    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape', multiDay: true },
-    'dit-log': { label: 'DIT Log', defaultOrient: 'landscape', multiDay: true },
-    'sound-report': { label: 'Sound Report', defaultOrient: 'portrait', multiDay: true },
-    'camera-report': { label: 'Camera Report', defaultOrient: 'landscape', multiDay: true },
-    'on-set-notes': { label: 'On-Set Notes', defaultOrient: 'portrait', multiDay: true },
-    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape', multiDay: true },
+    // On-Set
+    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape' },
+    'dit-log': { label: 'DIT Log', defaultOrient: 'landscape' },
+    'sound-report': { label: 'Sound Report', defaultOrient: 'portrait' },
+    'camera-report': { label: 'Camera Report', defaultOrient: 'landscape' },
+    'on-set-notes': { label: 'On-Set Notes', defaultOrient: 'portrait' },
+    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape' },
 
     // Post
     'budget-actual': { label: 'Actuals', defaultOrient: 'landscape' },
@@ -102,22 +102,26 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 const val = getToolData(key);
                 versions = val && Object.keys(val).length ? [val] : [];
             }
-
-            // Filter empty? No, we need indexes to match DB array.
-            // But usually DB array doesn't have holes.
-            // Let's assume stack is clean.
+            // Filter out purely empty objects or empty content structure
+            versions = versions.filter(v => {
+                if (!v) return false;
+                if (Object.keys(v).length === 0) return false;
+                // Specific checks for known array-based tools
+                if (v.slides && Array.isArray(v.slides) && v.slides.length === 0) return false;
+                if (v.scenes && Array.isArray(v.scenes) && v.scenes.length === 0) return false;
+                if (v.content && Array.isArray(v.content) && v.content.length === 0) return false;
+                return true;
+            });
 
             const hasData = versions.length > 0;
-            const isMultiDayCapable = meta.multiDay;
 
             return {
                 id: key,
                 label: meta.label,
                 defaultOrient: meta.defaultOrient,
                 hasData: hasData,
-                status: hasData ? (isMultiDayCapable && versions.length > 1 ? `${versions.length} Days` : 'Drafted') : 'Empty',
-                versions: versions,
-                isMultiDayCapable: isMultiDayCapable
+                status: hasData ? (versions.length > 1 ? `${versions.length} Versions` : 'Drafted') : 'Empty',
+                versions: versions
             };
         });
     }, [activeProject, getToolData, getToolStack]);
@@ -130,8 +134,6 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
     const toggleSelection = (id: string, versionsCount: number) => {
         const next = new Set(selectedTools);
-        const meta = TOOL_TYPES[id];
-        const isMultiDay = meta?.multiDay;
 
         if (next.has(id)) {
             next.delete(id);
@@ -141,16 +143,10 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
             if (previewId === id) setPreviewId(null);
         } else {
             next.add(id);
-            // Default Selection Logic
-            if (isMultiDay) {
-                // Select ALL days
-                const allIndices = Array.from({ length: versionsCount }, (_, i) => i);
-                setSelectedVersions(prev => ({ ...prev, [id]: allIndices }));
-            } else {
-                // Select ONLY LATEST (Last)
-                const lastIndex = versionsCount > 0 ? versionsCount - 1 : 0;
-                setSelectedVersions(prev => ({ ...prev, [id]: [lastIndex] }));
-            }
+            // Default Selection: Always default to the LATEST version.
+            // This avoids confusing users with empty historical drafts or "All" selections
+            const lastIndex = versionsCount > 0 ? versionsCount - 1 : 0;
+            setSelectedVersions(prev => ({ ...prev, [id]: [lastIndex] }));
 
             setPreviewId(id);
         }
@@ -303,7 +299,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                             {documentList.map(doc => {
                                 const isSelected = selectedTools.has(doc.id);
                                 const isPreviewing = previewId === doc.id;
-                                const isMultiDay = doc.isMultiDayCapable && doc.versions.length > 1;
+                                const isMultiDay = doc.versions.length > 1;
                                 const isExpanded = expandedDocs.has(doc.id);
                                 const selectedIndices = selectedVersions[doc.id] || [];
 
