@@ -40,27 +40,42 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
     return (
         <>
             {/* 1. Cover Page */}
-            {coverSettings.showCover && (
-                <div
-                    id="print-node-COVER"
-                    className={`bg-white shadow-2xl ${coverDims.widthClass} ${coverDims.heightClass} relative flex flex-col items-center justify-center text-black shrink-0`}
-                    style={{
-                        transformOrigin: 'top center',
-                        transform: 'scale(0.75)',
-                        marginBottom: isCoverLandscape ? '-204px' : '-264px'
-                    }}
-                >
-                    <div className="text-center space-y-8">
-                        <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">{coverSettings.title}</h1>
-                        <div className="w-24 h-1.5 bg-black mx-auto" />
-                        <h2 className="text-lg font-bold tracking-[0.3em] uppercase text-zinc-500">{coverSettings.subtitle}</h2>
-                        <p className="pt-8 font-mono text-xs text-zinc-400 font-bold tracking-widest">{coverSettings.date}</p>
+            {coverSettings.showCover && (() => {
+                // Cover Dimensions Logic
+                const isL = coverSettings.orientation === 'landscape';
+                const w = isL ? 1056 : 816;
+                const h = isL ? 816 : 1056;
+                const scaledW = w * 0.75;
+                const scaledH = h * 0.75;
+
+                return (
+                    <div
+                        id="print-node-COVER"
+                        className="bg-white shadow-2xl relative shrink-0 mb-8"
+                        style={{ width: scaledW, height: scaledH, overflow: 'hidden' }}
+                    >
+                        <div
+                            className={`w-[${w}px] h-[${h}px] flex flex-col items-center justify-center text-black`}
+                            style={{
+                                width: w,
+                                height: h,
+                                transform: 'scale(0.75)',
+                                transformOrigin: 'top left'
+                            }}
+                        >
+                            <div className="text-center space-y-8">
+                                <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">{coverSettings.title}</h1>
+                                <div className="w-24 h-1.5 bg-black mx-auto" />
+                                <h2 className="text-lg font-bold tracking-[0.3em] uppercase text-zinc-500">{coverSettings.subtitle}</h2>
+                                <p className="pt-8 font-mono text-xs text-zinc-400 font-bold tracking-widest">{coverSettings.date}</p>
+                            </div>
+                            <div className="absolute bottom-16 left-0 right-0 text-center">
+                                <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">Created with onFORMAT</p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="absolute bottom-16 left-0 right-0 text-center">
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">Created with onFORMAT</p>
-                    </div>
-                </div>
-            )}
+                );
+            })()}
 
             {/* 2. Sequence of Items */}
             {items.flatMap((item) => {
@@ -93,31 +108,41 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
                     };
 
                     const isItemLandscape = (orientationOverride || 'portrait') === 'landscape';
+                    const w = isItemLandscape ? 1056 : 816;
+                    const h = isItemLandscape ? 816 : 1056;
+                    const scaledW = w * 0.75;
+                    const scaledH = h * 0.75;
 
                     return (
-                        <div
-                            key={uniqueKey}
-                            className="flex flex-col items-center w-full"
-                            style={{
-                                transformOrigin: 'top center',
-                                transform: 'scale(0.75)',
-                                marginBottom: isItemLandscape ? '-204px' : '-264px'
-                            }}
-                        >
-                            {Template ? (
-                                <Template
-                                    data={versionData}
-                                    plain={false}
-                                    orientation={orientationOverride || 'portrait'}
-                                    isPrinting={true}
-                                    metadata={injectedMetadata}
-                                    onUpdate={() => { }}
-                                />
-                            ) : (
-                                <div className={`bg-white shadow-xl ${masterDims.widthClass} ${masterDims.heightClass} flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest`}>
-                                    Template Not Found for {item.label}
+                        <div key={uniqueKey} className="flex flex-col items-center w-full mb-8">
+                            <div
+                                className="bg-white shadow-xl relative overflow-hidden"
+                                style={{ width: scaledW, height: scaledH }}
+                            >
+                                <div
+                                    style={{
+                                        width: w,
+                                        height: h,
+                                        transform: 'scale(0.75)',
+                                        transformOrigin: 'top left'
+                                    }}
+                                >
+                                    {Template ? (
+                                        <Template
+                                            data={versionData}
+                                            plain={false}
+                                            orientation={orientationOverride || 'portrait'}
+                                            isPrinting={true}
+                                            metadata={injectedMetadata}
+                                            onUpdate={() => { }}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest">
+                                            Template Not Found for {item.label}
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     );
                 });

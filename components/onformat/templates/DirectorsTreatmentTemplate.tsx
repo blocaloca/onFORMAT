@@ -158,13 +158,19 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
         // Shared Title Input
         const TitleBlock = (
             <div className="mb-4">
-                <input
-                    className="w-full bg-transparent text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300"
-                    value={slide.title}
-                    onChange={(e) => updateSlide(slide.id, { title: e.target.value })}
-                    placeholder="SLIDE TITLE"
-                    readOnly={isLocked || isPrinting}
-                />
+                {isPrinting ? (
+                    <div className="w-full text-xl font-black uppercase tracking-normal text-black bg-transparent">
+                        {slide.title}
+                    </div>
+                ) : (
+                    <input
+                        className="w-full bg-transparent text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300"
+                        value={slide.title}
+                        onChange={(e) => updateSlide(slide.id, { title: e.target.value })}
+                        placeholder="SLIDE TITLE"
+                        readOnly={isLocked}
+                    />
+                )}
                 <div className="text-[10px] uppercase tracking-widest text-emerald-600 font-bold mb-2">{slide.category}</div>
                 <div className="w-full h-px bg-zinc-200" />
             </div>
