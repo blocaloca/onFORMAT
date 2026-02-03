@@ -800,6 +800,28 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     },
                 }));
                 return;
+            } else if (typeof parsedIncoming === 'object' && parsedIncoming !== null) {
+                // PARTIAL UPDATE (Patch) from AI Action
+                // Merge into the HEAD (Index 0)
+                const currentHead = currentStack[0] || {};
+                const newHead = { ...currentHead, ...parsedIncoming };
+                currentStack[0] = newHead;
+
+                const finalDraftString = JSON.stringify(currentStack);
+                setState((s) => ({
+                    ...s,
+                    phases: {
+                        ...s.phases,
+                        [s.activePhase]: {
+                            ...s.phases[s.activePhase],
+                            drafts: {
+                                ...s.phases[s.activePhase].drafts,
+                                [s.activeTool]: finalDraftString,
+                            },
+                        },
+                    },
+                }));
+                return;
             }
         } catch {
             // Not JSON, continue to AI logic
@@ -1714,6 +1736,13 @@ Context:\n"${fullContext}"`;
             setIsAiDocked(false);
         }
     }, [state.activeTool]);
+
+    // PREVENT PERSISTENCE: Close AI when leaving Development
+    useEffect(() => {
+        if (state.activePhase !== 'DEVELOPMENT') {
+            setIsAiDocked(true);
+        }
+    }, [state.activePhase]);
 
 
 
