@@ -43,8 +43,12 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
             {coverSettings.showCover && (
                 <div
                     id="print-node-COVER"
-                    className={`bg-white shadow-2xl ${coverDims.widthClass} ${coverDims.heightClass} relative flex flex-col items-center justify-center text-black shrink-0 mb-[-250px]`}
-                    style={{ transformOrigin: 'top center', transform: 'scale(0.75)' }}
+                    className={`bg-white shadow-2xl ${coverDims.widthClass} ${coverDims.heightClass} relative flex flex-col items-center justify-center text-black shrink-0`}
+                    style={{
+                        transformOrigin: 'top center',
+                        transform: 'scale(0.75)',
+                        marginBottom: isCoverLandscape ? '-204px' : '-264px'
+                    }}
                 >
                     <div className="text-center space-y-8">
                         <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">{coverSettings.title}</h1>
@@ -88,8 +92,18 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
                         producer: activeProject?.owner_name,
                     };
 
+                    const isItemLandscape = (orientationOverride || 'portrait') === 'landscape';
+
                     return (
-                        <div key={uniqueKey} className="flex flex-col items-center w-full mb-[-250px]" style={{ transformOrigin: 'top center', transform: 'scale(0.75)' }}>
+                        <div
+                            key={uniqueKey}
+                            className="flex flex-col items-center w-full"
+                            style={{
+                                transformOrigin: 'top center',
+                                transform: 'scale(0.75)',
+                                marginBottom: isItemLandscape ? '-204px' : '-264px'
+                            }}
+                        >
                             {Template ? (
                                 <Template
                                     data={versionData}

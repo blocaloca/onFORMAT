@@ -51,18 +51,17 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
 
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-    // --- 3. Migration Logic (Legacy -> Slides) ---
-    useEffect(() => {
-        // Safe-guard: If we already have slides, do absolutely nothing.
-        // This prevents overwriting valid data.
-        if (data.slides && data.slides.length > 0) return;
+    // --- 3. Migration Logic (Legacy -> Slides) - ON THE FLY for Read-Only Contexts ---
+    const activeSlides = React.useMemo(() => {
+        // 1. If we have modern slides, use them.
+        if (data.slides && data.slides.length > 0) return data.slides;
 
-        // If we have legacy scenes but no slides, migrate them.
+        // 2. If valid legacy scenes exist, migrate them in-memory.
         if (data.scenes && data.scenes.length > 0) {
-            const migratedSlides: TreatmentSlide[] = data.scenes.map((scene: any) => ({
+            const migrated: TreatmentSlide[] = data.scenes.map((scene: any) => ({
                 id: scene.id,
-                category: scene.type === 'Narrative' ? 'Story/Narrative' : 'Cinematography/Editing', // Rough mapping
-                layout: 'Split', // Default to split to match old look
+                category: scene.type === 'Narrative' ? 'Story/Narrative' : 'Cinematography/Editing',
+                layout: 'Split',
                 title: scene.description || 'Treatment Note',
                 content: scene.content || '',
                 modules: {
@@ -71,28 +70,36 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 }
             }));
 
-            // Also migrate the "Top Level" fields (Approach, Tone) into an Intro slide if they exist
+            // Add Intro if needed
             if (data.approach || data.tone) {
-                const introSlide: TreatmentSlide = {
+                migrated.unshift({
                     id: 'intro-slide-migration',
                     category: 'Introduction/Vision',
                     layout: 'Text',
                     title: 'Executive Summary',
                     content: `APPROACH:\n${data.approach || ''}\n\nTONE:\n${data.tone || ''}\n\nNARRATIVE:\n${data.narrativeArc || ''}`,
                     modules: {}
-                };
-                migratedSlides.unshift(introSlide);
+                });
             }
-
-            onUpdate?.({ slides: migratedSlides });
+            return migrated;
         }
-    }, [data.scenes, data.slides]); // Re-run if data loads asynchronously
+
+        return [];
+    }, [data.slides, data.scenes, data.approach, data.tone, data.narrativeArc]);
+
+    // Keep the useEffect for PERSISTENCE when editable
+    useEffect(() => {
+        if (!onUpdate || (data.slides && data.slides.length > 0)) return;
+        if (activeSlides.length > 0) {
+            onUpdate({ slides: activeSlides });
+        }
+    }, [activeSlides, data.slides, onUpdate]);
 
     const updateSlides = (newSlides: TreatmentSlide[]) => {
         onUpdate?.({ ...data, slides: newSlides });
     };
 
-    const slides = data.slides || [];
+    const slides = activeSlides;
     const [showAddMenu, setShowAddMenu] = useState(false);
 
     // --- CRUD Handlers ---
