@@ -110,6 +110,26 @@ export const DocumentNavBar = ({
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3">
+                {/* Orientation Toggle (Global) */}
+                {onToggleOrientation && (
+                    <div className="flex bg-zinc-950 rounded-sm border border-zinc-800 p-0.5 mr-2">
+                        <button
+                            onClick={() => onToggleOrientation('portrait')}
+                            className={`p-1.5 rounded-sm transition-all ${orientation === 'portrait' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                            title="Portrait"
+                        >
+                            <RectangleVertical size={14} />
+                        </button>
+                        <button
+                            onClick={() => onToggleOrientation('landscape')}
+                            className={`p-1.5 rounded-sm transition-all ${orientation === 'landscape' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                            title="Landscape"
+                        >
+                            <RectangleHorizontal size={14} />
+                        </button>
+                    </div>
+                )}
+
                 {onToggleAi && (
                     <button
                         onClick={onToggleAi}
