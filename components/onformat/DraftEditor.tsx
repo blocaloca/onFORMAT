@@ -421,11 +421,11 @@ export const DraftEditor = ({
                 isAiDocked={isAiDocked}
             />
 
-            <div className="flex-1 overflow-y-auto bg-transparent p-8 flex flex-col items-center" id="document-preview-area">
+            <div className="flex-1 overflow-y-auto bg-transparent flex flex-col items-center" id="document-preview-area">
 
                 {/* Document Area */}
-                <div className="w-full flex justify-center pb-20">
-                    <div className="relative z-10">
+                <div className="w-full flex justify-center pb-20 pt-8">
+                    <div className="relative z-10" style={{ zoom: 0.75 }}>
                         <TemplateComponent
                             data={activeData}
                             // @ts-ignore
