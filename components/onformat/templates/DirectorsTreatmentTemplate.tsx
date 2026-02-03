@@ -60,8 +60,8 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
         if (data.scenes && data.scenes.length > 0) {
             const migrated: TreatmentSlide[] = data.scenes.map((scene: any) => ({
                 id: scene.id,
-                category: scene.type === 'Narrative' ? 'Story/Narrative' : 'Cinematography/Editing',
-                layout: 'Split',
+                category: scene.type === 'Visual' ? 'Cinematography/Editing' : 'Story/Narrative',
+                layout: 'Image', // Force 'Hero' layout (One Image, One Text) as requested
                 title: scene.description || 'Treatment Note',
                 content: scene.content || '',
                 modules: {
@@ -70,17 +70,12 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 }
             }));
 
-            // Add Intro if needed
+            /* 
+            // Intro Slide disabled per user request ("Keep the one image, one text box")
             if (data.approach || data.tone) {
-                migrated.unshift({
-                    id: 'intro-slide-migration',
-                    category: 'Introduction/Vision',
-                    layout: 'Text',
-                    title: 'Executive Summary',
-                    content: `APPROACH:\n${data.approach || ''}\n\nTONE:\n${data.tone || ''}\n\nNARRATIVE:\n${data.narrativeArc || ''}`,
-                    modules: {}
-                });
+                migrated.unshift({ ... });
             }
+            */
             return migrated;
         }
 
