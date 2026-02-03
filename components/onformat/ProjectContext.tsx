@@ -13,6 +13,7 @@ export interface ActiveProject {
 interface ProjectContextType {
     activeProject: ActiveProject | null;
     getToolData: (toolId: string) => any;
+    getToolStack: (toolId: string) => any[];
 }
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
@@ -93,8 +94,45 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
         };
     }, [activeProject]);
 
+    // Stack/Array Unwrapper (Returns all Versions/Days)
+    const getToolStack = useMemo(() => {
+        return (toolId: string) => {
+            if (!activeProject?.data?.phases) return [];
+
+            let foundData: any = null;
+            const phases = activeProject.data.phases;
+            const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+
+            for (const phaseKey of priorityOrder) {
+                const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
+                if (phase?.drafts?.[toolId]) {
+                    foundData = phase.drafts[toolId];
+                    break;
+                }
+            }
+
+            if (!foundData) {
+                for (const key of Object.keys(phases)) {
+                    if (phases[key]?.drafts?.[toolId]) {
+                        foundData = phases[key].drafts[toolId];
+                        break;
+                    }
+                }
+            }
+
+            let result: any[] = [];
+            try {
+                if (foundData) {
+                    const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
+                    result = Array.isArray(parsed) ? parsed : [parsed];
+                }
+            } catch (e) { }
+            return result;
+        };
+    }, [activeProject]);
+
     return (
-        <ProjectContext.Provider value={{ activeProject, getToolData }}>
+        <ProjectContext.Provider value={{ activeProject, getToolData, getToolStack }}>
             {children}
         </ProjectContext.Provider>
     );

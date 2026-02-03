@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Printer, Settings, Layers, RectangleVertical, RectangleHorizontal, GripVertical, Check, Eye, AlertCircle, FileText } from 'lucide-react';
+import { X, Printer, Settings, Layers, RectangleVertical, RectangleHorizontal, GripVertical, Check, Eye, AlertCircle, FileText, ChevronDown, ChevronUp } from 'lucide-react';
 import { PrintItem } from './types';
 import { PrintPreview } from './PrintPreview';
 import { ProjectProvider, useProject } from '../ProjectContext'; // Adjust path if needed
@@ -57,11 +57,13 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
 // Inner Component (Accesses Context)
 // ---------------------------------------------------------------------------
 const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, projectName: string }) => {
-    const { activeProject, getToolData } = useProject();
+    const { activeProject, getToolData, getToolStack } = useProject();
 
     // Selection State
     const [selectedTools, setSelectedTools] = useState<Set<string>>(new Set());
+    const [selectedVersions, setSelectedVersions] = useState<Record<string, number[]>>({}); // Track selected versions per tool
     const [previewId, setPreviewId] = useState<string | null>(null);
+    const [expandedDocs, setExpandedDocs] = useState<Set<string>>(new Set()); // For UI expansion
 
     // Master Orientation State (Default to Landscape)
     const [masterOrientation, setMasterOrientation] = useState<'portrait' | 'landscape'>('landscape');
@@ -92,18 +94,21 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     // 1. Build List regarding Context Data
     const documentList = useMemo(() => {
         return Object.entries(TOOL_TYPES).map(([key, meta]) => {
-            const data = getToolData(key);
-            const hasData = data && Object.keys(data).length > 0;
+            // Use getToolStack to get all versions
+            const versions = getToolStack ? getToolStack(key) : [getToolData(key)];
+            // Filter out empty versions if needed, but for now we assume stack existence implies data
+            const hasData = versions.length > 0 && Object.keys(versions[0] || {}).length > 0;
 
             return {
                 id: key,
                 label: meta.label,
                 defaultOrient: meta.defaultOrient,
                 hasData: hasData,
-                status: hasData ? 'Drafted' : 'Empty'
+                status: hasData ? (versions.length > 1 ? `${versions.length} Days` : 'Drafted') : 'Empty',
+                versions: versions
             };
         });
-    }, [activeProject, getToolData]);
+    }, [activeProject, getToolData, getToolStack]);
 
     // Initial Selection (Start Empty, Show Cover)
     useEffect(() => {
@@ -112,18 +117,36 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
         setPreviewId(null); // Shows cover by default
     }, []); // Run once on mount
 
-    const toggleSelection = (id: string) => {
+    const toggleSelection = (id: string, versionsCount: number) => {
         const next = new Set(selectedTools);
         if (next.has(id)) {
             next.delete(id);
+            // Cleanup version selection
+            const nextVersions = { ...selectedVersions };
+            delete nextVersions[id];
+            setSelectedVersions(nextVersions);
             // If we uncheck the currently previewed item, go back to Cover
             if (previewId === id) setPreviewId(null);
         } else {
             next.add(id);
+            // Select ALL versions by default
+            const allIndices = Array.from({ length: versionsCount }, (_, i) => i);
+            setSelectedVersions(prev => ({ ...prev, [id]: allIndices }));
             // Auto-preview when checking ON
             setPreviewId(id);
         }
         setSelectedTools(next);
+    };
+
+    const toggleVersionSelection = (toolId: string, versionIndex: number) => {
+        setSelectedVersions(prev => {
+            const current = prev[toolId] || [];
+            if (current.includes(versionIndex)) {
+                return { ...prev, [toolId]: current.filter(i => i !== versionIndex) };
+            } else {
+                return { ...prev, [toolId]: [...current, versionIndex].sort((a, b) => a - b) };
+            }
+        });
     };
 
     const handlePreviewSelect = (doc: any) => {
@@ -143,7 +166,8 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     isSelected: true,
                     // FORCE Master Orientation for all items
                     orientation: masterOrientation,
-                    pageCountEstimate: 1
+                    pageCountEstimate: 1,
+                    selectedVersions: selectedVersions[doc.id] // Pass selected days
                 }));
 
             const blob = await pdf(
@@ -260,36 +284,86 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                             {documentList.map(doc => {
                                 const isSelected = selectedTools.has(doc.id);
                                 const isPreviewing = previewId === doc.id;
+                                const isMultiDay = doc.versions.length > 1;
+                                const isExpanded = expandedDocs.has(doc.id);
+                                const selectedIndices = selectedVersions[doc.id] || [];
 
                                 return (
-                                    <div
-                                        key={doc.id}
-                                        className={`group flex items-center gap-3 p-2 rounded border transition-all cursor-pointer ${isPreviewing ? 'bg-zinc-800/50 border-zinc-700' : 'bg-transparent border-transparent hover:bg-zinc-900/50'}`}
-                                        onClick={() => handlePreviewSelect(doc)}
-                                    >
-                                        {/* Selection Checkbox */}
+                                    <div key={doc.id} className="flex flex-col">
                                         <div
-                                            className={`w-4 h-4 shrink-0 rounded border flex items-center justify-center transition-colors ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-zinc-700 hover:border-zinc-500'}`}
-                                            onClick={(e) => { e.stopPropagation(); toggleSelection(doc.id); }}
+                                            className={`group flex items-center gap-3 p-2 rounded border transition-all cursor-pointer ${isPreviewing ? 'bg-zinc-800/50 border-zinc-700' : 'bg-transparent border-transparent hover:bg-zinc-900/50'}`}
+                                            onClick={() => handlePreviewSelect(doc)}
                                         >
-                                            {isSelected && <Check size={10} strokeWidth={4} />}
+                                            {/* Selection Checkbox (Master) */}
+                                            <div
+                                                className={`w-4 h-4 shrink-0 rounded border flex items-center justify-center transition-colors ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-zinc-700 hover:border-zinc-500'}`}
+                                                onClick={(e) => { e.stopPropagation(); toggleSelection(doc.id, doc.versions?.length || 1); }}
+                                            >
+                                                {/* Partial check visual could be added here if needed */}
+                                                {isSelected && <Check size={10} strokeWidth={4} />}
+                                            </div>
+
+                                            {/* Label & Status */}
+                                            <div className="flex-1 min-w-0">
+                                                <div className={`text-xs font-medium truncate ${doc.hasData ? 'text-zinc-200' : 'text-zinc-500'}`}>
+                                                    {doc.label}
+                                                </div>
+                                                <div className="flex items-center gap-1.5 mt-0.5">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${doc.hasData ? 'bg-emerald-500' : 'bg-zinc-700'}`} />
+                                                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-mono">
+                                                        {doc.status}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {/* Expansion Toggle (Multi-Day Only) */}
+                                            {isMultiDay && (
+                                                <div
+                                                    className="p-1 hover:bg-zinc-800 rounded text-zinc-500 hover:text-white transition-colors"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setExpandedDocs(prev => {
+                                                            const next = new Set(prev);
+                                                            if (next.has(doc.id)) next.delete(doc.id);
+                                                            else next.add(doc.id);
+                                                            return next;
+                                                        });
+                                                    }}
+                                                >
+                                                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                                                </div>
+                                            )}
+
+                                            {/* Preview Indicator */}
+                                            {isPreviewing && <Eye size={12} className="text-zinc-400" />}
                                         </div>
 
-                                        {/* Label & Status */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className={`text-xs font-medium truncate ${doc.hasData ? 'text-zinc-200' : 'text-zinc-500'}`}>
-                                                {doc.label}
-                                            </div>
-                                            <div className="flex items-center gap-1.5 mt-0.5">
-                                                <div className={`w-1.5 h-1.5 rounded-full ${doc.hasData ? 'bg-emerald-500' : 'bg-zinc-700'}`} />
-                                                <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-mono">
-                                                    {doc.status}
-                                                </span>
-                                            </div>
-                                        </div>
+                                        {/* Nested Day List */}
+                                        {isMultiDay && isExpanded && isSelected && (
+                                            <div className="pl-9 pr-2 pb-2 space-y-1 animate-in slide-in-from-top-1">
+                                                {doc.versions.map((ver, idx) => {
+                                                    const isVerSelected = selectedIndices.includes(idx);
+                                                    const dayLabel = ver.dayLabel || `Day ${idx + 1}`;
+                                                    const dateLabel = ver.date || '';
 
-                                        {/* Preview Indicator */}
-                                        {isPreviewing && <Eye size={12} className="text-zinc-400" />}
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className={`flex items-center gap-3 p-1.5 rounded border transition-colors cursor-pointer ${isVerSelected ? 'bg-zinc-800/30 border-zinc-800' : 'bg-transparent border-transparent opacity-50 hover:opacity-100'}`}
+                                                            onClick={(e) => { e.stopPropagation(); toggleVersionSelection(doc.id, idx); }}
+                                                        >
+                                                            <div className={`w-3 h-3 rounded border flex items-center justify-center ${isVerSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-zinc-700'}`}>
+                                                                {isVerSelected && <Check size={8} strokeWidth={4} />}
+                                                            </div>
+                                                            <div className="text-[10px] text-zinc-300 font-mono">
+                                                                <span className="font-bold">{dayLabel}</span>
+                                                                {dateLabel && <span className="text-zinc-500 ml-2">{dateLabel}</span>}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
                                 );
                             })}
@@ -323,7 +397,8 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                     label: doc.label,
                                     isSelected: true,
                                     orientation: masterOrientation,
-                                    pageCountEstimate: 1
+                                    pageCountEstimate: 1,
+                                    selectedVersions: selectedVersions[doc.id]
                                 }))}
                             coverSettings={{
                                 ...coverSettings,

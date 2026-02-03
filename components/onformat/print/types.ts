@@ -5,4 +5,5 @@ export interface PrintItem {
     isSelected: boolean;
     orientation: 'portrait' | 'landscape';
     pageCountEstimate: number;
+    selectedVersions?: number[];
 }
