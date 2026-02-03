@@ -65,8 +65,8 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 title: scene.description || 'Treatment Note',
                 content: scene.content || '',
                 modules: {
-                    image1: scene.image,
-                    image2: scene.image2
+                    image1: scene.image || scene.img || scene.url || '',
+                    image2: scene.image2 || ''
                 }
             }));
 
