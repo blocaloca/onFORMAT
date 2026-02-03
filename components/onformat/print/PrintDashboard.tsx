@@ -231,7 +231,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
             <div className="flex-1 flex overflow-hidden print:overflow-visible print:h-auto print:block">
 
                 {/* --- Sidebar: The "List" --- */}
-                <aside className="w-80 bg-zinc-950/50 flex flex-col overflow-y-auto print:hidden">
+                <aside className="w-80 bg-zinc-950/50 flex flex-col overflow-y-auto print:hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-800">
 
                     {/* Master Actions (Orientation) */}
                     <div className="p-4 border-b border-zinc-900 bg-zinc-950/30">
@@ -399,7 +399,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </aside>
 
                 {/* --- Preview Pane --- */}
-                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-y-auto">
+                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-800">
                     <div className="w-full min-h-full flex flex-col items-center gap-8 pb-32 pt-8">
                         {/* Render Active Preview */}
                         <PrintPreview
