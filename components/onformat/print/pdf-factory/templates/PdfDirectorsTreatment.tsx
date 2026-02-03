@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from '@react-pdf/renderer';
+import { View, Text, Image, StyleSheet } from '@react-pdf/renderer';
 import { globalStyles, COLORS } from '../PdfTheme';
 
 interface Slide {
@@ -21,17 +21,17 @@ interface PdfDirectorsTreatmentProps {
 const styles = StyleSheet.create({
     slideContainer: {
         marginBottom: 24,
+        paddingBottom: 16,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.slate,
-        paddingBottom: 16
+        borderBottomColor: COLORS.slate
     },
     slideHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 8
+        marginBottom: 12
     },
     slideTitle: {
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 900,
         color: COLORS.charcoal,
         textTransform: 'uppercase'
@@ -46,14 +46,38 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.lightGrey,
         padding: 12,
         borderLeftWidth: 2,
-        borderLeftColor: COLORS.charcoal
+        borderLeftColor: COLORS.charcoal,
+        minHeight: 50
+    },
+    // Layouts
+    splitLayout: {
+        flexDirection: 'row',
+        gap: 16
+    },
+    column: {
+        flex: 1
+    },
+    imageContainer: {
+        gap: 8
+    },
+    image: {
+        width: '100%',
+        height: 150,
+        objectFit: 'cover',
+        backgroundColor: '#eee'
+    },
+    heroImage: {
+        width: '100%',
+        height: 300,
+        objectFit: 'contain',
+        marginBottom: 12,
+        backgroundColor: '#000'
     }
 });
 
 export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
     // Handle potential array wrapper or direct object
     const rawv = Array.isArray(data) ? data[0] : data;
-    // content might be stored in 'slides' array inside the object
     const slides: Slide[] = rawv?.slides || [];
 
     if (!slides || slides.length === 0) {
@@ -68,31 +92,79 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
 
     return (
         <View>
-            {slides.map((slide, index) => (
-                <View key={slide.id || index} style={styles.slideContainer} wrap={false}>
-                    {/* Header: Title + Category */}
-                    <View style={styles.slideHeader}>
-                        <Text style={styles.slideTitle}>{slide.title || 'Untitled Slide'}</Text>
-                        <Text style={styles.slideCategory}>{slide.category || 'General'}</Text>
-                    </View>
+            {slides.map((slide, index) => {
+                const layout = slide.layout || 'Text'; // Default to Text
 
-                    {/* Content Body */}
-                    <View style={styles.contentBox}>
-                        <Text style={globalStyles.text}>
-                            {slide.content || (
-                                <Text style={{ color: COLORS.mutedText, fontStyle: 'italic' }}>No content...</Text>
-                            )}
-                        </Text>
-                    </View>
+                return (
+                    <View key={slide.id || index} style={styles.slideContainer} wrap={false}>
+                        {/* Header */}
+                        <View style={styles.slideHeader}>
+                            <Text style={styles.slideTitle}>{slide.title || 'Untitled Slide'}</Text>
+                            <Text style={styles.slideCategory}>{slide.category || 'General'}</Text>
+                        </View>
 
-                    {/* TODO: Image Handling (if URLs are valid) */}
-                    {/* 
-                    {slide.modules?.image1 && (
-                         <Image src={slide.modules.image1} style={{ marginTop: 8, height: 100, objectFit: 'cover' }} />
-                    )} 
-                    */}
-                </View>
-            ))}
+                        {/* --- Layout: TEXT --- */}
+                        {layout === 'Text' && (
+                            <View style={styles.contentBox}>
+                                <Text style={globalStyles.text}>
+                                    {slide.content || 'No content...'}
+                                </Text>
+                            </View>
+                        )}
+
+                        {/* --- Layout: IMAGE (Hero) --- */}
+                        {layout === 'Image' && (
+                            <View>
+                                {slide.modules?.image1 ? (
+                                    <Image src={slide.modules.image1} style={styles.heroImage} />
+                                ) : (
+                                    <View style={[styles.heroImage, { alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f0f0' }]}>
+                                        <Text style={{ fontSize: 8, color: '#999' }}>NO IMAGE SELECTED</Text>
+                                    </View>
+                                )}
+                                <View style={styles.contentBox}>
+                                    <Text style={globalStyles.text}>
+                                        {slide.content || 'No caption...'}
+                                    </Text>
+                                </View>
+                            </View>
+                        )}
+
+                        {/* --- Layout: SPLIT --- */}
+                        {layout === 'Split' && (
+                            <View style={styles.splitLayout}>
+                                {/* Left: Images */}
+                                <View style={[styles.column, styles.imageContainer]}>
+                                    {slide.modules?.image1 ? (
+                                        <Image src={slide.modules.image1} style={styles.image} />
+                                    ) : (
+                                        <View style={[styles.image, { alignItems: 'center', justifyContent: 'center' }]}>
+                                            <Text style={{ fontSize: 8, color: '#999' }}>NO IMAGE</Text>
+                                        </View>
+                                    )}
+
+                                    {slide.modules?.image2 ? (
+                                        <Image src={slide.modules.image2} style={styles.image} />
+                                    ) : (
+                                        <View style={[styles.image, { alignItems: 'center', justifyContent: 'center' }]}>
+                                            <Text style={{ fontSize: 8, color: '#999' }}>NO IMAGE</Text>
+                                        </View>
+                                    )}
+                                </View>
+
+                                {/* Right: Text */}
+                                <View style={styles.column}>
+                                    <View style={[styles.contentBox, { height: '100%' }]}>
+                                        <Text style={globalStyles.text}>
+                                            {slide.content || 'No description...'}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
+                        )}
+                    </View>
+                );
+            })}
         </View>
     );
 };

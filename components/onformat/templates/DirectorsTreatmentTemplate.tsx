@@ -192,12 +192,20 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="flex flex-col h-full relative group">
                     {TitleBlock}
                     {renderLayoutControls(slide)}
-                    <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative min-h-0 print:border-none print:bg-white">
-                        <ImageUploader
-                            currentUrl={slide.modules.image1 || ''}
-                            onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
-                            className="w-full h-full object-contain bg-black print:bg-transparent"
-                        />
+                    <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative min-h-0 print:border-none print:bg-white overflow-hidden">
+                        {isPrinting ? (
+                            <img
+                                src={slide.modules.image1 || ''}
+                                className="w-full h-full object-contain"
+                                alt="Slide Hero Visual"
+                            />
+                        ) : (
+                            <ImageUploader
+                                currentUrl={slide.modules.image1 || ''}
+                                onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
+                                className="w-full h-full object-contain bg-black print:bg-transparent"
+                            />
+                        )}
                     </div>
                     <div className="mt-4 h-24 shrink-0">
                         {isPrinting ? (
@@ -226,19 +234,35 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
                     {/* Left: Images */}
                     <div className="flex flex-col gap-4 h-full">
-                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white">
-                            <ImageUploader
-                                currentUrl={slide.modules.image1 || ''}
-                                onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
+                            {isPrinting ? (
+                                <img
+                                    src={slide.modules.image1 || ''}
+                                    className="w-full h-full object-cover"
+                                    alt="Slide Visual 1"
+                                />
+                            ) : (
+                                <ImageUploader
+                                    currentUrl={slide.modules.image1 || ''}
+                                    onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
                         </div>
-                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white">
-                            <ImageUploader
-                                currentUrl={slide.modules.image2 || ''}
-                                onUpload={(url) => updateSlide(slide.id, { modules: { image2: url } })}
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
+                            {isPrinting ? (
+                                <img
+                                    src={slide.modules.image2 || ''}
+                                    className="w-full h-full object-cover"
+                                    alt="Slide Visual 2"
+                                />
+                            ) : (
+                                <ImageUploader
+                                    currentUrl={slide.modules.image2 || ''}
+                                    onUpload={(url) => updateSlide(slide.id, { modules: { image2: url } })}
+                                    className="w-full h-full object-cover"
+                                />
+                            )}
                         </div>
                     </div>
                     {/* Right: Text */}
