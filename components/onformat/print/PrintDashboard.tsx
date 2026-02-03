@@ -18,7 +18,7 @@ interface PrintDashboardProps {
 // ---------------------------------------------------------------------------
 // Tool Metadata Registry (Expanded)
 // ---------------------------------------------------------------------------
-const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape' }> = {
+const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape', multiDay?: boolean }> = {
     // Development
     'project-vision': { label: 'Project Vision', defaultOrient: 'portrait' },
     'brief': { label: 'Creative Brief', defaultOrient: 'landscape' },
@@ -37,13 +37,13 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
     'wardrobe-styling': { label: 'Wardrobe', defaultOrient: 'portrait' },
     'props-list': { label: 'Props', defaultOrient: 'portrait' },
 
-    // On-Set
-    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape' },
-    'dit-log': { label: 'DIT Log', defaultOrient: 'landscape' },
-    'sound-report': { label: 'Sound Report', defaultOrient: 'portrait' },
-    'camera-report': { label: 'Camera Report', defaultOrient: 'landscape' },
-    'on-set-notes': { label: 'On-Set Notes', defaultOrient: 'portrait' },
-    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape' },
+    // On-Set (Multi-Day capable)
+    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape', multiDay: true },
+    'dit-log': { label: 'DIT Log', defaultOrient: 'landscape', multiDay: true },
+    'sound-report': { label: 'Sound Report', defaultOrient: 'portrait', multiDay: true },
+    'camera-report': { label: 'Camera Report', defaultOrient: 'landscape', multiDay: true },
+    'on-set-notes': { label: 'On-Set Notes', defaultOrient: 'portrait', multiDay: true },
+    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape', multiDay: true },
 
     // Post
     'budget-actual': { label: 'Actuals', defaultOrient: 'landscape' },
@@ -94,45 +94,64 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     // 1. Build List regarding Context Data
     const documentList = useMemo(() => {
         return Object.entries(TOOL_TYPES).map(([key, meta]) => {
-            // Use getToolStack to get all versions
-            const versions = getToolStack ? getToolStack(key) : [getToolData(key)];
-            // Filter out empty versions if needed, but for now we assume stack existence implies data
-            const hasData = versions.length > 0 && Object.keys(versions[0] || {}).length > 0;
+            // Always fetch full stack to ensure index alignment with Factory
+            let versions: any[] = [];
+            if (getToolStack) {
+                versions = getToolStack(key);
+            } else {
+                const val = getToolData(key);
+                versions = val && Object.keys(val).length ? [val] : [];
+            }
+
+            // Filter empty? No, we need indexes to match DB array.
+            // But usually DB array doesn't have holes.
+            // Let's assume stack is clean.
+
+            const hasData = versions.length > 0;
+            const isMultiDayCapable = meta.multiDay;
 
             return {
                 id: key,
                 label: meta.label,
                 defaultOrient: meta.defaultOrient,
                 hasData: hasData,
-                status: hasData ? (versions.length > 1 ? `${versions.length} Days` : 'Drafted') : 'Empty',
-                versions: versions
+                status: hasData ? (isMultiDayCapable && versions.length > 1 ? `${versions.length} Days` : 'Drafted') : 'Empty',
+                versions: versions,
+                isMultiDayCapable: isMultiDayCapable
             };
         });
     }, [activeProject, getToolData, getToolStack]);
 
     // Initial Selection (Start Empty, Show Cover)
     useEffect(() => {
-        // No auto-selection of tools
         setSelectedTools(new Set());
-        setPreviewId(null); // Shows cover by default
-    }, []); // Run once on mount
+        setPreviewId(null);
+    }, []);
 
     const toggleSelection = (id: string, versionsCount: number) => {
         const next = new Set(selectedTools);
+        const meta = TOOL_TYPES[id];
+        const isMultiDay = meta?.multiDay;
+
         if (next.has(id)) {
             next.delete(id);
-            // Cleanup version selection
             const nextVersions = { ...selectedVersions };
             delete nextVersions[id];
             setSelectedVersions(nextVersions);
-            // If we uncheck the currently previewed item, go back to Cover
             if (previewId === id) setPreviewId(null);
         } else {
             next.add(id);
-            // Select ALL versions by default
-            const allIndices = Array.from({ length: versionsCount }, (_, i) => i);
-            setSelectedVersions(prev => ({ ...prev, [id]: allIndices }));
-            // Auto-preview when checking ON
+            // Default Selection Logic
+            if (isMultiDay) {
+                // Select ALL days
+                const allIndices = Array.from({ length: versionsCount }, (_, i) => i);
+                setSelectedVersions(prev => ({ ...prev, [id]: allIndices }));
+            } else {
+                // Select ONLY LATEST (Last)
+                const lastIndex = versionsCount > 0 ? versionsCount - 1 : 0;
+                setSelectedVersions(prev => ({ ...prev, [id]: [lastIndex] }));
+            }
+
             setPreviewId(id);
         }
         setSelectedTools(next);
@@ -284,7 +303,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                             {documentList.map(doc => {
                                 const isSelected = selectedTools.has(doc.id);
                                 const isPreviewing = previewId === doc.id;
-                                const isMultiDay = doc.versions.length > 1;
+                                const isMultiDay = doc.isMultiDayCapable && doc.versions.length > 1;
                                 const isExpanded = expandedDocs.has(doc.id);
                                 const selectedIndices = selectedVersions[doc.id] || [];
 
