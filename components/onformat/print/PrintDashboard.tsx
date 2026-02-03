@@ -95,12 +95,19 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     const documentList = useMemo(() => {
         return Object.entries(TOOL_TYPES).map(([key, meta]) => {
             // Always fetch full stack to ensure index alignment with Factory
-            let versions: any[] = [];
-            if (getToolStack) {
-                versions = getToolStack(key);
-            } else {
-                const val = getToolData(key);
-                versions = val && Object.keys(val).length ? [val] : [];
+            // Fetch Stack (History) and Current Draft (Active)
+            const stack = getToolStack ? getToolStack(key) || [] : [];
+            const currentDraft = getToolData(key);
+
+            let versions: any[] = [...stack];
+
+            // Always ensure the active draft is included if valid, as it represents the latest edits
+            if (currentDraft && Object.keys(currentDraft).length > 0) {
+                const lastVer = versions[versions.length - 1];
+                // Simple JSON compare to avoid exact duplicates
+                if (!lastVer || JSON.stringify(lastVer) !== JSON.stringify(currentDraft)) {
+                    versions.push(currentDraft);
+                }
             }
             // Filter out purely empty objects or empty content structure
             versions = versions.filter(v => {
