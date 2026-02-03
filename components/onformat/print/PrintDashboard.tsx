@@ -22,7 +22,7 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
     // Development
     'project-vision': { label: 'Project Vision', defaultOrient: 'portrait' },
     'brief': { label: 'Creative Brief', defaultOrient: 'landscape' },
-    'directors-treatment': { label: 'Director\'s Treatment', defaultOrient: 'landscape' },
+    'directors-treatment': { label: 'Treatment', defaultOrient: 'landscape' },
     'lookbook': { label: 'Lookbook', defaultOrient: 'landscape' },
     'storyboard': { label: 'Storyboard', defaultOrient: 'landscape' },
     'av-script': { label: 'AV Script', defaultOrient: 'portrait' },

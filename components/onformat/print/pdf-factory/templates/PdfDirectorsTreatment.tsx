@@ -78,7 +78,22 @@ const styles = StyleSheet.create({
 export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
     // Handle potential array wrapper or direct object
     const rawv = Array.isArray(data) ? data[0] : data;
-    const slides: Slide[] = rawv?.slides || [];
+    let slides: Slide[] = rawv?.slides || [];
+
+    // Migration Check: If no slides, try legacy 'scenes'
+    if (slides.length === 0 && rawv?.scenes && Array.isArray(rawv.scenes)) {
+        slides = rawv.scenes.map((scene: any) => ({
+            id: scene.id,
+            title: scene.description || scene.slug || 'Untitled Scene',
+            content: scene.content || '',
+            category: scene.type === 'Narrative' ? 'Story/Narrative' : 'Visual',
+            layout: 'Split', // Default legacy look
+            modules: {
+                image1: scene.image || '', // Map legacy image
+                image2: scene.image2 || ''
+            }
+        }));
+    }
 
     if (!slides || slides.length === 0) {
         return (
