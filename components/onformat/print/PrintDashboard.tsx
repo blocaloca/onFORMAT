@@ -256,7 +256,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
             </header>
 
-            <div className="flex-1 h-full overflow-hidden grid grid-cols-12 divide-x divide-zinc-900">
+            <div className="flex-1 h-full overflow-hidden grid grid-cols-12 divide-x divide-zinc-900 max-w-[1600px] w-full mx-auto border-x border-zinc-900">
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
