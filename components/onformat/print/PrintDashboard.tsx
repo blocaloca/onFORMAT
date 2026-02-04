@@ -260,7 +260,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
-                <div className="col-span-7 overflow-y-auto bg-zinc-950/50 p-6 md:p-8 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                <div className="col-span-5 overflow-y-auto bg-zinc-950/50 p-6 md:p-8 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                     {/* 1. COVER PAGE CONTROLS */}
                     <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-6">
@@ -338,7 +338,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                                         <Check size={12} strokeWidth={4} className={`transform transition-transform ${isSelected ? 'scale-100' : 'scale-50 opacity-0'}`} />
                                                     </div>
 
-                                                    <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-white' : 'text-zinc-500 group-hover:text-zinc-300'}`}>
+                                                    <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-300'}`}>
                                                         {doc.label}
                                                     </span>
                                                 </div>
@@ -366,7 +366,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
 
                 {/* RIGHT COL: PREVIEW STACK (Span 5) */}
-                <div className="col-span-5 bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
+                <div className="col-span-7 bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
 
                     {/* Preview Toolbar */}
                     <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
@@ -393,8 +393,8 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     </div>
 
                     {/* Scrollable Preview Area */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50">
-                        <div className="absolute inset-0 flex flex-col items-center py-10 origin-top transform scale-[0.4] w-[250%] gap-16">
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center py-12">
+                        <div className="origin-top transform scale-[0.5] flex flex-col items-center gap-16">
                             {/* Render the actual content but scaled */}
                             <PrintPreview
                                 items={documentList
