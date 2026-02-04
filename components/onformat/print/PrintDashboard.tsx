@@ -260,7 +260,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
-                <div className="col-span-5 overflow-y-auto bg-zinc-950/50 p-6 md:p-8 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                <div className="col-span-5 overflow-y-auto bg-zinc-950/50 py-6 pl-6 pr-10 md:py-8 md:pl-8 md:pr-16 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                     {/* 1. COVER PAGE CONTROLS */}
                     <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-6">
