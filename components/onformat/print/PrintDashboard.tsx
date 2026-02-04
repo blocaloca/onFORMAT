@@ -243,22 +243,24 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                 {masterDay === -1 ? 'All Days' : `Day ${masterDay + 1}`}
                                 <ChevronDown size={12} className="text-zinc-500" />
                             </button>
-                            <div className="absolute top-full right-0 mt-2 w-32 bg-zinc-950 border border-zinc-800 rounded shadow-xl overflow-hidden hidden group-hover:block z-50">
-                                <button
-                                    onClick={() => setMasterDay(-1)}
-                                    className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === -1 ? 'text-emerald-500' : 'text-zinc-400'}`}
-                                >
-                                    All Days
-                                </button>
-                                {Array.from({ length: maxDays }).map((_, i) => (
+                            <div className="absolute top-full right-0 pt-2 w-32 hidden group-hover:block z-50">
+                                <div className="bg-zinc-950 border border-zinc-800 rounded shadow-xl overflow-hidden">
                                     <button
-                                        key={i}
-                                        onClick={() => setMasterDay(i)}
-                                        className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === i ? 'text-emerald-500' : 'text-zinc-400'}`}
+                                        onClick={() => setMasterDay(-1)}
+                                        className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === -1 ? 'text-emerald-500' : 'text-zinc-400'}`}
                                     >
-                                        Day {i + 1}
+                                        All Days
                                     </button>
-                                ))}
+                                    {Array.from({ length: maxDays }).map((_, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => setMasterDay(i)}
+                                            className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === i ? 'text-emerald-500' : 'text-zinc-400'}`}
+                                        >
+                                            Day {i + 1}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     )}
@@ -276,7 +278,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
             </header>
 
-            <div className="flex-1 h-full overflow-hidden grid grid-cols-12 divide-x divide-zinc-900 max-w-[1600px] w-full mx-auto border-x border-zinc-900">
+            <div className="flex-1 h-full overflow-hidden grid grid-cols-12 divide-x divide-zinc-900 max-w-[1300px] w-full mx-auto border-x border-zinc-900">
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
