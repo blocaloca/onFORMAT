@@ -68,9 +68,11 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
     // Selection State
     const [selectedTools, setSelectedTools] = useState<Set<string>>(new Set());
-    const [selectedVersions, setSelectedVersions] = useState<Record<string, number[]>>({}); // Track selected versions per tool
     const [previewId, setPreviewId] = useState<string | null>(null);
-    const [expandedDocs, setExpandedDocs] = useState<Set<string>>(new Set()); // For UI expansion
+
+    // Master Day State (-1 = All, 0 = Day 1, 1 = Day 2, etc.)
+    // Default to Day 1
+    const [masterDay, setMasterDay] = useState<number>(0);
 
     // Master Orientation State (Default to Landscape)
     const [masterOrientation, setMasterOrientation] = useState<'portrait' | 'landscape'>('landscape');
@@ -140,42 +142,31 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
         });
     }, [activeProject, getToolData, getToolStack]);
 
+    // Calculate Max Days available across all docs
+    const maxDays = useMemo(() => {
+        let max = 1;
+        documentList.forEach(doc => {
+            if (doc.versions.length > max) max = doc.versions.length;
+        });
+        return max;
+    }, [documentList]);
+
     // Initial Selection (Start Empty, Show Cover)
     useEffect(() => {
         setSelectedTools(new Set());
         setPreviewId(null);
     }, []);
 
-    const toggleSelection = (id: string, versionsCount: number) => {
+    const toggleSelection = (id: string) => {
         const next = new Set(selectedTools);
-
         if (next.has(id)) {
             next.delete(id);
-            const nextVersions = { ...selectedVersions };
-            delete nextVersions[id];
-            setSelectedVersions(nextVersions);
             if (previewId === id) setPreviewId(null);
         } else {
             next.add(id);
-            // Default Selection: Always default to the LATEST version.
-            // This avoids confusing users with empty historical drafts or "All" selections
-            const lastIndex = versionsCount > 0 ? versionsCount - 1 : 0;
-            setSelectedVersions(prev => ({ ...prev, [id]: [lastIndex] }));
-
             setPreviewId(id);
         }
         setSelectedTools(next);
-    };
-
-    const toggleVersionSelection = (toolId: string, versionIndex: number) => {
-        setSelectedVersions(prev => {
-            const current = prev[toolId] || [];
-            if (current.includes(versionIndex)) {
-                return { ...prev, [toolId]: current.filter(i => i !== versionIndex) };
-            } else {
-                return { ...prev, [toolId]: [...current, versionIndex].sort((a, b) => a - b) };
-            }
-        });
     };
 
     const handlePreviewSelect = (doc: any) => {
@@ -196,7 +187,9 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     // FORCE Master Orientation for all items
                     orientation: masterOrientation,
                     pageCountEstimate: 1,
-                    selectedVersions: selectedVersions[doc.id] // Pass selected days
+                    selectedVersions: masterDay === -1
+                        ? doc.versions.map((_: any, i: number) => i)
+                        : (doc.versions.length === 1 ? [0] : (masterDay < doc.versions.length ? [masterDay] : []))
                 }));
 
             const blob = await pdf(
@@ -242,6 +235,33 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
+                    {/* Day Selector */}
+                    {maxDays > 0 && (
+                        <div className="relative group">
+                            <button className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 text-zinc-300 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-800 transition-colors">
+                                <span className="text-zinc-500">View:</span>
+                                {masterDay === -1 ? 'All Days' : `Day ${masterDay + 1}`}
+                                <ChevronDown size={12} className="text-zinc-500" />
+                            </button>
+                            <div className="absolute top-full right-0 mt-2 w-32 bg-zinc-950 border border-zinc-800 rounded shadow-xl overflow-hidden hidden group-hover:block z-50">
+                                <button
+                                    onClick={() => setMasterDay(-1)}
+                                    className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === -1 ? 'text-emerald-500' : 'text-zinc-400'}`}
+                                >
+                                    All Days
+                                </button>
+                                {Array.from({ length: maxDays }).map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setMasterDay(i)}
+                                        className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === i ? 'text-emerald-500' : 'text-zinc-400'}`}
+                                    >
+                                        Day {i + 1}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     <button
                         onClick={handleExport}
                         disabled={isExporting}
@@ -260,7 +280,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
-                <div className="col-span-5 overflow-y-auto bg-zinc-950/50 py-6 pl-6 pr-10 md:py-8 md:pl-8 md:pr-16 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                <div className="col-span-5 overflow-y-auto bg-zinc-950/50 py-6 pl-6 pr-6 mr-4 md:py-8 md:pl-8 md:pr-8 md:mr-6 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                     {/* 1. COVER PAGE CONTROLS */}
                     <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-6">
@@ -322,13 +342,12 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
                                         const isSelected = selectedTools.has(toolId);
                                         const statusColor = getStatusColor(doc);
-                                        const versionCount = doc.versions.length;
 
                                         return (
                                             <div
                                                 key={toolId}
                                                 className="group flex items-center justify-between p-3 rounded-md hover:bg-zinc-900/50 border border-transparent hover:border-zinc-800 transition-all cursor-pointer"
-                                                onClick={() => toggleSelection(toolId, versionCount)}
+                                                onClick={() => toggleSelection(toolId)}
                                             >
                                                 {/* Left: Checkbox & Name */}
                                                 <div className="flex items-center gap-4">
@@ -345,13 +364,6 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 
                                                 {/* Right: Status Light */}
                                                 <div className="flex items-center gap-4">
-                                                    {/* Optional: Show version pill if selected and >1 */}
-                                                    {isSelected && versionCount > 0 && (
-                                                        <span className="text-[9px] font-mono text-zinc-500 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
-                                                            V{selectedVersions[doc.id]?.[0] !== undefined ? selectedVersions[doc.id][0] + 1 : versionCount}
-                                                        </span>
-                                                    )}
-
                                                     <div className="relative flex items-center justify-center w-4 h-4" title={statusColor.includes('red') ? 'Empty' : statusColor.includes('yellow') ? 'Drafting' : 'Ready'}>
                                                         <div className={`w-2 h-2 rounded-full ${statusColor} transition-colors duration-300 group-hover:ring-2 ring-white/10`} />
                                                     </div>
@@ -407,7 +419,9 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                         isSelected: true,
                                         orientation: masterOrientation,
                                         pageCountEstimate: 1,
-                                        selectedVersions: selectedVersions[doc.id]
+                                        selectedVersions: masterDay === -1
+                                            ? doc.versions.map((_: any, i: number) => i)
+                                            : (doc.versions.length === 1 ? [0] : (masterDay < doc.versions.length ? [masterDay] : []))
                                     }))
                                 }
                                 coverSettings={{
