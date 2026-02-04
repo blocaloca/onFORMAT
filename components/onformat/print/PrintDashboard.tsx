@@ -52,6 +52,13 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
     'archive-log': { label: 'Archive Log', defaultOrient: 'portrait' },
 };
 
+const PHASE_GROUPS: Record<string, string[]> = {
+    'Development': ['project-vision', 'brief', 'directors-treatment', 'lookbook', 'storyboard', 'av-script'],
+    'Pre-Production': ['shot-scene-book', 'budget', 'schedule', 'crew-list', 'locations-sets', 'casting-talent', 'wardrobe-styling', 'props-list'],
+    'Production': ['call-sheet', 'dit-log', 'sound-report', 'camera-report', 'on-set-notes', 'script-notes'],
+    'Post-Production': ['budget-actual', 'deliverables-licensing', 'client-selects', 'archive-log']
+};
+
 
 // ---------------------------------------------------------------------------
 // Inner Component (Accesses Context)
@@ -213,11 +220,18 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
         }
     };
 
-    return (
-        <div className="flex flex-col h-full bg-zinc-950 text-zinc-200 overflow-hidden relative animate-in fade-in zoom-in-95 duration-200 print:h-auto print:overflow-visible print:bg-white">
+    // --- Status Helper ---
+    const getStatusColor = (doc: any) => {
+        if (!doc.hasData) return 'bg-red-500';
+        if (doc.versions.length > 1) return 'bg-emerald-500';
+        return 'bg-yellow-500';
+    };
 
-            {/* Header */}
-            <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20 print:hidden">
+    return (
+        <div className="fixed inset-0 bg-zinc-950 z-50 flex flex-col animate-in fade-in duration-200 overflow-hidden text-zinc-200">
+
+            {/* TOP BAR */}
+            <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20">
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800 text-emerald-500">
                         <Printer size={16} />
@@ -227,209 +241,185 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                         <p className="text-[10px] text-zinc-500 font-mono">Unified Document Manager</p>
                     </div>
                 </div>
-                <button
-                    onClick={onClose}
-                    className="p-2 rounded hover:bg-zinc-900 text-zinc-500 hover:text-white transition-colors"
-                >
-                    <X size={18} />
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={handleExport}
+                        disabled={isExporting}
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-emerald-900/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isExporting ? <div className="w-3 h-3 animate-spin border-2 border-white/30 border-t-white rounded-full" /> : <Printer size={14} />}
+                        <span>Export PDF</span>
+                    </button>
+                    <button onClick={onClose} className="p-2 rounded hover:bg-zinc-900 text-zinc-500 hover:text-white transition-colors">
+                        <X size={18} />
+                    </button>
+                </div>
             </header>
 
-            <div className="flex-1 flex overflow-hidden print:overflow-visible print:h-auto print:block">
+            <div className="flex-1 overflow-hidden grid grid-cols-12 divide-x divide-zinc-900">
 
                 {/* --- Sidebar: The "List" --- */}
-                <aside className="w-80 bg-zinc-950/50 flex flex-col overflow-y-auto print:hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-600">
+                {/* LEFT COL: CONTROLS (Span 7) */}
+                <div className="col-span-7 overflow-y-auto bg-zinc-950/50 p-6 md:p-8 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
-                    {/* Master Actions (Orientation) */}
-                    <div className="p-4 border-b border-zinc-900 bg-zinc-950/30">
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Master Settings</div>
+                    {/* 1. COVER PAGE CONTROLS */}
+                    <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-xs font-black uppercase text-white tracking-widest flex items-center gap-2">
+                                <Layers size={14} className="text-emerald-500" />
+                                Cover Page
+                            </h2>
+                            <div
+                                onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
+                                className={`w-10 h-5 rounded-full cursor-pointer relative transition-all duration-300 ${coverSettings.showCover ? 'bg-emerald-600' : 'bg-zinc-800'}`}
+                            >
+                                <div className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-300 ${coverSettings.showCover ? 'left-[22px]' : 'left-1'}`} />
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2">
+
+                        {coverSettings.showCover && (
+                            <div className="grid grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2">
+                                <div className="col-span-2 space-y-2">
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Project Title</label>
+                                    <input
+                                        value={coverSettings.title}
+                                        onChange={(e) => setCoverSettings(s => ({ ...s, title: e.target.value }))}
+                                        className="w-full bg-black border border-zinc-800 rounded px-4 py-3 text-sm font-bold text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 focus:outline-none transition-all uppercase tracking-wide"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Client</label>
+                                    <input
+                                        value={coverSettings.subtitle}
+                                        onChange={(e) => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
+                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2.5 text-xs text-zinc-300 focus:border-emerald-500 focus:outline-none transition-all placeholder:text-zinc-700"
+                                        placeholder="Client Name / Agency"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Producer / Owner</label>
+                                    <input
+                                        value={activeProject?.owner_name || ''}
+                                        readOnly
+                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2.5 text-xs text-zinc-500 focus:outline-none font-mono cursor-not-allowed"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </section>
+
+                    {/* 2. PHASED LIST */}
+                    <div className="space-y-10">
+                        {Object.entries(PHASE_GROUPS).map(([phase, tools]) => (
+                            <div key={phase} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <h3 className="text-[10px] font-black uppercase text-zinc-600 mb-4 tracking-[0.2em] border-b border-zinc-900 pb-2">
+                                    {phase}
+                                </h3>
+                                <div className="space-y-1">
+                                    {tools.map(toolId => {
+                                        const doc = documentList.find(d => d.id === toolId);
+                                        if (!doc) return null;
+
+                                        const isSelected = selectedTools.has(toolId);
+                                        const statusColor = getStatusColor(doc);
+                                        const versionCount = doc.versions.length;
+
+                                        return (
+                                            <div
+                                                key={toolId}
+                                                className="group flex items-center justify-between p-3 rounded-md hover:bg-zinc-900/50 border border-transparent hover:border-zinc-800 transition-all cursor-pointer"
+                                                onClick={() => toggleSelection(toolId, versionCount)}
+                                            >
+                                                {/* Left: Checkbox & Name */}
+                                                <div className="flex items-center gap-4">
+                                                    <div
+                                                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-emerald-600 border-emerald-600 text-black shadow-[0_0_10px_rgba(5,150,105,0.4)]' : 'border-zinc-700 bg-transparent text-transparent group-hover:border-zinc-500'}`}
+                                                    >
+                                                        <Check size={12} strokeWidth={4} className={`transform transition-transform ${isSelected ? 'scale-100' : 'scale-50 opacity-0'}`} />
+                                                    </div>
+
+                                                    <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-white' : 'text-zinc-500 group-hover:text-zinc-300'}`}>
+                                                        {doc.label}
+                                                    </span>
+                                                </div>
+
+                                                {/* Right: Status Light */}
+                                                <div className="flex items-center gap-4">
+                                                    {/* Optional: Show version pill if selected and >1 */}
+                                                    {isSelected && versionCount > 0 && (
+                                                        <span className="text-[9px] font-mono text-zinc-500 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
+                                                            V{selectedVersions[doc.id]?.[0] !== undefined ? selectedVersions[doc.id][0] + 1 : versionCount}
+                                                        </span>
+                                                    )}
+
+                                                    <div className="relative flex items-center justify-center w-4 h-4" title={statusColor.includes('red') ? 'Empty' : statusColor.includes('yellow') ? 'Drafting' : 'Ready'}>
+                                                        <div className={`w-2 h-2 rounded-full ${statusColor} transition-colors duration-300 group-hover:ring-2 ring-white/10`} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* RIGHT COL: PREVIEW STACK (Span 5) */}
+                <div className="col-span-5 bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
+
+                    {/* Preview Toolbar */}
+                    <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
+                        <h2 className="text-[10px] font-black uppercase text-zinc-400 tracking-widest flex items-center gap-2">
+                            <Eye size={12} className="text-zinc-600" />
+                            Output Preview
+                        </h2>
+                        <div className="flex bg-zinc-900 p-0.5 rounded-md border border-zinc-800">
                             <button
                                 onClick={() => setMasterOrientation('portrait')}
-                                className={`flex-1 flex items-center justify-center gap-2 p-2 rounded border text-xs font-medium transition-all ${masterOrientation === 'portrait' ? 'bg-zinc-800 border-zinc-700 text-white' : 'border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
+                                className={`p-1.5 rounded transition-all ${masterOrientation === 'portrait' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                                title="Portrait"
                             >
-                                <RectangleVertical size={14} />
-                                <span>Portrait</span>
+                                <RectangleVertical size={12} />
                             </button>
                             <button
                                 onClick={() => setMasterOrientation('landscape')}
-                                className={`flex-1 flex items-center justify-center gap-2 p-2 rounded border text-xs font-medium transition-all ${masterOrientation === 'landscape' ? 'bg-zinc-800 border-zinc-700 text-white' : 'border-zinc-800 text-zinc-500 hover:text-zinc-300'}`}
+                                className={`p-1.5 rounded transition-all ${masterOrientation === 'landscape' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                                title="Landscape"
                             >
-                                <RectangleHorizontal size={14} />
-                                <span>Landscape</span>
+                                <RectangleHorizontal size={12} />
                             </button>
                         </div>
                     </div>
 
-                    {/* Cover Settings */}
-                    <div className="p-4 border-b border-zinc-900">
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400">
-                                <Settings size={14} />
-                                <span>Cover Page</span>
-                            </div>
-                            <div
-                                onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
-                                className={`w-8 h-4 rounded-full cursor-pointer relative transition-colors ${coverSettings.showCover ? 'bg-emerald-600' : 'bg-zinc-800'}`}
-                            >
-                                <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${coverSettings.showCover ? 'left-[18px]' : 'left-0.5'}`} />
-                            </div>
-                        </div>
-                        {coverSettings.showCover && (
-                            <div className="space-y-2 animate-in slide-in-from-top-2">
-                                <input
-                                    value={coverSettings.title}
-                                    onChange={e => setCoverSettings(s => ({ ...s, title: e.target.value }))}
-                                    className="w-full bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 text-xs text-white outline-none focus:border-emerald-500 transition-colors"
-                                    placeholder="Title"
-                                />
-                                <input
-                                    value={coverSettings.subtitle}
-                                    onChange={e => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
-                                    className="w-full bg-zinc-900 border border-zinc-800 rounded px-2 py-1.5 text-xs text-white outline-none focus:border-emerald-500 transition-colors"
-                                    placeholder="Subtitle"
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Document Registry */}
-                    <div className="flex-1 p-4">
-                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">
-                            <Layers size={14} />
-                            <span>Documents</span>
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                            {documentList.map(doc => {
-                                const isSelected = selectedTools.has(doc.id);
-                                const isPreviewing = previewId === doc.id;
-                                const isMultiDay = doc.versions.length > 1;
-                                const isExpanded = expandedDocs.has(doc.id);
-                                const selectedIndices = selectedVersions[doc.id] || [];
-
-                                return (
-                                    <div key={doc.id} className="flex flex-col">
-                                        <div
-                                            className={`group flex items-center gap-3 p-2 rounded border transition-all cursor-pointer ${isPreviewing ? 'bg-zinc-800/50 border-zinc-700' : 'bg-transparent border-transparent hover:bg-zinc-900/50'}`}
-                                            onClick={() => handlePreviewSelect(doc)}
-                                        >
-                                            {/* Selection Checkbox (Master) */}
-                                            <div
-                                                className={`w-4 h-4 shrink-0 rounded border flex items-center justify-center transition-colors ${isSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-zinc-700 hover:border-zinc-500'}`}
-                                                onClick={(e) => { e.stopPropagation(); toggleSelection(doc.id, doc.versions?.length || 1); }}
-                                            >
-                                                {/* Partial check visual could be added here if needed */}
-                                                {isSelected && <Check size={10} strokeWidth={4} />}
-                                            </div>
-
-                                            {/* Label & Status */}
-                                            <div className="flex-1 min-w-0">
-                                                <div className={`text-xs font-medium truncate ${doc.hasData ? 'text-zinc-200' : 'text-zinc-500'}`}>
-                                                    {doc.label}
-                                                </div>
-                                                <div className="flex items-center gap-1.5 mt-0.5">
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${doc.hasData ? 'bg-emerald-500' : 'bg-zinc-700'}`} />
-                                                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-mono">
-                                                        {doc.status}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            {/* Expansion Toggle (Multi-Day Only) */}
-                                            {isMultiDay && (
-                                                <div
-                                                    className="p-1 hover:bg-zinc-800 rounded text-zinc-500 hover:text-white transition-colors"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setExpandedDocs(prev => {
-                                                            const next = new Set(prev);
-                                                            if (next.has(doc.id)) next.delete(doc.id);
-                                                            else next.add(doc.id);
-                                                            return next;
-                                                        });
-                                                    }}
-                                                >
-                                                    {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                                                </div>
-                                            )}
-
-                                            {/* Preview Indicator */}
-                                            {isPreviewing && <Eye size={12} className="text-zinc-400" />}
-                                        </div>
-
-                                        {/* Nested Day List */}
-                                        {isMultiDay && isExpanded && isSelected && (
-                                            <div className="pl-9 pr-2 pb-2 space-y-1 animate-in slide-in-from-top-1">
-                                                {doc.versions.map((ver, idx) => {
-                                                    const isVerSelected = selectedIndices.includes(idx);
-                                                    const dayLabel = ver.dayLabel || `Day ${idx + 1}`;
-                                                    const dateLabel = ver.date || '';
-
-                                                    return (
-                                                        <div
-                                                            key={idx}
-                                                            className={`flex items-center gap-3 p-1.5 rounded border transition-colors cursor-pointer ${isVerSelected ? 'bg-zinc-800/30 border-zinc-800' : 'bg-transparent border-transparent opacity-50 hover:opacity-100'}`}
-                                                            onClick={(e) => { e.stopPropagation(); toggleVersionSelection(doc.id, idx); }}
-                                                        >
-                                                            <div className={`w-3 h-3 rounded border flex items-center justify-center ${isVerSelected ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-zinc-700'}`}>
-                                                                {isVerSelected && <Check size={8} strokeWidth={4} />}
-                                                            </div>
-                                                            <div className="text-[10px] text-zinc-300 font-mono">
-                                                                <span className="font-bold">{dayLabel}</span>
-                                                                {dateLabel && <span className="text-zinc-500 ml-2">{dateLabel}</span>}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            })}
+                    {/* Scrollable Preview Area */}
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50">
+                        <div className="absolute inset-0 flex flex-col items-center py-10 origin-top transform scale-[0.4] w-[250%] gap-16">
+                            {/* Render the actual content but scaled */}
+                            <PrintPreview
+                                items={documentList
+                                    .filter(doc => selectedTools.has(doc.id))
+                                    .map(doc => ({
+                                        id: doc.id,
+                                        toolKey: doc.id,
+                                        label: doc.label,
+                                        isSelected: true,
+                                        orientation: masterOrientation,
+                                        pageCountEstimate: 1,
+                                        selectedVersions: selectedVersions[doc.id]
+                                    }))
+                                }
+                                coverSettings={{
+                                    ...coverSettings,
+                                    orientation: masterOrientation
+                                }}
+                                orientationOverride={masterOrientation}
+                            />
                         </div>
                     </div>
+                </div>
 
-                    {/* Footer Actions */}
-                    <div className="p-4 border-t border-zinc-900 mt-auto bg-zinc-950">
-                        <button
-                            onClick={handleExport}
-                            disabled={isExporting}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold uppercase tracking-widest text-xs rounded-sm shadow-lg shadow-emerald-900/20 transition-all flex items-center justify-center gap-2"
-                        >
-                            {isExporting ? <div className="w-3 h-3 animate-spin border-2 border-white/30 border-t-white rounded-full" /> : <Printer size={14} />}
-                            <span>Export Selection</span>
-                        </button>
-                    </div>
-                </aside>
 
-                {/* --- Preview Pane --- */}
-                <main className="flex-1 bg-zinc-900/50 relative flex flex-col overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-600">
-                    <div className="w-full min-h-full flex flex-col items-center gap-8 pb-32 pt-8">
-                        {/* Render Active Preview */}
-                        <PrintPreview
-                            key={`preview-${selectedTools.size}-${masterOrientation}`}
-                            items={documentList
-                                .filter(doc => selectedTools.has(doc.id))
-                                .map(doc => ({
-                                    id: doc.id,
-                                    toolKey: doc.id,
-                                    label: doc.label,
-                                    isSelected: true,
-                                    orientation: masterOrientation,
-                                    pageCountEstimate: 1,
-                                    selectedVersions: selectedVersions[doc.id]
-                                }))}
-                            coverSettings={{
-                                ...coverSettings,
-                                orientation: masterOrientation
-                            }}
-                            orientationOverride={masterOrientation}
-                        />
-                    </div>
-                </main>
 
             </div>
         </div>
