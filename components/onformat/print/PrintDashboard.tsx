@@ -256,7 +256,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
             </header>
 
-            <div className="flex-1 overflow-hidden grid grid-cols-12 divide-x divide-zinc-900">
+            <div className="flex-1 h-full overflow-hidden grid grid-cols-12 divide-x divide-zinc-900">
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
@@ -366,7 +366,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
 
                 {/* RIGHT COL: PREVIEW STACK (Span 5) */}
-                <div className="col-span-7 bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
+                <div className="col-span-7 h-full overflow-hidden bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
 
                     {/* Preview Toolbar */}
                     <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
@@ -393,10 +393,11 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                     </div>
 
                     {/* Scrollable Preview Area */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center py-12">
-                        <div className="origin-top transform scale-[0.5] flex flex-col items-center gap-16">
+                    <div className="flex-1 h-full overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center py-12">
+                        <div className="flex flex-col items-center gap-8 w-full">
                             {/* Render the actual content but scaled */}
                             <PrintPreview
+                                scale={0.45}
                                 items={documentList
                                     .filter(doc => selectedTools.has(doc.id))
                                     .map(doc => ({

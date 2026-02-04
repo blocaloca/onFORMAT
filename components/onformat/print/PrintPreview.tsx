@@ -22,7 +22,7 @@ interface PrintPreviewProps {
     orientationOverride?: 'portrait' | 'landscape';
 }
 
-export const PrintPreview = ({ items = [], coverSettings, orientationOverride }: PrintPreviewProps) => {
+export const PrintPreview = ({ items = [], coverSettings, orientationOverride, scale = 0.75 }: PrintPreviewProps & { scale?: number }) => {
     const { getToolData, getToolStack, activeProject } = useProject();
 
     // Dimensions
@@ -45,8 +45,8 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
                 const isL = coverSettings.orientation === 'landscape';
                 const w = isL ? 1056 : 816;
                 const h = isL ? 816 : 1056;
-                const scaledW = w * 0.75;
-                const scaledH = h * 0.75;
+                const scaledW = w * scale;
+                const scaledH = h * scale;
 
                 return (
                     <div
@@ -59,7 +59,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
                             style={{
                                 width: w,
                                 height: h,
-                                transform: 'scale(0.75)',
+                                transform: `scale(${scale})`,
                                 transformOrigin: 'top left'
                             }}
                         >
@@ -110,8 +110,8 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
                     const isItemLandscape = (orientationOverride || 'portrait') === 'landscape';
                     const w = isItemLandscape ? 1056 : 816;
                     const h = isItemLandscape ? 816 : 1056;
-                    const scaledW = w * 0.75;
-                    const scaledH = h * 0.75;
+                    const scaledW = w * scale;
+                    const scaledH = h * scale;
 
                     return (
                         <div key={uniqueKey} className="flex flex-col items-center w-full mb-8">
@@ -123,7 +123,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride }:
                                     style={{
                                         width: w,
                                         height: h,
-                                        transform: 'scale(0.75)',
+                                        transform: `scale(${scale})`,
                                         transformOrigin: 'top left'
                                     }}
                                 >
