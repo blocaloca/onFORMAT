@@ -1,10 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
-
 export type Database = {
   public: {
     Tables: {
@@ -79,3 +74,23 @@ export type Database = {
     }
   }
 }
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+// KILL THE SINGLETON
+// Export a function that creates a fresh client every time.
+export const getClient = () => createBrowserClient(supabaseUrl, supabaseAnonKey)
+
+// KEEP BACKWARD COMPAT (TEMPORARY)
+// We must keep 'supabase' export for now to avoid breaking 100+ files instantly.
+// But we re-assign it to a getter or a fresh instance.
+// WARNING: This is still a singleton if just assigned.
+// For true fix, we need to migrate usages. 
+// BUT for immediate patch, we can make 'supabase' a lazy proxy or just keep it 
+// and rely on getClient() for critical auth flows.
+
+// Better approach for Refactor:
+// We export 'supabase' as a fresh instance but we know it might be cached by module system.
+// The critical fix is using getClient() in Auth flows.
+export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)

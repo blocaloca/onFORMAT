@@ -20,17 +20,19 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
-      // 0. Nuke storage to be sure
-      if (typeof window !== 'undefined') {
-        localStorage.clear();
-        sessionStorage.clear();
+      // 1. Session Check & Atomic Logout
+      const { data: currentSession } = await supabase.auth.getSession();
+
+      if (currentSession?.session) {
+        // If logged in, we MUST kill the session atomically before proceeding
+        await fetch('/api/auth/logout', { method: 'POST' });
+
+        // Clear client storage
+        if (typeof window !== 'undefined') {
+          localStorage.clear();
+          sessionStorage.clear();
+        }
       }
-
-      // 0.5. Force Server-Side Logout (removes cookies)
-      await forceLogout();
-
-      // 1. Sign out any existing session first
-      await supabase.auth.signOut();
 
       // Sign up the user
       const { data, error: signUpError } = await supabase.auth.signUp({

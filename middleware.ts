@@ -62,9 +62,12 @@ export async function middleware(request: NextRequest) {
     )
 
     // 3. Refresh Session
-    // This call essentially keeps the session alive.
-    // However, if we are heading to /auth/logout (which we will create), we shouldn't do this.
-    const { data: { user } } = await supabase.auth.getUser()
+    // GUARD: Do NOT refresh session if we are simply visiting public auth pages.
+    // This prevents "Zombie Sessions" from being re-validated when a user is trying to switch accounts.
+    const path = request.nextUrl.pathname;
+    if (!path.startsWith('/login') && !path.startsWith('/signup') && !path.startsWith('/auth/logout')) {
+        await supabase.auth.getUser()
+    }
 
     // 4. Force Redirect to Dashboard if Logged In and visiting Login/Signup?
     // Usually good practice, but in this specific "switch account" case, it causes confusion.
