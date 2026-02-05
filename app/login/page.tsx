@@ -19,6 +19,16 @@ export default function LoginPage() {
     setMessage('');
 
     try {
+      // 0. Ensure clean slate
+      if (typeof window !== 'undefined') {
+        // We only clear if they are explicit switching accounts, but technically login page assumes new session
+        // So clearing storage is safe.
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+      await supabase.auth.signOut();
+
+
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,

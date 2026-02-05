@@ -19,6 +19,12 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
+      // 0. Nuke storage to be sure
+      if (typeof window !== 'undefined') {
+        localStorage.clear();
+        sessionStorage.clear();
+      }
+
       // 1. Sign out any existing session first
       await supabase.auth.signOut();
 
