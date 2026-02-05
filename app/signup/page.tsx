@@ -47,17 +47,28 @@ export default function SignupPage() {
 
       // Create profile
       if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: email,
-            full_name: fullName,
-            subscription_status: 'trial',
-            subscription_tier: null,
-          })
+        // Attempt to create profile (might fail if verification required and RLS blocks, but we try)
+        // If Supabase is set to 'Confirm Email', session will be null here.
+        // We catch the error but don't block the "Check Email" message for that case.
+        try {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              email: email,
+              full_name: fullName,
+              subscription_status: 'trial',
+              subscription_tier: null,
+            })
+          if (profileError) console.warn("Profile creation deferred (Pending Verification):", profileError);
+        } catch (e) { /* ignore */ }
+      }
 
-        if (profileError) throw profileError
+      // CHECK IF SESSION ESTABLISHED
+      // If "Confirm Email" is ON in Supabase, data.session will be null.
+      if (!data.session) {
+        setError("Account created! Please check your email to verify your account.");
+        return; // Stop here, do not redirect
       }
 
       // FORCE HARD RELOAD to clear any client-side singleton state
