@@ -53,6 +53,23 @@ export default function DashboardPage() {
                 router.push('/login');
             } else {
                 setUser(user.email || null);
+
+                // PHASE 1 HANDSHAKE: Link auth.uid to crew_membership
+                if (user.email) {
+                    try {
+                        // Attempt to link current user ID to any membership records with matching email
+                        // This ensures invited users "claim" their membership upon login
+                        const { error } = await supabase
+                            .from('crew_membership')
+                            .update({ user_id: user.id })
+                            .ilike('user_email', user.email) // Case-insensitive match
+                            .is('user_id', null); // Only if not already claimed
+
+                        if (error) console.warn("Handshake Error (Non-Critical - Verify Schema):", error);
+                    } catch (e) {
+                        console.warn("Handshake Failed", e);
+                    }
+                }
             }
         };
         checkAuth();

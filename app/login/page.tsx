@@ -75,7 +75,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.toLowerCase())}
                 placeholder="EMAIL ADDRESS"
                 className="w-full bg-zinc-900/50 border border-zinc-800 pl-12 p-4 text-sm text-white font-bold outline-none focus:border-white focus:bg-zinc-900 transition-all placeholder-zinc-700 rounded-sm uppercase"
                 required

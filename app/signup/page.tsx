@@ -62,7 +62,7 @@ export default function SignupPage() {
           <h1 className="text-3xl font-bold text-white mb-6 text-center">
             Start Creating
           </h1>
-          
+
           {error && (
             <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-4">
               {error}
@@ -93,7 +93,7 @@ export default function SignupPage() {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value.toLowerCase())}
                 required
                 className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 placeholder="you@example.com"
