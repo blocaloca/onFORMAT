@@ -212,10 +212,22 @@ export default function DashboardPage() {
         // Update email state if not set
         if (!user) setUser(authUser.email || null);
 
+        console.log("DASHBOARD DEBUG: Auth User ID:", authUser.id);
+        console.log("DASHBOARD DEBUG: Auth User Email:", authUser.email);
+
         const { data, error } = await supabase
             .from('projects')
             .select('*')
             .order('updated_at', { ascending: false });
+
+        if (error) {
+            console.error("DASHBOARD DEBUG: Fetch Error:", error);
+        } else {
+            console.log("DASHBOARD DEBUG: Projects Found:", data?.length);
+            if (data && data.length > 0) {
+                console.log("DASHBOARD DEBUG: Sample Project UserID:", data[0].user_id);
+            }
+        }
 
         if (data) {
             setProjects(data);
