@@ -203,16 +203,53 @@ export default function AccountPage() {
                         <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6 flex items-center gap-2">
                             <CreditCard size={16} /> Plan Status
                         </h2>
-                        <div className="flex items-center justify-between bg-zinc-900 p-4 border border-zinc-800 rounded-sm mb-4">
-                            <div>
-                                <p className="text-zinc-400 text-xs uppercase font-bold">Current Plan</p>
-                                <p className="text-xl font-bold text-white uppercase">{profile?.subscription_status === 'active' ? 'Pro Plan' : 'Free Beta'}</p>
-                            </div>
-                            <div className="text-emerald-500 font-mono text-xs uppercase">
+                        <div>
+                            <p className="text-zinc-400 text-xs uppercase font-bold">Current Plan</p>
+                            <p className="text-xl font-bold text-white uppercase">{profile?.subscription_status === 'active' ? 'Pro Plan' : 'Free Beta'}</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-emerald-500 font-mono text-xs uppercase mb-2">
                                 {profile?.subscription_status === 'active' ? '● Active' : '● Inactive'}
                             </div>
                         </div>
                     </div>
+
+                    {/* Manage Billing Action */}
+                    <button
+                        onClick={async () => {
+                            setLoading(true); // Re-use main loading or local state
+                            try {
+                                if (profile?.subscription_status !== 'active') {
+                                    // If inactive, go to Checkout instead of Portal
+                                    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
+                                    if (!priceId) { alert("Stripe Key Missing"); setLoading(false); return; }
+
+                                    const res = await fetch('/api/checkout', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ priceId })
+                                    });
+                                    const data = await res.json();
+                                    if (data.url) window.location.href = data.url;
+                                } else {
+                                    // If Active, go to Customer Portal
+                                    const res = await fetch('/api/create-portal-link');
+                                    const data = await res.json();
+                                    if (data.url) window.location.href = data.url;
+                                    else if (data.error) alert(data.error);
+                                }
+                            } catch (e) {
+                                console.error(e);
+                                alert("Failed to load billing portal.");
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                        className="w-full bg-white text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm flex items-center justify-center gap-2"
+                    >
+                        <CreditCard size={14} />
+                        {profile?.subscription_status === 'active' ? 'Manage Subscription' : 'Upgrade to Pro'}
+                    </button>
 
                     {/* Security */}
                     <div className="bg-black/20 border border-zinc-800 p-8 rounded-lg">
@@ -252,7 +289,7 @@ export default function AccountPage() {
                     </div>
                 </div>
 
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
