@@ -13,6 +13,8 @@ import { UserMenu } from '@/components/onformat/UserMenu';
 import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone, CalendarClock } from 'lucide-react';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import { buildGridRows } from '@/lib/production-grid/parser';
+import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
+import { hasAccess } from '@/lib/permissions';
 
 import { DEMO_PROJECT_DATA } from '@/lib/demoProject';
 
@@ -43,6 +45,7 @@ export default function DashboardPage() {
     const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false);
     const [activeFolder, setActiveFolder] = useState<string | null>(null);
     const [folderActionTarget, setFolderActionTarget] = useState<Folder | null>(null);
+    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
 
 
@@ -242,6 +245,27 @@ export default function DashboardPage() {
         // Unless we are admin acting on other's behalf.
         // For now, let's assume current user owns the new copy.
         // user.id is correct.
+
+        // PHASE 2 GATE: Check Project Limits
+        // We only gating creation of NEW projects (or duplicates).
+        const { data: profile } = await supabase.from('profiles').select('subscription_status, subscription_tier').eq('id', user.id).single();
+
+        // Use permissions lib to check access. 
+        // For "Basic" tier, we limit to 1 active project.
+        // If Founder or "Pro", unlimited.
+
+        // This logic is simplistic: "If not hasAccess('pro') AND projects.length >= 1, BLOCK"
+        const isPro = hasAccess({ email: user.email, subscription_status: profile?.subscription_status }, 'pro');
+        const isFounderUser = hasAccess({ email: user.email }, 'enterprise'); // Founder check implicit
+
+        // Note: filteredProjects in render is based on view, we need raw list count of owned projects.
+        // We can just use `projects.length` since we fetch all owned projects.
+        // Assuming `projects` state is accurate list of owned projects.
+        if (!isPro && !isFounderUser && projects.length >= 1) {
+            setIsUpgradeOpen(true);
+            setIsDialogOpen(false); // Close create dialog
+            return;
+        }
 
         let payloadData = {
             clientName: client,
@@ -610,6 +634,10 @@ export default function DashboardPage() {
                 onCreate={handleCreateFolder}
             />
 
+            <UpgradeModal
+                isOpen={isUpgradeOpen}
+                onClose={() => setIsUpgradeOpen(false)}
+            />
 
         </div>
     );
