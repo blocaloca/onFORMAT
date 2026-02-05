@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
@@ -14,13 +14,43 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  // Protect against "Founder Trap" immediately on mount
+  // If we land here and are logged in, we are in a bad state.
+  // We can't auto-logout easily without flashing, but we can prevent the form from working
+  // until we are sure.
+  const [sessionChecked, setSessionChecked] = useState(false);
+
+  useEffect(() => {
+    const checkAndNuke = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        console.warn("ZOMBIE SESSION DETECTED: Nuking...");
+        // Atomic Nuke
+        await fetch('/api/auth/logout', { method: 'POST' });
+        if (typeof window !== 'undefined') {
+          localStorage.clear();
+          sessionStorage.clear();
+        }
+        await supabase.auth.signOut();
+        window.location.reload(); // Hard reload to clear singleton
+      } else {
+        setSessionChecked(true);
+      }
+    };
+
+    checkAndNuke();
+  }, []);
+
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!sessionChecked) return; // Don't let them submit if we haven't verified safety
+
     setError('')
     setLoading(true)
 
     try {
-      // 1. Session Check & Atomic Logout
+      // Double Check: Atomic Logout (Redundant but Safe)
+      // ... existing logic ...
       const { data: currentSession } = await supabase.auth.getSession();
 
       if (currentSession?.session) {

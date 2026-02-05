@@ -36,13 +36,20 @@ export async function POST(request: Request) {
     const allCookies = cookieStore.getAll()
     allCookies.forEach(cookie => {
         if (cookie.name.startsWith('sb-') || cookie.name.includes('supabase')) {
+            // Nuke it on current domain
             cookieStore.set({
                 name: cookie.name,
                 value: '',
                 expires: new Date(0),
                 path: '/',
                 maxAge: 0
-            })
+            });
+
+            // Nuke it on root domain (dot-prefixed) just in case
+            // Note: We can't easily know the exact root domain dynamically in all envs without parsing host,
+            // but we can try setting it if the environment variable hints at it or just robustly attempting standard variations.
+            // For localhost, domain is ignored usually. for production, it matters.
+            // We will assume standard clearing is enough for now unless we receive specific domain info.
         }
     })
 
