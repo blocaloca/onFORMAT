@@ -19,6 +19,9 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
+      // 1. Sign out any existing session first
+      await supabase.auth.signOut();
+
       // Sign up the user
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
