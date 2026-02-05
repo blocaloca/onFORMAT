@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { createBrowserClient } from '@supabase/ssr';
 import { NewProjectDialog, PROJECT_COLORS } from '@/components/dashboard/NewProjectDialog';
 import { CreateFolderDialog } from '@/components/dashboard/CreateFolderDialog';
 import { MoveToFolderDialog } from '@/components/dashboard/MoveToFolderDialog';
@@ -33,6 +33,10 @@ interface Project {
 }
 
 export default function DashboardPage() {
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const router = useRouter();
     const [user, setUser] = useState<string | null>(null);
     const [view, setView] = useState<'grid' | 'list' | 'timeline'>('grid');
@@ -221,7 +225,7 @@ export default function DashboardPage() {
             .order('updated_at', { ascending: false });
 
         if (error) {
-            console.error("DASHBOARD DEBUG: Fetch Error:", error);
+            console.error("DASHBOARD DEBUG: Fetch Error:", error.message, error.hint, error.details);
         } else {
             console.log("DASHBOARD DEBUG: Projects Found:", data?.length);
             if (data && data.length > 0) {

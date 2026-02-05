@@ -1,9 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { getClient } from '@/lib/supabase';
+import { createBrowserClient } from '@supabase/ssr';
 
 export default function TestDBPage() {
-    const supabase = getClient();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const [status, setStatus] = useState('Ready');
     const [userId, setUserId] = useState('');
     const [logs, setLogs] = useState<string[]>([]);
