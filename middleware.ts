@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
                         name,
                         value,
                         ...options,
+                        httpOnly: false, // CRITICAL: Allow Client Side Access
                     })
                 },
                 remove(name: string, options: CookieOptions) {
