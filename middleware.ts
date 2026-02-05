@@ -2,12 +2,19 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+    // 1. Check if we are visiting Login or Signup pages
+    // If so, we want to ensure we don't accidentally refresh an old session
+    // unless the user intends to stay logged in. 
+    // BUT since the user is explicitly visiting /login or /signup, we might want to forcefully clear session OR redirect to dashboard if logged in.
+    // The issue "new user accessing founder account" implies the session persists.
+
     let response = NextResponse.next({
         request: {
             headers: request.headers,
         },
     })
 
+    // 2. Setup Supabase Client
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -54,7 +61,15 @@ export async function middleware(request: NextRequest) {
         }
     )
 
-    await supabase.auth.getUser()
+    // 3. Refresh Session
+    // This call essentially keeps the session alive.
+    // However, if we are heading to /auth/logout (which we will create), we shouldn't do this.
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // 4. Force Redirect to Dashboard if Logged In and visiting Login/Signup?
+    // Usually good practice, but in this specific "switch account" case, it causes confusion.
+    // If I am logged in and go to /signup, I probably want to create a new account.
+    // So the /signup page MUST handle the logout itself. which we tried.
 
     return response
 }

@@ -60,7 +60,10 @@ export default function SignupPage() {
         if (profileError) throw profileError
       }
 
-      router.push('/dashboard')
+      // FORCE HARD RELOAD to clear any client-side singleton state
+      // This is critical to prevent "Shared Account" ghosting.
+      window.location.href = '/dashboard';
+
     } catch (err: any) {
       setError(err.message || 'Failed to sign up')
     } finally {
