@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { forceLogout } from '@/lib/auth-actions'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -24,6 +25,9 @@ export default function SignupPage() {
         localStorage.clear();
         sessionStorage.clear();
       }
+
+      // 0.5. Force Server-Side Logout (removes cookies)
+      await forceLogout();
 
       // 1. Sign out any existing session first
       await supabase.auth.signOut();
