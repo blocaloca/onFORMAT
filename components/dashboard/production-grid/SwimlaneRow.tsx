@@ -33,8 +33,8 @@ export const SwimlaneRow = ({ row, dateRange, dayWidth, onEventClick, clashingId
 
             {/* Left Header (Sticky?) - Handled by parent container generally, but putting label here for simple MV1 */}
             <div className={`w-48 shrink-0 flex flex-col justify-center px-4 border-r ${tokens.border.subtle} bg-white dark:bg-zinc-950 sticky left-0 z-20`}>
-                <span className={`text-xs font-bold truncate ${tokens.text.primary}`}>{row.label}</span>
-                <span className={`text-[10px] uppercase truncate ${tokens.text.secondary}`}>{row.meta.client}</span>
+                <span className={`text-[10px] font-bold uppercase tracking-widest truncate text-zinc-400 mb-0.5`}>{row.meta.client}</span>
+                <span className={`text-xs font-black uppercase tracking-tight truncate ${tokens.text.primary}`}>{row.label}</span>
             </div>
 
             {/* Timeline Area */}
