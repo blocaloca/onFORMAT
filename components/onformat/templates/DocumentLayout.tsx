@@ -33,8 +33,10 @@ export const DocumentLayout = ({
 }: DocumentLayoutProps) => {
 
     // Dimensions in pixels (96DPI): 8.5in = 816px, 11in = 1056px
-    const width = orientation === 'landscape' ? 1056 : 816;
-    const height = orientation === 'landscape' ? 816 : 1056;
+    // User Request: Make document 20% larger in workspace (1.2x scale)
+    const SCALE = 1.2;
+    const width = Math.round((orientation === 'landscape' ? 1056 : 816) * SCALE);
+    const height = Math.round((orientation === 'landscape' ? 816 : 1056) * SCALE);
 
     return (
         <>
