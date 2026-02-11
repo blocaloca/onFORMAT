@@ -43,7 +43,7 @@ export function parseProjectEvents(project: ProjectSourceData): ProductionEvent[
                                 id: `evt-${id}-shoot-${index}`,
                                 projectId: id,
                                 projectName: name,
-                                projectColor: data.color || 'blue', // Default
+                                projectColor: data.color || 'blue', // Use project-level color preference
                                 title: `Shoot Day ${index + 1}`,
                                 startDate: isoDate,
                                 endDate: isoDate,
@@ -85,7 +85,7 @@ export function parseProjectEvents(project: ProjectSourceData): ProductionEvent[
                             id: `evt-${id}-del-dead-${index}`,
                             projectId: id,
                             projectName: name,
-                            projectColor: data.color || 'blue',
+                            projectColor: project.data?.color || 'blue', // Use project color
                             title: item.fileNumber ? `DUE: ${item.fileNumber}` : `Deadline`,
                             startDate: item.dueDate,
                             endDate: item.dueDate,
