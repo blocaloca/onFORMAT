@@ -37,9 +37,11 @@ export const DocumentLayout = ({
     // Dimensions in pixels (96DPI): 8.5in = 816px, 11in = 1056px
     // User Request: Make document 20% larger in workspace (1.2x scale)
     // FIX: reset scaling for Print Room to prevent cropping
-    const SCALE = isPrinting ? 1.0 : 1.2;
-    const width = Math.round((orientation === 'landscape' ? 1056 : 816) * SCALE);
-    const height = Math.round((orientation === 'landscape' ? 816 : 1056) * SCALE);
+    // Always use standard 96DPI dimensions (1.0 scale) to ensure Editor matches PDF output (WYSIWYG).
+    // Zooming is handled by the parent container's CSS transform.
+    const SCALE = 1.0;
+    const width = orientation === 'landscape' ? 1056 : 816;
+    const height = orientation === 'landscape' ? 816 : 1056;
 
     return (
         <>
