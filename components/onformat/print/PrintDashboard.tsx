@@ -398,11 +398,11 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     </div>
 
                     {/* Scrollable Preview Area */}
-                    <div className="flex-1 h-full overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center pt-8 pb-20">
+                    <div className="flex-1 h-full overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center pt-8 pb-20 px-8">
                         <div className="flex flex-col items-center gap-8 w-full">
                             {/* Render the actual content but scaled */}
                             <PrintPreview
-                                scale={0.85}
+                                scale={0.9}
                                 items={documentList
                                     .filter(doc => selectedTools.has(doc.id))
                                     .map(doc => ({

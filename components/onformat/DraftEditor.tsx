@@ -425,7 +425,7 @@ export const DraftEditor = ({
 
                 {/* Document Area */}
                 <div className="w-full flex justify-center pb-20 pt-6">
-                    <div className="relative z-10 origin-top" style={{ transform: 'scale(0.85)' }}>
+                    <div className="relative z-10 origin-top" style={{ transform: 'scale(0.9)' }}>
                         <TemplateComponent
                             data={activeData}
                             // @ts-ignore
