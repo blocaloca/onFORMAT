@@ -128,7 +128,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                                         transform: `scale(${scale})`,
                                     }}
                                 >
-                                    <div className="w-full h-full p-[40px] overflow-hidden relative">
+                                    <div className="w-full h-full relative">
                                         {Template ? (
                                             <Template
                                                 data={versionData}
