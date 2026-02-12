@@ -343,8 +343,6 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                         if (!doc) return null;
 
                                         const isSelected = selectedTools.has(toolId);
-                                        const statusColor = getStatusColor(doc);
-
                                         return (
                                             <div
                                                 key={toolId}
@@ -362,13 +360,6 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                                     <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-300'}`}>
                                                         {doc.label}
                                                     </span>
-                                                </div>
-
-                                                {/* Right: Status Light */}
-                                                <div className="flex items-center gap-4">
-                                                    <div className="relative flex items-center justify-center w-4 h-4" title={statusColor.includes('red') ? 'Empty' : statusColor.includes('yellow') ? 'Drafting' : 'Ready'}>
-                                                        <div className={`w-2 h-2 rounded-full ${statusColor} transition-colors duration-300 group-hover:ring-2 ring-white/10`} />
-                                                    </div>
                                                 </div>
                                             </div>
                                         );
