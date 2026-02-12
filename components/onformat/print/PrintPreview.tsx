@@ -51,11 +51,11 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                 return (
                     <div
                         id="print-node-COVER"
-                        className="bg-white shadow-2xl relative shrink-0 mb-8"
-                        style={{ width: scaledW, height: scaledH, overflow: 'hidden' }}
+                        className="bg-white shadow-2xl relative shrink-0 mb-8 overflow-hidden"
+                        style={{ width: scaledW, height: scaledH }}
                     >
                         <div
-                            className={`w-[${w}px] h-[${h}px] flex flex-col items-center justify-center text-black`}
+                            className="bg-white flex flex-col items-center justify-center text-black"
                             style={{
                                 width: w,
                                 height: h,
@@ -63,14 +63,15 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                                 transformOrigin: 'top left'
                             }}
                         >
-                            <div className="text-center space-y-8">
+                            <div className="text-center space-y-8 p-12 w-full h-full flex flex-col items-center justify-center relative">
                                 <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">{coverSettings.title}</h1>
                                 <div className="w-24 h-1.5 bg-black mx-auto" />
                                 <h2 className="text-lg font-bold tracking-[0.3em] uppercase text-zinc-500">{coverSettings.subtitle}</h2>
                                 <p className="pt-8 font-mono text-xs text-zinc-400 font-bold tracking-widest">{coverSettings.date}</p>
-                            </div>
-                            <div className="absolute bottom-16 left-0 right-0 text-center">
-                                <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">Created with onFORMAT</p>
+
+                                <div className="absolute bottom-16 left-0 right-0 text-center">
+                                    <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">Created with onFORMAT</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -116,31 +117,33 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                     return (
                         <div key={uniqueKey} className="flex flex-col items-center w-full mb-8">
                             <div
-                                className="bg-white shadow-xl relative overflow-hidden"
+                                className="bg-white shadow-xl relative overflow-hidden shrink-0"
                                 style={{ width: scaledW, height: scaledH }}
                             >
                                 <div
+                                    className="bg-white origin-top-left"
                                     style={{
                                         width: w,
                                         height: h,
                                         transform: `scale(${scale})`,
-                                        transformOrigin: 'top left'
                                     }}
                                 >
-                                    {Template ? (
-                                        <Template
-                                            data={versionData}
-                                            plain={false}
-                                            orientation={orientationOverride || 'portrait'}
-                                            isPrinting={true}
-                                            metadata={injectedMetadata}
-                                            onUpdate={() => { }}
-                                        />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest">
-                                            Template Not Found for {item.label}
-                                        </div>
-                                    )}
+                                    <div className="w-full h-full p-[40px] overflow-hidden relative">
+                                        {Template ? (
+                                            <Template
+                                                data={versionData}
+                                                plain={false}
+                                                orientation={orientationOverride || 'portrait'}
+                                                isPrinting={true}
+                                                metadata={injectedMetadata}
+                                                onUpdate={() => { }}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest border-2 border-dashed border-zinc-200 rounded-lg">
+                                                Template Not Found for {item.label}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
