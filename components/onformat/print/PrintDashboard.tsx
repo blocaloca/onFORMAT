@@ -278,11 +278,11 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 </div>
             </header>
 
-            <div className="flex-1 h-full overflow-hidden flex flex-row divide-x divide-zinc-900 max-w-[1300px] w-full mx-auto border-x border-zinc-900">
+            <div className="flex-1 h-full overflow-hidden flex flex-row divide-x divide-zinc-900 w-full bg-zinc-950">
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
-                <div className="w-64 shrink-0 overflow-y-auto bg-zinc-950/50 py-6 px-4 space-y-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                <div className="w-64 shrink-0 overflow-y-auto bg-zinc-950 py-6 px-4 space-y-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                     {/* 1. COVER PAGE CONTROLS */}
                     <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4">
