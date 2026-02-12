@@ -63,7 +63,7 @@ const PHASE_GROUPS: Record<string, string[]> = {
 // ---------------------------------------------------------------------------
 // Inner Component (Accesses Context)
 // ---------------------------------------------------------------------------
-const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, projectName: string }) => {
+const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onClose: () => void, projectName: string, clientName?: string, producer?: string }) => {
     const { activeProject, getToolData, getToolStack } = useProject();
 
     // Selection State
@@ -95,7 +95,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
     const [coverSettings, setCoverSettings] = useState({
         showCover: true,
         title: projectName,
-        subtitle: 'Production Package',
+        subtitle: clientName || '',
         date: new Date().toLocaleDateString(),
         orientation: 'landscape' as 'portrait' | 'landscape' // Will be overridden by masterOrientation in preview
     });
@@ -278,15 +278,15 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
             </header>
 
-            <div className="flex-1 h-full overflow-hidden grid grid-cols-12 divide-x divide-zinc-900 max-w-[1300px] w-full mx-auto border-x border-zinc-900">
+            <div className="flex-1 h-full overflow-hidden flex flex-row divide-x divide-zinc-900 max-w-[1300px] w-full mx-auto border-x border-zinc-900">
 
                 {/* --- Sidebar: The "List" --- */}
                 {/* LEFT COL: CONTROLS (Span 7) */}
-                <div className="col-span-5 overflow-y-auto bg-zinc-950/50 py-6 pl-6 pr-6 mr-4 md:py-8 md:pl-8 md:pr-8 md:mr-6 space-y-12 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                <div className="w-64 shrink-0 overflow-y-auto bg-zinc-950/50 py-6 px-4 space-y-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
 
                     {/* 1. COVER PAGE CONTROLS */}
-                    <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-6">
-                        <div className="flex items-center justify-between mb-6">
+                    <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-4">
                             <h2 className="text-xs font-black uppercase text-white tracking-widest flex items-center gap-2">
                                 <Layers size={14} className="text-emerald-500" />
                                 Cover Page
@@ -300,13 +300,13 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                         </div>
 
                         {coverSettings.showCover && (
-                            <div className="grid grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2">
-                                <div className="col-span-2 space-y-2">
+                            <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
+                                <div className="space-y-2">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Project Title</label>
                                     <input
                                         value={coverSettings.title}
                                         onChange={(e) => setCoverSettings(s => ({ ...s, title: e.target.value }))}
-                                        className="w-full bg-black border border-zinc-800 rounded px-4 py-3 text-sm font-bold text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 focus:outline-none transition-all uppercase tracking-wide"
+                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs font-bold text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 focus:outline-none transition-all uppercase tracking-wide"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -314,16 +314,16 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                                     <input
                                         value={coverSettings.subtitle}
                                         onChange={(e) => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
-                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2.5 text-xs text-zinc-300 focus:border-emerald-500 focus:outline-none transition-all placeholder:text-zinc-700"
+                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-300 focus:border-emerald-500 focus:outline-none transition-all placeholder:text-zinc-700"
                                         placeholder="Client Name / Agency"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Producer / Owner</label>
                                     <input
-                                        value={activeProject?.owner_name || ''}
+                                        value={producer || activeProject?.owner_name || ''}
                                         readOnly
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2.5 text-xs text-zinc-500 focus:outline-none font-mono cursor-not-allowed"
+                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-500 focus:outline-none font-mono cursor-not-allowed"
                                     />
                                 </div>
                             </div>
@@ -371,7 +371,7 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
                 </div>
 
                 {/* RIGHT COL: PREVIEW STACK (Span 5) */}
-                <div className="col-span-7 h-full overflow-hidden bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
+                <div className="flex-1 h-full overflow-hidden bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
 
                     {/* Preview Toolbar */}
                     <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
@@ -437,10 +437,10 @@ const PrintRoomContent = ({ onClose, projectName }: { onClose: () => void, proje
 // ---------------------------------------------------------------------------
 // Wrapper
 // ---------------------------------------------------------------------------
-export const PrintDashboard = ({ phases, projectName, producer, onClose }: PrintDashboardProps) => {
+export const PrintDashboard = ({ phases, projectName, clientName, producer, onClose }: PrintDashboardProps) => {
     return (
         <ProjectProvider phases={phases} projectMetadata={{ name: projectName, producer: producer }}>
-            <PrintRoomContent onClose={onClose} projectName={projectName || 'Untitled'} />
+            <PrintRoomContent onClose={onClose} projectName={projectName || 'Untitled'} clientName={clientName} producer={producer} />
         </ProjectProvider>
     );
 };
