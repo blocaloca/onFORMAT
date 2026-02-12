@@ -402,7 +402,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                         <div className="flex flex-col items-center gap-8 w-full">
                             {/* Render the actual content but scaled */}
                             <PrintPreview
-                                scale={1}
+                                scale={0.85}
                                 items={documentList
                                     .filter(doc => selectedTools.has(doc.id))
                                     .map(doc => ({
