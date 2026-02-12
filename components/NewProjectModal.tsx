@@ -46,83 +46,91 @@ export default function NewProjectModal({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
+    <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="bg-zinc-950 border border-zinc-800 rounded-sm shadow-2xl max-w-md w-full animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="p-6 border-b border-[#E5E5EA]">
-          <h2 className="text-2xl font-bold text-[#1D1D1F]">Create New Project</h2>
+        <div className="p-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/50">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 bg-emerald-500 rounded-sm" />
+            <h2 className="text-xs font-black uppercase text-white tracking-[0.2em]">New Operation</h2>
+          </div>
+          <div className="text-[10px] font-mono text-zinc-600">PN-{Math.floor(Math.random() * 1000)}</div>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-8 space-y-8">
           {/* Project Name */}
-          <div>
-            <label className="block text-sm font-semibold text-[#1D1D1F] mb-2">
-              Project Name
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase text-zinc-500 tracking-wider">
+              Project Name / Codename
             </label>
             <input
               type="text"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
-              placeholder="Summer Campaign 2025"
-              className="w-full px-4 py-3 border border-[#E5E5EA] rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-[#1D1D1F]"
+              placeholder="ENTER PROJECT IDENTIFIER..."
+              className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-sm text-sm font-bold text-white placeholder-zinc-700 focus:outline-none focus:border-emerald-500 focus:bg-zinc-900 transition-all uppercase tracking-wide"
               autoFocus
             />
           </div>
 
           {/* Template Selector */}
-          <div>
-            <label className="block text-sm font-semibold text-[#1D1D1F] mb-2">
-              Choose Template
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase text-zinc-500 tracking-wider">
+              Select Framework
             </label>
-            <select
-              value={selectedTemplate}
-              onChange={(e) => setSelectedTemplate(e.target.value)}
-              className="w-full px-4 py-3 border border-[#E5E5EA] rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-[#1D1D1F] bg-white"
-            >
-              <option value="">Select a template...</option>
+            <div className="relative">
+              <select
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value)}
+                className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-sm text-xs font-bold text-zinc-300 focus:outline-none focus:border-emerald-500 focus:text-white appearance-none uppercase tracking-wide"
+              >
+                <option value="">Select Template...</option>
 
-              {/* Custom Templates */}
-              {customTemplates.length > 0 && (
-                <optgroup label="My Custom Templates">
-                  {customTemplates.map((template) => (
+                {/* Custom Templates */}
+                {customTemplates.length > 0 && (
+                  <optgroup label="MY TEMPLATES">
+                    {customTemplates.map((template) => (
+                      <option key={template.id} value={template.id}>
+                        {template.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+
+                {/* Built-in Templates */}
+                <optgroup label="SYSTEM TEMPLATES">
+                  {builtInTemplates.map((template) => (
                     <option key={template.id} value={template.id}>
-                      {template.icon} {template.name}
+                      {template.name}
                     </option>
                   ))}
                 </optgroup>
-              )}
-
-              {/* Built-in Templates */}
-              <optgroup label="Built-in Templates">
-                {builtInTemplates.map((template) => (
-                  <option key={template.id} value={template.id}>
-                    {template.icon} {template.name}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
+              </select>
+              {/* Custom Arrow */}
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-zinc-600" />
+            </div>
           </div>
 
           {/* Hint */}
-          <div className="pt-2">
-            <p className="text-sm text-gray-500">
-              Scroll down to see all available templates on the dashboard.
+          <div className="pt-2 border-t border-zinc-900">
+            <p className="text-[10px] font-mono text-zinc-600 uppercase">
+              // Initializing project structure...
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-[#E5E5EA] flex gap-3 justify-end">
+        <div className="p-4 bg-zinc-900/30 border-t border-zinc-800 flex gap-4 justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 border border-[#E5E5EA] text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+            className="px-6 py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-white transition-colors"
           >
-            Cancel
+            Abort
           </button>
           <button
             onClick={handleCreate}
-            className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition font-semibold"
+            className="px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-black border border-emerald-500 rounded-sm text-[10px] font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_rgba(16,185,129,0.5)] transition-all"
           >
             Create Project
           </button>

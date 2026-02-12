@@ -14,18 +14,19 @@ export const GlassButton = ({
     ...props
 }: GlassButtonProps) => {
 
-    const baseStyles = "relative overflow-hidden rounded-xl font-semibold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 backdrop-blur-md";
+    // INDUSTRIAL DESIGN SYSTEM OVERRIDE
+    const baseStyles = "relative overflow-hidden rounded-sm font-bold uppercase tracking-widest transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2";
 
     const variants = {
-        primary: "bg-[#1D1D1F] text-white hover:bg-black shadow-lg hover:shadow-xl border border-transparent",
-        secondary: "bg-white/60 dark:bg-white/10 text-[#1D1D1F] dark:text-white border border-white/20 hover:bg-white/80 dark:hover:bg-white/20 shadow-sm",
-        ghost: "bg-transparent hover:bg-white/20 text-[#1D1D1F] dark:text-white"
+        primary: "bg-emerald-600 text-white hover:bg-emerald-500 shadow-md shadow-emerald-900/20 border border-emerald-500",
+        secondary: "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-white hover:bg-zinc-800",
+        ghost: "bg-transparent text-zinc-500 hover:text-white hover:bg-zinc-800/50"
     };
 
     const sizes = {
-        sm: "px-4 py-2 text-sm",
-        md: "px-6 py-3 text-base",
-        lg: "px-8 py-4 text-lg"
+        sm: "px-3 py-1.5 text-[10px]",
+        md: "px-5 py-2.5 text-xs",
+        lg: "px-8 py-3 text-sm"
     };
 
     return (
