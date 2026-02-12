@@ -213,7 +213,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     placeholder="Describe the visual direction, tone, and style..."
                                     className={`w-full bg-zinc-50 border border-zinc-200 p-3 text-xs min-h-[60px] outline-none focus:border-black resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                 />
-                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-zinc-50 border border-zinc-200 p-3 text-xs min-h-[60px] whitespace-pre-wrap break-words text-black`}>
+                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-xs min-h-[60px] whitespace-pre-wrap break-words text-black`}>
                                     {data.overview || "—"}
                                 </div>
                             </div>
@@ -222,7 +222,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                         {/* Sub-page Header */}
                         {pageIndex > 0 && (
                             <div className="text-center text-sm font-bold text-zinc-500 mb-4">
-                                Storyboard (Cont. Page {pageIndex + 1})
+                                Moodboard (Cont. Page {pageIndex + 1})
                             </div>
                         )}
 
@@ -294,13 +294,19 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )}
 
                                         {/* Image Container */}
-                                        <div className={`w-full bg-zinc-50 ${getAspectClass(item.aspectRatio)} shadow-sm relative border border-dashed border-zinc-200`}>
-                                            <ImageUploader
-                                                currentUrl={item.url}
-                                                onUpload={(url) => handleUpdateItem(originalIndex, { url })}
-                                                className="w-full h-full object-cover"
-                                                isLocked={isLocked}
-                                            />
+                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} shadow-sm relative ${isPrinting ? 'bg-transparent' : 'bg-zinc-50 border border-dashed border-zinc-200'}`}>
+                                            {isPrinting ? (
+                                                item.url ? (
+                                                    <img src={item.url} className="w-full h-full object-cover" />
+                                                ) : null
+                                            ) : (
+                                                <ImageUploader
+                                                    currentUrl={item.url}
+                                                    onUpload={(url) => handleUpdateItem(originalIndex, { url })}
+                                                    className="w-full h-full object-cover"
+                                                    isLocked={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Caption */}

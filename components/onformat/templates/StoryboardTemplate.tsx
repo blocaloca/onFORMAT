@@ -315,13 +315,19 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             </div>
                                         )}
 
-                                        <div className={`w-full bg-zinc-50 ${getAspectClass(item.aspectRatio)} border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200'} relative overflow-hidden transition-all`}>
-                                            <ImageUploader
-                                                currentUrl={item.url}
-                                                onUpload={(url) => handleUpdateItem(originalIndex, { url })}
-                                                className="w-full h-full object-cover"
-                                                isLocked={isLocked}
-                                            />
+                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} relative overflow-hidden transition-all ${isPrinting ? 'bg-transparent' : `bg-zinc-50 border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200'}`}`}>
+                                            {isPrinting ? (
+                                                item.url ? (
+                                                    <img src={item.url} className="w-full h-full object-cover" />
+                                                ) : null
+                                            ) : (
+                                                <ImageUploader
+                                                    currentUrl={item.url}
+                                                    onUpload={(url) => handleUpdateItem(originalIndex, { url })}
+                                                    className="w-full h-full object-cover"
+                                                    isLocked={isLocked}
+                                                />
+                                            )}
                                             {invalidScene && item.sceneLink && !isPrinting && (
                                                 <div className="absolute top-2 right-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
                                                     SCENE DELETED

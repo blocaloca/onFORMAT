@@ -60,7 +60,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                     onChange={(e) => handleChange(key, e.target.value)}
                     placeholder={placeholder}
                 />
-                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 p-3 rounded-sm min-h-[40px]`}>
+                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-xs font-sans leading-normal text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 p-3 rounded-sm`}>
                     {textVal || "—"}
                 </div>
             </>

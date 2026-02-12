@@ -127,7 +127,7 @@ export const CreativeConceptTemplate = ({
                             className={`flex-1 w-full bg-zinc-50/30 resize-none outline-none text-sm leading-relaxed p-6 border border-transparent focus:border-zinc-200 focus:bg-white rounded-sm transition-colors ${isPrinting ? 'hidden' : 'print:hidden'}`}
                             disabled={isLocked}
                         />
-                        <div className={`${isPrinting ? 'block' : 'hidden print:block'} flex-1 w-full text-sm leading-relaxed p-6 whitespace-pre-wrap break-words text-black bg-zinc-50 border border-transparent rounded-sm`}>
+                        <div className={`${isPrinting ? 'block' : 'hidden print:block'} flex-1 w-full text-sm leading-relaxed p-6 whitespace-pre-wrap break-words text-black bg-transparent`}>
                             {page.content || "—"}
                         </div>
 

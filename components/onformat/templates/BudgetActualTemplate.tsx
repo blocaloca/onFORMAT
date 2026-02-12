@@ -158,10 +158,10 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.description}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`w-full bg-transparent text-xs font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-xs font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden`}>{item.description}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black`}>{item.description}</div>
                                         </div>
 
                                         {/* Budgeted (ReadOnly) */}
@@ -175,11 +175,11 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="number"
                                                 value={item.actual || ''}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { actual: parseFloat(e.target.value) || 0 })}
-                                                className={`w-full bg-transparent text-xs font-mono font-bold text-right focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-xs font-mono font-bold text-right focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="0.00"
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-mono font-bold text-right px-1 py-1`}>{formatter.format(item.actual)}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-mono font-bold text-right px-1 py-1 text-black`}>{formatter.format(item.actual)}</div>
                                         </div>
 
                                         {/* Variance */}

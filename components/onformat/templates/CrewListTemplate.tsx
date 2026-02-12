@@ -311,24 +311,24 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.department}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { department: e.target.value })}
-                                                className={`w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                             </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 text-ellipsis overflow-hidden`}>{item.department}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 text-ellipsis overflow-hidden text-black`}>{item.department}</div>
                                         </div>
                                         {/* Role */}
                                         <div className="relative">
                                             <select
                                                 value={item.role}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { role: e.target.value })}
-                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 text-[10px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 text-[10px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {roles.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                             </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] font-medium px-1 py-1.5 text-ellipsis overflow-hidden`}>{item.role}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] font-medium px-1 py-1.5 text-ellipsis overflow-hidden text-black`}>{item.role}</div>
                                         </div>
                                         {/* Name */}
                                         <div>
@@ -336,11 +336,11 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.name}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { name: e.target.value })}
-                                                className={`w-full bg-transparent text-xs font-bold focus:bg-white rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-xs font-bold focus:bg-white rounded px-1 py-1 outline-none text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Name..."
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold px-1 py-1`}>{item.name || "—"}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold px-1 py-1 text-black`}>{item.name || "—"}</div>
                                         </div>
 
                                         {/* onSET Groups */}

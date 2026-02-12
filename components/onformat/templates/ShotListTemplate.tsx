@@ -155,15 +155,16 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
 
                                         {/* Scene */}
+                                        {/* Scene */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-xs font-medium px-1 py-1 block">{shot.scene}</div>
+                                                <div className="w-full text-xs font-medium px-1 py-1 block text-black">{shot.scene}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={shot.scene}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { scene: e.target.value })}
-                                                    className="w-full bg-transparent text-xs font-medium focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1"
+                                                    className="w-full bg-transparent text-xs font-medium focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black"
                                                     placeholder="Sc #"
                                                     disabled={isLocked}
                                                 />
@@ -173,12 +174,12 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Size Dropdown */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block">{shot.size}</div>
+                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block text-black">{shot.size}</div>
                                             ) : (
                                                 <select
                                                     value={shot.size}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { size: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10"
+                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 text-black"
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_SIZES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -189,12 +190,12 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Angle Dropdown */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block">{shot.angle}</div>
+                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block text-black">{shot.angle}</div>
                                             ) : (
                                                 <select
                                                     value={shot.angle}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { angle: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10"
+                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 text-black"
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_ANGLES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -205,12 +206,12 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Movement Dropdown */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block">{shot.movement}</div>
+                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block text-black">{shot.movement}</div>
                                             ) : (
                                                 <select
                                                     value={shot.movement}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { movement: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10"
+                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 text-black"
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_MOVEMENTS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -221,14 +222,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Description */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-xs leading-relaxed px-1 py-1 whitespace-pre-wrap block">{shot.description}</div>
+                                                <div className="w-full text-xs leading-relaxed px-1 py-1 whitespace-pre-wrap block text-black">{shot.description}</div>
                                             ) : (
                                                 <textarea
                                                     data-index={globalIdx}
                                                     value={shot.description}
                                                     onChange={autoResize}
                                                     rows={1}
-                                                    className="w-full bg-transparent text-xs leading-relaxed focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 resize-none overflow-hidden min-h-[32px]"
+                                                    className="w-full bg-transparent text-xs leading-relaxed focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 resize-none overflow-hidden min-h-[32px] text-black"
                                                     placeholder="Describe the action..."
                                                     disabled={isLocked}
                                                     style={{ height: 'auto' }} // Initial reset

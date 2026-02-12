@@ -129,7 +129,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                 <div className={`space-y-3 ${!isPortrait ? 'w-1/2' : ''}`}>
                                     <div>
                                         {isPrinting ? (
-                                            <div className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-1 leading-tight">{item.role}</div>
+                                            <div className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-1 leading-tight block">{item.role}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -142,7 +142,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                         )}
 
                                         {isPrinting ? (
-                                            <div className="text-xl font-bold text-black leading-tight">{item.name}</div>
+                                            <div className="text-xl font-bold text-black leading-tight block">{item.name}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -160,7 +160,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                         <div className="space-y-1">
                                             <label className="text-[9px] text-zinc-400 font-bold uppercase block">Agency</label>
                                             {isPrinting ? (
-                                                <div className="font-medium text-zinc-600 min-h-[1rem]">{item.specs.agency}</div>
+                                                <div className="font-medium text-zinc-600 min-h-[1rem] block">{item.specs.agency}</div>
                                             ) : (
                                                 <input
                                                     type="text"
@@ -175,7 +175,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                         <div className="space-y-1">
                                             <label className="text-[9px] text-zinc-400 font-bold uppercase block">Union Status</label>
                                             {isPrinting ? (
-                                                <div className="font-medium text-zinc-600 min-h-[1rem]">{item.specs.union}</div>
+                                                <div className="font-medium text-zinc-600 min-h-[1rem] block">{item.specs.union}</div>
                                             ) : (
                                                 <input
                                                     type="text"
@@ -190,7 +190,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                         <div className="space-y-1">
                                             <label className="text-[9px] text-zinc-400 font-bold uppercase block">Contact</label>
                                             {isPrinting ? (
-                                                <div className="font-medium text-zinc-600 min-h-[1rem]">{item.specs.contact}</div>
+                                                <div className="font-medium text-zinc-600 min-h-[1rem] block">{item.specs.contact}</div>
                                             ) : (
                                                 <input
                                                     type="text"
@@ -205,7 +205,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                         <div className="space-y-1">
                                             <label className="text-[9px] text-zinc-400 font-bold uppercase block">Sizes / Height</label>
                                             {isPrinting ? (
-                                                <div className="font-medium text-zinc-600 min-h-[1rem]">{item.specs.sizes}</div>
+                                                <div className="font-medium text-zinc-600 min-h-[1rem] block">{item.specs.sizes}</div>
                                             ) : (
                                                 <input
                                                     type="text"
@@ -223,7 +223,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                     <div className="space-y-1 border-t border-zinc-100 pt-3 mt-2">
                                         <label className="text-[9px] text-zinc-400 font-bold uppercase block">Notes</label>
                                         {isPrinting ? (
-                                            <div className="font-medium text-zinc-600 min-h-[1rem] whitespace-pre-wrap text-xs">{item.notes}</div>
+                                            <div className="font-medium text-zinc-600 min-h-[1rem] whitespace-pre-wrap text-xs block">{item.notes}</div>
                                         ) : (
                                             <textarea
                                                 value={item.notes || ''}

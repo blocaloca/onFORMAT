@@ -281,24 +281,34 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                         {/* Image Container */}
                                         <div className={`w-full bg-zinc-50 ${getAspectClass(item.aspectRatio)} shadow-sm relative overflow-hidden`}>
-                                            <ImageUploader
-                                                currentUrl={item.url}
-                                                onUpload={(url) => handleUpdateItem(originalIndex, { url })}
-                                                className="w-full h-full object-cover"
-                                                isLocked={isLocked}
-                                            />
+                                            {isPrinting ? (
+                                                item.url ? (
+                                                    <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
+                                                ) : null
+                                            ) : (
+                                                <ImageUploader
+                                                    currentUrl={item.url}
+                                                    onUpload={(url) => handleUpdateItem(originalIndex, { url })}
+                                                    className="w-full h-full object-cover"
+                                                    isLocked={isLocked}
+                                                />
+                                            )}
                                         </div>
 
                                         {/* Caption */}
                                         {item.showCaption && (
-                                            <textarea
-                                                className="w-full text-[10px] font-mono text-gray-500 bg-transparent outline-none border-b border-transparent focus:border-black placeholder-gray-300 resize-none overflow-hidden"
-                                                placeholder="Add notes..."
-                                                rows={2}
-                                                value={item.caption}
-                                                onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
-                                                disabled={isLocked}
-                                            />
+                                            isPrinting ? (
+                                                <div className="w-full text-[10px] font-mono text-gray-500 whitespace-pre-wrap break-words block mt-1">{item.caption}</div>
+                                            ) : (
+                                                <textarea
+                                                    className="w-full text-[10px] font-mono text-gray-500 bg-transparent outline-none border-b border-transparent focus:border-black placeholder-gray-300 resize-none overflow-hidden mt-1"
+                                                    placeholder="Add notes..."
+                                                    rows={2}
+                                                    value={item.caption}
+                                                    onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            )
                                         )}
                                     </div>
                                 );

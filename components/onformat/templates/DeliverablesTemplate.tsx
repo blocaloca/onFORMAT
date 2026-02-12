@@ -154,14 +154,15 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         </div>
 
                                         {/* File Number */}
+                                        {/* File Number */}
                                         {isPrinting ? (
-                                            <div className="font-mono font-bold text-xs px-1 pt-1 leading-normal block">{item.fileNumber}</div>
+                                            <div className="font-mono font-bold text-xs px-1 pt-1 leading-normal block text-black">{item.fileNumber}</div>
                                         ) : (
                                             <input
                                                 type="text"
                                                 value={item.fileNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                                className="font-mono font-bold text-xs bg-transparent outline-none focus:bg-white rounded px-1 pt-1"
+                                                className="font-mono font-bold text-xs bg-transparent outline-none focus:bg-white rounded px-1 pt-1 text-black"
                                                 placeholder="A001_..."
                                                 disabled={isLocked}
                                             />
@@ -170,7 +171,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* Due Date */}
                                         <div className="pt-1">
                                             {isPrinting ? (
-                                                <div className="font-mono font-bold text-xs uppercase block">{item.dueDate}</div>
+                                                <div className="font-mono font-bold text-[10px] uppercase block text-zinc-600">{item.dueDate}</div>
                                             ) : (
                                                 <input
                                                     type="date"
@@ -185,12 +186,12 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* Description */}
                                         <div className="min-w-0">
                                             {isPrinting ? (
-                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block">{item.description}</div>
+                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block text-black">{item.description}</div>
                                             ) : (
                                                 <textarea
                                                     value={item.description}
                                                     onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[40px] w-full text-[10px]"
+                                                    className="bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[40px] w-full text-[10px] text-black"
                                                     placeholder="Description..."
                                                     rows={Math.max(2, item.description.split('\n').length)}
                                                     disabled={isLocked}
