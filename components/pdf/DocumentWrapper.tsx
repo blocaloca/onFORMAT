@@ -56,7 +56,7 @@ export const PageLayout: React.FC<PageLayoutProps> = ({ children, orientation = 
     });
 
     return (
-        <Page size="A4" style={styles.page} orientation={orientation}>
+        <Page size="LETTER" style={styles.page} orientation={orientation}>
             {children}
 
             {/* Footer - Fixed on all pages */}

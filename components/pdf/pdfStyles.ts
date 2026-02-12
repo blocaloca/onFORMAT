@@ -21,10 +21,10 @@ export const colors = {
 export const styles = StyleSheet.create({
     // Global Page Layout
     page: {
-        paddingTop: 40,
-        paddingBottom: 40,
-        paddingLeft: 40,
-        paddingRight: 40,
+        paddingTop: 54, // ~0.75 inch safe margin
+        paddingBottom: 54,
+        paddingLeft: 54,
+        paddingRight: 54,
         fontFamily: 'Inter',
         fontSize: 9,
         color: colors.text,
