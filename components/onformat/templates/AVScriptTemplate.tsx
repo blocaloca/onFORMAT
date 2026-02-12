@@ -125,7 +125,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-bold text-sm text-center text-black py-1`}>{row.scene}</div>
+                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-bold text-sm text-center text-black py-1`}>{row.scene || "—"}</div>
                                             </div>
 
                                             {/* Duration */}
@@ -138,7 +138,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     placeholder="00:00:00"
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-mono text-xs text-black py-1`}>{row.time}</div>
+                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-mono text-xs text-black py-1`}>{row.time || "—"}</div>
                                             </div>
 
                                             {/* Visual */}

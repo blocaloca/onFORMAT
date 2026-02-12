@@ -60,6 +60,14 @@ export const MasterPDFDocument: React.FC<MasterPDFProps> = ({ document, project,
                     { header: 'Call Time', width: '30%', accessor: 'callTime' }
                 ];
 
+            case 'av-script':
+                return [
+                    { header: 'Scene', width: '10%', align: 'center', render: (row: any) => row.scene || '—' },
+                    { header: 'Duration', width: '10%', align: 'center', render: (row: any) => row.time || '—' },
+                    { header: 'Visual', width: '40%', accessor: 'visual' },
+                    { header: 'Audio', width: '40%', accessor: 'audio' }
+                ];
+
             default:
                 // Generic fallback - try to find common keys or array
                 return [
@@ -87,6 +95,9 @@ export const MasterPDFDocument: React.FC<MasterPDFProps> = ({ document, project,
             const talent = c.talent || [];
             return [...talent, ...crew];
         }
+
+        // AV Script
+        if (document.type === 'av-script' && c.rows) return c.rows;
 
         // Generic List
         if (Array.isArray(c)) return c;
