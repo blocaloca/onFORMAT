@@ -20,6 +20,7 @@ interface DocumentLayoutProps {
     plain?: boolean; // Deprecated but kept for compatibility, effectively always false now for visual pages
     orientation?: 'portrait' | 'landscape';
     metadata?: DocumentMetadata;
+    isPrinting?: boolean;
 }
 
 export const DocumentLayout = ({
@@ -29,12 +30,14 @@ export const DocumentLayout = ({
     className = '',
     hideHeader = false,
     orientation = 'portrait',
-    metadata
+    metadata,
+    isPrinting = false
 }: DocumentLayoutProps) => {
 
     // Dimensions in pixels (96DPI): 8.5in = 816px, 11in = 1056px
     // User Request: Make document 20% larger in workspace (1.2x scale)
-    const SCALE = 1.2;
+    // FIX: reset scaling for Print Room to prevent cropping
+    const SCALE = isPrinting ? 1.0 : 1.2;
     const width = Math.round((orientation === 'landscape' ? 1056 : 816) * SCALE);
     const height = Math.round((orientation === 'landscape' ? 816 : 1056) * SCALE);
 

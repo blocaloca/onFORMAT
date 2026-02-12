@@ -76,6 +76,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                 metadata={metadata}
                 plain={plain}
                 orientation={orientation}
+                isPrinting={isPrinting}
             >
                 <div className="space-y-6 h-full flex flex-col">
                     <section>
@@ -115,6 +116,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                 metadata={undefined} // Hide redundant metadata block if preferred, or keep
                 plain={plain}
                 orientation={orientation}
+                isPrinting={isPrinting}
             >
                 <div className="space-y-6 h-full flex flex-col">
                     <section className="flex-1">
