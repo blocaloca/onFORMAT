@@ -16,12 +16,13 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { priceId } = body;
 
-        // Use the configured Pro Plan ID as the default/target
+        // Use the configured Pro Plan ID as default
         const PRO_PRICE_ID = STRIPE_PLANS.pro.id;
 
-        // If a specific price ID is passed, verify it is one of our allowed plans
-        // Note: Free plan usually doesn't need checkout, but for completeness or upsells
-        if (priceId && priceId !== PRO_PRICE_ID && priceId !== STRIPE_PLANS.free.id) {
+        // Collect all valid price IDs
+        const validPriceIds = Object.values(STRIPE_PLANS).map(plan => plan.id);
+
+        if (priceId && !validPriceIds.includes(priceId)) {
             return new NextResponse('Invalid Price ID', { status: 400 });
         }
 

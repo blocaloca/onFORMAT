@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { STRIPE_PLANS } from '@/lib/stripe-products';
 
 export default function AccountPage() {
     const router = useRouter();
@@ -199,57 +200,121 @@ export default function AccountPage() {
                 {/* Column 3: Subscription & Security */}
                 <div className="space-y-8">
                     {/* Subscription */}
+                    {/* Subscription Tiers */}
                     <div className="bg-black/20 border border-zinc-800 p-8 rounded-lg">
                         <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6 flex items-center gap-2">
-                            <CreditCard size={16} /> Plan Status
+                            <CreditCard size={16} /> Subscription
                         </h2>
-                        <div>
-                            <p className="text-zinc-400 text-xs uppercase font-bold">Current Plan</p>
-                            <p className="text-xl font-bold text-white uppercase">{profile?.subscription_status === 'active' ? 'Pro Plan' : 'Free Beta'}</p>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-emerald-500 font-mono text-xs uppercase mb-2">
-                                {profile?.subscription_status === 'active' ? '● Active' : '● Inactive'}
+
+                        <div className="mb-6">
+                            <p className="text-zinc-500 text-xs uppercase font-bold mb-1">Current Plan</p>
+                            <div className="flex items-center gap-2">
+                                <p className="text-xl font-bold text-white uppercase">
+                                    {profile?.subscription_status === 'active'
+                                        ? (STRIPE_PLANS[profile?.subscription_tier as keyof typeof STRIPE_PLANS]?.name || 'Pro')
+                                        : 'Scout (Free)'}
+                                </p>
+                                <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide font-bold ${profile?.subscription_status === 'active'
+                                        ? 'bg-emerald-900/30 text-emerald-500 border border-emerald-900'
+                                        : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
+                                    }`}>
+                                    {profile?.subscription_status === 'active' ? 'Active' : 'Basic'}
+                                </span>
                             </div>
                         </div>
+
+                        <div className="space-y-3">
+                            {/* Upgrade Options */}
+                            {(!profile?.subscription_status || profile.subscription_status !== 'active') && (
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            setLoading(true);
+                                            fetch('/api/stripe/checkout', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ priceId: STRIPE_PLANS.pro.id })
+                                            })
+                                                .then(res => res.json())
+                                                .then(data => { if (data.url) window.location.href = data.url; })
+                                                .catch(() => alert('Checkout failed'))
+                                                .finally(() => setLoading(false));
+                                        }}
+                                        disabled={loading}
+                                        className="w-full bg-white text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm flex items-center justify-between group"
+                                    >
+                                        <span>Upgrade to Pro</span>
+                                        <span className="text-zinc-500 group-hover:text-black">$15/mo</span>
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setLoading(true);
+                                            fetch('/api/stripe/checkout', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ priceId: STRIPE_PLANS.studio.id })
+                                            })
+                                                .then(res => res.json())
+                                                .then(data => { if (data.url) window.location.href = data.url; })
+                                                .catch(() => alert('Checkout failed'))
+                                                .finally(() => setLoading(false));
+                                        }}
+                                        disabled={loading}
+                                        className="w-full bg-zinc-800 border border-zinc-700 text-white px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-700 rounded-sm flex items-center justify-between group"
+                                    >
+                                        <span>Upgrade to Studio</span>
+                                        <span className="text-zinc-400 group-hover:text-white">$29/mo</span>
+                                    </button>
+                                </>
+                            )}
+
+                            {/* If Pro, allow upgrade to Studio */}
+                            {profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro' && (
+                                <button
+                                    onClick={() => {
+                                        setLoading(true);
+                                        fetch('/api/stripe/checkout', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({ priceId: STRIPE_PLANS.studio.id })
+                                        })
+                                            .then(res => res.json())
+                                            .then(data => { if (data.url) window.location.href = data.url; })
+                                            .catch(() => alert('Checkout failed'))
+                                            .finally(() => setLoading(false));
+                                    }}
+                                    disabled={loading}
+                                    className="w-full bg-white text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm flex items-center justify-between"
+                                >
+                                    <span>Upgrade to Studio</span>
+                                    <span>$29/mo</span>
+                                </button>
+                            )}
+
+                            {/* Manage Subscription (Portal) - Always show if active */}
+                            {profile?.subscription_status === 'active' && (
+                                <button
+                                    onClick={async () => {
+                                        setLoading(true);
+                                        try {
+                                            const res = await fetch('/api/stripe/portal', { method: 'POST' });
+                                            const data = await res.json();
+                                            if (data.url) window.location.href = data.url;
+                                            else alert('Failed to load portal');
+                                        } catch (e) {
+                                            alert('Error loading portal');
+                                        } finally {
+                                            setLoading(false);
+                                        }
+                                    }}
+                                    className="w-full mt-4 bg-transparent border border-zinc-700 text-zinc-400 px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:text-white hover:border-zinc-500 rounded-sm"
+                                >
+                                    Manage Subscription
+                                </button>
+                            )}
+                        </div>
                     </div>
-
-                    {/* Manage Billing Action */}
-                    <button
-                        onClick={async () => {
-                            setLoading(true); // Re-use main loading or local state
-                            try {
-                                if (profile?.subscription_status !== 'active') {
-                                    // If inactive, go to Checkout instead of Portal
-                                    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO;
-                                    if (!priceId) { alert("Stripe Key Missing"); setLoading(false); return; }
-
-                                    const res = await fetch('/api/checkout', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ priceId })
-                                    });
-                                    const data = await res.json();
-                                    if (data.url) window.location.href = data.url;
-                                } else {
-                                    // If Active, go to Customer Portal
-                                    const res = await fetch('/api/create-portal-link');
-                                    const data = await res.json();
-                                    if (data.url) window.location.href = data.url;
-                                    else if (data.error) alert(data.error);
-                                }
-                            } catch (e) {
-                                console.error(e);
-                                alert("Failed to load billing portal.");
-                            } finally {
-                                setLoading(false);
-                            }
-                        }}
-                        className="w-full bg-white text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm flex items-center justify-center gap-2"
-                    >
-                        <CreditCard size={14} />
-                        {profile?.subscription_status === 'active' ? 'Manage Subscription' : 'Upgrade to Pro'}
-                    </button>
 
                     {/* Security */}
                     <div className="bg-black/20 border border-zinc-800 p-8 rounded-lg">

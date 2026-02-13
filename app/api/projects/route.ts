@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getInitialDocuments } from '@/lib/default-document-content'
+import { STRIPE_PLANS } from '@/lib/stripe-products'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key';
@@ -143,6 +144,46 @@ export async function POST(request: NextRequest) {
     } else {
       console.log('✅ Ensured Profile exists for:', finalUserId);
     }
+
+    // --- CHECK PROJECT LIMITS ---
+    // 1. Get current project count
+    const { count: projectCount, error: countError } = await supabase
+      .from('projects')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', finalUserId);
+
+    if (countError) {
+      console.error('Failed to check project count:', countError);
+      return NextResponse.json({ error: 'Failed to verify project limits.' }, { status: 500 });
+    }
+
+    // 2. Get user's subscription tier
+    const { data: userProfile, error: tierError } = await supabase
+      .from('profiles')
+      .select('subscription_tier')
+      .eq('id', finalUserId)
+      .single();
+
+    // Default to 'free' (Scout) if no profile or error
+    const tierKey = (userProfile?.subscription_tier || 'free') as keyof typeof STRIPE_PLANS;
+    const plan = STRIPE_PLANS[tierKey] || STRIPE_PLANS.free;
+
+    // 3. Enforce Limit
+    // Note: We check if count is >= max. (e.g. if max is 1, and they have 1, they cannot create another).
+    if ((projectCount || 0) >= plan.maxProjects) {
+      console.warn(`⛔️ User ${finalUserId} reached project limit for tier ${tierKey}. Count: ${projectCount}, Max: ${plan.maxProjects}`);
+      return NextResponse.json(
+        {
+          error: `Project limit reached for ${plan.name} plan.`,
+          code: 'PROJECT_LIMIT_REACHED',
+          limit: plan.maxProjects,
+          tier: tierKey
+        },
+        { status: 403 }
+      );
+    }
+    console.log(`✅ Limit Check Passed: ${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects} (Tier: ${tierKey})`);
+    // ----------------------------
 
     // Construct proper initial state to prevent WorkspaceEditor crash
     // The editor expects { activePhase, phases: {...}, ... }
