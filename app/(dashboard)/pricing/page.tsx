@@ -64,23 +64,17 @@ export default function PricingPage() {
                     </div>
 
                     <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-2">Basic</h3>
-                    <h2 className="text-3xl font-black uppercase tracking-widest mb-6">Scout</h2>
-                    <div className="text-5xl font-black mb-1">Free</div>
+                    <h2 className="text-3xl font-black uppercase tracking-widest mb-6">{STRIPE_PLANS.free.name}</h2>
+                    <div className="text-5xl font-black mb-1">{STRIPE_PLANS.free.price}</div>
                     <div className="text-zinc-400 text-sm mb-8">Forever</div>
 
                     <ul className="space-y-4 mb-8 flex-1">
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <Check size={16} className="text-zinc-300" />
-                            <span>Up to 3 Active Projects</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <Check size={16} className="text-zinc-300" />
-                            <span>Basic Document Templates</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <Check size={16} className="text-zinc-300" />
-                            <span>Standard PDF Exports</span>
-                        </li>
+                        {STRIPE_PLANS.free.features.map((feature, i) => (
+                            <li key={i} className="flex items-center gap-3 text-sm font-medium">
+                                <Check size={16} className="text-zinc-300" />
+                                <span>{feature}</span>
+                            </li>
+                        ))}
                     </ul>
 
                     <button disabled className="w-full py-4 border-2 border-zinc-100 text-zinc-400 font-bold text-xs uppercase tracking-widest rounded-xl cursor-not-allowed">
@@ -98,31 +92,17 @@ export default function PricingPage() {
                     <h3 className="text-sm font-bold uppercase tracking-widest text-indigo-400 mb-2 flex items-center gap-2">
                         <Sparkles size={14} /> Most Popular
                     </h3>
-                    <h2 className="text-3xl font-black uppercase tracking-widest mb-6">Pro</h2>
-                    <div className="text-5xl font-black mb-1">$29</div>
+                    <h2 className="text-3xl font-black uppercase tracking-widest mb-6">{STRIPE_PLANS.pro.name}</h2>
+                    <div className="text-5xl font-black mb-1">{STRIPE_PLANS.pro.price}</div>
                     <div className="text-zinc-500 text-sm mb-8">Per Month</div>
 
                     <ul className="space-y-4 mb-8 flex-1">
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <div className="bg-indigo-500/20 p-1 rounded-full text-indigo-400"><Check size={12} /></div>
-                            <span>Unlimited Projects</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <div className="bg-indigo-500/20 p-1 rounded-full text-indigo-400"><Check size={12} /></div>
-                            <span>Advanced AI Tools & Generation</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <div className="bg-indigo-500/20 p-1 rounded-full text-indigo-400"><Check size={12} /></div>
-                            <span>Custom Branding on PDFs</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <div className="bg-indigo-500/20 p-1 rounded-full text-indigo-400"><Check size={12} /></div>
-                            <span>Client View Links</span>
-                        </li>
-                        <li className="flex items-center gap-3 text-sm font-medium">
-                            <div className="bg-indigo-500/20 p-1 rounded-full text-indigo-400"><Check size={12} /></div>
-                            <span>Priority Support</span>
-                        </li>
+                        {STRIPE_PLANS.pro.features.map((feature, i) => (
+                            <li key={i} className="flex items-center gap-3 text-sm font-medium">
+                                <div className="bg-indigo-500/20 p-1 rounded-full text-indigo-400"><Check size={12} /></div>
+                                <span>{feature}</span>
+                            </li>
+                        ))}
                     </ul>
 
                     <button
