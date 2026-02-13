@@ -15,10 +15,13 @@ function UserActions({ user }: { user: any }) {
       }}>
         <button
           type="submit"
-          className={`p-2 rounded-full transition-colors ${user.manual_pro_override ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' : 'bg-zinc-100 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600'}`}
-          title={user.manual_pro_override ? "Revoke Pro Override" : "Grant Pro Override"}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm ${user.manual_pro_override
+              ? 'bg-amber-400 text-black hover:bg-amber-500'
+              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:text-white'
+            }`}
         >
-          <Crown size={16} fill={user.manual_pro_override ? "currentColor" : "none"} />
+          <Crown size={12} fill={user.manual_pro_override ? "currentColor" : "none"} />
+          {user.manual_pro_override ? 'Pro Active' : 'Grant Pro'}
         </button>
       </form>
 
@@ -29,10 +32,13 @@ function UserActions({ user }: { user: any }) {
       }}>
         <button
           type="submit"
-          className={`p-2 rounded-full transition-colors ${user.is_beta_user ? 'bg-indigo-100 text-indigo-600 hover:bg-indigo-200' : 'bg-zinc-100 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600'}`}
-          title={user.is_beta_user ? "Revoke Beta Access" : "Grant Beta Access"}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm ${user.is_beta_user
+              ? 'bg-indigo-500 text-white hover:bg-indigo-600'
+              : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300 hover:text-zinc-900'
+            }`}
         >
-          <Sparkles size={16} fill={user.is_beta_user ? "currentColor" : "none"} />
+          <Sparkles size={12} fill={user.is_beta_user ? "currentColor" : "none"} />
+          {user.is_beta_user ? 'Beta Active' : 'Grant Beta'}
         </button>
       </form>
     </div>
@@ -41,7 +47,7 @@ function UserActions({ user }: { user: any }) {
 
 // Helper for Feedback Actions
 function FeedbackActions({ message }: { message: any }) {
-  if (message.status === 'read') return <span className="text-emerald-500"><CheckCircle size={16} /></span>;
+  if (message.status === 'read') return <span className="text-emerald-500 font-bold text-xs flex items-center gap-1"><CheckCircle size={14} /> Read</span>;
   return (
     <form action={async () => {
       'use server';
@@ -49,10 +55,9 @@ function FeedbackActions({ message }: { message: any }) {
     }}>
       <button
         type="submit"
-        className="p-1.5 rounded-full bg-zinc-100 text-zinc-400 hover:bg-emerald-100 hover:text-emerald-600 transition-colors"
-        title="Mark as Read"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-300 hover:bg-emerald-600 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm"
       >
-        <Check size={14} />
+        <Check size={12} /> Mark Read
       </button>
     </form>
   );
@@ -67,29 +72,42 @@ export default async function AdminPage() {
     redirect('/login');
   }
 
-  // Rough check - in real prod use DB flag or dedicated table
+  // STRICT FOUNDER CHECK
+  // Only unconditional access for the founder
   if (user.email !== 'casteelio@gmail.com') {
-    const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
-    if (!profile?.is_admin) {
-      return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 text-zinc-900 gap-4">
-          <Lock size={48} className="text-zinc-300" />
-          <h1 className="text-xl font-bold uppercase tracking-widest">Access Denied</h1>
-          <p className="text-sm text-zinc-500">You do not have permission to view this area.</p>
-        </div>
-      );
-    }
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 text-zinc-900 gap-4">
+        <Lock size={48} className="text-zinc-300" />
+        <h1 className="text-xl font-bold uppercase tracking-widest">Access Denied</h1>
+        <p className="text-sm text-zinc-500">This area is restricted to the founder only.</p>
+      </div>
+    );
   }
 
   // 2. Fetch Data
   const users = await fetchAdminUsers();
   const feedback = await fetchFeedback();
 
-  // 3. Render Helper
+  // 3. Render Helper (Robust Name Sanitizer)
   const renderName = (u: any) => {
-    if (!u.full_name) return 'Anonymous User';
-    if (u.full_name.trim().startsWith('{')) return 'Invalid Name Data'; // Catch JSON dumps
-    return u.full_name;
+    try {
+      const name = u.full_name;
+      if (!name) return 'Anonymous User';
+
+      // If it's a string starting with {, it's likely a JSON dump
+      if (typeof name === 'string' && name.trim().startsWith('{')) {
+        return 'Invalid Name (JSON)';
+      }
+
+      // If it's weirdly an object
+      if (typeof name === 'object') {
+        return 'Invalid Name (Object)';
+      }
+
+      return name;
+    } catch (e) {
+      return 'Render Error';
+    }
   };
 
   return (
@@ -134,7 +152,7 @@ export default async function AdminPage() {
                     <tr key={msg.id} className={`group transition-colors ${msg.status === 'new' ? 'bg-blue-50/30 hover:bg-blue-50/50' : 'hover:bg-zinc-50'}`}>
                       <td className="px-6 py-4">
                         <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${msg.type === 'bug' ? 'bg-red-100 text-red-700' :
-                            msg.type === 'feature' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'
+                          msg.type === 'feature' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'
                           }`}>
                           {msg.type === 'bug' ? <Bug size={10} /> : msg.type === 'feature' ? <Lightbulb size={10} /> : <MessageSquare size={10} />}
                           {msg.type}
@@ -218,10 +236,10 @@ export default async function AdminPage() {
                       {/* Plan Status */}
                       <td className="px-6 py-4">
                         <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.manual_pro_override
-                            ? 'bg-amber-100 text-amber-700'
-                            : u.tier === 'pro'
-                              ? 'bg-black text-white'
-                              : 'bg-zinc-100 text-zinc-500'
+                          ? 'bg-amber-100 text-amber-700'
+                          : u.tier === 'pro'
+                            ? 'bg-black text-white'
+                            : 'bg-zinc-100 text-zinc-500'
                           }`}>
                           {u.manual_pro_override && <Crown size={10} fill="currentColor" />}
                           {tierLabel}
