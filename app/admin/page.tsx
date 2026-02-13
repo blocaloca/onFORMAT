@@ -134,83 +134,85 @@ export default async function AdminPage() {
             <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500">User Management</h2>
           </div>
           <div className="bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden">
-            <table className="w-full text-left table-auto">
-              <thead className="bg-zinc-50 border-b border-zinc-200">
-                <tr>
-                  <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[40%]">User</th>
-                  <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%]">Plan</th>
-                  <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%] text-center">Projects</th>
-                  <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%] text-center">Joined</th>
-                  <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%] text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100">
-                {users.map((u: any) => {
-                  const tierLabel = u.manual_pro_override ? 'Founder Override' : (u.tier || 'Scout');
+            <div className="overflow-x-auto">
+              <table className="w-full text-left table-fixed min-w-[800px]">
+                <thead className="bg-zinc-50 border-b border-zinc-200">
+                  <tr>
+                    <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[35%]">User</th>
+                    <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%]">Plan</th>
+                    <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%] text-center">Projects</th>
+                    <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[15%] text-center">Joined</th>
+                    <th className="px-6 py-4 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[20%] text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100">
+                  {users.map((u: any) => {
+                    const tierLabel = u.manual_pro_override ? 'Founder Override' : (u.tier || 'Scout');
 
-                  return (
-                    <tr key={u.id} className="group hover:bg-zinc-50 transition-colors">
-                      {/* User Info */}
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center overflow-hidden border border-zinc-200 relative mb-safe">
-                            {u.avatar_url ? (
-                              <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                              <User size={14} className="text-zinc-400" />
-                            )}
-                          </div>
-                          <div className="overflow-hidden">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-bold text-zinc-900 truncate max-w-[200px]" title={u.full_name}>{renderName(u)}</span>
-                              {u.email === 'casteelio@gmail.com' && (
-                                <span className="px-1.5 py-0.5 bg-black text-white text-[9px] font-bold uppercase tracking-wider rounded-sm">You</span>
-                              )}
-                              {u.is_admin && u.email !== 'casteelio@gmail.com' && (
-                                <span className="px-1.5 py-0.5 bg-zinc-200 text-zinc-600 text-[9px] font-bold uppercase tracking-wider rounded-sm">Admin</span>
+                    return (
+                      <tr key={u.id} className="group hover:bg-zinc-50 transition-colors">
+                        {/* User Info */}
+                        <td className="px-6 py-4 overflow-hidden">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-zinc-100 flex-shrink-0 flex items-center justify-center overflow-hidden border border-zinc-200 relative mb-safe">
+                              {u.avatar_url ? (
+                                <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                <User size={14} className="text-zinc-400" />
                               )}
                             </div>
-                            <div className="text-xs font-mono text-zinc-400">{u.email}</div>
+                            <div className="overflow-hidden min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-zinc-900 truncate" title={u.full_name}>{renderName(u)}</span>
+                                {u.email === 'casteelio@gmail.com' && (
+                                  <span className="flex-shrink-0 px-1.5 py-0.5 bg-black text-white text-[9px] font-bold uppercase tracking-wider rounded-sm">You</span>
+                                )}
+                                {u.is_admin && u.email !== 'casteelio@gmail.com' && (
+                                  <span className="flex-shrink-0 px-1.5 py-0.5 bg-zinc-200 text-zinc-600 text-[9px] font-bold uppercase tracking-wider rounded-sm">Admin</span>
+                                )}
+                              </div>
+                              <div className="text-xs font-mono text-zinc-400 truncate" title={u.email}>{u.email}</div>
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Plan Status */}
-                      <td className="px-6 py-4">
-                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.manual_pro_override
-                          ? 'bg-amber-100 text-amber-700'
-                          : u.tier === 'pro'
-                            ? 'bg-black text-white'
-                            : 'bg-zinc-100 text-zinc-500'
-                          }`}>
-                          {u.manual_pro_override && <Crown size={10} fill="currentColor" />}
-                          {tierLabel}
-                        </div>
-                      </td>
+                        {/* Plan Status */}
+                        <td className="px-6 py-4">
+                          <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.manual_pro_override
+                            ? 'bg-amber-100 text-amber-700'
+                            : u.tier === 'pro'
+                              ? 'bg-black text-white'
+                              : 'bg-zinc-100 text-zinc-500'
+                            }`}>
+                            {u.manual_pro_override && <Crown size={10} fill="currentColor" />}
+                            {tierLabel}
+                          </div>
+                        </td>
 
-                      {/* Projects */}
-                      <td className="px-6 py-4 text-center">
-                        <span className="text-xs font-mono font-bold">{u.project_count}</span>
-                      </td>
+                        {/* Projects */}
+                        <td className="px-6 py-4 text-center">
+                          <span className="text-xs font-mono font-bold">{u.project_count}</span>
+                        </td>
 
-                      {/* Joined */}
-                      <td className="px-6 py-4 text-center">
-                        <span className="text-[10px] text-zinc-500 font-mono">
-                          {new Date(u.created_at).toLocaleDateString()}
-                        </span>
-                      </td>
+                        {/* Joined */}
+                        <td className="px-6 py-4 text-center">
+                          <span className="text-[10px] text-zinc-500 font-mono">
+                            {new Date(u.created_at).toLocaleDateString()}
+                          </span>
+                        </td>
 
-                      {/* Actions */}
-                      <td className="px-6 py-4">
-                        <div className="flex justify-end">
-                          <UserActions user={u} />
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        {/* Actions */}
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end w-full">
+                            <UserActions user={u} />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
       </div>
