@@ -119,3 +119,29 @@ export async function manualUpdateTier(userId: string, tier: string) {
     if (error) throw new Error(error.message);
     revalidatePath('/admin');
 }
+
+// Action: Fetch Feedback Messages
+export async function fetchFeedback() {
+    const { data, error } = await adminSupabase
+        .from('feedback_messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        // Table might not exist yet if migration hasn't run
+        console.warn("Feedback table error (likely migration pending):", error.message);
+        return [];
+    }
+    return data;
+}
+
+// Action: Mark Feedback as Read
+export async function markFeedbackRead(id: string) {
+    const { error } = await adminSupabase
+        .from('feedback_messages')
+        .update({ status: 'read' })
+        .eq('id', id);
+
+    if (error) throw new Error(error.message);
+    revalidatePath('/admin');
+}
