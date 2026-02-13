@@ -20,6 +20,8 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
 })
 
+import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger'
+
 export default function RootLayout({
   children,
 }: {
@@ -27,7 +29,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={montserrat.className}>{children}</body>
+      <body className={montserrat.className}>
+        {children}
+        <BetaFeedbackTrigger />
+      </body>
     </html>
   )
 }

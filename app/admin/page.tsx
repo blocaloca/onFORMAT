@@ -1,67 +1,9 @@
 import React, { Suspense } from 'react';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import { fetchAdminUsers, toggleProOverride, toggleBetaUser, fetchFeedback, markFeedbackRead } from './actions';
+import { fetchAdminUsers, fetchFeedback } from './actions';
 import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare } from 'lucide-react';
-
-// Helper for row actions
-function UserActions({ user }: { user: any }) {
-  return (
-    <div className="flex items-center gap-2">
-      {/* Manual Pro Override */}
-      <form action={async () => {
-        'use server';
-        await toggleProOverride(user.id, user.manual_pro_override || false);
-      }}>
-        <button
-          type="submit"
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm ${user.manual_pro_override
-              ? 'bg-amber-400 text-black hover:bg-amber-500'
-              : 'bg-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:text-white'
-            }`}
-        >
-          <Crown size={12} fill={user.manual_pro_override ? "currentColor" : "none"} />
-          {user.manual_pro_override ? 'Pro Active' : 'Grant Pro'}
-        </button>
-      </form>
-
-      {/* Beta Access */}
-      <form action={async () => {
-        'use server';
-        await toggleBetaUser(user.id, user.is_beta_user || false);
-      }}>
-        <button
-          type="submit"
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm ${user.is_beta_user
-              ? 'bg-indigo-500 text-white hover:bg-indigo-600'
-              : 'bg-zinc-200 text-zinc-600 hover:bg-zinc-300 hover:text-zinc-900'
-            }`}
-        >
-          <Sparkles size={12} fill={user.is_beta_user ? "currentColor" : "none"} />
-          {user.is_beta_user ? 'Beta Active' : 'Grant Beta'}
-        </button>
-      </form>
-    </div>
-  );
-}
-
-// Helper for Feedback Actions
-function FeedbackActions({ message }: { message: any }) {
-  if (message.status === 'read') return <span className="text-emerald-500 font-bold text-xs flex items-center gap-1"><CheckCircle size={14} /> Read</span>;
-  return (
-    <form action={async () => {
-      'use server';
-      await markFeedbackRead(message.id);
-    }}>
-      <button
-        type="submit"
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-800 text-zinc-300 hover:bg-emerald-600 hover:text-white text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm"
-      >
-        <Check size={12} /> Mark Read
-      </button>
-    </form>
-  );
-}
+import { UserActions, FeedbackActions } from './AdminActions';
 
 export default async function AdminPage() {
   // 1. Auth Check
