@@ -42,8 +42,15 @@ export default function LandingPage() {
 
       {/* 1. Header (Fixed) */}
       <nav className="fixed top-0 w-full z-50 px-8 py-4 flex items-center justify-between mix-blend-difference pointer-events-none">
-        <div className="w-60 relative h-20 pointer-events-auto">
-          <img src="/logo-white.png" alt="onFORMAT" className="h-full object-contain object-left" />
+
+        {/* Left: Logo & Pricing */}
+        <div className="flex items-center gap-8 pointer-events-auto">
+          <div className="w-60 relative h-20">
+            <img src="/logo-white.png" alt="onFORMAT" className="h-full object-contain object-left" />
+          </div>
+          <Link href="/pricing" className="hidden md:block text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
+            Pricing
+          </Link>
         </div>
 
         <Link href="/dashboard" className="absolute top-6 right-8 flex items-center gap-3 group pointer-events-auto">
@@ -219,9 +226,11 @@ export default function LandingPage() {
         <div className="flex flex-col gap-4">
           <p>&copy; 2026 onFORMAT. All rights reserved.</p>
           <div className="flex justify-center gap-6">
-            <Link href="/terms" className="hover:text-green-500 transition-colors">Terms of Service</Link>
+            <Link href="/support" className="hover:text-green-500 transition-colors">Support</Link>
             <span className="text-zinc-900">•</span>
-            <span className="text-zinc-800 cursor-not-allowed">Privacy Policy</span>
+            <Link href="/support" className="hover:text-green-500 transition-colors">Terms of Service</Link>
+            <span className="text-zinc-900">•</span>
+            <Link href="/support" className="hover:text-green-500 transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </footer>
