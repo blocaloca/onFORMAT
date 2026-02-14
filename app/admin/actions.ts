@@ -59,24 +59,31 @@ export async function fetchAdminUsers() {
 
 // Check if Current User is Admin
 export async function verifyAdmin(userId: string) {
-    // Hardcoded safety check
-    // In production, we'd check against a specific list or table
-
-    // Fetch profile
+    // Hardcoded safety check + DB check
     const { data: profile } = await adminSupabase
         .from('profiles')
         .select('email, is_admin')
         .eq('id', userId)
         .single();
 
-    if (profile?.email === 'casteelio@gmail.com' || profile?.is_admin) {
-        return true;
-    }
-    return false;
+    // Allow if is_admin OR specific email (Founder)
+    const isAuthorized = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
+
+    return isAuthorized;
 }
 
 // Action: Toggle Manual Pro Override
 export async function toggleProOverride(userId: string, currentState: boolean) {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !(await verifyAdmin(user.id))) {
+        throw new Error("Unauthorized");
+    }
+
     const { error } = await adminSupabase
         .from('profiles')
         .update({ manual_pro_override: !currentState })
@@ -88,6 +95,16 @@ export async function toggleProOverride(userId: string, currentState: boolean) {
 
 // Action: Toggle Beta User
 export async function toggleBetaUser(userId: string, currentState: boolean) {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !(await verifyAdmin(user.id))) {
+        throw new Error("Unauthorized");
+    }
+
     const { error } = await adminSupabase
         .from('profiles')
         .update({ is_beta_user: !currentState })
@@ -99,6 +116,16 @@ export async function toggleBetaUser(userId: string, currentState: boolean) {
 
 // Action: Update Subscription Tier Manually (in Subscriptions table)
 export async function manualUpdateTier(userId: string, tier: string) {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !(await verifyAdmin(user.id))) {
+        throw new Error("Unauthorized");
+    }
+
     // Determine status based on tier
     // If 'scout', we might remove or set to canceled/inactive?
     // If 'pro', set to active.
@@ -137,6 +164,16 @@ export async function fetchFeedback() {
 
 // Action: Mark Feedback as Read
 export async function markFeedbackRead(id: string) {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !(await verifyAdmin(user.id))) {
+        throw new Error("Unauthorized");
+    }
+
     const { error } = await adminSupabase
         .from('feedback_messages')
         .update({ status: 'read' })
