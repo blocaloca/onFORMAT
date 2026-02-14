@@ -42,11 +42,12 @@ export const FeedbackDialog = ({ isOpen, onClose, userId }: FeedbackDialogProps)
             return
         }
 
-        const { error } = await supabase.from('feedback').insert({
+        const { error } = await supabase.from('feedback_messages').insert({
             user_id: effectiveUserId,
+            user_email: (await supabase.auth.getUser()).data.user?.email,
             message: message,
-            category: category,
-            metadata: {
+            type: category, // DB column is 'type'
+            context: {
                 userAgent: window.navigator.userAgent,
                 url: window.location.href
             }

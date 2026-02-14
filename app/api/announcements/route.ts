@@ -35,25 +35,39 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { media_url, message, userId } = body;
+        const { media_url, message } = body;
+        const supabase = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+            auth: {
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false,
+            }
+        });
 
-        // Simple Admin Check (Hardcoded for now as requested/planned)
-        // Ideally we check the user's role in 'profiles' table via DB first
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        // 1. Verify Auth Token
+        const authHeader = req.headers.get('Authorization');
+        if (!authHeader) {
+            return NextResponse.json({ error: 'Missing Authorization Header' }, { status: 401 });
         }
 
+        const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Unauthorized: Invalid Session' }, { status: 401 });
+        }
+
+        // 2. Privilege Check
         const { data: profile } = await adminSupabase
             .from('profiles')
             .select('email, is_admin')
-            .eq('id', userId)
+            .eq('id', user.id)
             .single();
 
-        // Allow if is_admin OR specific email
-        const isAdmin = profile?.is_admin || profile?.email === 'davidcasteel@gmail.com' || profile?.email === 'casteelio@gmail.com'; // Adjust email as needed
+        // Allow if is_admin OR specific email (Founder)
+        const isAuthorized = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
 
-        if (!isAdmin) {
-            console.warn(`Unauthorized announcement attempt by ${userId}`);
+        if (!isAuthorized) {
+            console.warn(`Unauthorized announcement attempt by ${user.email}`);
             return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
         }
 

@@ -14,18 +14,45 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('userId')
     const projectId = searchParams.get('projectId')
 
+    // 1. Verify Auth
+    const supabaseAuth = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) return NextResponse.json({ error: 'Missing Auth Header' }, { status: 401 });
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(authHeader.replace('Bearer ', ''));
+    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // 2. Check Admin Status (for overrides)
+    const { data: profile } = await supabase.from('profiles').select('is_admin, email').eq('id', user.id).single();
+    const isAdmin = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
+
     if (projectId) {
       // Get specific project
-      const { data, error } = await supabase
+      const query = supabase
         .from('projects')
         .select('*')
         .eq('id', projectId)
-        .single()
+        .single();
 
-      if (error) throw error
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      // Ensure ownership or admin
+      if (data.user_id !== user.id && !isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+
       return NextResponse.json(data)
     } else if (userId) {
       // Get all projects for user
+      // BLOCK access to other users unless admin
+      if (userId !== user.id && !isAdmin) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
+
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -35,10 +62,15 @@ export async function GET(request: NextRequest) {
       if (error) throw error
       return NextResponse.json(data)
     } else {
-      return NextResponse.json(
-        { error: 'userId or projectId required' },
-        { status: 400 }
-      )
+      // Default: Return OWN projects if no params
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+
+      if (error) throw error;
+      return NextResponse.json(data);
     }
   } catch (error: any) {
     return NextResponse.json(
@@ -62,88 +94,63 @@ export async function POST(request: NextRequest) {
     console.log('========================================')
 
     const body = await request.json()
-    console.log('1. Request body received:', JSON.stringify(body, null, 2))
 
-    const { userId, userEmail, productType, templateId, name, data: projectData, templateData } = body
-    console.log('2. Destructured values:')
-    console.log('   - userId:', userId)
-    console.log('   - userEmail:', userEmail)
-    console.log('   - productType:', productType)
-    console.log('   - templateId:', templateId)
-    console.log('   - name:', name)
-    console.log('   - projectData:', projectData)
-    console.log('   - templateData:', templateData ? 'provided' : 'not provided')
+    // 1. Verify Auth
+    const supabaseAuth = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) return NextResponse.json({ error: 'Missing Auth Header' }, { status: 401 });
 
-    // Validate required fields
-    if (!name) {
-      console.error('ERROR: name is missing')
-      return NextResponse.json(
-        { error: 'name is required' },
-        { status: 400 }
-      )
-    }
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(authHeader.replace('Bearer ', ''));
+    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    // AUTO-RESOLVE USER ID for Offline/Dev Mode
-    const DUMMY_ID = '00000000-0000-0000-0000-000000000000';
-    let finalUserId = userId;
-    let finalUserEmail = userEmail || 'dev@onformat.com';
+    let finalUserId = user.id;
+    let finalUserEmail = user.email || '';
 
-    if (!finalUserId || finalUserId === DUMMY_ID) {
-      console.log(`🚨 Resolving User ID for email: ${finalUserEmail}`);
+    // 2. Admin/Founder Override Check (Optional - if admin wants to create for others)
+    // We check if the request body tries to specify a different user.
+    if (body.userId && body.userId !== user.id) {
+      const { data: profile } = await supabase.from('profiles').select('is_admin, email').eq('id', user.id).single();
+      const isFounder = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
 
-      // 1. Try to find user in Auth list
-      const { data: { users }, error: listError } = await supabase.auth.admin.listUsers();
-
-      const existingUser = users?.find(u => u.email === finalUserEmail) || users?.[0];
-
-      if (existingUser) {
-        finalUserId = existingUser.id;
-        finalUserEmail = existingUser.email || finalUserEmail;
-        console.log('✅ Resolved Existing User ID:', finalUserId);
+      if (isFounder) {
+        console.log(`👮‍♂️ Admin ${user.email} creating project for ${body.email || body.userId}`);
+        // If admin, we allow using the body's userId - BUT we need to ensure that user exists in profiles.
+        // For now, let's just stick to "creating for self" to be safe, unless specifically requested.
+        // If we want to support admin creation, we'd set finalUserId = body.userId here.
+        // But simpler is to enforce self-creation for now.
+        // finalUserId = body.userId; 
       } else {
-        // 2. Create new user if not found
-        console.log('⚠️ User not found. Creating new user...');
-        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
-          email: finalUserEmail,
-          password: 'password123',
-          email_confirm: true
-        });
-
-        if (newUser.user) {
-          finalUserId = newUser.user.id;
-          console.log('✅ Created New User ID:', finalUserId);
-        } else {
-          console.error('❌ Failed to create user:', createError);
-          // Fallback to error or throw?
-          // If we can't get a user, we can't create a project linked to a user.
-          // But maybe we can create it orphaned? No, schema likely requires user_id.
-          if (createError?.message?.includes("already registered")) {
-            // Edge case: User exists but wasn't in first page of listUsers?
-            // Not resolving this edge case for now.
-            throw new Error('User already exists but could not be resolved.');
-          }
-          throw new Error('Failed to resolve user context.');
-        }
+        // If not admin, ignore the body userId and force self.
+        console.warn(`User ${user.id} tried to create project for ${body.userId}. Forced to self.`);
       }
     }
 
-    // CRITICAL: Ensure this user has a PROFILE to satisfy "projects_user_id_fkey"
+    const { productType, templateId, name, data: projectData, templateData } = body
+
+    // Validate required fields
+    if (!name) {
+      return NextResponse.json({ error: 'name is required' }, { status: 400 })
+    }
+
+    // Ensure Profile Exists (Self-Repair)
     const { error: profileError } = await supabase
       .from('profiles')
       .upsert({
         id: finalUserId,
         email: finalUserEmail,
-        subscription_status: 'active',
-        subscription_tier: 'pro'
-      }, { onConflict: 'id' });
+        // Don't overwrite existing sub status if it exists, but how to do that with upsert?
+        // Actually, we shouldn't overwrite sub/tier here blindly if they already exist.
+        // Better to just INSERT ON CONFLICT DO NOTHING for critical fields, 
+        // OR just check if exists.
+        // Let's rely on the trigger that creates profiles, OR just select first.
+      }, { onConflict: 'id', ignoreDuplicates: true });
+    // ignoreDuplicates=true avoids overwriting subscription_status with defaults if record exists
 
-    if (profileError) {
-      console.warn('⚠️ Warning: Could not ensure profile exists:', profileError.message);
-      // Continue anyway, as failure might be RLS or schema related, 
-      // hope for the best or that it already exists.
-    } else {
-      console.log('✅ Ensured Profile exists for:', finalUserId);
-    }
+    if (profileError) console.warn('Profile Ensure Warning:', profileError.message);
+    else console.log('✅ Ensured Profile exists for:', finalUserId);
+
 
     // --- CHECK PROJECT LIMITS ---
     // 1. Get current project count
@@ -362,6 +369,21 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { projectId, data: projectData } = body
 
+    // 1. Verify Auth
+    const supabaseAuth = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) return NextResponse.json({ error: 'Missing Auth Header' }, { status: 401 });
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(authHeader.replace('Bearer ', ''));
+    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // 2. Check Admin Status (for overrides)
+    const { data: profile } = await supabase.from('profiles').select('is_admin, email').eq('id', user.id).single();
+    const isAdmin = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
+
+
     // Get current project
     const { data: currentProject, error: fetchError } = await supabase
       .from('projects')
@@ -370,6 +392,11 @@ export async function PUT(request: NextRequest) {
       .single()
 
     if (fetchError) throw fetchError
+
+    // 3. Verify Ownership
+    if (currentProject.user_id !== user.id && !isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
     const newVersion = currentProject.current_version + 1
 
@@ -415,6 +442,33 @@ export async function DELETE(request: NextRequest) {
         { error: 'projectId is required' },
         { status: 400 }
       )
+    }
+
+    // 1. Verify Auth
+    const supabaseAuth = createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader) return NextResponse.json({ error: 'Missing Auth Header' }, { status: 401 });
+
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser(authHeader.replace('Bearer ', ''));
+    if (authError || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    // 2. Check Admin Status (for overrides)
+    const { data: profile } = await supabase.from('profiles').select('is_admin, email').eq('id', user.id).single();
+    const isAdmin = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
+
+    // Check ownership before delete!
+    const { data: currentProject, error: fetchError } = await supabase
+      .from('projects')
+      .select('user_id')
+      .eq('id', projectId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    if (currentProject.user_id !== user.id && !isAdmin) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const { error } = await supabase
