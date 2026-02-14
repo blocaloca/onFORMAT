@@ -67,7 +67,7 @@ export async function verifyAdmin(userId: string) {
         .single();
 
     // Allow if is_admin OR specific email (Founder)
-    const isAuthorized = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
+    const isAuthorized = profile?.is_admin || ['casteelio@gmail.com'].includes(profile?.email?.toLowerCase() || '');
 
     return isAuthorized;
 }

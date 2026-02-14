@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         }
 
         // Allow if is_admin OR specific email (Founder)
-        const isAuthorized = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
+        const isAuthorized = profile?.is_admin || ['casteelio@gmail.com'].includes(profile?.email?.toLowerCase() || '');
 
         if (!isAuthorized) {
             console.warn(`Unauthorized announcement attempt by ${user.email}`);
