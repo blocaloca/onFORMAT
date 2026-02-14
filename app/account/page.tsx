@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check } from 'lucide-react';
 import Link from 'next/link';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
-import { isFounder } from '@/lib/permissions';
+import { isFounder as checkIsFounder } from '@/lib/permissions';
 
 export default function AccountPage() {
     const router = useRouter();
@@ -53,7 +53,9 @@ export default function AccountPage() {
             setAvatarUrl(data.avatar_url || null);
 
             // Centralized Founder Check
-            if (isFounder(data.email) || data.is_admin) {
+            // Use profile email or auth email as fallback
+            const emailToCheck = data.email || user.email;
+            if (checkIsFounder(emailToCheck) || data.is_admin) {
                 setIsFounder(true);
             }
         }
