@@ -5,7 +5,7 @@
  * Defines the super-user "Founder" who bypasses all subscription and access checks.
  */
 
-const FOUNDER_EMAILS = ['casteelio@gmail.com'];
+const FOUNDER_EMAILS = ['casteelio@gmail.com', 'davidcasteel@gmail.com'];
 
 export const isFounder = (email?: string | null): boolean => {
     if (!email) return false;
