@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import { fetchAdminUsers, fetchFeedback } from './actions';
 import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare } from 'lucide-react';
 import { UserActions, FeedbackActions } from './AdminActions';
+import { isFounder } from '@/lib/permissions';
+import AnnouncementEditor from '@/components/admin/AnnouncementEditor';
 
 export default async function AdminPage() {
   // 1. Auth Check
@@ -16,7 +18,7 @@ export default async function AdminPage() {
 
   // STRICT FOUNDER CHECK
   // Only unconditional access for the founder
-  if (user.email !== 'casteelio@gmail.com') {
+  if (!isFounder(user.email)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-50 text-zinc-900 gap-4">
         <Lock size={48} className="text-zinc-300" />
@@ -68,6 +70,9 @@ export default async function AdminPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-8 py-12 space-y-12">
+
+        {/* Announcement Editor */}
+        <AnnouncementEditor user={user} />
 
         {/* Feedback Inbox Section */}
         <section>
