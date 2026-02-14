@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check } from 'lucide-react';
 import Link from 'next/link';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
+import { isFounder } from '@/lib/permissions';
 
 export default function AccountPage() {
     const router = useRouter();
@@ -51,9 +52,8 @@ export default function AccountPage() {
             setFullName(data.full_name || '');
             setAvatarUrl(data.avatar_url || null);
 
-            // Simple check for Founder Mode (can be expanded)
-            // Replace with your actual email or an admin flag
-            if (data.email === 'casteelio@gmail.com' || data.is_admin) {
+            // Centralized Founder Check
+            if (isFounder(data.email) || data.is_admin) {
                 setIsFounder(true);
             }
         }
@@ -319,8 +319,8 @@ export default function AccountPage() {
                                                 : 'Scout'}
                                         </p>
                                         <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide font-bold ${profile?.subscription_status === 'active'
-                                                ? 'bg-emerald-900/30 text-emerald-500 border border-emerald-900'
-                                                : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
+                                            ? 'bg-emerald-900/30 text-emerald-500 border border-emerald-900'
+                                            : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
                                             }`}>
                                             {profile?.subscription_status === 'active' ? 'Active' : 'Free'}
                                         </span>
