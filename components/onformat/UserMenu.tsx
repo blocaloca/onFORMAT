@@ -62,30 +62,7 @@ export const UserMenu = ({ email }: { email?: string }) => {
                             >
                                 <User size={14} /> Account & Billing
                             </button>
-                            <button
-                                onClick={async () => {
-                                    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_FREE;
-                                    if (!priceId) {
-                                        alert("Beta Access is not configured yet.");
-                                        return;
-                                    }
-                                    try {
-                                        const res = await fetch('/api/checkout', {
-                                            method: 'POST',
-                                            headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ priceId })
-                                        });
-                                        const data = await res.json();
-                                        if (data.url) window.location.href = data.url;
-                                    } catch (e) {
-                                        console.error(e);
-                                        alert("Failed to start checkout");
-                                    }
-                                }}
-                                className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors"
-                            >
-                                <CreditCard size={14} /> Upgrade to Pro
-                            </button>
+
                         </div>
                         <div className="border-t border-zinc-800 py-1">
                             <button

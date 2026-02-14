@@ -267,20 +267,32 @@ export default function DashboardPage() {
         const { data: profile } = await supabase.from('profiles').select('subscription_status, subscription_tier').eq('id', user.id).single();
 
         // Use permissions lib to check access. 
-        // For "Basic" tier, we limit to 1 active project.
-        // If Founder or "Pro", unlimited.
-
-        // This logic is simplistic: "If not hasAccess('pro') AND projects.length >= 1, BLOCK"
-        const isPro = hasAccess({ email: user.email, subscription_status: profile?.subscription_status }, 'pro');
+        // Limit Logic
+        // Scout (Free/Inactive): 1 Project
+        // Pro: 5 Projects
+        // Studio: Unlimited
         const isFounderUser = hasAccess({ email: user.email }, 'enterprise'); // Founder check implicit
 
-        // Note: filteredProjects in render is based on view, we need raw list count of owned projects.
-        // We can just use `projects.length` since we fetch all owned projects.
-        // Assuming `projects` state is accurate list of owned projects.
-        if (!isPro && !isFounderUser && projects.length >= 1) {
-            setIsUpgradeOpen(true);
-            setIsDialogOpen(false); // Close create dialog
-            return;
+        if (!isFounderUser) {
+            const currentCount = projects.length;
+            const tier = profile?.subscription_tier;
+            const status = profile?.subscription_status;
+
+            // Scout / Free Logic
+            if ((!status || status !== 'active') && currentCount >= 1) {
+                setIsUpgradeOpen(true);
+                setIsDialogOpen(false);
+                return;
+            }
+
+            // Pro Logic
+            if (status === 'active' && tier === 'pro' && currentCount >= 5) {
+                setIsUpgradeOpen(true);
+                setIsDialogOpen(false);
+                return;
+            }
+
+            // Studio is unlimited, so no check needed.
         }
 
         let payloadData = {

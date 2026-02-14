@@ -71,16 +71,16 @@ export const UpgradeModal = ({ isOpen, onClose, title, description }: UpgradeMod
                     </div>
 
                     <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2 relative z-10">
-                        {title || "Scale Your Output"}
+                        Project Limit Reached
                     </h2>
                     <p className="text-zinc-400 text-sm leading-relaxed mb-8 relative z-10">
-                        {description || "Your current plan allows for 1 active project. Upgrade to Pro for unlimited productions and enhanced crew collaboration."}
+                        You have reached the maximum number of active projects for your current plan. Upgrade to unlock more capacity.
                     </p>
 
                     <div className="space-y-3 mb-8 relative z-10">
                         <div className="flex items-center gap-3 text-sm text-zinc-300">
                             <CheckCircle2 size={16} className="text-emerald-500" />
-                            <span>Unlimited Active Projects</span>
+                            <span>Increase Project Limits</span>
                         </div>
                         <div className="flex items-center gap-3 text-sm text-zinc-300">
                             <CheckCircle2 size={16} className="text-emerald-500" />
@@ -88,16 +88,15 @@ export const UpgradeModal = ({ isOpen, onClose, title, description }: UpgradeMod
                         </div>
                         <div className="flex items-center gap-3 text-sm text-zinc-300">
                             <CheckCircle2 size={16} className="text-emerald-500" />
-                            <span>Advanced PDF Exports & Branding</span>
+                            <span>Advanced Features</span>
                         </div>
                     </div>
 
                     <button
-                        onClick={handleUpgrade}
+                        onClick={() => router.push('/account')}
                         className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-zinc-200 transition-colors rounded-sm shadow-lg shadow-white/5 relative z-10 flex items-center justify-center gap-2 group"
                     >
-                        <span>Upgrade to Pro</span>
-                        <Lock size={14} className="group-hover:hidden" />
+                        <span>Manage Subscription</span>
                         <Sparkles size={14} className="hidden group-hover:block text-emerald-600 animate-pulse" />
                     </button>
 
