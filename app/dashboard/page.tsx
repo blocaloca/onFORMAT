@@ -10,7 +10,7 @@ import { FolderActionsDialog } from '@/components/dashboard/FolderActionsDialog'
 
 import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav';
 import { UserMenu } from '@/components/onformat/UserMenu';
-import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone, CalendarClock } from 'lucide-react';
+import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone, CalendarClock, Megaphone } from 'lucide-react';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
@@ -51,6 +51,46 @@ export default function DashboardPage() {
     const [folderActionTarget, setFolderActionTarget] = useState<Folder | null>(null);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
+    // Announcement State
+    const [announcement, setAnnouncement] = useState<any>(null);
+
+    const fetchAnnouncement = async () => {
+        try {
+            const res = await fetch('/api/announcements');
+            const data = await res.json();
+            if (data && !data.error) {
+                setAnnouncement(data);
+            }
+        } catch (e) {
+            console.error("Failed to fetch announcements", e);
+        }
+    };
+
+    const renderAnnouncementMedia = (url: string) => {
+        if (!url) return null;
+        // YouTube Embed
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            let embedUrl = url;
+            if (url.includes('watch?v=')) {
+                embedUrl = url.replace('watch?v=', 'embed/');
+            } else if (url.includes('youtu.be/')) {
+                embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
+            }
+            if (embedUrl.includes('&')) embedUrl = embedUrl.split('&')[0];
+            return (
+                <div className="w-full h-full relative aspect-video">
+                    <iframe src={embedUrl} className="absolute top-0 left-0 w-full h-full" allow="accelerometer; autoplay; encrypted-media; gyroscope;" allowFullScreen />
+                </div>
+            );
+        }
+        // MP4 Video
+        if (url.match(/\.(mp4|webm|ogg)$/i)) {
+            return <video src={url} controls className="w-full h-full object-cover max-h-[300px]" />;
+        }
+        // Image
+        return <img src={url} alt="Announcement" className="w-full h-full object-cover max-h-[300px]" />;
+    };
+
 
 
     useEffect(() => {
@@ -88,6 +128,7 @@ export default function DashboardPage() {
         }
 
         fetchProjects();
+        fetchAnnouncement();
 
     }, [router]);
 
@@ -412,6 +453,29 @@ export default function DashboardPage() {
 
             {/* MAIN CONTENT Area */}
             <main className="flex-1 p-12 max-w-[1600px] overflow-y-auto h-screen">
+
+                {/* ANNOUNCEMENT BANNER */}
+                {announcement && (
+                    <div className="mb-12 bg-zinc-800/30 border border-zinc-700/50 rounded-lg overflow-hidden flex flex-col md:flex-row shadow-lg">
+                        {announcement.media_url && (
+                            <div className="md:w-1/3 border-b md:border-b-0 md:border-r border-zinc-700/50 bg-black/20">
+                                {renderAnnouncementMedia(announcement.media_url)}
+                            </div>
+                        )}
+                        <div className="p-6 flex-1 flex flex-col justify-center">
+                            <div className="flex items-center gap-2 mb-2 text-indigo-400">
+                                <Megaphone size={16} />
+                                <span className="text-[10px] font-bold uppercase tracking-widest">New Announcement</span>
+                            </div>
+                            <p className="text-zinc-200 text-sm leading-relaxed font-medium">
+                                {announcement.message}
+                            </p>
+                            <div className="mt-4 text-[10px] text-zinc-500 uppercase tracking-widest font-mono">
+                                Posted {new Date(announcement.created_at).toLocaleDateString()}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Top Bar: User Welcome + View Toggles */}
                 <div className="flex justify-between items-end mb-12 border-b border-zinc-800 pb-8">
