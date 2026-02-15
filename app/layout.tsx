@@ -20,7 +20,8 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
 })
 
-import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger'
+import { ThemeProvider } from '@/components/ThemeProvider';
+import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
 
 export default function RootLayout({
   children,
@@ -28,10 +29,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={montserrat.className}>
-        {children}
-        <BetaFeedbackTrigger />
+        <ThemeProvider>
+          {children}
+          <BetaFeedbackTrigger />
+        </ThemeProvider>
       </body>
     </html>
   )

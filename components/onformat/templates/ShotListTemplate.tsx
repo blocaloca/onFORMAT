@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { Trash2, Plus, FileInput } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
@@ -24,9 +24,11 @@ interface ShotListTemplateProps {
     isLocked?: boolean;
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
-    metadata?: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    metadata?: Record<string, any>;
     isPrinting?: boolean;
-    onMagicImport?: (data: any) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onMagicImport?: (data: Record<string, any>) => void;
 }
 
 const SHOT_SIZES = ['Wide', 'Full', 'Medium', 'Cowboy', 'Close Up', 'Extreme CU'];
@@ -53,7 +55,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                 onUpdate({ shots: newShots });
             }
         }
-    }, [data.shots]);
+    }, [data.shots, onUpdate]);
 
     const { theme } = useTheme();
     const darkMode = theme === 'dark';
@@ -96,7 +98,8 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
             // Legacy Path
             const importedRows = metadata.importedAVScript.rows;
-            const newShots = importedRows.map((row: any, i: number) => ({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const newShots = importedRows.map((row: Record<string, any>, i: number) => ({
                 id: `shot-import-${Date.now()}-${i}`,
                 sourceId: row.id, // Track source for updates
                 scene: row.scene || '',

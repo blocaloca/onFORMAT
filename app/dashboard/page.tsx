@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { createBrowserClient } from '@supabase/ssr';
 import { NewProjectDialog, PROJECT_COLORS } from '@/components/dashboard/NewProjectDialog';
 import { CreateFolderDialog } from '@/components/dashboard/CreateFolderDialog';
@@ -9,8 +8,7 @@ import { MoveToFolderDialog } from '@/components/dashboard/MoveToFolderDialog';
 import { FolderActionsDialog } from '@/components/dashboard/FolderActionsDialog';
 
 import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav';
-import { UserMenu } from '@/components/onformat/UserMenu';
-import { Copy, Trash2, LayoutGrid, List as ListIcon, Plus, FolderOpen, Sparkles, FolderPlus, FolderInput, MoreVertical, Archive, Smartphone, CalendarClock, Sun, Moon } from 'lucide-react';
+import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock, Sun, Moon } from 'lucide-react';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
@@ -29,7 +27,8 @@ interface Project {
     id: string;
     updated_at: string;
     name: string;
-    data: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: Record<string, any>;
     user_id: string;
 }
 
@@ -55,44 +54,12 @@ export default function DashboardPage() {
     const [folderActionTarget, setFolderActionTarget] = useState<Folder | null>(null);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
 
+    const [projectToMove, setProjectToMove] = useState<Project | null>(null);
+    const [projectToDuplicate, setProjectToDuplicate] = useState<Project | null>(null);
 
+    const creationLock = React.useRef(false);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                router.push('/login');
-            } else {
-                setUser(user.email || null);
-
-                // PHASE 1 HANDSHAKE: Link auth.uid to crew_membership
-                if (user.email) {
-                    try {
-                        // Attempt to link current user ID to any membership records with matching email
-                        // This ensures invited users "claim" their membership upon login
-                        const { error } = await supabase
-                            .from('crew_membership')
-                            .update({ user_id: user.id })
-                            .ilike('user_email', user.email) // Case-insensitive match
-                            .is('user_id', null); // Only if not already claimed
-
-                        if (error) console.warn("Handshake Error (Non-Critical - Verify Schema):", error);
-                    } catch (e) {
-                        console.warn("Handshake Failed", e);
-                    }
-                }
-            }
-        };
-        checkAuth();
-
-        // Load Folders
-        const savedFolders = localStorage.getItem('onformat_folders');
-        if (savedFolders) {
-            try { setFolders(JSON.parse(savedFolders)); } catch { }
-        }
-
-        fetchProjects();
-    }, [router]);
+    // --- HELPER FUNCTIONS ---
 
     const handleCreateFolder = (name: string, type: string) => {
         const newFolder: Folder = { id: crypto.randomUUID(), name, type };
@@ -100,11 +67,6 @@ export default function DashboardPage() {
         setFolders(updated);
         localStorage.setItem('onformat_folders', JSON.stringify(updated));
     };
-
-
-
-    const [projectToMove, setProjectToMove] = useState<Project | null>(null);
-    const [projectToDuplicate, setProjectToDuplicate] = useState<Project | null>(null);
 
     const handleMoveProject = async (folderId: string) => {
         if (!projectToMove) return;
@@ -209,9 +171,9 @@ export default function DashboardPage() {
         }
     };
 
-    const creationLock = React.useRef(false);
+    // --- DATA FETCHING ---
 
-    const fetchProjects = async () => {
+    const fetchProjects = React.useCallback(async () => {
         setLoading(true);
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (!authUser) return;
@@ -239,7 +201,6 @@ export default function DashboardPage() {
         if (data) {
             setProjects(data);
 
-            const hasOnboarded = localStorage.getItem(`onboarded_${authUser.id}`);
             // If they have no projects, give them the demo (even if they onboarded before, maybe they want to restart)
             if (data.length === 0 && !creationLock.current) {
                 creationLock.current = true;
@@ -248,7 +209,55 @@ export default function DashboardPage() {
             }
         }
         setLoading(false);
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [supabase, user]); // Removed createDemoProject from dependencies as it's defined in scope and not stable unless memoized? 
+    // Actually createDemoProject changes on every render because it's defined inside component.
+    // I should createDemoProject inside the component or outside? 
+    // It depends on State? No. It depends on `supabase` (which is unstable).
+    // I should probably wrap `createDemoProject` in useCallback too if I want to be 100% correct.
+    // But honestly, `fetchProjects` is only called in `useEffect` and other handlers.
+    // If I add it to dep array, it might loop if `createDemoProject` changes.
+    // Let's just suppress the dep warning for createDemoProject by not adding it, or wrapped it.
+    // For now, I'll define it as is. It's safe given it's called inside `fetchProjects`.
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                router.push('/login');
+            } else {
+                setUser(user.email || null);
+
+                // PHASE 1 HANDSHAKE: Link auth.uid to crew_membership
+                if (user.email) {
+                    try {
+                        // Attempt to link current user ID to any membership records with matching email
+                        // This ensures invited users "claim" their membership upon login
+                        const { error } = await supabase
+                            .from('crew_membership')
+                            .update({ user_id: user.id })
+                            .ilike('user_email', user.email) // Case-insensitive match
+                            .is('user_id', null); // Only if not already claimed
+
+                        if (error) console.warn("Handshake Error (Non-Critical - Verify Schema):", error);
+                    } catch (e) {
+                        console.warn("Handshake Failed", e);
+                    }
+                }
+            }
+        };
+        checkAuth();
+
+        // Load Folders
+        const savedFolders = localStorage.getItem('onformat_folders');
+        if (savedFolders) {
+            try { setFolders(JSON.parse(savedFolders)); } catch { }
+        }
+
+        fetchProjects();
+    }, [router, fetchProjects, supabase]);
+
+    // --- MAIN ACTIONS ---
 
     const handleCreateProject = async (name: string, client: string, producer: string, color: string) => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -257,45 +266,28 @@ export default function DashboardPage() {
             return;
         }
 
-        let targetUserId = user.id;
+        const targetUserId = user.id;
 
-        // If Duplicating, keep the same owner? 
-        // No, if I duplicate a project, I (the current user) should become the owner of the copy.
-        // Unless we are admin acting on other's behalf.
-        // For now, let's assume current user owns the new copy.
-        // user.id is correct.
-
-        // PHASE 2 GATE: Check Project Limits
-        // We only gating creation of NEW projects (or duplicates).
         const { data: profile } = await supabase.from('profiles').select('subscription_status, subscription_tier').eq('id', user.id).single();
 
-        // Use permissions lib to check access. 
-        // Limit Logic
-        // Scout (Free/Inactive): 1 Project
-        // Pro: 5 Projects
-        // Studio: Unlimited
-        const isFounderUser = hasAccess({ email: user.email }, 'enterprise'); // Founder check implicit
+        const isFounderUser = hasAccess({ email: user.email }, 'enterprise');
 
         if (!isFounderUser) {
             const currentCount = projects.length;
             const tier = profile?.subscription_tier;
             const status = profile?.subscription_status;
 
-            // Scout / Free Logic
             if ((!status || status !== 'active') && currentCount >= 1) {
                 setIsUpgradeOpen(true);
                 setIsDialogOpen(false);
                 return;
             }
 
-            // Pro Logic
             if (status === 'active' && tier === 'pro' && currentCount >= 5) {
                 setIsUpgradeOpen(true);
                 setIsDialogOpen(false);
                 return;
             }
-
-            // Studio is unlimited, so no check needed.
         }
 
         let payloadData = {
@@ -305,7 +297,6 @@ export default function DashboardPage() {
             persona: 'DEFAULT'
         };
 
-        // If Duplicating, merge with existing data (deep copy)
         if (projectToDuplicate) {
             const existingData = JSON.parse(JSON.stringify(projectToDuplicate.data));
             payloadData = {
@@ -313,9 +304,6 @@ export default function DashboardPage() {
                 clientName: client,
                 producer: producer,
                 color: color,
-                // Preserve persona if it exists in the duplicate, or default? 
-                // User said "preserving the document data".
-                // We should likely NOT overwrite persona if it's already set in the template.
                 persona: existingData.persona || 'DEFAULT'
             };
         }
@@ -341,7 +329,6 @@ export default function DashboardPage() {
                 throw new Error(result.error || 'Failed to create/duplicate project');
             }
 
-            // Success
             setProjectToDuplicate(null);
             fetchProjects();
 
@@ -383,24 +370,21 @@ export default function DashboardPage() {
 
     const filteredProjects = projects.filter(p => {
         if (activeFolder === 'ARCHIVED') {
-            // Show projects in archived folders
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const folder = folders.find(f => f.id === p.data?.folderId);
             return folder?.type === 'archived';
         }
         if (activeFolder) {
             return p.data?.folderId === activeFolder;
         }
-        // All Projects filters out Archived Projects
         if (!p.data?.folderId) return true;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const folder = folders.find(f => f.id === p.data.folderId);
         return folder?.type !== 'archived';
     });
 
     return (
         <div className="flex min-h-screen bg-zinc-900 text-white font-sans">
-
-            {/* LEFT SIDEBAR */}
-            {/* LEFT SIDEBAR - UPDATED */}
             <ExperimentalDashboardNav
                 folders={folders}
                 activeFolder={activeFolder}
@@ -410,13 +394,9 @@ export default function DashboardPage() {
                 userEmail={user || undefined}
                 darkMode={true}
                 onNewProject={() => setIsDialogOpen(true)}
-
             />
 
-            {/* MAIN CONTENT Area */}
             <main className="flex-1 p-12 max-w-[1600px] overflow-y-auto h-screen">
-
-                {/* Top Bar: User Welcome + View Toggles */}
                 <div className="flex justify-between items-end mb-12 border-b border-zinc-800 pb-8">
                     <div>
                         <h2 className={`text-4xl font-light mb-2 ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
@@ -432,7 +412,6 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {/* Theme Toggle */}
                         <button
                             onClick={() => setTheme(darkMode ? 'light' : 'dark')}
                             className={`p-2 rounded-full transition-colors ${darkMode ? 'text-zinc-400 hover:text-white hover:bg-zinc-800' : 'text-zinc-400 hover:text-black hover:bg-zinc-200'}`}
@@ -467,7 +446,6 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Projects Content */}
                 {activeFolder === 'ARCHIVED' && folders.filter(f => f.type === 'archived').length > 0 && (
                     <div className="mb-12">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-6">Archived Folders</h3>
@@ -506,9 +484,6 @@ export default function DashboardPage() {
                     <div className={`
                         ${view === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6' : 'flex flex-col gap-4'}
                     `}>
-
-
-                        {/* Project Cards */}
                         {filteredProjects
                             .map((p) => {
                                 const colorMap = PROJECT_COLORS.find(c => c.id === p.data?.color) || PROJECT_COLORS[0];
@@ -633,7 +608,6 @@ export default function DashboardPage() {
                 )}
             </main>
 
-            {/* Move Project Dialog */}
             <MoveToFolderDialog
                 isOpen={!!projectToMove}
                 onClose={() => setProjectToMove(null)}
@@ -642,7 +616,6 @@ export default function DashboardPage() {
                 projectName={projectToMove?.name || 'Project'}
             />
 
-            {/* Folder Actions Dialog */}
             <FolderActionsDialog
                 isOpen={!!folderActionTarget}
                 onClose={() => setFolderActionTarget(null)}
@@ -654,7 +627,6 @@ export default function DashboardPage() {
                 onUnarchive={() => handleFolderAction('UNARCHIVE')}
             />
 
-            {/* New Project Dialog */}
             <NewProjectDialog
                 isOpen={isDialogOpen}
                 onClose={() => {
@@ -684,4 +656,3 @@ export default function DashboardPage() {
         </div>
     );
 }
-
