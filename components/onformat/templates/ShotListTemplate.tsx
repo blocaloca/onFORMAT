@@ -164,13 +164,15 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Scene */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className={`w-full text-xs font-medium px-1 py-1 block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.scene}</div>
+                                                <div className={`w-full text-xs font-medium px-2 py-2 block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.scene}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={shot.scene}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { scene: e.target.value })}
-                                                    className={`w-full bg-transparent text-xs font-medium focus:outline-none focus:ring-1 focus:ring-black/10 rounded px-1 py-1 ${darkMode ? 'text-zinc-300 focus:bg-zinc-800 focus:ring-zinc-700 placeholder:text-zinc-700' : 'text-black focus:bg-white'}`}
+                                                    className={`w-full text-xs font-medium focus:outline-none border px-2 py-2 rounded-sm transition-colors ${darkMode
+                                                        ? 'bg-black border-zinc-700 text-zinc-300 focus:border-white placeholder:text-zinc-700'
+                                                        : 'bg-white border-zinc-200 text-black focus:border-black placeholder:text-zinc-300'}`}
                                                     placeholder="Sc #"
                                                     disabled={isLocked}
                                                 />
@@ -180,12 +182,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Size Dropdown */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block ${darkMode ? 'text-zinc-400' : 'text-black'}`}>{shot.size}</div>
+                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 block ${darkMode ? 'text-zinc-400' : 'text-black'}`}>{shot.size}</div>
                                             ) : (
                                                 <select
                                                     value={shot.size}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { size: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 ${darkMode ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 focus:ring-zinc-700' : 'bg-zinc-100 hover:bg-zinc-200 text-black'}`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
+                                                        ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
+                                                        : 'bg-white border-zinc-200 text-black focus:border-black hover:bg-zinc-50'}`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_SIZES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -196,12 +200,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Angle Dropdown */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block ${darkMode ? 'text-zinc-400' : 'text-black'}`}>{shot.angle}</div>
+                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 block ${darkMode ? 'text-zinc-400' : 'text-black'}`}>{shot.angle}</div>
                                             ) : (
                                                 <select
                                                     value={shot.angle}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { angle: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 ${darkMode ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 focus:ring-zinc-700' : 'bg-zinc-100 hover:bg-zinc-200 text-black'}`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
+                                                        ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
+                                                        : 'bg-white border-zinc-200 text-black focus:border-black hover:bg-zinc-50'}`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_ANGLES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -212,12 +218,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Movement Dropdown */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 block ${darkMode ? 'text-zinc-400' : 'text-black'}`}>{shot.movement}</div>
+                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 block ${darkMode ? 'text-zinc-400' : 'text-black'}`}>{shot.movement}</div>
                                             ) : (
                                                 <select
                                                     value={shot.movement}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { movement: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 ${darkMode ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-400 focus:ring-zinc-700' : 'bg-zinc-100 hover:bg-zinc-200 text-black'}`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
+                                                        ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
+                                                        : 'bg-white border-zinc-200 text-black focus:border-black hover:bg-zinc-50'}`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_MOVEMENTS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -228,14 +236,16 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Description */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className={`w-full text-xs leading-relaxed px-1 py-1 whitespace-pre-wrap block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.description}</div>
+                                                <div className={`w-full text-xs leading-relaxed px-2 py-2 whitespace-pre-wrap block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.description}</div>
                                             ) : (
                                                 <textarea
                                                     data-index={globalIdx}
                                                     value={shot.description}
                                                     onChange={autoResize}
                                                     rows={1}
-                                                    className={`w-full bg-transparent text-xs leading-relaxed focus:outline-none focus:ring-1 focus:ring-black/10 rounded px-1 py-1 resize-none overflow-hidden min-h-[32px] ${darkMode ? 'text-zinc-300 focus:bg-zinc-800 focus:ring-zinc-700 placeholder:text-zinc-700' : 'text-black focus:bg-white'}`}
+                                                    className={`w-full text-xs leading-relaxed focus:outline-none border rounded-sm px-2 py-2 resize-none overflow-hidden min-h-[34px] transition-colors ${darkMode
+                                                        ? 'bg-black border-zinc-700 text-zinc-300 focus:border-white placeholder:text-zinc-700'
+                                                        : 'bg-white border-zinc-200 text-black focus:border-black placeholder:text-zinc-300'}`}
                                                     placeholder="Describe the action..."
                                                     disabled={isLocked}
                                                     style={{ height: 'auto' }} // Initial reset
@@ -280,10 +290,12 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                             {/* Add Shot Button */}
                             {!isLocked && !isPrinting && (
-                                <div className="pt-2 print-hidden">
+                                <div className="pt-4 print-hidden">
                                     <button
                                         onClick={handleAddShot}
-                                        className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-2 py-2 rounded-sm w-full ${darkMode ? 'text-zinc-500 hover:text-white hover:bg-zinc-800' : 'text-zinc-400 hover:text-black hover:bg-zinc-50'}`}
+                                        className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-sm w-full transition-colors border ${darkMode
+                                            ? 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700 hover:text-white hover:border-zinc-600'
+                                            : 'bg-zinc-50 border-zinc-200 text-zinc-500 hover:bg-white hover:text-black hover:border-zinc-300'}`}
                                     >
                                         <Plus size={10} className="mr-1" /> Add Shot
                                     </button>
@@ -291,7 +303,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     {metadata?.importedAVScript?.rows && (
                                         <button
                                             onClick={handleImportAVScript}
-                                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 px-2 py-2 rounded-sm w-full mt-1"
+                                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-500 border border-emerald-500/20 hover:border-emerald-500 hover:bg-emerald-500/10 px-4 py-3 rounded-sm w-full mt-2 transition-colors"
                                         >
                                             <FileInput size={10} className="mr-1" /> Import from AV Script
                                         </button>

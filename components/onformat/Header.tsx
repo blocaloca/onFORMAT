@@ -21,15 +21,7 @@ export const Header = ({ activePhase, onPhaseChange, onSave, onCompletePhase }: 
       <div className="flex items-center gap-6">
         {/* Branding Removed as requested */}
       </div>
-      <div className="flex gap-3">
-        <button
-          onClick={() => setTheme(darkMode ? 'light' : 'dark')}
-          className={`p-2 rounded-full transition-colors ${darkMode ? 'text-zinc-400 hover:text-white hover:bg-white/10' : 'text-zinc-500 hover:text-black hover:bg-zinc-100'}`}
-          title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
-      </div>
+
     </header>
   );
 };
