@@ -106,7 +106,7 @@ export default function AnnouncementEditor({ user }: { user: any }) {
         <section>
             <div className="flex items-center gap-2 mb-4">
                 <Megaphone size={20} className="text-zinc-400" />
-                <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Global Announcement</h2>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Global Announcement (v2 Debug)</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
