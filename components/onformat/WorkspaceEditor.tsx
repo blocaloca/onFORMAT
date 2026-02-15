@@ -1779,7 +1779,7 @@ Context:\n"${fullContext}"`;
     return (
         <div className="h-screen bg-[var(--background)] flex flex-col font-sans text-[var(--foreground)]">
 
-            <main className="flex-1 flex overflow-hidden relative bg-zinc-900">
+            <main className="flex-1 flex overflow-hidden relative bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
                 {/* Standby Banner Removed */}
 
                 <ExperimentalWorkspaceNav
@@ -1931,59 +1931,68 @@ Context:\n"${fullContext}"`;
 
 
                 {/* --- Main Content Area --- */}
-                {state.activeTool === 'project-export' ? (
-                    <PrintDashboard
-                        onClose={() => setState(s => ({ ...s, activeTool: 'brief' }))}
-                        phases={state.phases}
-                        projectName={state.projectName}
-                        clientName={state.clientName}
-                        producer={state.producer}
-                    />
-                ) : state.activeTool === 'project-overview' ? (
-                    <ProjectOverview
-                        phases={state.phases}
-                        activePhaseKey={state.activePhase}
-                        onOpenTool={(phaseKey) => {
-                            const DEFAULTS: any = {
-                                'STRATEGY': 'project-vision',
-                                'DEVELOPMENT': 'brief',
-                                'PRE_PRODUCTION': 'shot-scene-book',
-                                'PRODUCTION': 'call-sheet',
-                                'POST_PRODUCTION': 'client-selects',
-                                'WRAP': 'archive-log'
-                            };
-                            const targetTool = DEFAULTS[phaseKey] || 'brief';
-                            setState(s => ({ ...s, activePhase: phaseKey as Phase, activeTool: targetTool }));
-                        }}
-                    />
-                ) : (
-                    <DraftEditor
-                        draft={currentDraft}
-                        onDraftChange={saveDraftForActiveTool}
-                        isLocked={isToolLocked}
-                        activeToolLabel={activeToolLabel}
-                        // @ts-ignore
-                        activeToolKey={state.activeTool}
-                        persona={persona}
-                        projectId={projectId}
-                        // @ts-ignore
-                        projectName={state.projectName}
-                        clientName={state.clientName}
-                        producer={state.producer}
+                <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+                    <Header
                         activePhase={state.activePhase}
-                        phases={state.phases}
-                        onToggleLock={() => activePhaseState.locked ? unlockPhase() : lockPhase()}
-                        onGenerateFromVision={handleGenerateFromVision}
-                        onOpenAi={state.activePhase === 'DEVELOPMENT' ? toggleAiDock : undefined}
-                        isAiDocked={isAiDocked}
-                        // @ts-ignore
-                        latestNotification={latestNotification}
-                        // @ts-ignore
-                        onMagicImport={handleMagicImport}
-                        // @ts-ignore
-                        onOpenPrintRoom={() => setState(s => ({ ...s, activeTool: 'project-export' }))}
+                        onPhaseChange={(p) => setPhase(p)}
+                        onSave={() => onSave && onSave(state)}
+                        onCompletePhase={() => { }}
                     />
-                )}
+
+                    {state.activeTool === 'project-export' ? (
+                        <PrintDashboard
+                            onClose={() => setState(s => ({ ...s, activeTool: 'brief' }))}
+                            phases={state.phases}
+                            projectName={state.projectName}
+                            clientName={state.clientName}
+                            producer={state.producer}
+                        />
+                    ) : state.activeTool === 'project-overview' ? (
+                        <ProjectOverview
+                            phases={state.phases}
+                            activePhaseKey={state.activePhase}
+                            onOpenTool={(phaseKey) => {
+                                const DEFAULTS: any = {
+                                    'STRATEGY': 'project-vision',
+                                    'DEVELOPMENT': 'brief',
+                                    'PRE_PRODUCTION': 'shot-scene-book',
+                                    'PRODUCTION': 'call-sheet',
+                                    'POST_PRODUCTION': 'client-selects',
+                                    'WRAP': 'archive-log'
+                                };
+                                const targetTool = DEFAULTS[phaseKey] || 'brief';
+                                setState(s => ({ ...s, activePhase: phaseKey as Phase, activeTool: targetTool }));
+                            }}
+                        />
+                    ) : (
+                        <DraftEditor
+                            draft={currentDraft}
+                            onDraftChange={saveDraftForActiveTool}
+                            isLocked={isToolLocked}
+                            activeToolLabel={activeToolLabel}
+                            // @ts-ignore
+                            activeToolKey={state.activeTool}
+                            persona={persona}
+                            projectId={projectId}
+                            // @ts-ignore
+                            projectName={state.projectName}
+                            clientName={state.clientName}
+                            producer={state.producer}
+                            activePhase={state.activePhase}
+                            phases={state.phases}
+                            onToggleLock={() => activePhaseState.locked ? unlockPhase() : lockPhase()}
+                            onGenerateFromVision={handleGenerateFromVision}
+                            onOpenAi={state.activePhase === 'DEVELOPMENT' ? toggleAiDock : undefined}
+                            isAiDocked={isAiDocked}
+                            // @ts-ignore
+                            latestNotification={latestNotification}
+                            // @ts-ignore
+                            onMagicImport={handleMagicImport}
+                            // @ts-ignore
+                            onOpenPrintRoom={() => setState(s => ({ ...s, activeTool: 'project-export' }))}
+                        />
+                    )}
+                </div>
 
 
             </main>

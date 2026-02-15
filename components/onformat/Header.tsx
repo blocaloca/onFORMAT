@@ -2,13 +2,13 @@ import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 interface HeaderProps {
-  activePhase: 'CONCEPT' | 'PLAN' | 'EXECUTE' | 'WRAP';
-  onPhaseChange: (phase: 'CONCEPT' | 'PLAN' | 'EXECUTE' | 'WRAP') => void;
+  activePhase: 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST';
+  onPhaseChange: (phase: 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST') => void;
   onSave: () => void;
   onCompletePhase: () => void;
 }
 
-const PHASES = ['CONCEPT', 'PLAN', 'EXECUTE', 'WRAP'] as const;
+const PHASES = ['DEVELOPMENT', 'PRE_PRODUCTION', 'ON_SET', 'POST'] as const;
 
 import { useTheme } from '@/components/ThemeProvider';
 
