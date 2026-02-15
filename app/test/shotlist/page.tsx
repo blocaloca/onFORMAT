@@ -80,10 +80,6 @@ export default function ShotListTestPage() {
                 {/* PAGE HEADER */}
                 <div className="mb-12">
                     <h2 className="text-4xl font-light mb-4">Production Shots</h2>
-                    <p className="text-sm text-zinc-500 max-w-lg leading-relaxed">
-                        Manage your shot list with our new high-contrast, distraction-free interface.
-                        Designed for clarity on onset monitors and printed reports.
-                    </p>
                 </div>
 
                 {/* VISUAL TABLE HEADER */}
