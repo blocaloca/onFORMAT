@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sun, Moon } from 'lucide-react';
 
 interface HeaderProps {
   activePhase: 'CONCEPT' | 'PLAN' | 'EXECUTE' | 'WRAP';
@@ -12,7 +13,7 @@ const PHASES = ['CONCEPT', 'PLAN', 'EXECUTE', 'WRAP'] as const;
 import { useTheme } from '@/components/ThemeProvider';
 
 export const Header = ({ activePhase, onPhaseChange, onSave, onCompletePhase }: HeaderProps) => {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const darkMode = theme === 'dark';
 
   return (
@@ -21,7 +22,13 @@ export const Header = ({ activePhase, onPhaseChange, onSave, onCompletePhase }: 
         <span className={`font-black tracking-tighter text-xl ${darkMode ? 'text-industrial-accent' : 'text-black'}`}>onFORMAT</span>
       </div>
       <div className="flex gap-3">
-        {/* Buttons removed for Document Nav Bar migration */}
+        <button
+          onClick={() => setTheme(darkMode ? 'light' : 'dark')}
+          className={`p-2 rounded-full transition-colors ${darkMode ? 'text-zinc-400 hover:text-white hover:bg-white/10' : 'text-zinc-500 hover:text-black hover:bg-zinc-100'}`}
+          title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
       </div>
     </header>
   );
