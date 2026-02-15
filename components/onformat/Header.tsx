@@ -17,9 +17,9 @@ export const Header = ({ activePhase, onPhaseChange, onSave, onCompletePhase }: 
   const darkMode = theme === 'dark';
 
   return (
-    <header className={`flex justify-between items-center px-6 py-3 border-b transition-colors ${darkMode ? 'border-industrial bg-industrial-surface' : 'border-zinc-200 bg-white'}`}>
+    <header className={`flex justify-between items-center px-6 py-3 border-b transition-colors ${darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
       <div className="flex items-center gap-6">
-        <span className={`font-black tracking-tighter text-xl ${darkMode ? 'text-industrial-accent' : 'text-black'}`}>onFORMAT</span>
+        {/* Branding Removed as requested */}
       </div>
       <div className="flex gap-3">
         <button

@@ -308,7 +308,7 @@ export const ExperimentalWorkspaceNav = ({
     };
 
     return (
-        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors ${darkMode ? 'bg-zinc-950 border-zinc-900' : 'bg-white border-zinc-100'}`}>
+        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors ${darkMode ? 'bg-zinc-950 border-zinc-900' : 'bg-zinc-100 border-zinc-200'}`}>
             <NavHeader
                 darkMode={darkMode}
             />

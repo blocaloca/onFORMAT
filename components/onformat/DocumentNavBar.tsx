@@ -60,7 +60,7 @@ export const DocumentNavBar = ({
     const dateLabel = activeItem.date || ''; // Optional date subtitle
 
     return (
-        <div className={`w-full h-12 border-b flex items-center justify-between px-4 select-none transition-colors ${darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'}`}>
+        <div className={`w-full h-12 border-b flex items-center justify-between px-4 select-none transition-colors ${darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
             {/* Left: Navigation Logic */}
             <div className="flex items-center gap-4">
 
