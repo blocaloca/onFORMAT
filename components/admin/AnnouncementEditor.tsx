@@ -57,9 +57,15 @@ export default function AnnouncementEditor({ user }: { user: any }) {
             }
 
             // 2. Post to API
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("No active session");
+
             const res = await fetch('/api/announcements', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
                 body: JSON.stringify({
                     userId: user.id,
                     media_url: finalMediaUrl,
