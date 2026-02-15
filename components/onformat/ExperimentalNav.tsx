@@ -276,11 +276,15 @@ interface WorkspaceSidebarProps {
     mobileStatus?: { isLive: boolean; hasAlert: boolean; alertMsg?: string }; // New prop
 }
 
+import { useTheme } from '@/components/ThemeProvider';
+
+// ... (previous imports remain, ensure useTheme is imported)
+
 export const ExperimentalWorkspaceNav = ({
     activeTool,
     activePhase,
     onToolSelect,
-    darkMode = true, // Default Dark for Workspace
+    // darkMode prop is removed in favor of context
     userEmail,
     producerName,
     onToggleAi,
@@ -288,6 +292,9 @@ export const ExperimentalWorkspaceNav = ({
     mobileStatus,
     alerts
 }: WorkspaceSidebarProps & { alerts?: Record<string, boolean> }) => {
+    const { theme } = useTheme();
+    const darkMode = theme === 'dark'; // Derived from context
+
     // We maintain local state for 'expanded' phases, but we default to expanding the ACTIVE phase.
     const [expandedPhase, setExpandedPhase] = useState<Phase | null>(activePhase);
 

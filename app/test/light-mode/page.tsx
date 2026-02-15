@@ -107,6 +107,10 @@ const MockLightNavbar = () => (
 
 // --- MAIN PAGE ---
 
+import { ThemeProvider } from '@/components/ThemeProvider';
+
+// ... (other imports)
+
 export default function LightModeTestPage() {
     const [activeTool, setActiveTool] = useState('shot-scene-book');
     const [activePhase, setActivePhase] = useState<Phase>('PRE_PRODUCTION');
@@ -147,150 +151,151 @@ export default function LightModeTestPage() {
     };
 
     return (
-        <div className="flex h-screen w-full bg-white text-zinc-900 font-sans overflow-hidden">
+        <ThemeProvider>
+            <div className="flex h-screen w-full bg-white text-zinc-900 font-sans overflow-hidden">
 
-            {/* 1. SIDEBAR (Real Component, Light Mode) */}
-            <ExperimentalWorkspaceNav
-                activeTool={activeTool}
-                activePhase={activePhase}
-                onToolSelect={(tool, phase) => {
-                    setActiveTool(tool);
-                    setActivePhase(phase);
-                }}
-                darkMode={false} // KEY PROP
-                userEmail="davidcasteel@gmail.com"
-                mobileStatus={{ isLive: true, hasAlert: false }}
-            />
+                {/* 1. SIDEBAR (Real Component, Light Mode) */}
+                <ExperimentalWorkspaceNav
+                    activeTool={activeTool}
+                    activePhase={activePhase}
+                    onToolSelect={(tool, phase) => {
+                        setActiveTool(tool);
+                        setActivePhase(phase);
+                    }}
+                    userEmail="davidcasteel@gmail.com"
+                    mobileStatus={{ isLive: true, hasAlert: false }}
+                />
 
-            {/* 2. MAIN LAYOUT */}
-            <div className="flex-1 flex flex-col h-screen overflow-hidden bg-zinc-50">
+                {/* 2. MAIN LAYOUT */}
+                <div className="flex-1 flex flex-col h-screen overflow-hidden bg-zinc-50">
 
-                {/* 3. MOCK HEADER */}
-                <MockLightHeader />
+                    {/* 3. MOCK HEADER */}
+                    <MockLightHeader />
 
-                {/* 4. MOCK DOC NAV */}
-                <MockLightNavbar />
+                    {/* 4. MOCK DOC NAV */}
+                    <MockLightNavbar />
 
-                {/* 5. DOCUMENT AREA */}
-                <main className="flex-1 overflow-y-auto px-12 py-12">
-                    <div className="max-w-5xl mx-auto">
+                    {/* 5. DOCUMENT AREA */}
+                    <main className="flex-1 overflow-y-auto px-12 py-12">
+                        <div className="max-w-5xl mx-auto">
 
-                        {/* Page Title */}
-                        <div className="mb-12">
-                            <h2 className="text-3xl font-light text-zinc-900 mb-2">Production Shots</h2>
-                            <div className="h-1 w-12 bg-zinc-200 rounded-full"></div>
-                        </div>
+                            {/* Page Title */}
+                            <div className="mb-12">
+                                <h2 className="text-3xl font-light text-zinc-900 mb-2">Production Shots</h2>
+                                <div className="h-1 w-12 bg-zinc-200 rounded-full"></div>
+                            </div>
 
-                        {/* VISUAL TABLE HEADER */}
-                        <div className="hidden md:grid grid-cols-[60px_120px_120px_120px_1fr_40px] gap-4 mb-4 px-4 pl-6">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Scene</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Size</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Angle</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Movement</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Description</span>
-                            <span></span>
-                        </div>
+                            {/* VISUAL TABLE HEADER */}
+                            <div className="hidden md:grid grid-cols-[60px_120px_120px_120px_1fr_40px] gap-4 mb-4 px-4 pl-6">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Scene</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Size</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Angle</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Movement</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Description</span>
+                                <span></span>
+                            </div>
 
-                        {/* CONTENT CARD */}
-                        <div className="bg-white border border-zinc-200 shadow-sm rounded-lg overflow-hidden min-h-[500px]">
-                            <div className="divide-y divide-zinc-100">
-                                {shots.map((shot, index) => (
-                                    <div
-                                        key={shot.id}
-                                        className="group hover:bg-zinc-50 transition-colors p-4"
-                                    >
-                                        <div className="grid grid-cols-1 md:grid-cols-[60px_120px_120px_120px_1fr_40px] gap-4 items-start">
+                            {/* CONTENT CARD */}
+                            <div className="bg-white border border-zinc-200 shadow-sm rounded-lg overflow-hidden min-h-[500px]">
+                                <div className="divide-y divide-zinc-100">
+                                    {shots.map((shot, index) => (
+                                        <div
+                                            key={shot.id}
+                                            className="group hover:bg-zinc-50 transition-colors p-4"
+                                        >
+                                            <div className="grid grid-cols-1 md:grid-cols-[60px_120px_120px_120px_1fr_40px] gap-4 items-start">
 
-                                            {/* SCENE */}
-                                            <div className="md:contents">
-                                                <input
-                                                    type="text"
-                                                    value={shot.scene}
-                                                    onChange={(e) => updateShot(shot.id, 'scene', e.target.value)}
-                                                    placeholder="#"
-                                                    className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-sm font-mono text-center rounded-md font-bold text-zinc-700"
-                                                />
+                                                {/* SCENE */}
+                                                <div className="md:contents">
+                                                    <input
+                                                        type="text"
+                                                        value={shot.scene}
+                                                        onChange={(e) => updateShot(shot.id, 'scene', e.target.value)}
+                                                        placeholder="#"
+                                                        className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-sm font-mono text-center rounded-md font-bold text-zinc-700"
+                                                    />
+                                                </div>
+
+                                                {/* SIZE */}
+                                                <div className="relative">
+                                                    <select
+                                                        value={shot.size}
+                                                        onChange={(e) => updateShot(shot.id, 'size', e.target.value)}
+                                                        className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-xs font-bold uppercase tracking-wider rounded-md appearance-none cursor-pointer text-zinc-700"
+                                                    >
+                                                        {SHOT_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                                                    </select>
+                                                </div>
+
+                                                {/* ANGLE */}
+                                                <div className="relative">
+                                                    <select
+                                                        value={shot.angle}
+                                                        onChange={(e) => updateShot(shot.id, 'angle', e.target.value)}
+                                                        className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-xs font-bold uppercase tracking-wider rounded-md appearance-none cursor-pointer text-zinc-700"
+                                                    >
+                                                        {SHOT_ANGLES.map(s => <option key={s} value={s}>{s}</option>)}
+                                                    </select>
+                                                </div>
+
+                                                {/* MOVEMENT */}
+                                                <div className="relative">
+                                                    <select
+                                                        value={shot.movement}
+                                                        onChange={(e) => updateShot(shot.id, 'movement', e.target.value)}
+                                                        className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-xs font-bold uppercase tracking-wider rounded-md appearance-none cursor-pointer text-zinc-700"
+                                                    >
+                                                        {SHOT_MOVEMENTS.map(s => <option key={s} value={s}>{s}</option>)}
+                                                    </select>
+                                                </div>
+
+                                                {/* DESCRIPTION */}
+                                                <div className="relative">
+                                                    <textarea
+                                                        value={shot.description}
+                                                        onChange={(e) => updateShot(shot.id, 'description', e.target.value)}
+                                                        placeholder="Describe the shot..."
+                                                        rows={1}
+                                                        className="w-full min-h-[38px] py-2 px-3 bg-white border border-transparent focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-sm leading-relaxed resize-none rounded-md placeholder:text-zinc-300 font-medium text-zinc-600"
+                                                        style={{ height: 'auto', minHeight: '38px' }}
+                                                        onInput={(e) => {
+                                                            const target = e.target as HTMLTextAreaElement;
+                                                            target.style.height = 'auto';
+                                                            target.style.height = Math.max(38, target.scrollHeight) + 'px';
+                                                        }}
+                                                    />
+                                                </div>
+
+                                                {/* ACTIONS */}
+                                                <div className="flex items-center justify-center pt-2">
+                                                    <button
+                                                        onClick={() => deleteShot(shot.id)}
+                                                        className="w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                </div>
+
                                             </div>
-
-                                            {/* SIZE */}
-                                            <div className="relative">
-                                                <select
-                                                    value={shot.size}
-                                                    onChange={(e) => updateShot(shot.id, 'size', e.target.value)}
-                                                    className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-xs font-bold uppercase tracking-wider rounded-md appearance-none cursor-pointer text-zinc-700"
-                                                >
-                                                    {SHOT_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                                                </select>
-                                            </div>
-
-                                            {/* ANGLE */}
-                                            <div className="relative">
-                                                <select
-                                                    value={shot.angle}
-                                                    onChange={(e) => updateShot(shot.id, 'angle', e.target.value)}
-                                                    className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-xs font-bold uppercase tracking-wider rounded-md appearance-none cursor-pointer text-zinc-700"
-                                                >
-                                                    {SHOT_ANGLES.map(s => <option key={s} value={s}>{s}</option>)}
-                                                </select>
-                                            </div>
-
-                                            {/* MOVEMENT */}
-                                            <div className="relative">
-                                                <select
-                                                    value={shot.movement}
-                                                    onChange={(e) => updateShot(shot.id, 'movement', e.target.value)}
-                                                    className="w-full h-9 px-3 bg-zinc-50 border border-transparent focus:bg-white focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-xs font-bold uppercase tracking-wider rounded-md appearance-none cursor-pointer text-zinc-700"
-                                                >
-                                                    {SHOT_MOVEMENTS.map(s => <option key={s} value={s}>{s}</option>)}
-                                                </select>
-                                            </div>
-
-                                            {/* DESCRIPTION */}
-                                            <div className="relative">
-                                                <textarea
-                                                    value={shot.description}
-                                                    onChange={(e) => updateShot(shot.id, 'description', e.target.value)}
-                                                    placeholder="Describe the shot..."
-                                                    rows={1}
-                                                    className="w-full min-h-[38px] py-2 px-3 bg-white border border-transparent focus:border-zinc-300 focus:ring-4 focus:ring-zinc-100 outline-none transition-all text-sm leading-relaxed resize-none rounded-md placeholder:text-zinc-300 font-medium text-zinc-600"
-                                                    style={{ height: 'auto', minHeight: '38px' }}
-                                                    onInput={(e) => {
-                                                        const target = e.target as HTMLTextAreaElement;
-                                                        target.style.height = 'auto';
-                                                        target.style.height = Math.max(38, target.scrollHeight) + 'px';
-                                                    }}
-                                                />
-                                            </div>
-
-                                            {/* ACTIONS */}
-                                            <div className="flex items-center justify-center pt-2">
-                                                <button
-                                                    onClick={() => deleteShot(shot.id)}
-                                                    className="w-6 h-6 flex items-center justify-center text-zinc-300 hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100"
-                                                >
-                                                    <Trash2 size={14} />
-                                                </button>
-                                            </div>
-
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
 
-                            {/* ADD ROW */}
-                            <div className="p-4 bg-zinc-50/50 border-t border-zinc-100">
-                                <button
-                                    onClick={addShot}
-                                    className="w-full py-3 flex items-center justify-center gap-2 border border-dashed border-zinc-300 text-zinc-400 hover:text-zinc-600 hover:border-zinc-400 hover:bg-white rounded-md transition-all text-xs font-bold uppercase tracking-widest"
-                                >
-                                    <Plus size={14} /> Add Shot
-                                </button>
+                                {/* ADD ROW */}
+                                <div className="p-4 bg-zinc-50/50 border-t border-zinc-100">
+                                    <button
+                                        onClick={addShot}
+                                        className="w-full py-3 flex items-center justify-center gap-2 border border-dashed border-zinc-300 text-zinc-400 hover:text-zinc-600 hover:border-zinc-400 hover:bg-white rounded-md transition-all text-xs font-bold uppercase tracking-widest"
+                                    >
+                                        <Plus size={14} /> Add Shot
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </main>
+                    </main>
 
+                </div>
             </div>
-        </div>
+        </ThemeProvider>
     );
 }

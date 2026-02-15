@@ -24,6 +24,8 @@ interface DocumentNavBarProps {
     isAiDocked?: boolean;
 }
 
+import { useTheme } from '@/components/ThemeProvider';
+
 export const DocumentNavBar = ({
     versions,
     activeVersionIndex,
@@ -43,6 +45,8 @@ export const DocumentNavBar = ({
     onToggleAi,
     isAiDocked
 }: DocumentNavBarProps) => {
+    const { theme } = useTheme();
+    const darkMode = theme === 'dark';
     const [showVersionMenu, setShowVersionMenu] = useState(false);
 
     // Helpers for Collection Mode (Day Logic)
@@ -56,13 +60,13 @@ export const DocumentNavBar = ({
     const dateLabel = activeItem.date || ''; // Optional date subtitle
 
     return (
-        <div className="w-full h-12 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4 select-none">
+        <div className={`w-full h-12 border-b flex items-center justify-between px-4 select-none transition-colors ${darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'}`}>
             {/* Left: Navigation Logic */}
             <div className="flex items-center gap-4">
 
                 {/* Title */}
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wide text-zinc-500 mr-2">{title}</span>
+                    <span className={`text-xs font-bold uppercase tracking-wide mr-2 ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>{title}</span>
 
                     {/* Day Navigator Pill */}
                     <div className="flex items-center bg-black rounded-sm border border-zinc-800 h-8">
@@ -75,7 +79,7 @@ export const DocumentNavBar = ({
                         </button>
 
                         <div className="px-4 min-w-[100px] text-center flex flex-col justify-center h-full">
-                            <span className="block text-[10px] font-black uppercase text-white tracking-widest leading-none mb-0.5">
+                            <span className={`block text-[10px] font-black uppercase tracking-widest leading-none mb-0.5 ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
                                 {dayLabel}
                             </span>
                             {dateLabel && (
@@ -88,20 +92,20 @@ export const DocumentNavBar = ({
                         <button
                             onClick={() => onSelectVersion(Math.min(versions.length - 1, activeVersionIndex + 1))}
                             disabled={activeVersionIndex === versions.length - 1}
-                            className="h-full px-2 hover:text-white text-zinc-600 disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors border-l border-zinc-800/50"
+                            className={`h-full px-2 transition-colors border-l ${darkMode ? 'text-zinc-600 hover:text-white border-zinc-800/50 disabled:hover:text-zinc-600' : 'text-zinc-400 hover:text-black hover:bg-zinc-100 border-zinc-200 disabled:hover:text-zinc-400'}`}
                         >
                             <ChevronRight size={14} />
                         </button>
                     </div>
 
-                    <div className="h-4 w-px bg-zinc-800 mx-2" />
+                    <div className={`h-4 w-px mx-2 ${darkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
 
                     {/* Day Actions */}
                     <button onClick={onNew} className="p-1.5 text-zinc-500 hover:text-emerald-400 transition-colors" title="Add Day">
                         <Plus size={16} />
                     </button>
 
-                    <button onClick={onClear} className="p-1.5 text-zinc-500 hover:text-red-500 transition-colors" title="Delete Day">
+                    <button onClick={onClear} className={`p-1.5 transition-colors ${darkMode ? 'text-zinc-500 hover:text-red-500' : 'text-zinc-400 hover:text-red-600'}`} title="Delete Day">
                         <Trash2 size={14} />
                     </button>
                 </div>
@@ -112,17 +116,17 @@ export const DocumentNavBar = ({
             <div className="flex items-center gap-3">
                 {/* Orientation Toggle (Global) */}
                 {onToggleOrientation && (
-                    <div className="flex bg-zinc-950 rounded-sm border border-zinc-800 p-0.5 mr-2">
+                    <div className={`flex rounded-sm border p-0.5 mr-2 ${darkMode ? 'bg-zinc-950 border-zinc-800' : 'bg-zinc-50 border-zinc-200'}`}>
                         <button
                             onClick={() => onToggleOrientation('portrait')}
-                            className={`p-1.5 rounded-sm transition-all ${orientation === 'portrait' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                            className={`p-1.5 rounded-sm transition-all ${orientation === 'portrait' ? (darkMode ? 'bg-zinc-800 text-white shadow-sm' : 'bg-white text-black shadow-sm border border-zinc-200') : (darkMode ? 'text-zinc-600 hover:text-zinc-400' : 'text-zinc-400 hover:text-zinc-600')}`}
                             title="Portrait"
                         >
                             <RectangleVertical size={14} />
                         </button>
                         <button
                             onClick={() => onToggleOrientation('landscape')}
-                            className={`p-1.5 rounded-sm transition-all ${orientation === 'landscape' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                            className={`p-1.5 rounded-sm transition-all ${orientation === 'landscape' ? (darkMode ? 'bg-zinc-800 text-white shadow-sm' : 'bg-white text-black shadow-sm border border-zinc-200') : (darkMode ? 'text-zinc-600 hover:text-zinc-400' : 'text-zinc-400 hover:text-zinc-600')}`}
                             title="Landscape"
                         >
                             <RectangleHorizontal size={14} />
@@ -136,13 +140,14 @@ export const DocumentNavBar = ({
                         className={`
                             flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border shadow-sm
                             ${isAiDocked
-                                ? 'bg-zinc-800 text-emerald-500 border-zinc-700 hover:bg-zinc-700 hover:text-emerald-400' // Active/Docked/Shown? Actually "Docked" usually means hidden side panel in some contexts, or shown. In WorkspaceEditor: isAiDocked=true means HIDDEN (docked away). 
+                                ? (darkMode ? 'bg-zinc-800 text-emerald-500 border-zinc-700 hover:bg-zinc-700 hover:text-emerald-400' : 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100') // Active/Docked/Shown? Actually "Docked" usually means hidden side panel in some contexts, or shown. In WorkspaceEditor: isAiDocked=true means HIDDEN (docked away). 
                                 // Let's check WorkspaceEditor logic: 
                                 // const aiMode = isAiDocked ? 'OFF' : ...
                                 // So isAiDocked = TRUE means AI is OFF.
                                 // isAiDocked = FALSE means AI is OPEN.
+                                // isAiDocked = FALSE means AI is OPEN.
                                 // So if !isAiDocked (AI Open), we want it bright.
-                                : 'bg-emerald-900/30 text-emerald-400 border-emerald-800/50 hover:bg-emerald-900/50'
+                                : (darkMode ? 'bg-emerald-900/30 text-emerald-400 border-emerald-800/50 hover:bg-emerald-900/50' : 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 shadow-md')
                             }
                             ${!isAiDocked ? '' : 'opacity-60 hover:opacity-100'} 
                         `}
@@ -155,7 +160,7 @@ export const DocumentNavBar = ({
                 {onOpenPrintRoom && (
                     <button
                         onClick={onOpenPrintRoom}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border border-zinc-700 shadow-sm"
+                        className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border shadow-sm ${darkMode ? 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white border-zinc-700' : 'bg-zinc-900 text-white hover:bg-zinc-800 border-zinc-900'}`}
                     >
                         <Printer size={14} />
                         <span>Export</span>
