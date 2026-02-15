@@ -73,7 +73,8 @@ export default function AnnouncementEditor({ user }: { user: any }) {
                 setMediaUrl('');
                 fetchAnnouncement(); // Refresh preview
             } else {
-                alert("Failed to publish announcement.");
+                const errData = await res.json();
+                alert(`Failed to publish: ${errData.error || 'Unknown Error'}`);
             }
 
         } catch (error) {

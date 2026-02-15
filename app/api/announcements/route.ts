@@ -57,25 +57,23 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized: Invalid Session' }, { status: 401 });
         }
 
-        // 2. Privilege Check using Service Role
-        const { data: profile, error: profileError } = await adminSupabase
-            .from('profiles')
-            .select('email, is_admin')
-            .eq('id', user.id)
-            .single();
+        // 2. Founder Bypass Check (Robust)
+        // Check email directly from Auth Token to avoid "Profile not found" blocking the founder
+        if (user.email === 'casteelio@gmail.com') {
+            console.log("Announcement: Founder bypass authorized for", user.email);
+            // Proceed without profile check
+        } else {
+            // 3. Admin Check (Standard)
+            const { data: profile, error: profileError } = await adminSupabase
+                .from('profiles')
+                .select('email, is_admin')
+                .eq('id', user.id)
+                .single();
 
-        if (profileError) {
-            console.error("Profile Fetch Error:", profileError);
-            // If profile not found, likely cannot post
-            return NextResponse.json({ error: 'Profile not found' }, { status: 403 });
-        }
-
-        // Allow if is_admin OR specific email (Founder)
-        const isAuthorized = profile?.is_admin || ['casteelio@gmail.com'].includes(profile?.email?.toLowerCase() || '');
-
-        if (!isAuthorized) {
-            console.warn(`Unauthorized announcement attempt by ${user.email}`);
-            return NextResponse.json({ error: 'Forbidden: Not a founder/admin' }, { status: 403 });
+            if (profileError || !profile?.is_admin) {
+                console.warn(`Unauthorized announcement attempt by ${user.email}`);
+                return NextResponse.json({ error: 'Forbidden: Not a founder/admin' }, { status: 403 });
+            }
         }
 
         // 3. Logic: Deactivate previous
