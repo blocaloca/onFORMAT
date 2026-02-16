@@ -87,7 +87,7 @@ export default function ProjectPage() {
   };
 
   if (loading) {
-    return <div className="h-screen flex items-center justify-center bg-zinc-900 text-zinc-400 text-xs font-mono uppercase animate-pulse">Loading Workspace...</div>;
+    return <div className="h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 text-zinc-400 text-xs font-mono uppercase animate-pulse">Loading Workspace...</div>;
   }
 
   return (

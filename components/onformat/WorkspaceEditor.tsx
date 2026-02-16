@@ -1808,7 +1808,6 @@ Context:\n"${fullContext}"`;
                         // @ts-ignore
                         setState(s => ({ ...s, activePhase: phase, activeTool: toolKey as ToolKey }));
                     }}
-                    darkMode={true}
                     producerName={state.producer}
                     onToggleAi={toggleAiDock}
                     isAiDocked={isAiDocked}
@@ -1932,12 +1931,7 @@ Context:\n"${fullContext}"`;
 
                 {/* --- Main Content Area --- */}
                 <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                    <Header
-                        activePhase={state.activePhase}
-                        onPhaseChange={(p) => setPhase(p)}
-                        onSave={() => onSave && onSave(state)}
-                        onCompletePhase={() => { }}
-                    />
+                    <Header />
 
                     {state.activeTool === 'project-export' ? (
                         <PrintDashboard
