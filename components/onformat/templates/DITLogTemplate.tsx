@@ -41,7 +41,8 @@ const EVENT_OPTIONS = [
 ];
 
 export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: DITLogTemplateProps) => {
-    const supabase = getClient()
+    // Realtime Audit: Memoize client for stability
+    const supabase = React.useMemo(() => getClient(), []);
 
     // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);

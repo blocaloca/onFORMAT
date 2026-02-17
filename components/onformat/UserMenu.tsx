@@ -43,7 +43,13 @@ export const UserMenu = ({ email }: { email?: string }) => {
         }
 
         await supabase.auth.signOut();
-        router.push('/login');
+
+        // Zombie Verification: Explicitly clear client storage
+        localStorage.clear();
+
+        // Nuclear Logout: Trigger Server Route for 303 Hard Refresh
+        // router.push('/login'); // REPLACED
+        window.location.href = '/api/auth/logout';
     };
 
     return (

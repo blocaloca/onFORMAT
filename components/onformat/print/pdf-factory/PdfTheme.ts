@@ -4,7 +4,13 @@ import { StyleSheet } from '@react-pdf/renderer';
 // Using standard PDF fonts (Helvetica) for maximum stability.
 
 // --- 2. Dynamic Theme Generator ---
-export const getPDFTheme = (brandSettings: { logo_url?: string, accent_color?: string } = {}) => {
+export interface BrandSettings {
+    logo_url?: string;
+    accent_color?: string;
+    company_name?: string; // Future Use
+}
+
+export const getPDFTheme = (brandSettings: BrandSettings = {}) => {
 
     const ACCENT = brandSettings.accent_color || '#059669'; // Default Emerald
 
@@ -15,6 +21,7 @@ export const getPDFTheme = (brandSettings: { logo_url?: string, accent_color?: s
         lightGrey: '#F9FAF7', // Updated "Tactical" Input Background
         mutedText: '#6B7280', // Gray-500
         emerald: ACCENT,      // Dynamic Accent
+        primary: ACCENT,      // Semantic Alias for UI Bridge
         white: '#FFFFFF'
     };
 

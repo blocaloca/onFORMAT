@@ -279,7 +279,8 @@ export default function MobilePage() {
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
-    const supabase = getClient()
+    // Realtime Audit: Memoize client to prevent connection churn on re-renders
+    const supabase = React.useMemo(() => getClient(), []);
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<any>(null);
     const [userGroups, setUserGroups] = useState<string[]>([]);
@@ -302,6 +303,7 @@ export default function MobilePage() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user?.email) return;
 
+            // Realtime Audit: supabase instance is now stable
             const channel = supabase.channel('p_presence', { config: { presence: { key: user.email } } });
             channel.subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') await channel.track({ online_at: new Date().toISOString() });
