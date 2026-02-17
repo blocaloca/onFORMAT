@@ -12,13 +12,8 @@ export const metadata: Metadata = {
   },
 }
 
-import { Montserrat } from 'next/font/google'
-
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-montserrat',
-})
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -29,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={montserrat.className}>
+    <html lang="en" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <body className="font-sans antialiased">
         <ThemeProvider>
           {children}
           <BetaFeedbackTrigger />

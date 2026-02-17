@@ -384,7 +384,7 @@ export default function DashboardPage() {
     });
 
     return (
-        <div className="flex min-h-screen bg-zinc-900 text-white font-sans">
+        <div className="flex min-h-screen bg-background text-foreground font-sans transition-colors duration-200">
             <ExperimentalDashboardNav
                 folders={folders}
                 activeFolder={activeFolder}
@@ -399,14 +399,14 @@ export default function DashboardPage() {
             <main className="flex-1 p-12 max-w-[1600px] overflow-y-auto h-screen">
                 <div className="flex justify-between items-end mb-12 border-b border-zinc-800 pb-8">
                     <div>
-                        <h2 className={`text-4xl font-light mb-2 ${darkMode ? 'text-white' : 'text-zinc-900'}`}>
+                        <h2 className={`text-4xl font-light mb-2 tracking-tight text-foreground`}>
                             {activeFolder === 'ARCHIVED'
                                 ? 'Archived Projects'
                                 : activeFolder
                                     ? folders.find(f => f.id === activeFolder)?.name || 'Folder'
                                     : 'Projects'}
                         </h2>
-                        <p className="text-zinc-500 text-sm font-mono uppercase tracking-wide">
+                        <p className="text-muted-foreground text-sm font-mono uppercase tracking-wide">
                             {filteredProjects.length} Active • {new Date().toLocaleDateString()}
                         </p>
                     </div>
@@ -420,24 +420,24 @@ export default function DashboardPage() {
                             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
 
-                        <div className={`flex border rounded-sm p-1 ${darkMode ? 'bg-black border-zinc-800' : 'bg-white border-zinc-200'}`}>
+                        <div className={`flex border rounded-sm p-1 bg-muted border-border`}>
                             <button
                                 onClick={() => setView('grid')}
-                                className={`p-2 transition-colors ${view === 'grid' ? (darkMode ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black') : 'text-zinc-400 hover:text-zinc-500'}`}
+                                className={`p-2 transition-colors ${view === 'grid' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                                 title="Grid View"
                             >
                                 <LayoutGrid size={16} />
                             </button>
                             <button
                                 onClick={() => setView('list')}
-                                className={`p-2 transition-colors ${view === 'list' ? (darkMode ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black') : 'text-zinc-400 hover:text-zinc-500'}`}
+                                className={`p-2 transition-colors ${view === 'list' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                                 title="List View"
                             >
                                 <ListIcon size={16} />
                             </button>
                             <button
                                 onClick={() => setView('timeline')}
-                                className={`p-2 transition-colors ${view === 'timeline' ? (darkMode ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black') : 'text-zinc-400 hover:text-zinc-500'}`}
+                                className={`p-2 transition-colors ${view === 'timeline' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                                 title="Timeline View"
                             >
                                 <CalendarClock size={16} />
@@ -495,7 +495,7 @@ export default function DashboardPage() {
                                     transition-all cursor-pointer group relative hover:scale-[1.02] active:scale-100 duration-300
                                     ${view === 'grid'
                                                 ? `${colorMap.bg} ${colorMap.border} shadow-xl hover:shadow-2xl text-white rounded-sm rounded-tr-[3rem]`
-                                                : `p-6 flex items-center justify-between ${colorMap.bg} ${colorMap.border} border rounded-lg shadow-sm hover:shadow-lg text-white`
+                                                : `p-6 flex items-center justify-between bg-card border border-border rounded-lg shadow-sm hover:shadow-md text-foreground transition-all`
                                             }
                                     ${view === 'grid' ? 'aspect-[3/2] p-8' : ''}
                                 `}
@@ -565,14 +565,14 @@ export default function DashboardPage() {
                                         ) : (
                                             <>
                                                 <div className="flex items-center gap-8 flex-1">
-                                                    <div className="w-10 h-10 bg-zinc-900 border border-zinc-700 flex items-center justify-center text-lg">
+                                                    <div className="w-10 h-10 bg-muted border border-border flex items-center justify-center text-lg rounded-sm text-foreground">
                                                         📄
                                                     </div>
                                                     <div className="w-1/3">
-                                                        <h3 className="text-md font-bold truncate">{p.name}</h3>
-                                                        <p className="text-[10px] text-zinc-400 uppercase">{p.data?.clientName || 'No Client'}</p>
+                                                        <h3 className="text-md font-bold truncate text-foreground">{p.name}</h3>
+                                                        <p className="text-[10px] text-muted-foreground uppercase">{p.data?.clientName || 'No Client'}</p>
                                                     </div>
-                                                    <p className="text-[10px] font-mono text-zinc-400 uppercase">
+                                                    <p className="text-[10px] font-mono text-muted-foreground uppercase">
                                                         Edited {new Date(p.updated_at).toLocaleDateString()}
                                                     </p>
                                                 </div>

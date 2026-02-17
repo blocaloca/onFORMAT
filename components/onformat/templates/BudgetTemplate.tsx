@@ -116,7 +116,9 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
         setDeleteConfirmIndex(null);
     };
 
-    const ITEMS_PER_PAGE = orientation === 'landscape' ? 9 : 12;
+    const ITEMS_PER_PAGE = isPrinting
+        ? (orientation === 'landscape' ? 9 : 12)
+        : 9999;
     const totalPages = Math.ceil(Math.max(items.length, 1) / ITEMS_PER_PAGE);
     const pages = Array.from({ length: totalPages }, (_, i) => items.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
 

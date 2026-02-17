@@ -15,12 +15,12 @@ export const GlassButton = ({
 }: GlassButtonProps) => {
 
     // INDUSTRIAL DESIGN SYSTEM OVERRIDE
-    const baseStyles = "relative overflow-hidden rounded-sm font-bold uppercase tracking-widest transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2";
+    const baseStyles = "relative overflow-hidden rounded-none font-mono font-bold uppercase tracking-widest transition-all duration-100 tactile flex items-center justify-center gap-2 select-none";
 
     const variants = {
-        primary: "bg-emerald-600 text-white hover:bg-emerald-500 shadow-md shadow-emerald-900/20 border border-emerald-500",
-        secondary: "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:border-zinc-700 hover:text-white hover:bg-zinc-800",
-        ghost: "bg-transparent text-zinc-500 hover:text-white hover:bg-zinc-800/50"
+        primary: "bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 border border-transparent",
+        secondary: "bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900",
+        ghost: "bg-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
     };
 
     const sizes = {

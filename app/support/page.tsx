@@ -91,10 +91,10 @@ export default function SupportPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans selection:bg-emerald-500 selection:text-black pt-24 pb-20 px-8">
+        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-emerald-500 selection:text-black pt-24 pb-20 px-8 transition-colors duration-200">
 
             {/* Nav */}
-            <nav className="fixed top-0 left-0 w-full z-50 px-8 py-4 flex items-center justify-between bg-black/80 backdrop-blur-md border-b border-white/5">
+            <nav className="fixed top-0 left-0 w-full z-50 px-8 py-4 flex items-center justify-between bg-background/80 backdrop-blur-md border-b border-border">
                 <Link href="/" className="flex items-center gap-2 group">
                     <div className="w-8 h-8 relative">
                         <img src="/logo-white.png" alt="onFORMAT" className="w-full h-full object-contain" />
@@ -111,7 +111,7 @@ export default function SupportPage() {
                     <h1 className="text-4xl md:text-5xl font-light mb-6 tracking-wide">
                         How can we help?
                     </h1>
-                    <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+                    <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                         Search our knowledge base or get in touch with our support team.
                     </p>
                 </div>
@@ -131,8 +131,8 @@ export default function SupportPage() {
                                         onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
                                         className="w-full text-left flex justify-between items-start gap-4 hover:text-emerald-400 transition-colors"
                                     >
-                                        <span className="text-sm font-bold text-zinc-300 py-1">{faq.question}</span>
-                                        <span className="text-zinc-500 text-lg leading-none">{openFaq === idx ? '−' : '+'}</span>
+                                        <span className="text-sm font-bold text-muted-foreground hover:text-foreground py-1 transition-colors">{faq.question}</span>
+                                        <span className="text-muted-foreground text-lg leading-none">{openFaq === idx ? '−' : '+'}</span>
                                     </button>
                                     <div className={`grid transition-[grid-template-rows] duration-300 ease-out ${openFaq === idx ? 'grid-rows-[1fr] mt-3 opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                                         <div className="overflow-hidden">
@@ -157,12 +157,12 @@ export default function SupportPage() {
                     </div>
 
                     {/* Contact Form */}
-                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-8 h-fit">
+                    <div className="bg-card border border-border rounded-lg p-8 h-fit">
                         <h2 className="text-xl font-bold uppercase tracking-widest mb-2 flex items-center gap-3">
                             <MessageSquare className="text-indigo-500" size={20} />
                             Contact Us
                         </h2>
-                        <p className="text-zinc-500 text-sm mb-8">
+                        <p className="text-muted-foreground text-sm mb-8">
                             Have a specific issue? Send us a message directly.
                         </p>
 
@@ -207,7 +207,7 @@ export default function SupportPage() {
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
                                         placeholder="How can we help?"
-                                        className="w-full h-32 bg-black border border-zinc-800 rounded-lg p-4 text-sm text-white placeholder-zinc-600 focus:border-zinc-600 focus:outline-none resize-none transition-colors"
+                                        className="w-full h-32 bg-input border border-transparent rounded-none p-4 text-sm font-mono text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none resize-none transition-colors"
                                     />
                                 </div>
 
@@ -215,7 +215,7 @@ export default function SupportPage() {
                                 <button
                                     onClick={handleSubmit}
                                     disabled={isSubmitting || !message.trim()}
-                                    className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest text-xs rounded-lg hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-colors group"
+                                    className="w-full py-4 bg-foreground text-background font-bold uppercase tracking-widest text-xs rounded-none hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 transition-colors group tactile"
                                 >
                                     {isSubmitting ? (
                                         <Loader2 size={16} className="animate-spin" />

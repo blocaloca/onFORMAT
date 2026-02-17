@@ -232,15 +232,15 @@ export default function AccountPage() {
     if (loading) return <div className="h-screen bg-zinc-900 flex items-center justify-center text-white"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <div className="min-h-screen bg-zinc-900 text-white font-sans p-8 md:p-12">
-            <Link href="/dashboard" className="inline-flex items-center gap-2 text-zinc-400 hover:text-white mb-8 transition-colors text-xs font-bold uppercase tracking-widest">
+        <div className="min-h-screen bg-background text-foreground font-sans p-8 md:p-12 transition-colors duration-200">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors text-xs font-bold uppercase tracking-widest tactile">
                 <ArrowLeft size={16} /> Back to Dashboard
             </Link>
 
-            <div className="flex items-end justify-between mb-12 border-b border-zinc-800 pb-8">
+            <div className="flex items-end justify-between mb-12 border-b border-border pb-8">
                 <div>
-                    <h1 className="text-4xl font-light mb-2">Control Panel</h1>
-                    <p className="text-zinc-500 font-mono text-xs uppercase tracking-widest">Global Settings & Status</p>
+                    <h1 className="text-4xl font-light mb-2 tracking-tight">Account Control</h1>
+                    <p className="text-muted-foreground font-mono text-xs uppercase tracking-widest">Global Settings & Status</p>
                 </div>
             </div>
 
@@ -250,20 +250,20 @@ export default function AccountPage() {
                 <div className="lg:col-span-2 space-y-8">
 
                     {/* Identity Section */}
-                    <div className="bg-black/20 border border-zinc-800 p-8 rounded-lg relative overflow-hidden group">
+                    <div className="bg-card border border-border p-8 rounded-none relative overflow-hidden group">
                         <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
 
                             {/* Avatar */}
-                            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-zinc-800 border-2 border-zinc-700 shrink-0 group-hover:border-zinc-500 transition-colors">
+                            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-muted border border-border shrink-0 group-hover:border-foreground transition-colors">
                                 {avatarUrl ? (
                                     <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-zinc-600">
+                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                                         <User size={32} />
                                     </div>
                                 )}
                                 <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                    <span className="text-[10px] font-bold uppercase tracking-widest">Upload</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Upload</span>
                                     <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" disabled={saving} />
                                 </label>
                             </div>
@@ -272,22 +272,22 @@ export default function AccountPage() {
                             <div className="flex-1 w-full space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Display Name</label>
+                                        <label className="block text-xs font-bold text-muted-foreground uppercase mb-2">Display Name</label>
                                         <input
                                             type="text"
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
                                             placeholder="Enter your full name"
-                                            className="w-full bg-black border border-zinc-700 p-3 text-white focus:border-white outline-none transition-colors text-sm rounded-sm"
+                                            className="w-full bg-input border border-transparent focus:border-ring p-3 text-foreground outline-none transition-all text-sm font-mono rounded-none"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Email Address</label>
+                                        <label className="block text-xs font-bold text-muted-foreground uppercase mb-2">Email Address</label>
                                         <input
                                             type="email"
                                             value={user.email}
                                             disabled
-                                            className="w-full bg-zinc-900 border border-zinc-800 p-3 text-zinc-500 cursor-not-allowed text-sm rounded-sm"
+                                            className="w-full bg-muted border border-transparent p-3 text-muted-foreground cursor-not-allowed text-sm font-mono rounded-none"
                                         />
                                     </div>
                                 </div>
@@ -295,7 +295,7 @@ export default function AccountPage() {
                                     <button
                                         onClick={updateProfile}
                                         disabled={saving}
-                                        className="bg-white text-black px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm"
+                                        className="bg-foreground text-background px-6 py-2 text-xs font-bold uppercase tracking-widest hover:opacity-90 rounded-none tactile"
                                     >
                                         {saving ? 'Saving...' : 'Save Identity'}
                                     </button>

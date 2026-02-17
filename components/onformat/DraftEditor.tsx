@@ -421,59 +421,58 @@ export const DraftEditor = ({
                 isAiDocked={isAiDocked}
             />
 
-            <div className="flex-1 overflow-y-auto bg-transparent flex flex-col items-center" id="document-preview-area">
-
-                {/* Document Area */}
-                <div className="w-full flex justify-center pt-8 pb-20 px-8">
-                    <div className="relative z-10 origin-top" style={{ transform: 'scale(1.0)' }}>
-                        <TemplateComponent
-                            data={activeData}
-                            // @ts-ignore
-                            onUpdate={handleUpdate}
-                            isLocked={isLocked}
-                            persona={persona}
-                            // @ts-ignore
-                            plain={false}
-                            orientation={orientation}
-                            metadata={{
-                                projectName,
-                                clientName,
-                                date: new Date().toLocaleDateString(),
-                                producer,
-                                directorNames: activeData.directorNames,
-                                isTreatment: activeToolKey === 'directors-treatment',
-                                importedSchedule,
-                                importedAVScript,
-                                importedBudget,
-                                importedDITLog,
-                                importedBrief,
-                                importedVision,
-                                importedLookbook,
-                                importedLocations,
-                                projectId,
-                                latestNotification
-                            }}
-                            // @ts-ignore
-                            onGenerateFromVision={onGenerateFromVision}
-                            // @ts-ignore
-                            onOpenAi={onOpenAi}
-                            // @ts-ignore
-                            onMagicImport={onMagicImport}
-                            // @ts-ignore
-                            onAddDay={handleNew}
-                        />
-                    </div>
+            <div className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-zinc-900 flex flex-col" id="document-preview-area">
+                <div className="w-full flex-1 flex flex-col max-w-5xl mx-auto p-4 sm:p-8">
+                    <TemplateComponent
+                        data={activeData}
+                        // @ts-ignore
+                        onUpdate={handleUpdate}
+                        isLocked={isLocked}
+                        persona={persona}
+                        // @ts-ignore
+                        plain={false}
+                        orientation={orientation}
+                        metadata={{
+                            projectName,
+                            clientName,
+                            date: new Date().toLocaleDateString(),
+                            producer,
+                            directorNames: activeData.directorNames,
+                            isTreatment: activeToolKey === 'directors-treatment',
+                            importedSchedule,
+                            importedAVScript,
+                            importedBudget,
+                            importedDITLog,
+                            importedBrief,
+                            importedVision,
+                            importedLookbook,
+                            importedLocations,
+                            projectId,
+                            latestNotification
+                        }}
+                        // @ts-ignore
+                        onGenerateFromVision={onGenerateFromVision}
+                        // @ts-ignore
+                        onOpenAi={onOpenAi}
+                        // @ts-ignore
+                        onMagicImport={onMagicImport}
+                        // @ts-ignore
+                        onAddDay={handleNew}
+                    />
                 </div>
             </div>
 
+
             {/* Lock Overlay */}
-            {isLocked && (
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px] z-10 flex items-center justify-center cursor-not-allowed select-none">
-                    <div className="bg-white/90 px-4 py-2 border border-zinc-200 shadow-xl rounded-full text-[10px] font-bold tracking-widest uppercase text-zinc-500 flex items-center gap-2">
-                        <span>LOCKED</span>
+            {
+                isLocked && (
+                    <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px] z-10 flex items-center justify-center cursor-not-allowed select-none">
+                        <div className="bg-white/90 px-4 py-2 border border-zinc-200 shadow-xl rounded-full text-[10px] font-bold tracking-widest uppercase text-zinc-500 flex items-center gap-2">
+                            <span>LOCKED</span>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Hidden Container for PDF Generation */}
             <div
@@ -525,6 +524,6 @@ export const DraftEditor = ({
                     </div>
                 ))}
             </div>
-        </section>
+        </section >
     )
 }

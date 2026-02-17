@@ -35,13 +35,65 @@ export const DocumentLayout = ({
 }: DocumentLayoutProps) => {
 
     // Dimensions in pixels (96DPI): 8.5in = 816px, 11in = 1056px
+    // --- MODULAR WORKSPACE REFACTOR ---
+    // If not printing, we use the "Control Panel" fluid layout.
+    // If printing, we use the fixed "Paper" layout.
+
+    // Printing Logic
+    const width = orientation === 'landscape' ? 1056 : 816;
+    const height = orientation === 'landscape' ? 816 : 1056;
+
+    if (!isPrinting) {
+        // --- CONTROL PANEL MODE (Fluid, Dark/Light Support) ---
+        return (
+            <div className={`
+                w-full h-full flex flex-col gap-6 
+                bg-white dark:bg-zinc-950 
+                border-x border-b border-zinc-200 dark:border-zinc-800 
+                first:border-t
+                p-6 sm:p-10
+                transition-colors duration-200
+                ${className}
+            `}>
+                {/* Header (Simplified for Control Panel) */}
+                {!hideHeader && (
+                    <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-2">
+                        <div className="flex flex-col">
+                            <h1 className="text-2xl font-sans font-bold uppercase tracking-tight text-zinc-900 dark:text-zinc-100">{title}</h1>
+                            {metadata?.date && (
+                                <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
+                                    {metadata.date}
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Status / Metadata Pill */}
+                        {metadata && (
+                            <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
+                                <span className="hidden sm:inline">{metadata.projectName || 'UNTITLED'}</span>
+                                {metadata.clientName && <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">//</span>}
+                                {metadata.clientName && <span className="hidden sm:inline">{metadata.clientName}</span>}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Content Area */}
+                <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0 text-zinc-900 dark:text-zinc-100">
+                    {children}
+                </div>
+            </div>
+        );
+    }
+
+    // --- PRINT MODE (Fixed Paper) ---
     // User Request: Make document 20% larger in workspace (1.2x scale)
     // FIX: reset scaling for Print Room to prevent cropping
     // Always use standard 96DPI dimensions (1.0 scale) to ensure Editor matches PDF output (WYSIWYG).
     // Zooming is handled by the parent container's CSS transform.
     const SCALE = 1.0;
-    const width = orientation === 'landscape' ? 1056 : 816;
-    const height = orientation === 'landscape' ? 816 : 1056;
+    // const width = orientation === 'landscape' ? 1056 : 816;
+    // const height = orientation === 'landscape' ? 816 : 1056;
 
     return (
         <>

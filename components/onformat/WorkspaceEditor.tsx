@@ -1778,9 +1778,9 @@ Context:\n"${fullContext}"`;
 
 
     return (
-        <div className="h-screen bg-[var(--background)] flex flex-col font-sans text-[var(--foreground)]">
+        <div className="h-screen bg-background flex flex-col font-sans text-foreground transition-colors duration-300">
 
-            <main className="flex-1 flex overflow-hidden relative bg-zinc-100 dark:bg-zinc-900 transition-colors duration-300">
+            <main className="flex-1 flex overflow-hidden relative bg-muted/20 transition-colors duration-300">
                 {/* Standby Banner Removed */}
 
                 <ExperimentalWorkspaceNav
