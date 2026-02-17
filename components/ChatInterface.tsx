@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -29,7 +29,9 @@ export default function ChatInterface({
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [loadingHistory, setLoadingHistory] = useState(true)
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const supabase = getClient()
 
   // AI Mode Settings (parked, passed through only)
   const [aiMode, setAiMode] = useState('cinematographer')
@@ -53,13 +55,12 @@ export default function ChatInterface({
       setMessages([
         {
           role: 'assistant',
-          content: `${toolName}\nCreative ${
-            toolType === 'ArtMind'
-              ? 'Direction'
-              : toolType === 'GenStudioPro'
+          content: `${toolName}\nCreative ${toolType === 'ArtMind'
+            ? 'Direction'
+            : toolType === 'GenStudioPro'
               ? 'Generation'
               : 'Production'
-          } Workflow.\n\nTell me what you’re thinking about.`,
+            } Workflow.\n\nTell me what you’re thinking about.`,
         },
       ])
       setLoadingHistory(false)
@@ -193,16 +194,14 @@ export default function ChatInterface({
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${
-              message.role === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
           >
             <div
-              className={`max-w-3xl rounded-lg p-4 ${
-                message.role === 'user'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white/10 text-white border border-white/20'
-              }`}
+              className={`max-w-3xl rounded-lg p-4 ${message.role === 'user'
+                ? 'bg-purple-600 text-white'
+                : 'bg-white/10 text-white border border-white/20'
+                }`}
             >
               {message.role === 'assistant' && (
                 <div className="flex items-center gap-2 mb-2">

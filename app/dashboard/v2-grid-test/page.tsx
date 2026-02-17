@@ -1,12 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { GridRow } from '@/lib/production-grid/types';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import Link from 'next/link';
 
 export default function GridTestPage() {
+    const supabase = getClient()
 
     const [rows, setRows] = useState<GridRow[]>([]);
     const [loading, setLoading] = useState(true);

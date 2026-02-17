@@ -8,7 +8,7 @@ import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { ProjectOverview } from '@/components/onformat/ProjectOverview'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { PrintDashboard } from '@/components/onformat/print/PrintDashboard'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 import { Smartphone, X } from 'lucide-react'
 
 type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
@@ -171,6 +171,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [initialState, projectName]);
 
     const [state, setState] = useState<WorkspaceState>(mergedInitialState)
+    const supabase = getClient()
 
     // Sync projectName if it updates and wasn't in state
     useEffect(() => {

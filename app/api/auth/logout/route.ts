@@ -53,5 +53,7 @@ export async function POST(request: Request) {
         }
     })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.redirect(new URL('/login', request.url), {
+        status: 303,
+    })
 }

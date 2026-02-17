@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from '@react-pdf/renderer';
-import { globalStyles, COLORS } from '../PdfTheme';
+import { PdfThemeType } from '../PdfComponents';
 
 interface Slide {
     id: string;
@@ -16,14 +16,15 @@ interface Slide {
 
 interface PdfDirectorsTreatmentProps {
     data: any;
+    theme: PdfThemeType;
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: PdfThemeType) => StyleSheet.create({
     slideContainer: {
         marginBottom: 24,
         paddingBottom: 16,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.slate
+        borderBottomColor: theme.COLORS.slate
     },
     slideHeader: {
         flexDirection: 'row',
@@ -33,20 +34,20 @@ const styles = StyleSheet.create({
     slideTitle: {
         fontSize: 14,
         fontWeight: 900,
-        color: COLORS.charcoal,
+        color: theme.COLORS.charcoal,
         textTransform: 'uppercase'
     },
     slideCategory: {
         fontSize: 8,
-        color: COLORS.mutedText,
+        color: theme.COLORS.mutedText,
         textTransform: 'uppercase',
         fontWeight: 700
     },
     contentBox: {
-        backgroundColor: COLORS.lightGrey,
+        backgroundColor: theme.COLORS.lightGrey,
         padding: 12,
         borderLeftWidth: 2,
-        borderLeftColor: COLORS.charcoal,
+        borderLeftColor: theme.COLORS.charcoal,
         minHeight: 50
     },
     // Layouts
@@ -75,7 +76,9 @@ const styles = StyleSheet.create({
     }
 });
 
-export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
+export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProps) => {
+    const styles = getStyles(theme);
+
     // Handle potential array wrapper or direct object
     const rawv = Array.isArray(data) ? data[0] : data;
     let slides: Slide[] = rawv?.slides || [];
@@ -97,8 +100,8 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
 
     if (!slides || slides.length === 0) {
         return (
-            <View style={globalStyles.inputBox}>
-                <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+            <View style={theme.globalStyles.inputBox}>
+                <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
                     No treatment slides found.
                 </Text>
             </View>
@@ -121,7 +124,7 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
                         {/* --- Layout: TEXT --- */}
                         {layout === 'Text' && (
                             <View style={styles.contentBox}>
-                                <Text style={globalStyles.text}>
+                                <Text style={theme.globalStyles.text}>
                                     {slide.content || 'No content...'}
                                 </Text>
                             </View>
@@ -138,7 +141,7 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
                                     </View>
                                 )}
                                 <View style={styles.contentBox}>
-                                    <Text style={globalStyles.text}>
+                                    <Text style={theme.globalStyles.text}>
                                         {slide.content || 'No caption...'}
                                     </Text>
                                 </View>
@@ -170,7 +173,7 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
                                 {/* Right: Text */}
                                 <View style={styles.column}>
                                     <View style={[styles.contentBox, { height: '100%' }]}>
-                                        <Text style={globalStyles.text}>
+                                        <Text style={theme.globalStyles.text}>
                                             {slide.content || 'No description...'}
                                         </Text>
                                     </View>

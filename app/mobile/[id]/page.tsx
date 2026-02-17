@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, FileText, Calendar, Clapperboard, Users, MapPin, Shirt, Package, File, ChevronRight, CheckCircle2, Lock, AlertCircle } from 'lucide-react';
@@ -279,6 +279,7 @@ export default function MobilePage() {
     const params = useParams();
     const router = useRouter();
     const id = params.id as string;
+    const supabase = getClient()
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<any>(null);
     const [userGroups, setUserGroups] = useState<string[]>([]);

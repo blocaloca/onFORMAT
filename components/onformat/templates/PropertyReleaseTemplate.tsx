@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import SignatureCanvas from 'react-signature-canvas';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { Trash2, Save } from 'lucide-react';
 
 interface PropertyReleaseData {
@@ -44,6 +44,7 @@ interface PropertyReleaseTemplateProps {
 export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: PropertyReleaseTemplateProps) => {
 
     const sigPad = useRef<any>(null);
+    const supabase = getClient()
     const [isSaving, setIsSaving] = useState(false);
     const [localData, setLocalData] = useState(data);
 

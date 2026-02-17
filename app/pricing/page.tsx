@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Check, X, Loader2, ArrowRight } from 'lucide-react';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 export default function PricingPage() {
     const [user, setUser] = useState<any>(null);
+    const supabase = getClient()
     const [loading, setLoading] = useState(false);
     const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
 

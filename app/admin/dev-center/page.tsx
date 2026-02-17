@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 import AIProviderStatus from '@/components/admin/AIProviderStatus'
 import QuickFixes from '@/components/admin/QuickFixes'
 import APIKeyManager from '@/components/admin/APIKeyManager'
@@ -23,6 +23,7 @@ interface AuditResult {
 
 export default function DevCenterPage() {
   const router = useRouter()
+  const supabase = getClient()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null)

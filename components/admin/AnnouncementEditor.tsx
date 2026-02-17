@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { Megaphone, Upload, Loader2, Link as LinkIcon, X } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 export default function AnnouncementEditor({ user }: { user: any }) {
+    const supabase = getClient();
     const [announcement, setAnnouncement] = useState<any>(null);
     const [message, setMessage] = useState('');
     const [mediaUrl, setMediaUrl] = useState('');

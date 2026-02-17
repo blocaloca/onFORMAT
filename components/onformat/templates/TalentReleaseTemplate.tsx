@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import SignatureCanvas from 'react-signature-canvas';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { Trash2, Save, Download } from 'lucide-react';
 
 interface TalentReleaseData {
@@ -43,6 +43,7 @@ interface TalentReleaseTemplateProps {
 export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: TalentReleaseTemplateProps) => {
 
     const [localData, setLocalData] = useState(data);
+    const supabase = getClient()
     const sigPad = useRef<any>(null); // Kept for type compatibility if needed, though we removed usage? No, I see ref usage removed.
     const [isSaving, setIsSaving] = useState(false);
     const [typedName, setTypedName] = useState('');

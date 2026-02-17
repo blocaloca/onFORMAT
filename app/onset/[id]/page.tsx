@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 
@@ -62,6 +62,7 @@ interface MobileState {
  * MAIN COMPONENT
  * -------------------------------------------------------------------------------- */
 export default function OnSetMobilePage() {
+    const supabase = getClient()
     const params = useParams();
     const id = params.id as string;
     const [loading, setLoading] = useState(true);

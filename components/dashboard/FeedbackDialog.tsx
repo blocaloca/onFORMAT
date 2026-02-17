@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 import { X, MessageSquare, Bug, Lightbulb, Send, Loader2, CheckCircle2 } from 'lucide-react'
 
 interface FeedbackDialogProps {
@@ -11,7 +11,7 @@ interface FeedbackDialogProps {
 import { createPortal } from 'react-dom';
 
 export const FeedbackDialog = ({ isOpen, onClose, userId }: FeedbackDialogProps) => {
-    // const supabase = createClientComponentClient() // Removed
+    const supabase = getClient()
     const [message, setMessage] = useState('')
     const [category, setCategory] = useState<'bug' | 'feature' | 'other'>('bug')
     const [isSubmitting, setIsSubmitting] = useState(false)

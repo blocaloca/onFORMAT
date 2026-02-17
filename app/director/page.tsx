@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -11,6 +11,7 @@ interface Message {
 
 export default function DirectorPage() {
   const router = useRouter()
+  const supabase = getClient()
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -29,7 +30,7 @@ export default function DirectorPage() {
   /* ------------------ AUTH + LOAD ------------------ */
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       const { data } = await supabase.auth.getUser()
       if (!data.user) {
         router.push('/login')
@@ -188,16 +189,14 @@ export default function DirectorPage() {
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`flex ${
-              msg.role === 'user' ? 'justify-end' : 'justify-start'
-            }`}
+            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'
+              }`}
           >
             <div
-              className={`max-w-2xl px-6 py-4 rounded-2xl ${
-                msg.role === 'user'
+              className={`max-w-2xl px-6 py-4 rounded-2xl ${msg.role === 'user'
                   ? 'bg-purple-600 text-white'
                   : 'bg-gray-800 text-gray-100'
-              }`}
+                }`}
             >
               {msg.role === 'assistant' && (
                 <div className="text-xs text-gray-400 mb-2">🤖 Director</div>

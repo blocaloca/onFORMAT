@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { isFounder } from '@/lib/permissions';
 import { Loader2, CheckCircle2, Circle, AlertCircle, RefreshCw } from 'lucide-react';
 
@@ -12,6 +12,7 @@ export default function FounderDashboard() {
     const [changelog, setChangelog] = useState<any[]>([]);
 
     // Inputs
+    const supabase = getClient()
     const [version, setVersion] = useState('');
     const [notes, setNotes] = useState('');
 
@@ -109,8 +110,8 @@ export default function FounderDashboard() {
                                     <div className="flex flex-col gap-1">
                                         <div className="flex items-center gap-2">
                                             <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold ${item.category === 'bug' ? 'bg-red-900/30 text-red-500' :
-                                                    item.category === 'feature' ? 'bg-emerald-900/30 text-emerald-500' :
-                                                        'bg-blue-900/30 text-blue-500'
+                                                item.category === 'feature' ? 'bg-emerald-900/30 text-emerald-500' :
+                                                    'bg-blue-900/30 text-blue-500'
                                                 }`}>
                                                 {item.category}
                                             </span>

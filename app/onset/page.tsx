@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { Menu, ChevronRight, Clapperboard, Calendar, LogOut, UserCircle, Wifi, X } from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 export default function OnSetPage() {
+    const supabase = getClient();
     const [projects, setProjects] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showMenu, setShowMenu] = useState(false);

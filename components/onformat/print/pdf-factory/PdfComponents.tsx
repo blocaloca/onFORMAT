@@ -1,73 +1,84 @@
 import React from 'react';
-import { Text, View, StyleSheet, Image } from '@react-pdf/renderer';
-import { COLORS, LAYOUT, globalStyles } from './PdfTheme';
+import { Text, View, Image } from '@react-pdf/renderer';
+
+// Types
+export interface PdfThemeType {
+    COLORS: any;
+    LAYOUT: any;
+    globalStyles: any;
+    logo?: string;
+}
 
 interface PdfHeaderProps {
-    title: string;        // The Document Type (e.g. "CREATIVE BRIEF")
-    projectName?: string; // e.g. "PROJECT ALPHA"
+    title: string;
+    projectName?: string;
     clientName?: string;
     producer?: string;
     date?: string;
+    theme: PdfThemeType;
 }
 
-export const PdfHeader = ({ title, projectName, clientName, producer, date }: PdfHeaderProps) => (
-    <View style={{ marginBottom: 24 }} fixed>
-        {/* Top Row: Doc Title + Date */}
-        <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            borderBottomWidth: 3,
-            borderBottomColor: COLORS.charcoal,
-            paddingBottom: 12,
-            marginBottom: 0
-        }}>
-            <Text style={globalStyles.h1}>{title}</Text>
-            {date && (
-                <Text style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText, marginBottom: 4 }}>
-                    {date}
-                </Text>
-            )}
-        </View>
-
-        {/* Metadata Row: Client/Project + Producer */}
-        <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            paddingVertical: 8,
-            borderBottomWidth: 1,
-            borderBottomColor: COLORS.slate
-        }}>
-            {/* Left: Client // Project */}
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-                {clientName && (
-                    <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText }}>
-                        {clientName} <Text style={{ color: COLORS.slate }}>//</Text>
+export const PdfHeader = ({ title, projectName, clientName, producer, date, theme }: PdfHeaderProps) => {
+    const { COLORS, globalStyles } = theme;
+    return (
+        <View style={{ marginBottom: 24 }} fixed>
+            {/* Top Row: Doc Title + Date */}
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'flex-end',
+                borderBottomWidth: 3,
+                borderBottomColor: theme.COLORS.charcoal,
+                paddingBottom: 12,
+                marginBottom: 0
+            }}>
+                <Text style={theme.globalStyles.h1}>{title}</Text>
+                {date && (
+                    <Text style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText, marginBottom: 4 }}>
+                        {date}
                     </Text>
                 )}
-                <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.obsidian }}>
-                    {projectName || 'UNTITLED PROJECT'}
-                </Text>
             </View>
 
-            {/* Right: Producer */}
-            {producer && (
+            {/* Metadata Row: Client/Project + Producer */}
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingVertical: 8,
+                borderBottomWidth: 1,
+                borderBottomColor: theme.COLORS.slate
+            }}>
+                {/* Left: Client // Project */}
                 <View style={{ flexDirection: 'row', gap: 8 }}>
-                    <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText }}>
-                        PRODUCER
-                    </Text>
-                    <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.obsidian }}>
-                        {producer}
+                    {clientName && (
+                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText }}>
+                            {clientName} <Text style={{ color: theme.COLORS.slate }}>//</Text>
+                        </Text>
+                    )}
+                    <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.obsidian }}>
+                        {projectName || 'UNTITLED PROJECT'}
                     </Text>
                 </View>
-            )}
-        </View>
-    </View>
-);
 
-export const PdfFooter = () => (
-    <View style={{ position: 'absolute', bottom: LAYOUT.padding, left: LAYOUT.padding, right: LAYOUT.padding, borderTopWidth: 1, borderTopColor: COLORS.slate, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between' }} fixed>
+                {/* Right: Producer */}
+                {producer && (
+                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText }}>
+                            PRODUCER
+                        </Text>
+                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.obsidian }}>
+                            {producer}
+                        </Text>
+                    </View>
+                )}
+            </View>
+        </View>
+    );
+};
+
+export const PdfFooter = ({ theme }: { theme: PdfThemeType }) => (
+    <View style={{ position: 'absolute', bottom: theme.LAYOUT.padding, left: theme.LAYOUT.padding, right: theme.LAYOUT.padding, borderTopWidth: 1, borderTopColor: theme.COLORS.slate, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between' }} fixed>
         <Text style={{ fontSize: 7, color: '#9CA3AF' }}>GENERATED BY ONFORMAT</Text>
         <Text style={{ fontSize: 7, color: '#9CA3AF' }} render={({ pageNumber, totalPages }) => (
             `${pageNumber} / ${totalPages}`
@@ -77,31 +88,32 @@ export const PdfFooter = () => (
 
 interface Column {
     header: string;
-    accessor: string; // key in data object
-    width: string;    // e.g. '15%'
+    accessor: string;
+    width: string;
     align?: 'left' | 'right' | 'center';
 }
 
 interface DataGridProps {
     columns: Column[];
     data: any[];
+    theme: PdfThemeType;
 }
 
-export const DataGrid = ({ columns, data }: DataGridProps) => {
+export const DataGrid = ({ columns, data, theme }: DataGridProps) => {
     return (
-        <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: COLORS.obsidian }}>
+        <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: theme.COLORS.obsidian }}>
             {/* Header Row */}
-            <View style={{ flexDirection: 'row', backgroundColor: COLORS.lightGrey, borderBottomWidth: 1, borderBottomColor: COLORS.obsidian, paddingVertical: 6 }} fixed>
+            <View style={{ flexDirection: 'row', backgroundColor: theme.COLORS.lightGrey, borderBottomWidth: 1, borderBottomColor: theme.COLORS.obsidian, paddingVertical: 6 }} fixed>
                 {columns.map((col, i) => (
                     <View key={i} style={{ width: col.width, paddingHorizontal: 4 }}>
-                        <Text style={[globalStyles.label, { marginBottom: 0, textAlign: col.align || 'left' }]}>{col.header}</Text>
+                        <Text style={[theme.globalStyles.label, { marginBottom: 0, textAlign: col.align || 'left' }]}>{col.header}</Text>
                     </View>
                 ))}
             </View>
 
             {/* Data Rows */}
             {data.map((row, rowIndex) => (
-                <View key={rowIndex} style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: COLORS.slate, paddingVertical: 8 }} wrap={false}>
+                <View key={rowIndex} style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.COLORS.slate, paddingVertical: 8 }} wrap={false}>
                     {columns.map((col, colIndex) => (
                         <View key={colIndex} style={{ width: col.width, paddingHorizontal: 4 }}>
                             <Text style={[{ fontSize: 9, textAlign: col.align || 'left' }]}>

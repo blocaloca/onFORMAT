@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 import BudgetForm from '@/components/documents/BudgetForm'
 import CallSheetForm from '@/components/documents/CallSheetForm'
 import ShotListForm from '@/components/documents/ShotListForm'
@@ -56,6 +56,7 @@ interface Project {
 export default function DocumentEditorPage() {
   const router = useRouter()
   const params = useParams()
+  const supabase = getClient()
   const [document, setDocument] = useState<Document | null>(null)
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)

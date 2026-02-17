@@ -8,12 +8,13 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 import ChatInterface from '@/components/ChatInterface'
 
 export const dynamic = 'force-dynamic'
 
 function GenStudioContent() {
+  const supabase = getClient()
   const [user, setUser] = useState<any>(null)
   const [project, setProject] = useState<any>(null)
   const [projectName, setProjectName] = useState('')
@@ -28,14 +29,14 @@ function GenStudioContent() {
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (!user) {
       router.push('/login')
       return
     }
 
     setUser(user)
-    
+
     const projectId = searchParams.get('project')
     if (projectId) {
       loadExistingProject(projectId)
@@ -53,7 +54,7 @@ function GenStudioContent() {
         .single()
 
       if (error) throw error
-      
+
       setProject(data)
       setShowNameInput(false)
     } catch (error) {

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check } from 'lucide-react';
 import Link from 'next/link';
@@ -9,6 +9,7 @@ import { isFounder as checkIsFounder } from '@/lib/permissions';
 
 export default function AccountPage() {
     const router = useRouter();
+    const supabase = getClient()
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);

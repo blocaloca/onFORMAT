@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 
 export default function JoinProjectPage() {
     const params = useParams(); // Use useParams for client components
     const router = useRouter();
+    const supabase = getClient();
     const projectId = params?.id as string;
 
     const [projectName, setProjectName] = useState('Loading...');

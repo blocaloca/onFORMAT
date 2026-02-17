@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import SignatureCanvas from 'react-signature-canvas';
 
 const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to THE PRODUCER and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as THE PROJECT.
@@ -662,6 +662,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 }
 
 export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
+    const supabase = getClient();
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -1488,6 +1489,7 @@ export const MobileLocationsView = ({ data }: { data: any }) => {
 };
 
 export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (releases: any[]) => void }) => {
+    const supabase = getClient();
     const [view, setView] = useState<'list' | 'detail' | 'create'>('list');
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);

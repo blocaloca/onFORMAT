@@ -1,11 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowRight, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const supabase = getClient();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

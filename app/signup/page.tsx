@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getClient } from '@/lib/supabase'
 import { forceLogout } from '@/lib/auth-actions'
 
 export default function SignupPage() {
+  const supabase = getClient()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')

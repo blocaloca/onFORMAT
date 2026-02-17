@@ -4,9 +4,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 export default function LandingPage() {
+  const supabase = getClient();
   const [isHovering, setIsHovering] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);

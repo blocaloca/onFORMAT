@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, User, MessageSquare, Bug, Lightbulb, Send, Loader2, CheckCircle2, HelpCircle } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 // FAQ Content
 const FAQS = [
@@ -30,6 +30,7 @@ const FAQS = [
 
 export default function SupportPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
+    const supabase = getClient()
 
     // Feedback Form State
     const [message, setMessage] = useState('');
@@ -186,10 +187,10 @@ export default function SupportPage() {
                                             key={cat}
                                             onClick={() => setCategory(cat)}
                                             className={`p-2 rounded text-[10px] font-bold uppercase tracking-wider border transition-colors flex flex-col items-center gap-1 ${category === cat
-                                                    ? cat === 'bug' ? 'bg-red-900/20 border-red-900 text-red-500'
-                                                        : cat === 'feature' ? 'bg-emerald-900/20 border-emerald-900 text-emerald-500'
-                                                            : 'bg-blue-900/20 border-blue-900 text-blue-500'
-                                                    : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800'
+                                                ? cat === 'bug' ? 'bg-red-900/20 border-red-900 text-red-500'
+                                                    : cat === 'feature' ? 'bg-emerald-900/20 border-emerald-900 text-emerald-500'
+                                                        : 'bg-blue-900/20 border-blue-900 text-blue-500'
+                                                : 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:bg-zinc-800'
                                                 }`}
                                         >
                                             {cat === 'bug' && <Bug size={14} />}

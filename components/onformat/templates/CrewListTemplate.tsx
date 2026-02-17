@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { Trash2, Plus } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 const DEPARTMENTS: Record<string, string[]> = {
     'Production': ['Producer', 'UPM', 'Coordinator', 'Prod. Assist (PA)', 'Script Sup.'],
@@ -43,6 +43,7 @@ interface CrewListTemplateProps {
 }
 
 export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: CrewListTemplateProps) => {
+    const supabase = getClient()
 
     // Initialize/Migrate Data
     useEffect(() => {

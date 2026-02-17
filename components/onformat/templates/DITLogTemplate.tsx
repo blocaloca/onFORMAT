@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout, DocumentMetadata } from './DocumentLayout';
 import { Plus, Trash2, HardDrive, AlertCircle, CheckCircle2, X } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 interface DITLogItem {
     id: string;
@@ -41,6 +41,7 @@ const EVENT_OPTIONS = [
 ];
 
 export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: DITLogTemplateProps) => {
+    const supabase = getClient()
 
     // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);

@@ -3,10 +3,11 @@ import { User, CreditCard, Settings, Users, LogOut, ChevronUp, MessageSquare } f
 import { useRouter } from 'next/navigation';
 import { FeedbackDialog } from '@/components/dashboard/FeedbackDialog';
 
-import { supabase } from '@/lib/supabase';
+import { getClient } from '@/lib/supabase';
 
 export const UserMenu = ({ email }: { email?: string }) => {
     const router = useRouter();
+    const supabase = getClient();
     const [isOpen, setIsOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);

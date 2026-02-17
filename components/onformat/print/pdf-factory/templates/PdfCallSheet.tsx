@@ -1,18 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from '@react-pdf/renderer';
-import { DataGrid } from '../PdfComponents';
-import { globalStyles, COLORS } from '../PdfTheme';
+import { DataGrid, PdfThemeType } from '../PdfComponents';
 
 interface PdfCallSheetProps {
     data: any;
+    theme: PdfThemeType;
 }
 
-const styles = StyleSheet.create({
+const getStyles = (theme: PdfThemeType) => StyleSheet.create({
     vitalsContainer: {
         flexDirection: 'row',
         marginBottom: 20,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.slate,
+        borderBottomColor: theme.COLORS.slate,
         paddingBottom: 10
     },
     vitalBox: {
@@ -22,18 +22,20 @@ const styles = StyleSheet.create({
     bigTime: {
         fontSize: 48,
         fontWeight: 900,
-        color: COLORS.obsidian,
+        color: theme.COLORS.obsidian,
         letterSpacing: -2,
         lineHeight: 1
     }
 });
 
-const renderPlaceholder = (value: any, placeholder: string) => {
-    if (value) return <Text style={globalStyles.text}>{value}</Text>;
-    return <Text style={[globalStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>{placeholder}</Text>;
+const renderPlaceholder = (value: any, placeholder: string, theme: PdfThemeType) => {
+    if (value) return <Text style={theme.globalStyles.text}>{value}</Text>;
+    return <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>{placeholder}</Text>;
 };
 
-export const PdfCallSheet = ({ data }: PdfCallSheetProps) => {
+export const PdfCallSheet = ({ data, theme }: PdfCallSheetProps) => {
+    const styles = getStyles(theme);
+
     // Columns for the schedule
     const scheduleColumns = [
         { header: 'TIME', accessor: 'time', width: '15%' },
@@ -47,26 +49,26 @@ export const PdfCallSheet = ({ data }: PdfCallSheetProps) => {
             {/* Vitals Row */}
             <View style={styles.vitalsContainer}>
                 <View style={styles.vitalBox}>
-                    <Text style={globalStyles.label}>GENERAL CALL</Text>
+                    <Text style={theme.globalStyles.label}>GENERAL CALL</Text>
                     <Text style={styles.bigTime}>{data.crewCall || '00:00'}</Text>
                 </View>
 
                 {/* Weather & Hospital Container */}
                 <View style={[styles.vitalBox, { flex: 2, flexDirection: 'row' }]}>
                     <View style={{ flex: 1, paddingRight: 10 }}>
-                        <Text style={globalStyles.label}>WEATHER</Text>
-                        <Text style={globalStyles.h2}>{data.weather || '-'}</Text>
-                        <Text style={[globalStyles.text, { fontSize: 8 }]}>{data.sunriseSunset || ''}</Text>
+                        <Text style={theme.globalStyles.label}>WEATHER</Text>
+                        <Text style={theme.globalStyles.h2}>{data.weather || '-'}</Text>
+                        <Text style={[theme.globalStyles.text, { fontSize: 8 }]}>{data.sunriseSunset || ''}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Text style={globalStyles.label}>NEAREST HOSPITAL</Text>
-                        <Text style={[globalStyles.text, { fontSize: 8 }]}>{data.nearestHospital || 'No hospital data'}</Text>
+                        <Text style={theme.globalStyles.label}>NEAREST HOSPITAL</Text>
+                        <Text style={[theme.globalStyles.text, { fontSize: 8 }]}>{data.nearestHospital || 'No hospital data'}</Text>
                     </View>
                 </View>
 
                 {/* QR Code Slot */}
                 <View style={{ width: 60, alignItems: 'center' }}>
-                    <Text style={[globalStyles.label, { textAlign: 'center', marginBottom: 2 }]}>GET ONSET</Text>
+                    <Text style={[theme.globalStyles.label, { textAlign: 'center', marginBottom: 2 }]}>GET ONSET</Text>
                     <Image
                         src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io"
                         style={{ width: 48, height: 48, backgroundColor: '#F0F0F0' }}
@@ -76,17 +78,18 @@ export const PdfCallSheet = ({ data }: PdfCallSheetProps) => {
 
             {/* Notes */}
             <View style={{ marginBottom: 20 }}>
-                <Text style={globalStyles.label}>NOTES</Text>
-                <View style={globalStyles.inputBox}>
-                    {renderPlaceholder(data.notes, "General notes and instructions...")}
+                <Text style={theme.globalStyles.label}>NOTES</Text>
+                <View style={theme.globalStyles.inputBox}>
+                    {renderPlaceholder(data.notes, "General notes and instructions...", theme)}
                 </View>
             </View>
 
             {/* Schedule Grid */}
-            <Text style={[globalStyles.h2, { marginBottom: 5 }]}>SHOOTING SCHEDULE</Text>
+            <Text style={[theme.globalStyles.h2, { marginBottom: 5 }]}>SHOOTING SCHEDULE</Text>
             <DataGrid
                 columns={scheduleColumns}
                 data={data.events || []}
+                theme={theme}
             />
         </View>
     );
