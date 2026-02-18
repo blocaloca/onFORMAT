@@ -16,16 +16,16 @@ export const GlassInput = ({ label, error, className = '', ...props }: GlassInpu
             <input
                 className={`
               w-full px-3 py-2
-              bg-white dark:bg-zinc-950
-              border border-zinc-200 dark:border-zinc-800
-              rounded-none
-              font-mono text-sm text-zinc-900 dark:text-zinc-100
+              bg-zinc-200/40 dark:bg-zinc-900/40
+              border border-zinc-300 dark:border-zinc-800
+              rounded-sm
+              font-mono text-sm text-foreground
               placeholder-zinc-400 dark:placeholder-zinc-600
-              focus:bg-zinc-50 dark:focus:bg-zinc-900 
-              focus:border-zinc-400 dark:focus:border-zinc-600 
-              focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600
+              focus:bg-white dark:focus:bg-zinc-950
+              focus:border-black dark:focus:border-white
+              focus:ring-1 focus:ring-black dark:focus:ring-white
               focus:outline-none
-              transition-colors duration-150
+              transition-all duration-200
               ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}
               ${className}
             `}

@@ -56,7 +56,7 @@ export default function OnSetPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe">
+        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
             {/* Header */}
             <header className="bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-20 pt-safe transition-all">
@@ -140,7 +140,7 @@ export default function OnSetPage() {
                                     // Dynamic Gradients based on project color if available, else Emerald default
                                     return (
                                         <Link key={p.id} href={`/onset/${p.id}`}>
-                                            <div className="group relative overflow-hidden rounded-2xl bg-zinc-900 border border-zinc-800 hover:border-emerald-500/50 transition-all shadow-lg hover:shadow-emerald-900/10">
+                                            <div className="group relative overflow-hidden rounded-2xl bg-zinc-900 border border-zinc-800 border-b-2 border-b-zinc-800 hover:border-emerald-500/50 hover:border-b-emerald-500 transition-all shadow-lg hover:shadow-emerald-900/10 active:border-b-0 active:translate-y-[2px]">
                                                 {/* Background Gradient */}
                                                 <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-black opacity-100 group-hover:opacity-0 transition-opacity" />
                                                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/40 to-black opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

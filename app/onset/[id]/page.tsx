@@ -695,7 +695,7 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe">
+        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
             {/* HEADER */}
             <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50 pt-safe transition-all">

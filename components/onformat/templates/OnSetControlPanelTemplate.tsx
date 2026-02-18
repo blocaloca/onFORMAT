@@ -2,6 +2,7 @@
 import React from 'react';
 import { Smartphone, Lock, Zap, Users } from 'lucide-react';
 import { TOOLS_BY_PHASE } from '../ExperimentalNav';
+import { UnitBadge } from '@/components/ui/UnitBadge';
 
 export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting, metadata }: any) => {
 
@@ -138,28 +139,16 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                                                     {/* GROUP TOGGLES */}
                                                     <div className="flex items-center gap-1">
-                                                        {['A', 'B', 'C'].map(group => {
+                                                        {(['A', 'B', 'C'] as const).map(group => {
                                                             const isActive = groups.includes(group);
-
-                                                            // Colors: A=Emerald, B=Blue, C=Amber/Purple
-                                                            const activeColor =
-                                                                group === 'A' ? 'bg-emerald-500 text-black border-emerald-500' :
-                                                                    group === 'B' ? 'bg-blue-500 text-black border-blue-500' :
-                                                                        'bg-amber-500 text-black border-amber-500';
-
                                                             return (
                                                                 <button
                                                                     key={group}
                                                                     onClick={() => toggleGroup(tool.key, group)}
                                                                     disabled={isLocked}
-                                                                    className={`
-                                                                        w-6 h-6 rounded flex items-center justify-center text-[9px] font-black border transition-all
-                                                                        ${isActive
-                                                                            ? activeColor
-                                                                            : 'bg-transparent border-zinc-800 text-zinc-600 hover:border-zinc-600 hover:text-zinc-400'}
-                                                                    `}
+                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
                                                                 >
-                                                                    {group}
+                                                                    <UnitBadge unit={group} size="sm" />
                                                                 </button>
                                                             )
                                                         })}

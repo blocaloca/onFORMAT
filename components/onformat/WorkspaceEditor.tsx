@@ -1788,7 +1788,11 @@ Context:\n"${fullContext}"`;
 
                 {/* --- Main Content Area --- */}
                 <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                    <Header />
+
+                    <Header
+                        projectName={state.projectName}
+                        activeToolLabel={activeToolLabel}
+                    />
 
                     {state.activeTool === 'project-export' ? (
                         <PrintDashboard

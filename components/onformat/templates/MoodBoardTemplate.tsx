@@ -240,14 +240,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         {/* Toolbar (Hover) */}
                                         {!isLocked && (
                                             <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
-                                                {/* Aspect Ratio Selector */}
-                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Monitor size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '9:16' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '9:16' ? 'text-black' : 'text-zinc-400'}`} title="9:16"><Smartphone size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '1:1' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '1:1' ? 'text-black' : 'text-zinc-400'}`} title="1:1"><Square size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '4:5' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '4:5' ? 'text-black' : 'text-zinc-400'}`} title="4:5"><Crop size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '5:4' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '5:4' ? 'text-black' : 'text-zinc-400'}`} title="5:4"><Maximize size={12} className="rotate-90" /></button>
-                                                </div>
+
 
                                                 {/* Size Selector */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
