@@ -69,7 +69,6 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
 
     return (
         <div className="flex flex-col gap-8">
-            {/* Page 1: Strategy & Core Identity */}
             <DocumentLayout
                 title="Creative Brief"
                 hideHeader={false}
@@ -79,67 +78,66 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                 isPrinting={isPrinting}
             >
                 <div className="space-y-6 h-full flex flex-col">
-                    <section>
-                        <label className={labelStyle}>Vision</label>
-                        {renderField('product', 'Vision Summary... (Auto-filled from Project Vision)', 'min-h-[80px]')}
-                    </section>
-
-                    <section>
-                        <label className={labelStyle}>Objective</label>
-                        {renderField('objective', 'What is the primary goal of this project?', 'min-h-[60px]')}
-                    </section>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Strategy Section */}
+                    <div className="space-y-6 pb-6 border-b border-zinc-100 dark:border-zinc-800">
                         <section>
-                            <label className={labelStyle}>Target Audience</label>
-                            {renderField('targetAudience', 'Who are we talking to?', 'min-h-[80px]')}
+                            <label className={labelStyle}>Vision</label>
+                            {renderField('product', 'Vision Summary... (Auto-filled from Project Vision)', 'min-h-[80px]')}
                         </section>
 
                         <section>
-                            <label className={labelStyle}>Tone & Style</label>
-                            {renderField('tone', 'Adjectives describing the feel...', 'min-h-[80px]')}
-                        </section>
-                    </div>
-
-                    <section className="flex-1">
-                        <label className={labelStyle}>Key Message</label>
-                        {renderField('keyMessage', 'The one thing the audience should remember...', 'min-h-[80px]')}
-                    </section>
-                </div>
-            </DocumentLayout>
-
-            {/* Page 2: Execution & Logistics */}
-            <DocumentLayout
-                title="Creative Brief"
-                subtitle="Execution Plan"
-                hideHeader={false} // Show header on second page too for professionalism
-                metadata={undefined} // Hide redundant metadata block if preferred, or keep
-                plain={plain}
-                orientation={orientation}
-                isPrinting={isPrinting}
-            >
-                <div className="space-y-6 h-full flex flex-col">
-                    <section className="flex-1">
-                        <label className={labelStyle}>Narrative / Creative Approach</label>
-                        {renderField('narrative', 'Describe the story, concept, or creative execution in detail...', 'min-h-[180px] h-[90%]')}
-                    </section>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <section>
-                            <label className={labelStyle}>Talent / Casting</label>
-                            {renderField('talent', 'Key roles, demographic, look...', 'min-h-[100px]')}
+                            <label className={labelStyle}>Objective</label>
+                            {renderField('objective', 'What is the primary goal of this project?', 'min-h-[60px]')}
                         </section>
 
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <section>
+                                <label className={labelStyle}>Target Audience</label>
+                                {renderField('targetAudience', 'Who are we talking to?', 'min-h-[80px]')}
+                            </section>
+
+                            <section>
+                                <label className={labelStyle}>Tone & Style</label>
+                                {renderField('tone', 'Adjectives describing the feel...', 'min-h-[80px]')}
+                            </section>
+                        </div>
+
                         <section>
-                            <label className={labelStyle}>Location / Setting</label>
-                            {renderField('location', 'Where is this taking place? Studio, outdoor, specific spots...', 'min-h-[100px]')}
+                            <label className={labelStyle}>Key Message</label>
+                            {renderField('keyMessage', 'The one thing the audience should remember...', 'min-h-[80px]')}
                         </section>
                     </div>
 
-                    <section>
-                        <label className={labelStyle}>Deliverables</label>
-                        {renderField('deliverables', 'List required assets, formats, and aspect ratios...', 'min-h-[100px]')}
-                    </section>
+                    {/* Execution Section */}
+                    <div className="space-y-6 pt-2">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1" />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Execution Plan</span>
+                            <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1" />
+                        </div>
+
+                        <section>
+                            <label className={labelStyle}>Narrative / Creative Approach</label>
+                            {renderField('narrative', 'Describe the story, concept, or creative execution in detail...', 'min-h-[180px]')}
+                        </section>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <section>
+                                <label className={labelStyle}>Talent / Casting</label>
+                                {renderField('talent', 'Key roles, demographic, look...', 'min-h-[100px]')}
+                            </section>
+
+                            <section>
+                                <label className={labelStyle}>Location / Setting</label>
+                                {renderField('location', 'Where is this taking place? Studio, outdoor, specific spots...', 'min-h-[100px]')}
+                            </section>
+                        </div>
+
+                        <section>
+                            <label className={labelStyle}>Deliverables</label>
+                            {renderField('deliverables', 'List required assets, formats, and aspect ratios...', 'min-h-[100px]')}
+                        </section>
+                    </div>
                 </div>
             </DocumentLayout>
         </div>
