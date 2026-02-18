@@ -110,11 +110,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
 
                     {/* Execution Section */}
                     <div className="space-y-6 pt-2">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1" />
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Execution Plan</span>
-                            <div className="h-px bg-zinc-200 dark:bg-zinc-800 flex-1" />
-                        </div>
+
 
                         <section>
                             <label className={labelStyle}>Narrative / Creative Approach</label>
