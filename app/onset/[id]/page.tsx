@@ -705,9 +705,28 @@ export default function OnSetMobilePage() {
                         <div className="h-4 w-[1px] bg-zinc-700"></div>
                         <div className="flex flex-col">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
-                            <div className="flex items-center gap-1.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                                <span className="text-[9px] font-mono text-emerald-500 uppercase leading-none font-bold">Live Sync</span>
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                                    <span className="text-[9px] font-mono text-emerald-500 uppercase leading-none font-bold">Live Sync</span>
+                                </div>
+
+                                {/* Unit Badges Injection */}
+                                {(() => {
+                                    const crew = data.docs['crew-list']?.crew || [];
+                                    const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                    const units = me?.onSetGroups || [];
+
+                                    if (units.length === 0) return null;
+
+                                    return (
+                                        <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
+                                            {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-red-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(220,38,38,0.5)]">A</span>}
+                                            {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-blue-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(37,99,235,0.5)]">B</span>}
+                                            {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-amber-500 text-white rounded-[1px] shadow-[0_0_5px_rgba(245,158,11,0.5)]">C</span>}
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         </div>
                     </Link>

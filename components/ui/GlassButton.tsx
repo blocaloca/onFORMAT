@@ -14,13 +14,21 @@ export const GlassButton = ({
     ...props
 }: GlassButtonProps) => {
 
-    // INDUSTRIAL DESIGN SYSTEM OVERRIDE
-    const baseStyles = "relative overflow-hidden rounded-none font-mono font-bold uppercase tracking-widest transition-all duration-100 tactile flex items-center justify-center gap-2 select-none";
+    // INDUSTRIAL DESIGN SYSTEM OVERRIDE - Machined Glass
+    const baseStyles = "relative overflow-hidden rounded-sm font-mono font-bold uppercase tracking-widest transition-all duration-500 tactile flex items-center justify-center gap-2 select-none active:scale-[0.98]";
 
     const variants = {
-        primary: "bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 border border-transparent",
-        secondary: "bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900",
-        ghost: "bg-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50"
+        primary: `
+            bg-zinc-900 text-white 
+            shadow-[0_1px_0_rgba(255,255,255,0.1)_inset,0_1px_2px_rgba(0,0,0,0.1)] 
+            hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] hover:bg-zinc-800
+        `,
+        secondary: `
+            bg-white/80 backdrop-blur-sm text-zinc-900 border border-zinc-200/60
+            shadow-[0_1px_0_rgba(255,255,255,0.5)_inset,0_1px_2px_rgba(0,0,0,0.05)]
+            hover:bg-white hover:border-zinc-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.5)]
+        `,
+        ghost: "bg-transparent text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100/50"
     };
 
     const sizes = {
@@ -31,9 +39,12 @@ export const GlassButton = ({
 
     return (
         <button
-            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+            className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} group`}
             {...props}
         >
+            {/* Top Edge Highlight for Machined Glass Look */}
+            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+
             {children}
         </button>
     );
