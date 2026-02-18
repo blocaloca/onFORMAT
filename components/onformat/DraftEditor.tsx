@@ -311,11 +311,11 @@ export const DraftEditor = ({
             // Wait for render of hidden pages
             await new Promise(resolve => setTimeout(resolve, 800));
 
-            const pageWidth = orientation === 'landscape' ? 1056 : 816;
-            const pageHeight = orientation === 'landscape' ? 816 : 1056;
+            const pageWidth = 816;
+            const pageHeight = 1056;
 
             const pdf = new jsPDF({
-                orientation: orientation,
+                orientation: 'portrait',
                 unit: 'px',
                 format: [pageWidth, pageHeight],
                 hotfixes: ['px_scaling']
@@ -354,7 +354,7 @@ export const DraftEditor = ({
                         const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
                         if (pageAdded) {
-                            pdf.addPage([pageWidth, pageHeight], orientation);
+                            pdf.addPage([pageWidth, pageHeight], 'portrait');
                         }
 
                         pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
@@ -374,30 +374,14 @@ export const DraftEditor = ({
     };
 
 
-    // --- Orientation Support ---
-    // --- Orientation Support ---
-    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>(() => {
-        if (typeof window !== 'undefined') {
-            return (localStorage.getItem('onformat_orientation') as 'portrait' | 'landscape') || 'portrait';
-        }
-        return 'portrait';
-    });
-
-    // Removed auto-sync from data to enforce global persistence
-    // useEffect(() => { ... }, [activeVersionIndex, activeToolKey]);
-
-    const handleOrientationToggle = (newOrientation: 'portrait' | 'landscape') => {
-        setOrientation(newOrientation);
-        localStorage.setItem('onformat_orientation', newOrientation);
-        handleUpdate({ orientation: newOrientation });
-    };
+    // --- Orientation Support Removed ---
+    // User requested toggle removal. Hardcoded to 'portrait'.
+    const orientation = 'portrait';
 
     // --- Template Switcher ---
     const TemplateComponent = getTemplateForTool(activeToolKey);
 
-    const containerStyle = orientation === 'landscape'
-        ? "w-[1056px] h-[816px]"
-        : "w-[816px] h-[1056px]";
+    const containerStyle = "w-[816px] h-[1056px]";
 
     return (
         <section className="flex-1 flex flex-col h-full bg-transparent relative overflow-hidden">
@@ -411,8 +395,6 @@ export const DraftEditor = ({
                 onDuplicate={handleDuplicate}
                 onClear={handleClear}
                 onSave={() => { }} // "Save" is implicit
-                orientation={orientation}
-                onToggleOrientation={handleOrientationToggle}
                 onExportPdf={handleExportPdf}
                 isExportingPdf={isExportingPdf}
                 projectId={projectId}
@@ -431,7 +413,7 @@ export const DraftEditor = ({
                         persona={persona}
                         // @ts-ignore
                         plain={false}
-                        orientation={orientation}
+                        orientation="portrait"
                         metadata={{
                             projectName,
                             clientName,
@@ -495,7 +477,7 @@ export const DraftEditor = ({
                         key={i}
                         id={`pdf-page-${i}`}
                         style={{
-                            width: orientation === 'landscape' ? '1056px' : '816px',
+                            width: '816px',
                             backgroundColor: 'white',
                             padding: '0'
                         }}
@@ -508,7 +490,7 @@ export const DraftEditor = ({
                             persona={persona}
                             // @ts-ignore
                             plain={false}
-                            orientation={orientation}
+                            orientation="portrait"
                             isPrinting={true}
                             metadata={{
                                 projectName,

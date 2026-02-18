@@ -13,8 +13,7 @@ interface DocumentNavBarProps {
     onClear: () => void;
     onSave: () => void;
     title: string;
-    orientation?: 'portrait' | 'landscape';
-    onToggleOrientation?: (o: 'portrait' | 'landscape') => void;
+    // orientation props removed
     onExportPdf?: (scope: 'current' | 'all') => void;
     isExportingPdf?: boolean;
     projectId?: string;
@@ -35,8 +34,7 @@ export const DocumentNavBar = ({
     onClear,
     onSave,
     title,
-    orientation = 'portrait',
-    onToggleOrientation,
+    // orientation removed
     onExportPdf,
     isExportingPdf,
     projectId,
@@ -114,25 +112,7 @@ export const DocumentNavBar = ({
 
             {/* Right: Actions */}
             <div className="flex items-center gap-3">
-                {/* Orientation Toggle (Global) */}
-                {onToggleOrientation && (
-                    <div className={`flex rounded-sm border p-0.5 mr-2 ${darkMode ? 'bg-zinc-950 border-zinc-800' : 'bg-zinc-50 border-zinc-200'}`}>
-                        <button
-                            onClick={() => onToggleOrientation('portrait')}
-                            className={`p-1.5 rounded-sm transition-all ${orientation === 'portrait' ? (darkMode ? 'bg-zinc-800 text-white shadow-sm' : 'bg-white text-black shadow-sm border border-zinc-200') : (darkMode ? 'text-zinc-600 hover:text-zinc-400' : 'text-zinc-400 hover:text-zinc-600')}`}
-                            title="Portrait"
-                        >
-                            <RectangleVertical size={14} />
-                        </button>
-                        <button
-                            onClick={() => onToggleOrientation('landscape')}
-                            className={`p-1.5 rounded-sm transition-all ${orientation === 'landscape' ? (darkMode ? 'bg-zinc-800 text-white shadow-sm' : 'bg-white text-black shadow-sm border border-zinc-200') : (darkMode ? 'text-zinc-600 hover:text-zinc-400' : 'text-zinc-400 hover:text-zinc-600')}`}
-                            title="Landscape"
-                        >
-                            <RectangleHorizontal size={14} />
-                        </button>
-                    </div>
-                )}
+
 
                 {onToggleAi && (
                     <button
