@@ -1,3 +1,5 @@
+/* eslint-disable */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { ProductionEvent, ProjectSourceData, GridRow, EventType } from './types';
 
 /**

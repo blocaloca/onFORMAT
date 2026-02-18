@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React, { useEffect, useMemo, useState } from 'react';
-import { X, Printer, Settings, Layers, RectangleVertical, RectangleHorizontal, GripVertical, Check, Eye, AlertCircle, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Printer, Eye, ChevronDown, Layers, RectangleVertical, RectangleHorizontal, Check } from 'lucide-react';
 import { PrintItem } from './types';
 import { PrintPreview } from './PrintPreview';
 import { ProjectProvider, useProject } from '../ProjectContext'; // Adjust path if needed
@@ -9,6 +10,7 @@ import { GlobalPdfDocument } from './pdf-factory/PdfDocumentFactory';
 
 interface PrintDashboardProps {
     onClose: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     phases: any; // Full project data
     projectName?: string;
     clientName?: string;
@@ -108,6 +110,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
             const stack = getToolStack ? getToolStack(key) || [] : [];
             const currentDraft = getToolData(key);
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let versions: any[] = [...stack];
 
             // Always ensure the active draft is included if valid, as it represents the latest edits
@@ -140,7 +143,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 versions: versions
             };
         });
-    }, [activeProject, getToolData, getToolStack]);
+    }, [getToolData, getToolStack]);
 
     // Calculate Max Days available across all docs
     const maxDays = useMemo(() => {
@@ -169,9 +172,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
         setSelectedTools(next);
     };
 
-    const handlePreviewSelect = (doc: any) => {
-        setPreviewId(doc.id);
-    };
+
 
     const handleExport = async () => {
         setIsExporting(true);
@@ -188,6 +189,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     orientation: masterOrientation,
                     pageCountEstimate: 1,
                     selectedVersions: masterDay === -1
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         ? doc.versions.map((_: any, i: number) => i)
                         : (doc.versions.length === 1 ? [0] : (masterDay < doc.versions.length ? [masterDay] : []))
                 }));
@@ -214,11 +216,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
     };
 
     // --- Status Helper ---
-    const getStatusColor = (doc: any) => {
-        if (!doc.hasData) return 'bg-red-500';
-        if (doc.versions.length > 1) return 'bg-emerald-500';
-        return 'bg-yellow-500';
-    };
+
 
     return (
         <div className="fixed inset-0 bg-zinc-950 z-50 flex flex-col animate-in fade-in duration-200 overflow-hidden text-zinc-200">
@@ -413,6 +411,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                         orientation: masterOrientation,
                                         pageCountEstimate: 1,
                                         selectedVersions: masterDay === -1
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                             ? doc.versions.map((_: any, i: number) => i)
                                             : (doc.versions.length === 1 ? [0] : (masterDay < doc.versions.length ? [masterDay] : []))
                                     }))

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, jsx-a11y/alt-text */
 import React from 'react';
 import { Smartphone, Lock, Zap, Users } from 'lucide-react';
 import { TOOLS_BY_PHASE } from '../ExperimentalNav';

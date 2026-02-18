@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { Document, Page, View, Text, Image } from '@react-pdf/renderer';
 import { getPDFTheme } from './PdfTheme';
@@ -5,9 +6,13 @@ import { PdfHeader, PdfFooter, PdfThemeType } from './PdfComponents';
 
 // --- Types ---
 interface FactoryProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     items: any[]; // Playlist items
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     phases: any;  // Global data store
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     coverSettings: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     brandSettings?: any; // New Injection Point
 }
 
@@ -19,7 +24,6 @@ const getStackForTool = (toolId: string, phases: any) => {
     const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
 
     for (const phaseKey of priorityOrder) {
-        // @ts-ignore
         const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
         if (phase?.drafts?.[toolId]) {
             foundData = phase.drafts[toolId];
@@ -30,9 +34,9 @@ const getStackForTool = (toolId: string, phases: any) => {
     // Fallback Search
     if (!foundData) {
         for (const phase of Object.values(phases)) {
-            // @ts-ignore
+            // @ts-expect-error: Intentionally loose typing for legacy phase structure
             if (phase?.drafts?.[toolId]) {
-                // @ts-ignore
+                // @ts-expect-error: Intentionally loose typing for legacy phase structure
                 foundData = phase.drafts[toolId];
                 break;
             }
@@ -56,6 +60,7 @@ const CoverPage = ({ settings, theme }: { settings: any, theme: PdfThemeType }) 
         <View style={{ marginBottom: 40, alignItems: 'center' }}>
             {/* Optional Logo */}
             {theme.logo && (
+                // eslint-disable-next-line jsx-a11y/alt-text
                 <Image
                     src={theme.logo}
                     style={{ width: 64, height: 64, marginBottom: 24, objectFit: 'contain' }}
@@ -157,7 +162,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings, brandSettings 
                 const stack = getStackForTool(item.id, phases);
 
                 // Determine Indices
-                // @ts-ignore
+
                 let indices = item.selectedVersions;
                 if (!indices || indices.length === 0) {
                     if (Array.isArray(stack) && stack.length > 0) {
@@ -168,7 +173,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings, brandSettings 
                 }
 
                 // Render Pages
-                // @ts-ignore
+                // @ts-expect-error: Sorting indices mixed types
                 return indices.sort((a, b) => a - b).map((idx) => {
                     const data = stack && stack[idx] ? stack[idx] : {};
                     const uniqueKey = `${item.id}-${idx}`;

@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
 import { getTemplateForTool } from '@/components/onformat/TemplateRegistry'
 import { DocumentNavBar } from './DocumentNavBar'
 
@@ -14,9 +14,10 @@ interface DraftEditorProps {
     projectId?: string
     projectName?: string
     producer?: string
-    activePhase?: string
-    phases?: any
-    onToggleLock: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    phases?: Record<string, any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onGenerateFromVision?: (targetTool: any, visionText: string, promptPrefix: string) => void
     onOpenAi?: () => void
     latestNotification?: { msg: string, time: number } | null
@@ -36,9 +37,7 @@ export const DraftEditor = ({
     projectId,
     projectName,
     producer,
-    activePhase,
     phases,
-    onToggleLock,
     onGenerateFromVision,
     onOpenAi,
     latestNotification,
@@ -120,38 +119,7 @@ export const DraftEditor = ({
     }
 
     // --- Nav Mode Logic ---
-    const COLLECTION_TOOLS = [
-        'schedule',
-        'call-sheet',
-        'on-set-notes',
-        'script-notes',
-        'camera-report',
-        'sound-report',
-        'dit-log',
-        'archive-log'
-    ];
 
-    const HIDDEN_NAV_TOOLS = [
-        'onset-mobile-control',
-        'project-vision',
-        'creative-direction', // Moodboard
-        'lookbook',
-        'storyboard',
-        'crew-list',
-        'casting-talent',
-        'locations-sets',
-        'wardrobe-styling',
-        'props-list',
-        'equipment-list',
-        'client-selects',
-        'deliverables-licensing',
-        'budget-actual',
-        'releases'
-    ];
-
-    let navMode: 'stack' | 'collection' | 'hidden' = 'stack';
-    if (COLLECTION_TOOLS.includes(activeToolKey)) navMode = 'collection';
-    if (HIDDEN_NAV_TOOLS.includes(activeToolKey)) navMode = 'hidden';
 
     // Locations Import Logic (for Call Sheet Sync)
     let importedLocations = null;
@@ -167,6 +135,7 @@ export const DraftEditor = ({
     const [activeVersionIndex, setActiveVersionIndex] = useState(0);
 
     // Parse draft safely into an Array
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getVersions = (): any[] => {
         if (!draft) return [{}];
         try {
@@ -184,6 +153,7 @@ export const DraftEditor = ({
     // Handle empty versions array or null entries case
     const activeData = (versions.length > 0 && versions[safeIndex]) ? versions[safeIndex] : {};
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUpdate = (updatedFields: any) => {
         if (isLocked) return;
         const newVersions = [...versions];
@@ -200,7 +170,8 @@ export const DraftEditor = ({
         // Universal "Collection/Day" Mode: Append to End (Day 1, Day 2...)
         // Smart Date Increment Logic
         const lastItem = versions[versions.length - 1] || {};
-        let newItem: any = {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newItem: any = {};
 
         if (lastItem.date) {
             try {
@@ -222,15 +193,7 @@ export const DraftEditor = ({
         onDraftChange(JSON.stringify(newVersions));
     };
 
-    const handleDuplicate = () => {
-        // Universal "Collection/Day" Mode: Append Copy to End
-        const copy = { ...activeData };
-        // Remove ID to avoid conflicts if present
-        if (copy.id) delete copy.id;
-        const newVersions = [...versions, copy];
-        setActiveVersionIndex(newVersions.length - 1);
-        onDraftChange(JSON.stringify(newVersions));
-    };
+
 
     const handleClear = () => {
         if (confirm('Are you sure you want to clear this document? Content will be erased.')) {
@@ -294,94 +257,16 @@ export const DraftEditor = ({
 
 
 
-    // --- PDF Export Logic ---
-    const [isExportingPdf, setIsExportingPdf] = useState(false);
 
-    const handleExportPdf = async (scope: 'current' | 'all' = 'current') => {
-        if (isExportingPdf) return;
-        setIsExportingPdf(true);
-
-        try {
-            // Dynamically import libraries to prevent SSR/Webpack crashes
-            const html2canvas = (await import('html2canvas')).default;
-            const jsPDFModule = await import('jspdf');
-            // Handle both default (v2) and named (v3) exports for reliability
-            const jsPDF = jsPDFModule.default || (jsPDFModule as any).jsPDF;
-
-            // Wait for render of hidden pages
-            await new Promise(resolve => setTimeout(resolve, 800));
-
-            const pageWidth = 816;
-            const pageHeight = 1056;
-
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'px',
-                format: [pageWidth, pageHeight],
-                hotfixes: ['px_scaling']
-            });
-
-            // Determine which versions to export
-            const versionsToExport = scope === 'all'
-                ? versions.map((_, i) => i)
-                : [safeIndex]; // Only current
-
-            let pageAdded = false;
-            let capturedPagesCount = 0;
-
-            for (const i of versionsToExport) {
-                const container = document.getElementById(`pdf-page-${i}`);
-                if (!container) continue;
-
-                // Find all individual pages within this version/draft
-                const pages = container.querySelectorAll('.document-page');
-
-                if (pages.length > 0) {
-                    for (let p = 0; p < pages.length; p++) {
-                        const pageEl = pages[p] as HTMLElement;
-
-                        const canvas = await html2canvas(pageEl, {
-                            scale: 2,
-                            useCORS: true,
-                            logging: false,
-                            backgroundColor: '#ffffff',
-                            width: pageWidth,
-                            height: pageHeight,
-                            windowWidth: pageWidth,
-                            windowHeight: pageHeight
-                        });
-
-                        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-                        if (pageAdded) {
-                            pdf.addPage([pageWidth, pageHeight], 'portrait');
-                        }
-
-                        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
-                        pageAdded = true;
-                    }
-                }
-            }
-
-            pdf.save(`${(activeToolLabel || 'Document').replace(/\s+/g, '_')}.pdf`);
-
-        } catch (error) {
-            console.error('PDF Generation Failed:', error);
-            alert('Failed to generate PDF. Check console for details.');
-        } finally {
-            setIsExportingPdf(false);
-        }
-    };
 
 
     // --- Orientation Support Removed ---
     // User requested toggle removal. Hardcoded to 'portrait'.
-    const orientation = 'portrait';
 
     // --- Template Switcher ---
     const TemplateComponent = getTemplateForTool(activeToolKey);
 
-    const containerStyle = "w-[816px] h-[1056px]";
+
 
     return (
         <section className="flex-1 flex flex-col h-full bg-transparent relative overflow-hidden">
@@ -392,12 +277,7 @@ export const DraftEditor = ({
                 activeVersionIndex={safeIndex}
                 onSelectVersion={setActiveVersionIndex}
                 onNew={handleNew}
-                onDuplicate={handleDuplicate}
                 onClear={handleClear}
-                onSave={() => { }} // "Save" is implicit
-                onExportPdf={handleExportPdf}
-                isExportingPdf={isExportingPdf}
-                projectId={projectId}
                 onOpenPrintRoom={onOpenPrintRoom}
                 onToggleAi={onOpenAi}
                 isAiDocked={isAiDocked}
@@ -407,11 +287,11 @@ export const DraftEditor = ({
                 <div className="w-full flex-1 flex flex-col max-w-5xl mx-auto p-4 sm:p-8">
                     <TemplateComponent
                         data={activeData}
-                        // @ts-ignore
+
                         onUpdate={handleUpdate}
                         isLocked={isLocked}
                         persona={persona}
-                        // @ts-ignore
+
                         plain={false}
                         orientation="portrait"
                         metadata={{
@@ -432,13 +312,13 @@ export const DraftEditor = ({
                             projectId,
                             latestNotification
                         }}
-                        // @ts-ignore
+
                         onGenerateFromVision={onGenerateFromVision}
-                        // @ts-ignore
+
                         onOpenAi={onOpenAi}
-                        // @ts-ignore
+
                         onMagicImport={onMagicImport}
-                        // @ts-ignore
+
                         onAddDay={handleNew}
                     />
                 </div>
@@ -457,55 +337,7 @@ export const DraftEditor = ({
             }
 
             {/* Hidden Container for PDF Generation */}
-            <div
-                style={{
-                    position: 'fixed',
-                    left: 0,
-                    top: 0,
-                    zIndex: -50,
-                    opacity: 1,
-                    pointerEvents: 'none'
-                }}
-            >
-                {isExportingPdf && versions.map((v, i) => (
-                    // Only render if we are exporting 'all' or this is the active version
-                    // Note: We don't have 'exportScope' state here easily, so we usually render all.
-                    // But if the loop only picks one, it should work.
-                    // If the user says it downloads ALL, then the loop is iterating ALL.
-                    // Which means scope is 'all'.
-                    <div
-                        key={i}
-                        id={`pdf-page-${i}`}
-                        style={{
-                            width: '816px',
-                            backgroundColor: 'white',
-                            padding: '0'
-                        }}
-                    >
-                        <TemplateComponent
-                            data={v}
-                            // @ts-ignore
-                            onUpdate={() => { }}
-                            isLocked={true}
-                            persona={persona}
-                            // @ts-ignore
-                            plain={false}
-                            orientation="portrait"
-                            isPrinting={true}
-                            metadata={{
-                                projectName,
-                                clientName,
-                                date: new Date().toLocaleDateString(),
-                                producer,
-                                directorNames: activeData.directorNames,
-                                isTreatment: activeToolKey === 'directors-treatment',
-                                projectId,
-                                importedBudget
-                            }}
-                        />
-                    </div>
-                ))}
-            </div>
+
         </section >
     )
 }

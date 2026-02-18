@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { View, Text, StyleSheet, Image } from '@react-pdf/renderer';
 import { DataGrid, PdfThemeType } from '../PdfComponents';
 
 interface PdfCallSheetProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     theme: PdfThemeType;
 }
@@ -28,6 +30,7 @@ const getStyles = (theme: PdfThemeType) => StyleSheet.create({
     }
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderPlaceholder = (value: any, placeholder: string, theme: PdfThemeType) => {
     if (value) return <Text style={theme.globalStyles.text}>{value}</Text>;
     return <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>{placeholder}</Text>;
@@ -69,6 +72,7 @@ export const PdfCallSheet = ({ data, theme }: PdfCallSheetProps) => {
                 {/* QR Code Slot */}
                 <View style={{ width: 60, alignItems: 'center' }}>
                     <Text style={[theme.globalStyles.label, { textAlign: 'center', marginBottom: 2 }]}>GET ONSET</Text>
+
                     <Image
                         src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io"
                         style={{ width: 48, height: 48, backgroundColor: '#F0F0F0' }}

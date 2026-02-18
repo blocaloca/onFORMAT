@@ -17,6 +17,7 @@ interface ShotListData {
 }
 
 interface ShotListFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any
   onChange: (content: ShotListData) => void
 }
@@ -58,6 +59,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
     console.log('Current shot list data:', JSON.stringify(shotListData, null, 2))
     onChange(shotListData)
     console.log('✅ Called onChange - parent should receive this data')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shotListData])
 
   // Expose method to add shots from AI responses

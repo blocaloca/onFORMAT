@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { View, Text } from '@react-pdf/renderer';
 import { DocumentWrapper, PageLayout } from './DocumentWrapper';

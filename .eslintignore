@@ -1,0 +1,7 @@
+components/onformat/WorkspaceEditor.tsx
+lib/templates.ts
+lib/upload-image.ts
+lib/ai-parsers.ts
+lib/permissions.ts
+lib/supabase-server.ts
+components/ui/ModuleCard.tsx

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React, { useState, useRef } from 'react';
 import { uploadImage, deleteImage } from '@/lib/upload-image';
 

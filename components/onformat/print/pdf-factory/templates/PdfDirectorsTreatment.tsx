@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { View, Text, Image, StyleSheet } from '@react-pdf/renderer';
 import { PdfThemeType } from '../PdfComponents';
@@ -15,6 +16,7 @@ interface Slide {
 }
 
 interface PdfDirectorsTreatmentProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     theme: PdfThemeType;
 }
@@ -85,6 +87,7 @@ export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProp
 
     // Migration Check: If no slides, try legacy 'scenes'
     if (slides.length === 0 && rawv?.scenes && Array.isArray(rawv.scenes)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         slides = rawv.scenes.map((scene: any) => ({
             id: scene.id,
             title: scene.description || scene.slug || 'Untitled Scene',

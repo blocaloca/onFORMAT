@@ -6,6 +6,7 @@ interface AIAction {
     label: string;
     type: 'draft_prefill' | 'suggestion' | 'link';
     target?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload?: any;
     prominence: 'primary' | 'secondary';
 }
@@ -17,40 +18,7 @@ interface ChatMsg {
 }
 
 // ... (ActionDeck Component Definition)
-const ActionDeck = ({ actions, onAction }: { actions: AIAction[], onAction: (action: AIAction) => void }) => {
-    const primary = actions.find(a => a.prominence === 'primary');
-    const secondaries = actions.filter(a => a.prominence === 'secondary');
 
-    if (actions.length === 0) return null;
-
-    return (
-        <div className="bg-zinc-50 border-t border-zinc-200 px-4 py-3 flex flex-col gap-3 animate-in slide-in-from-bottom-2 duration-200">
-            {primary && (
-                <button
-                    onClick={() => onAction(primary)}
-                    className="w-full bg-black text-white hover:bg-zinc-800 transition-colors py-3 px-4 rounded-sm flex items-center justify-between group shadow-sm"
-                >
-                    <span className="text-[11px] font-bold uppercase tracking-widest">{primary.label}</span>
-                    <ArrowUp size={14} className="rotate-45 group-hover:rotate-90 transition-transform duration-300" />
-                </button>
-            )}
-
-            {secondaries.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                    {secondaries.map((action, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => onAction(action)}
-                            className="bg-white border border-zinc-300 hover:border-black hover:text-black text-zinc-500 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-wide transition-colors"
-                        >
-                            {action.label}
-                        </button>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
 
 interface ChatInterfaceProps {
     messages: ChatMsg[];
@@ -64,13 +32,10 @@ interface ChatInterfaceProps {
     activeToolLabel: string;
     activeToolKey: string;
     isLocked: boolean;
-    activePhase: string;
-    persona: 'STILLS' | 'MOTION' | 'HYBRID';
     isDocked?: boolean;
     onDock?: () => void;
     activeMode: 'OFF' | 'ASSIST' | 'DEVELOP';
     onModeChange: (m: 'OFF' | 'ASSIST' | 'DEVELOP') => void;
-    onCreateBrief?: (text: string) => void;
     onNavigate?: (tool: string, payload?: string) => void;
     placeholderHint?: string;
 }
@@ -87,13 +52,10 @@ export const ChatInterface = ({
     activeToolLabel,
     activeToolKey,
     isLocked,
-    activePhase,
-    persona,
     isDocked,
     onDock,
     activeMode,
     onModeChange,
-    onCreateBrief,
     onNavigate,
     placeholderHint
 }: ChatInterfaceProps) => {
@@ -203,18 +165,7 @@ export const ChatInterface = ({
         }
     };
 
-    const handleModeSwitch = (mode: 'OFF' | 'ASSIST' | 'DEVELOP') => {
-        console.log('Switching Mode:', mode);
-        if (activeToolKey === 'project-vision' && mode === 'ASSIST') return;
-        if (mode === 'OFF') {
-            onDock?.();
-        }
-        if (onModeChange) {
-            onModeChange(mode);
-        } else {
-            console.error('onModeChange is missing!');
-        }
-    };
+
 
     useEffect(() => {
         if (activeToolKey === 'project-vision' && activeMode === 'ASSIST') {
@@ -324,7 +275,7 @@ export const ChatInterface = ({
                                     inlineActions = parsed.actions;
                                 }
                             }
-                        } catch (e) {
+                        } catch {
                             // Not JSON, render as text
                         }
                     }

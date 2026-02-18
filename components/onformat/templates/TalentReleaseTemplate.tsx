@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, jsx-a11y/alt-text */
 import React, { useRef, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import SignatureCanvas from 'react-signature-canvas';

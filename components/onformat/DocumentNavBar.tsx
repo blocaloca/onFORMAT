@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { RectangleVertical, RectangleHorizontal, ChevronLeft, ChevronRight, Copy, Plus, Trash2, Printer, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Printer, Sparkles } from 'lucide-react';
 
 export type NavMode = 'stack' | 'collection' | 'hidden';
 
 interface DocumentNavBarProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     versions: any[];
     activeVersionIndex: number;
     onSelectVersion: (index: number) => void;
     onNew: () => void;
-    onDuplicate: () => void;
     onClear: () => void;
-    onSave: () => void;
     title: string;
-    // orientation props removed
-    onExportPdf?: (scope: 'current' | 'all') => void;
-    isExportingPdf?: boolean;
-    projectId?: string;
-    navMode?: NavMode;
     onOpenPrintRoom?: () => void;
     onToggleAi?: () => void;
     isAiDocked?: boolean;
@@ -30,22 +24,14 @@ export const DocumentNavBar = ({
     activeVersionIndex,
     onSelectVersion,
     onNew,
-    onDuplicate,
     onClear,
-    onSave,
     title,
-    // orientation removed
-    onExportPdf,
-    isExportingPdf,
-    projectId,
-    navMode = 'stack',
     onOpenPrintRoom,
     onToggleAi,
     isAiDocked
 }: DocumentNavBarProps) => {
     const { theme } = useTheme();
     const darkMode = theme === 'dark';
-    const [showVersionMenu, setShowVersionMenu] = useState(false);
 
     // Helpers for Collection Mode (Day Logic)
     // In Collection Mode: versions array = [Day 1, Day 2, Day 3]

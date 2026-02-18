@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, Sparkles } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { UserMenu } from './UserMenu';
 
 interface Tool {
@@ -13,14 +13,12 @@ interface ToolSelectorProps {
     onToolChange: (tool: string) => void;
     activePhase: string;
     onPhaseChange: (phase: 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST') => void;
-    persona: 'STILLS' | 'MOTION' | 'HYBRID';
-    setPersona: (p: 'STILLS' | 'MOTION' | 'HYBRID') => void;
     isAiDocked?: boolean;
     toggleAiDock?: () => void;
     userEmail?: string;
 }
 
-export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onPhaseChange, persona, setPersona, isAiDocked, toggleAiDock, userEmail }: ToolSelectorProps) => {
+export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onPhaseChange, isAiDocked, toggleAiDock, userEmail }: ToolSelectorProps) => {
 
     const PHASE_LABELS: Record<string, string> = {
         DEVELOPMENT: 'Development',
@@ -63,7 +61,7 @@ export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onP
                     {Object.entries(PHASE_LABELS).map(([key, label]) => (
                         <button
                             key={key}
-                            onClick={() => onPhaseChange(key as any)}
+                            onClick={() => onPhaseChange(key as 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST')}
                             className={`
 w-full text-left px-3 py-2 text-xs rounded-sm transition-colors border
               ${activePhase === key

@@ -32,6 +32,7 @@ import { ReleasesManagerTemplate } from '@/components/onformat/templates/Release
 
 // Helper for Plain Text (Default)
 // Exporting this so DraftEditor logic can fall back to it explicitly if needed
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const PlainTemplate = ({ data, onUpdate, isLocked, activeToolLabel, orientation }: any) => {
     const text = typeof data === 'string' ? data : (data?.text || JSON.stringify(data, null, 2));
     const displayText = text === '{}' ? '' : text;
@@ -56,6 +57,7 @@ export const PlainTemplate = ({ data, onUpdate, isLocked, activeToolLabel, orien
 }
 
 // Registry Mapping
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const TEMPLATE_REGISTRY: Record<string, React.ComponentType<any>> = {
     'brief': BriefTemplate,
     'directors-treatment': DirectorsTreatmentTemplate,

@@ -2,14 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     ChevronDown,
-    ChevronRight,
     ChevronLeft,
     Folder,
     LayoutGrid,
-    Sparkles,
     MoreVertical,
     Plus,
-    FolderPlus,
     FolderOpen,
     Archive,
     Smartphone
@@ -74,7 +71,7 @@ export const getPhaseLabel = (key: Phase): string => {
 
 // --- Shared Components ---
 
-const NavHeader = ({ darkMode = false }: { darkMode?: boolean }) => (
+const NavHeader = () => (
     <div className={`p-8 pb-4 text-foreground`}>
         <Link href="/" className="block w-32 mb-10 hover:opacity-80 transition-opacity">
             <img src="/logo-white.png" alt="onFORMAT" className="w-full h-auto object-contain bg-foreground p-1 invert dark:invert-0" />
@@ -84,7 +81,7 @@ const NavHeader = ({ darkMode = false }: { darkMode?: boolean }) => (
     </div>
 );
 
-const NavSectionTitle = ({ children, darkMode = false }: { children: React.ReactNode, darkMode?: boolean }) => (
+const NavSectionTitle = ({ children }: { children: React.ReactNode }) => (
     <div className={`px-4 text-[10px] font-bold uppercase tracking-widest mb-2 mt-6 text-muted-foreground`}>
         {children}
     </div>
@@ -93,6 +90,7 @@ const NavSectionTitle = ({ children, darkMode = false }: { children: React.React
 interface NavItemProps {
     active?: boolean;
     children: React.ReactNode;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     icon?: any;
     onClick?: () => void;
     hasSubmenu?: boolean;
@@ -109,7 +107,6 @@ const NavItem = ({
     onClick,
     hasSubmenu = false,
     isOpen = false,
-    darkMode = false,
     onAction,
     href
 }: NavItemProps) => {
@@ -172,6 +169,7 @@ interface DashboardSidebarProps {
     activeFolder: string | null;
     setActiveFolder: (id: string | null) => void;
     onComposeFolder?: () => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onFolderAction?: (folder: any) => void;
     userEmail?: string;
     darkMode?: boolean;
@@ -189,16 +187,13 @@ export const ExperimentalDashboardNav = ({
     onComposeFolder,
     onFolderAction,
     userEmail,
-    darkMode = false,
     onNewProject,
-    AiComponent,
-    onToggleAi,
-    isAiDocked = true
+    AiComponent
 }: DashboardSidebarProps) => {
 
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-card border-border`}>
-            <NavHeader darkMode={darkMode} />
+            <NavHeader />
 
             {/* AI Slot (Preserving Dashboard Chat functionality) */}
             {AiComponent && (
@@ -220,15 +215,15 @@ export const ExperimentalDashboardNav = ({
             )}
 
             <div className="flex-1 overflow-y-auto pt-2 scrollbar-hide">
-                <NavSectionTitle darkMode={darkMode}>Views</NavSectionTitle>
-                <NavItem icon={LayoutGrid} active={activeFolder === null} onClick={() => setActiveFolder(null)} darkMode={darkMode}>
+                <NavSectionTitle>Views</NavSectionTitle>
+                <NavItem icon={LayoutGrid} active={activeFolder === null} onClick={() => setActiveFolder(null)}>
                     All Projects
                 </NavItem>
-                <NavItem icon={Archive} active={activeFolder === 'ARCHIVED'} onClick={() => setActiveFolder('ARCHIVED')} darkMode={darkMode}>
+                <NavItem icon={Archive} active={activeFolder === 'ARCHIVED'} onClick={() => setActiveFolder('ARCHIVED')}>
                     Archived
                 </NavItem>
 
-                <NavSectionTitle darkMode={darkMode}>Folders</NavSectionTitle>
+                <NavSectionTitle>Folders</NavSectionTitle>
                 <div className="space-y-0.5">
                     {folders?.filter(f => f.type !== 'archived').map(f => (
                         <NavItem
@@ -236,7 +231,6 @@ export const ExperimentalDashboardNav = ({
                             icon={activeFolder === f.id ? FolderOpen : Folder}
                             active={activeFolder === f.id}
                             onClick={() => setActiveFolder(f.id)}
-                            darkMode={darkMode}
                             onAction={onFolderAction ? () => onFolderAction(f) : undefined}
                         >
                             {f.name}
@@ -283,14 +277,10 @@ export const ExperimentalWorkspaceNav = ({
     onToolSelect,
     // darkMode prop is removed in favor of context
     userEmail,
-    producerName,
-    onToggleAi,
-    isAiDocked = true,
     mobileStatus,
     alerts
 }: WorkspaceSidebarProps & { alerts?: Record<string, boolean> }) => {
-    const { theme } = useTheme();
-    const darkMode = theme === 'dark'; // Derived from context
+    // const { theme } = useTheme();
 
     // We maintain local state for 'expanded' phases, but we default to expanding the ACTIVE phase.
     const [expandedPhase, setExpandedPhase] = useState<Phase | null>(activePhase);
@@ -306,9 +296,7 @@ export const ExperimentalWorkspaceNav = ({
 
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-card border-border`}>
-            <NavHeader
-                darkMode={darkMode}
-            />
+            <NavHeader />
 
             <div className="px-8 mb-6">
                 <Link href="/dashboard" className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-colors text-muted-foreground hover:text-foreground`}>
@@ -361,7 +349,7 @@ export const ExperimentalWorkspaceNav = ({
                     </button>
                 </div>
 
-                <NavSectionTitle darkMode={darkMode}>Phases</NavSectionTitle>
+                <NavSectionTitle>Phases</NavSectionTitle>
 
                 <div className="space-y-2 px-4">
                     {PHASES.map((phase) => {

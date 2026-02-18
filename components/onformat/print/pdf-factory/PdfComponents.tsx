@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
-import { Text, View, Image } from '@react-pdf/renderer';
+import { Text, View } from '@react-pdf/renderer';
 
 // Types
 export interface PdfThemeType {
@@ -19,7 +20,7 @@ interface PdfHeaderProps {
 }
 
 export const PdfHeader = ({ title, projectName, clientName, producer, date, theme }: PdfHeaderProps) => {
-    const { COLORS, globalStyles } = theme;
+    // const { COLORS, globalStyles } = theme;
     return (
         <View style={{ marginBottom: 24 }} fixed>
             {/* Top Row: Doc Title + Date */}
@@ -53,7 +54,7 @@ export const PdfHeader = ({ title, projectName, clientName, producer, date, them
                 <View style={{ flexDirection: 'row', gap: 8 }}>
                     {clientName && (
                         <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText }}>
-                            {clientName} <Text style={{ color: theme.COLORS.slate }}>//</Text>
+                            {clientName} <Text style={{ color: theme.COLORS.slate }}>{'//'}</Text>
                         </Text>
                     )}
                     <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.obsidian }}>

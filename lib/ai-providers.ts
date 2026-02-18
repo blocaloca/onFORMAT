@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 // AI Provider Abstraction Layer
 // Supports multiple AI providers with unified interface
 

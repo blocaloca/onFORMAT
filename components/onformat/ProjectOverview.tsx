@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import React from 'react';
 import {
-    BarChart3, Calendar, CheckSquare, Clock, FileText,
-    Layout, MessageSquare, PieChart, Users, Video, Zap,
-    AlertCircle, ArrowRight, Flag
+    Calendar, CheckSquare, Layout, Video, Zap,
+    Flag
 } from 'lucide-react';
 
 interface ProjectOverviewProps {

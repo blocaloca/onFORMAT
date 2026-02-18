@@ -16,10 +16,12 @@ interface ShotBookData {
 }
 
 interface ShotBookFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any
   onChange: (content: ShotBookData) => void
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface ShotBookFormHandle {
   // Add methods here if needed for AI integration later
 }
@@ -71,6 +73,7 @@ const ShotBookForm = forwardRef<ShotBookFormHandle, ShotBookFormProps>(({ conten
     console.log('Current shot book data:', JSON.stringify(shotBookData, null, 2))
     onChange(shotBookData)
     console.log('✅ Called onChange - parent should receive this data')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shotBookData])
 
   useImperativeHandle(ref, () => ({}))

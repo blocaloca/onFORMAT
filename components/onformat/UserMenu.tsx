@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, CreditCard, Settings, Users, LogOut, ChevronUp, MessageSquare } from 'lucide-react';
+import { User, LogOut, ChevronUp, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FeedbackDialog } from '@/components/dashboard/FeedbackDialog';
 

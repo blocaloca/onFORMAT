@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { PrintItem } from './types';
 import { getTemplateForTool } from '../TemplateRegistry';
@@ -26,16 +27,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
     const { getToolData, getToolStack, activeProject } = useProject();
 
     // Dimensions
-    const getDims = (isLandscape: boolean) => ({
-        widthClass: isLandscape ? "w-[1056px]" : "w-[816px]",
-        heightClass: isLandscape ? "h-[816px]" : "h-[1056px]"
-    });
 
-    const masterDims = getDims(orientationOverride === 'landscape');
-
-    // Cover Dimensions
-    const isCoverLandscape = coverSettings.orientation === 'landscape';
-    const coverDims = getDims(isCoverLandscape);
 
     return (
         <>
@@ -82,7 +74,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
             {items.flatMap((item) => {
                 const Template = getTemplateForTool(item.id);
                 // Use getToolStack from context to get all versions
-                // @ts-ignore
+
                 const stack = getToolStack ? getToolStack(item.id) : [getToolData(item.id)];
 
                 // Determine indices to render
@@ -97,7 +89,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                 }
 
                 // Render each selected day/version
-                // @ts-ignore
+
                 return indices.sort((a, b) => a - b).map((idx) => {
                     const versionData = stack[idx] || {};
                     const uniqueKey = `${item.id}-${idx}`;

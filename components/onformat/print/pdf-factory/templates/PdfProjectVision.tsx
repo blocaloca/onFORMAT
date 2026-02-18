@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
 import { PdfThemeType } from '../PdfComponents';
 
 interface PdfProjectVisionProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
     theme: PdfThemeType;
 }

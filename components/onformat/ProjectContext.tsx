@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 
 // Define the shape of activeProject
 export interface ActiveProject {
@@ -6,13 +6,16 @@ export interface ActiveProject {
     owner_name: string;
     created_at?: string;
     data: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         phases: any;
     };
 }
 
 interface ProjectContextType {
     activeProject: ActiveProject | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getToolData: (toolId: string) => any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getToolStack: (toolId: string) => any[];
 }
 
@@ -28,6 +31,7 @@ export const useProject = () => {
 
 interface ProjectProviderProps {
     children: React.ReactNode;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     phases: any;
     projectMetadata: {
         name?: string;
@@ -52,6 +56,7 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
         return (toolId: string) => {
             if (!activeProject?.data?.phases) return {};
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let foundData: any = null;
             const phases = activeProject.data.phases;
 
@@ -99,6 +104,7 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
         return (toolId: string) => {
             if (!activeProject?.data?.phases) return [];
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let foundData: any = null;
             const phases = activeProject.data.phases;
             const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
@@ -120,13 +126,14 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
                 }
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let result: any[] = [];
             try {
                 if (foundData) {
                     const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
                     result = Array.isArray(parsed) ? parsed : [parsed];
                 }
-            } catch (e) { }
+            } catch { }
             return result;
         };
     }, [activeProject]);

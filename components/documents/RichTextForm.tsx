@@ -3,11 +3,14 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react'
 
 export interface RichTextFormHandle {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getData: () => any
 }
 
 interface RichTextFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onChange: (content: any) => void
 }
 
@@ -24,6 +27,7 @@ const RichTextForm = forwardRef<RichTextFormHandle, RichTextFormProps>(({ conten
 
   useEffect(() => {
     onChange({ text })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text])
 
   return (
