@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { MessageSquarePlus, X, Loader2, Bug, Lightbulb } from 'lucide-react';
 import { submitFeedback } from '@/app/actions/feedback';
+import { usePathname } from 'next/navigation';
 
-export function BetaFeedbackTrigger() {
+export function BetaFeedbackTrigger({ variant = 'fixed' }: { variant?: 'fixed' | 'icon' }) {
+    const pathname = usePathname();
     const [open, setOpen] = useState(false);
     const [type, setType] = useState<'bug' | 'feature' | 'other'>('bug');
     const [message, setMessage] = useState('');
@@ -38,13 +40,23 @@ export function BetaFeedbackTrigger() {
     return (
         <Dialog.Root open={open} onOpenChange={setOpen}>
             <Dialog.Trigger asChild>
-                <button
-                    className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-black text-white px-4 py-3 rounded-full shadow-lg hover:bg-zinc-800 transition-all hover:scale-105 active:scale-95 font-bold text-xs uppercase tracking-widest border border-zinc-800"
-                    title="Submit Beta Feedback"
-                >
-                    <MessageSquarePlus size={16} />
-                    <span className="hidden md:inline">Beta Feedback</span>
-                </button>
+                {variant === 'fixed' ? (
+                    <button
+                        className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-black text-white px-4 py-3 rounded-full shadow-lg hover:bg-zinc-800 transition-all hover:scale-105 active:scale-95 font-bold text-xs uppercase tracking-widest border border-zinc-800 ${pathname?.startsWith('/onset') ? 'hidden' : ''}`}
+                        title="Submit Beta Feedback"
+                    >
+                        <MessageSquarePlus size={16} />
+                        <span className="hidden md:inline">Beta Feedback</span>
+                    </button>
+                ) : (
+                    <button
+                        className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 hover:text-white rounded-md text-[9px] font-bold uppercase tracking-wider transition-colors border border-zinc-700"
+                        title="Submit Beta Feedback"
+                    >
+                        <MessageSquarePlus size={12} />
+                        <span>Beta</span>
+                    </button>
+                )}
             </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
@@ -78,8 +90,8 @@ export function BetaFeedbackTrigger() {
                                         type="button"
                                         onClick={() => setType('bug')}
                                         className={`flex flex-col items-center justify-center gap-2 py-3 rounded-lg border-2 transition-all ${type === 'bug'
-                                                ? 'border-red-500 bg-red-50 text-red-700'
-                                                : 'border-zinc-100 bg-zinc-50 text-zinc-400 hover:border-zinc-200 hover:bg-zinc-100'
+                                            ? 'border-red-500 bg-red-50 text-red-700'
+                                            : 'border-zinc-100 bg-zinc-50 text-zinc-400 hover:border-zinc-200 hover:bg-zinc-100'
                                             }`}
                                     >
                                         <Bug size={20} />
@@ -89,8 +101,8 @@ export function BetaFeedbackTrigger() {
                                         type="button"
                                         onClick={() => setType('feature')}
                                         className={`flex flex-col items-center justify-center gap-2 py-3 rounded-lg border-2 transition-all ${type === 'feature'
-                                                ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                                                : 'border-zinc-100 bg-zinc-50 text-zinc-400 hover:border-zinc-200 hover:bg-zinc-100'
+                                            ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                                            : 'border-zinc-100 bg-zinc-50 text-zinc-400 hover:border-zinc-200 hover:bg-zinc-100'
                                             }`}
                                     >
                                         <Lightbulb size={20} />

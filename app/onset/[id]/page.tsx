@@ -25,6 +25,7 @@ import {
     MobileSoundReportView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive } from 'lucide-react';
+import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
 
 /* --------------------------------------------------------------------------------
  * COMPONENTS
@@ -704,7 +705,7 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="h-[100dvh] w-full max-w-md mx-auto bg-black text-white font-sans grid grid-rows-[auto_1fr_auto] overflow-hidden md:border-x md:border-zinc-800 shadow-2xl relative pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+        <div className="h-full w-full max-w-md mx-auto bg-black text-white font-sans grid grid-rows-[auto_1fr_auto] overflow-hidden rounded-2xl md:border-x border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
             {/* TOP ROW: Header & Alerts */}
             <div className="flex flex-col z-50">
@@ -721,8 +722,8 @@ export default function OnSetMobilePage() {
                             <div className="flex items-center gap-2 mt-0.5">
                                 <div className="flex items-center gap-1.5">
                                     <span
-                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected ? 'animate-pulse' : ''}`}
-                                        style={{ backgroundColor: isConnected ? '#22C55E' : '#71717a' }}
+                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive ? 'animate-pulse' : ''}`}
+                                        style={{ backgroundColor: !data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a') }}
                                     ></span>
                                     <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-400">
                                         LIVE
@@ -747,11 +748,14 @@ export default function OnSetMobilePage() {
                                 })()}
                             </div>
                         </div>
-                        <button
-                            onClick={() => setShowMenu(true)}
-                            className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700 ml-3">
-                            <Menu size={18} />
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <BetaFeedbackTrigger variant="icon" />
+                            <button
+                                onClick={() => setShowMenu(true)}
+                                className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700">
+                                <Menu size={18} />
+                            </button>
+                        </div>
                     </div>
                 </header>
 
