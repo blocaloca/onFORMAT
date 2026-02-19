@@ -104,7 +104,7 @@ export default function OnSetPage() {
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider bg-black/20 p-3 rounded-lg border border-zinc-800/50">
                                     <span className="flex items-center gap-2"><Wifi size={14} /> Network</span>
-                                    <span className="text-[#22C55E] flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] box-shadow-glow"></span> Online</span>
+                                    <span className="text-[#22C55E] flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span> Online</span>
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ export default function OnSetPage() {
                         <div className="border-t border-zinc-800 pt-6 pb-safe">
                             <button
                                 onClick={handleLogout}
-                                className="w-full bg-zinc-800/50 backdrop-blur-md text-red-500 border border-white/10 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-800/80 transition-all shadow-lg active:scale-95">
+                                className="w-full bg-zinc-800/50 backdrop-blur-md text-red-500 border-t border-white/10 border-x border-b border-black/50 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-800/80 transition-all shadow-lg active:scale-95 bg-gradient-to-b from-white/5 to-transparent">
                                 <LogOut size={14} /> Disconnect
                             </button>
                         </div>
@@ -162,7 +162,7 @@ export default function OnSetPage() {
 
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex items-center gap-2 text-[#3B82F6]">
-                                                            <span className="text-[10px] font-bold uppercase tracking-widest group-hover:underline decoration-2 underline-offset-4 decoration-blue-500/50">Enter Production</span>
+                                                            <span className="text-[10px] font-bold uppercase tracking-widest group-hover:underline decoration-2 underline-offset-4 decoration-[#3B82F6]/50">Enter Production</span>
                                                         </div>
                                                         <ChevronRight className="text-zinc-600 group-hover:text-[#3B82F6] transition-all transform group-hover:translate-x-1" size={16} />
                                                     </div>

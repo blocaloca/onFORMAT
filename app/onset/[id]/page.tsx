@@ -707,8 +707,8 @@ export default function OnSetMobilePage() {
                             <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                                    <span className="text-[9px] font-mono text-emerald-500 uppercase leading-none font-bold">Live Sync</span>
+                                    <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                                    <span className="text-[9px] font-mono text-[#22C55E] uppercase leading-none font-bold">Live Sync</span>
                                 </div>
 
                                 {/* Unit Badges Injection */}
@@ -964,10 +964,12 @@ export default function OnSetMobilePage() {
                                 key={key}
                                 onClick={() => setActiveTab(key)}
                                 className={`
-                                flex-shrink-0 px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all
+                                flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all
+                                border-t border-white/20 border-x border-b border-black/50 shadow-sm
                                 ${activeTab === key
-                                        ? 'bg-white text-black border-white'
-                                        : 'bg-zinc-900/50 text-zinc-500 border-zinc-800 hover:border-zinc-700 hover:text-zinc-300'}
+                                        ? 'bg-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] border-t-white/40' // Active State: Blue
+                                        : 'bg-zinc-900 text-zinc-500 hover:text-zinc-300 bg-gradient-to-b from-white/5 to-transparent' // Inactive: Hardware Keycap
+                                    }
                             `}
                             >
                                 {DOC_LABELS[key] || key}

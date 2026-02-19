@@ -265,7 +265,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     <button
                         onClick={handleExport}
                         disabled={isExporting}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-emerald-900/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-[#3B82F6] hover:bg-blue-500 text-white px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isExporting ? <div className="w-3 h-3 animate-spin border-2 border-white/30 border-t-white rounded-full" /> : <Printer size={14} />}
                         <span>Export PDF</span>
@@ -277,10 +277,10 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
             </header>
 
             {/* SPLIT PANE CONSOLE LAYOUT */}
-            <div className="flex-1 relative w-full bg-zinc-950 overflow-hidden">
+            <div className="flex-1 relative w-full bg-zinc-950 overflow-hidden isolate">
 
                 {/* --- LEFT RAIL: FIXED CONTROLS (z-index 50) --- */}
-                <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-zinc-950 border-r border-zinc-900 z-50 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700 py-6 px-4 space-y-8">
+                <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-zinc-950 border-r border-zinc-900 z-50 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700 py-6 px-4 space-y-8 shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
 
                     {/* 1. COVER PAGE CONTROLS */}
                     <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4">
@@ -291,7 +291,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                             </h2>
                             <div
                                 onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
-                                className={`w-10 h-5 rounded-full cursor-pointer relative transition-all duration-300 ${coverSettings.showCover ? 'bg-emerald-600' : 'bg-zinc-800'}`}
+                                className={`w-10 h-5 rounded-full cursor-pointer relative transition-all duration-300 ${coverSettings.showCover ? 'bg-[#3B82F6]' : 'bg-zinc-800'}`}
                             >
                                 <div className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-300 ${coverSettings.showCover ? 'left-[22px]' : 'left-1'}`} />
                             </div>
@@ -304,7 +304,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                     <input
                                         value={coverSettings.title}
                                         onChange={(e) => setCoverSettings(s => ({ ...s, title: e.target.value }))}
-                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs font-bold text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/50 focus:outline-none transition-all uppercase tracking-wide"
+                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs font-bold text-white focus:border-[#3B82F6] focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all uppercase tracking-wide"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -312,7 +312,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                     <input
                                         value={coverSettings.subtitle}
                                         onChange={(e) => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
-                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-300 focus:border-emerald-500 focus:outline-none transition-all placeholder:text-zinc-700"
+                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-300 focus:border-[#3B82F6] focus:outline-none transition-all placeholder:text-zinc-700"
                                         placeholder="Client Name / Agency"
                                     />
                                 </div>
@@ -350,7 +350,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                                 {/* Left: Checkbox & Name */}
                                                 <div className="flex items-center gap-4">
                                                     <div
-                                                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-emerald-600 border-emerald-600 text-black shadow-[0_0_10px_rgba(5,150,105,0.4)]' : 'border-zinc-700 bg-transparent text-transparent group-hover:border-zinc-500'}`}
+                                                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-[#3B82F6] border-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'border-zinc-700 bg-transparent text-transparent group-hover:border-zinc-500'}`}
                                                     >
                                                         <Check size={12} strokeWidth={4} className={`transform transition-transform ${isSelected ? 'scale-100' : 'scale-50 opacity-0'}`} />
                                                     </div>
@@ -369,7 +369,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 </aside>
 
                 {/* --- RIGHT PANE: OUTPUT PREVIEW (z-index 10) --- */}
-                <main className="absolute left-[280px] right-0 top-0 bottom-0 bg-zinc-950 z-10 flex flex-col">
+                <main className="absolute left-[280px] right-0 top-0 bottom-0 bg-zinc-950 z-10 flex flex-col pt-0">
 
                     {/* Preview Toolbar */}
                     <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
