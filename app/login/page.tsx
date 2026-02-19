@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowRight, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { GlassButton } from '@/components/ui/GlassButton'; // Using our new premium button
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,15 +21,11 @@ export default function LoginPage() {
     setMessage('');
 
     try {
-      // 0. Ensure clean slate
       if (typeof window !== 'undefined') {
-        // We only clear if they are explicit switching accounts, but technically login page assumes new session
-        // So clearing storage is safe.
         localStorage.clear();
         sessionStorage.clear();
       }
       await supabase.auth.signOut();
-
 
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
@@ -61,72 +58,96 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen bg-[#09090b] flex flex-col items-center justify-center text-white font-sans overflow-hidden relative">
-      <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-zinc-900 to-transparent opacity-20 pointer-events-none" />
+    // MACHINED GLASS CHASSIS: bg-zinc-50 (Light Mode Forced)
+    <div className="min-h-screen bg-zinc-50 flex flex-col items-center justify-center font-sans overflow-hidden relative text-zinc-900 selection:bg-blue-100 selection:text-blue-900">
 
-      <div className="w-full max-w-md p-8 md:p-12 relative z-10">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-black uppercase tracking-tighter mb-4">onFORMAT</h1>
-          <p className="text-xs font-mono text-zinc-500 uppercase tracking-widest">
+      {/* Background Grid/Noise texture could go here if needed, keeping it clean for now */}
+      <div className="absolute inset-0 bg-[url('/grid-pixel.png')] opacity-[0.03] pointer-events-none" />
+
+      <div className="w-full max-w-md p-8 relative z-10">
+
+        {/* LOGO & HEADER */}
+        <div className="text-center mb-10">
+          <div className="w-48 mx-auto mb-6">
+            {/* Invert logo for Light Mode compatibility */}
+            <img src="/logo-white.png" alt="onFORMAT" className="w-full h-auto object-contain invert opacity-90" />
+          </div>
+          <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">
             Production Operating System
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+        {/* GLASS CARD CONTAINER */}
+        <div className="bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm rounded-xl p-8 mb-6 relative overflow-hidden">
+          {/* Top Highlight */}
+          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white to-transparent opacity-80" />
 
-          {message && (
-            <div className="p-3 bg-red-500/10 border border-red-500/50 text-red-500 text-xs font-bold uppercase text-center rounded-sm">
-              {message}
+          <form onSubmit={handleAuth} className="space-y-5">
+
+            {message && (
+              <div className="p-3 bg-red-50 text-red-600 border border-red-100 text-[10px] font-bold uppercase tracking-wide text-center rounded-sm">
+                {message}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-blue-500 transition-colors" size={16} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                  placeholder="EMAIL ADDRESS"
+                  className="w-full bg-white/50 border border-zinc-200 pl-12 p-3.5 text-xs text-zinc-900 font-bold outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500/20 transition-all placeholder-zinc-400 rounded-lg uppercase tracking-wide font-mono"
+                  required
+                />
+              </div>
+
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-blue-500 transition-colors" size={16} />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="PASSWORD"
+                  className="w-full bg-white/50 border border-zinc-200 pl-12 pr-12 p-3.5 text-xs text-zinc-900 font-bold outline-none focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500/20 transition-all placeholder-zinc-400 rounded-lg font-mono"
+                  required
+                  minLength={6}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-700 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
-          )}
 
-          <div className="space-y-4">
-            <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                placeholder="EMAIL ADDRESS"
-                className="w-full bg-zinc-900/50 border border-zinc-800 pl-12 p-4 text-sm text-white font-bold outline-none focus:border-white focus:bg-zinc-900 transition-all placeholder-zinc-700 rounded-sm uppercase"
-                required
-              />
-            </div>
+            {/* Premium Glass Button */}
+            <GlassButton
+              type="submit"
+              variant="primary" // This defaults to dark in GlassButton, let's override or use styles?
+              // The primary variant in GlassButton is bg-zinc-900 text-white. That works well for contrast on light mode.
+              size="lg"
+              className="w-full justify-center mt-2 group"
+              disabled={loading}
+            >
+              {loading ? <Loader2 size={16} className="animate-spin" /> : (
+                <>
+                  <span className="text-white group-hover:text-white/90">{isLogin ? 'Enter System' : 'Create Account'}</span>
+                  <ArrowRight size={14} className="text-white/70 group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
+            </GlassButton>
+          </form>
 
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="PASSWORD"
-                className="w-full bg-zinc-900/50 border border-zinc-800 pl-12 pr-12 p-4 text-sm text-white font-bold outline-none focus:border-white focus:bg-zinc-900 transition-all placeholder-zinc-700 rounded-sm"
-                required
-                minLength={6}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-white text-black py-4 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2 rounded-sm disabled:opacity-50"
-          >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <>{isLogin ? 'Enter System' : 'Create Account'} <ArrowRight size={16} /></>}
-          </button>
-
-          <div className="flex flex-col items-center gap-4">
+          {/* Footer Actions */}
+          <div className="mt-6 flex flex-col items-center gap-3 pt-6 border-t border-zinc-100">
             <button
               type="button"
               onClick={() => { setIsLogin(!isLogin); setMessage(''); }}
-              className="text-[10px] text-zinc-500 hover:text-white uppercase tracking-wider font-bold transition-colors"
+              className="text-[10px] text-zinc-500 hover:text-zinc-900 uppercase tracking-widest font-bold transition-colors"
             >
               {isLogin ? "Need an account? Create one" : "Already have an account? Sign In"}
             </button>
@@ -145,17 +166,17 @@ export default function LoginPage() {
                   if (error) setMessage(error.message);
                   else setMessage("Magic Link sent! Check your email to login.");
                 }}
-                className="text-[10px] text-zinc-600 hover:text-zinc-400 uppercase tracking-wider font-bold transition-colors"
+                className="text-[9px] text-zinc-400 hover:text-blue-600 uppercase tracking-widest font-medium transition-colors"
               >
                 Forgot Password / Use Magic Link
               </button>
             )}
           </div>
-        </form>
-      </div>
+        </div>
 
-      <div className="absolute bottom-12 text-center text-zinc-800 text-[10px] uppercase font-mono">
-        v1.0.0 • Live
+        <div className="text-center text-zinc-300 text-[9px] uppercase font-mono tracking-widest">
+          v1.0.0 • Machined Glass
+        </div>
       </div>
     </div>
   );
