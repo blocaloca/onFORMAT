@@ -71,6 +71,7 @@ export default function OnSetMobilePage() {
     const [activeTab, setActiveTab] = useState<Tab>('');
     const [data, setData] = useState<MobileState>({ project: null, docs: {} });
     const [mediaAlerts, setMediaAlerts] = useState<any[]>([]);
+    const [isConnected, setIsConnected] = useState(false);
 
     const [userEmail, setUserEmail] = useState<string>('');
     const [userRole, setUserRole] = useState<string>('');
@@ -99,7 +100,13 @@ export default function OnSetMobilePage() {
                 console.log("Media Alert Received (Page):", payload);
                 setMediaAlerts(prev => [...prev, payload.payload]);
             })
-            .subscribe();
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    setIsConnected(true);
+                } else {
+                    setIsConnected(false);
+                }
+            });
 
         return () => {
             supabase.removeChannel(channel);
@@ -697,37 +704,28 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="h-[100dvh] max-w-md mx-auto bg-black text-white font-sans flex flex-col md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+        <div className="h-[100dvh] w-full max-w-md mx-auto bg-black text-white font-sans grid grid-rows-[auto_1fr_auto] overflow-hidden md:border-x md:border-zinc-800 shadow-2xl relative pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
-            {/* BOTTOM NAV RAIL */}
-            <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-800 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 px-6 flex justify-between items-center shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
-                <Link href={`/onset/${params.id}`} className={`flex flex-col items-center gap-1 ${pathname === `/onset/${params.id}` ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'} transition-colors group`}>
-                    <div className={`p-1.5 rounded-lg transition-all ${pathname === `/onset/${params.id}` ? 'bg-blue-500/10 shadow-[0_0_10px_rgba(59,130,246,0.3)]' : ''}`}>
-                        <LayoutGrid size={20} className={`transform transition-transform group-active:scale-90 ${pathname === `/onset/${params.id}` ? 'stroke-[2.5px]' : ''}`} />
-                    </div>
-                    <span className="text-[9px] font-bold uppercase tracking-widest">Grid</span>
-                </Link>
-            </nav>
-
-            {/* HEADER */}
-            <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50 pt-safe transition-all w-full">
-                <div className="h-16 md:h-18 flex items-center justify-between px-6">
-                    <Link href="/onset" className="flex items-center gap-3 active:opacity-50 transition-opacity">
-                        <img src="/onset_logo.png" className="h-6 w-auto object-contain" alt="onSET" />
-                        <div className="h-4 w-[1px] bg-zinc-700"></div>
-                        <div className="flex flex-col">
+            {/* TOP ROW: Header & Alerts */}
+            <div className="flex flex-col z-50">
+                {/* HEADER */}
+                <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 pt-safe transition-all w-full relative">
+                    <div className="h-16 md:h-18 flex items-center justify-between px-6">
+                        <Link href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2">
+                            <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
+                            <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
+                        </Link>
+                        <div className="h-4 w-[1px] bg-zinc-700 mx-3"></div>
+                        <div className="flex flex-col flex-1">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 mt-0.5">
                                 <div className="flex items-center gap-1.5">
                                     <span
-                                        className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.4)]"
-                                        style={{ backgroundColor: data.project.data?.color || '#22C55E' }}
+                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected ? 'animate-pulse' : ''}`}
+                                        style={{ backgroundColor: isConnected ? '#22C55E' : '#71717a' }}
                                     ></span>
-                                    <span
-                                        className="text-[9px] font-mono uppercase leading-none font-bold"
-                                        style={{ color: data.project.data?.color || '#22C55E' }}
-                                    >
-                                        Live Sync
+                                    <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-400">
+                                        LIVE
                                     </span>
                                 </div>
 
@@ -749,116 +747,116 @@ export default function OnSetMobilePage() {
                                 })()}
                             </div>
                         </div>
-                    </Link>
+                        <button
+                            onClick={() => setShowMenu(true)}
+                            className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700 ml-3">
+                            <Menu size={18} />
+                        </button>
+                    </div>
+                </header>
+
+                {/* GLOBAL MEDIA ALERT BANNER */}
+                {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
                     <button
-                        onClick={() => setShowMenu(true)}
-                        className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700">
-                        <Menu size={18} />
-                    </button>
-                </div>
-            </header>
-
-            {/* GLOBAL MEDIA ALERT BANNER */}
-            {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
-                <button
-                    onClick={() => setActiveTab('dit-log')}
-                    className="w-full bg-emerald-500 text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="bg-black/10 p-1.5 rounded-full">
-                            <HardDrive size={16} />
-                        </div>
-                        <div className="text-left">
-                            <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5">Media Alert</p>
-                            <p className="text-xs font-bold leading-none">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
-                        </div>
-                    </div>
-                    <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide">
-                        View
-                    </div>
-                </button>
-            )}
-
-            {/* SYSTEM MENU DRAWER */}
-            {
-                showMenu && (
-                    <div className="fixed inset-0 z-[100] flex justify-end">
-                        {/* Backdrop */}
-                        <div
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
-                            onClick={() => setShowMenu(false)}
-                        />
-
-                        {/* Drawer */}
-                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-900 border-l border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
-                                <button onClick={() => setShowMenu(false)} className="bg-black/50 p-2 rounded-full text-zinc-400">
-                                    <Menu size={14} />
-                                </button>
+                        onClick={() => setActiveTab('dit-log')}
+                        className="w-full bg-emerald-500 text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="bg-black/10 p-1.5 rounded-full">
+                                <HardDrive size={16} />
                             </div>
+                            <div className="text-left">
+                                <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5">Media Alert</p>
+                                <p className="text-xs font-bold leading-none">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                            </div>
+                        </div>
+                        <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                            View
+                        </div>
+                    </button>
+                )}
 
-                            <div className="space-y-6 flex-1">
-                                {/* Identity Card */}
-                                <div className="bg-black/50 p-4 rounded-xl border border-zinc-800">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <UserCircle size={20} className="text-emerald-500" />
-                                        <div>
-                                            <p className="text-xs font-bold text-white">{userRole || 'Crew Member'}</p>
-                                            <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
+                {/* SYSTEM MENU DRAWER */}
+                {
+                    showMenu && (
+                        <div className="fixed inset-0 z-[100] flex justify-end">
+                            {/* Backdrop */}
+                            <div
+                                className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
+                                onClick={() => setShowMenu(false)}
+                            />
+
+                            {/* Drawer */}
+                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-900 border-l border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
+                                    <button onClick={() => setShowMenu(false)} className="bg-black/50 p-2 rounded-full text-zinc-400">
+                                        <Menu size={14} />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6 flex-1">
+                                    {/* Identity Card */}
+                                    <div className="bg-black/50 p-4 rounded-xl border border-zinc-800">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <UserCircle size={20} className="text-emerald-500" />
+                                            <div>
+                                                <p className="text-xs font-bold text-white">{userRole || 'Crew Member'}</p>
+                                                <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Status */}
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                                            <span className="flex items-center gap-2"><Wifi size={12} /> Connection</span>
+                                            <span className="text-emerald-500">Stable</span>
+                                        </div>
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                                            <span>Sync Status</span>
+                                            <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-500" : "text-amber-500"}>
+                                                {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Status */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-                                        <span className="flex items-center gap-2"><Wifi size={12} /> Connection</span>
-                                        <span className="text-emerald-500">Stable</span>
-                                    </div>
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-                                        <span>Sync Status</span>
-                                        <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-500" : "text-amber-500"}>
-                                            {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
-                                        </span>
-                                    </div>
+                                <div className="border-t border-zinc-800 pt-6">
+                                    <button
+                                        onClick={async () => {
+                                            // Explicit Presence Cleanup for Mobile
+                                            if (userEmail && id) {
+                                                const { error } = await supabase
+                                                    .from('crew_membership')
+                                                    .update({ is_online: false })
+                                                    .eq('project_id', id)
+                                                    .eq('user_email', userEmail);
+
+                                                // Untrack from all channels
+                                                const channels = supabase.getChannels();
+                                                for (const channel of channels) {
+                                                    await channel.untrack();
+                                                }
+                                                await supabase.removeAllChannels();
+                                            }
+
+                                            localStorage.removeItem('onset_user_email');
+                                            window.location.reload();
+                                        }}
+                                        className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
+                                        <LogOut size={14} /> Disconnect
+                                    </button>
                                 </div>
                             </div>
-
-                            <div className="border-t border-zinc-800 pt-6">
-                                <button
-                                    onClick={async () => {
-                                        // Explicit Presence Cleanup for Mobile
-                                        if (userEmail && id) {
-                                            const { error } = await supabase
-                                                .from('crew_membership')
-                                                .update({ is_online: false })
-                                                .eq('project_id', id)
-                                                .eq('user_email', userEmail);
-
-                                            // Untrack from all channels
-                                            const channels = supabase.getChannels();
-                                            for (const channel of channels) {
-                                                await channel.untrack();
-                                            }
-                                            await supabase.removeAllChannels();
-                                        }
-
-                                        localStorage.removeItem('onset_user_email');
-                                        window.location.reload();
-                                    }}
-                                    className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
-                                    <LogOut size={14} /> Disconnect
-                                </button>
-                            </div>
                         </div>
-                    </div>
-                )
-            }
+                    )
+                }
 
-            {/* CONFIDENTIAL BANNER */}
-            <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
-                <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-600">Confidential Materials • {new Date().getFullYear()}</p>
+                {/* CONFIDENTIAL BANNER */}
+                <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
+                    <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-600">Confidential Materials • {new Date().getFullYear()}</p>
+                </div>
             </div>
 
             {/* WATERMARK OVERLAY */}
@@ -877,7 +875,7 @@ export default function OnSetMobilePage() {
             }
 
             {/* MAIN CONTENT SCROLLER */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden pb-32 touch-pan-y relative bg-black z-10">
+            <main className="w-full overflow-y-auto no-scrollbar relative bg-black z-10 touch-pan-y">
                 <div className="w-full max-w-lg mx-auto px-4 py-8">
                     {activeTab === '' ? (
                         <MobileLanding
@@ -935,8 +933,8 @@ export default function OnSetMobilePage() {
                 </div>
             </main>
 
-            {/* BOTTOM NAV (SCROLLABLE ROWS) */}
-            <nav className="fixed bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+            {/* BOTTOM NAV ROWS */}
+            <nav className="w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                 <div className="flex items-center h-16 overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                     {(() => {
                         const mobileControl = data.docs['onset-mobile-control'];
