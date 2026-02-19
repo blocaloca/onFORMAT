@@ -206,13 +206,13 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                 placeholder="Enter your email..."
                 value={val}
                 onChange={e => setVal(e.target.value)}
-                className="w-full max-w-xs bg-zinc-900 border border-zinc-700 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none placeholder:text-zinc-600 font-mono"
+                className="w-[90%] max-w-[340px] bg-zinc-900 border border-zinc-700 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none placeholder:text-zinc-600 font-mono"
             />
 
             <button
                 onClick={() => onJoin(val)}
                 disabled={!val}
-                className="w-full max-w-xs bg-emerald-500 text-black font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
+                className="w-[90%] max-w-[340px] bg-emerald-500 text-black font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
             >
                 Enter
             </button>

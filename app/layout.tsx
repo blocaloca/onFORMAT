@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     initialScale: 1,
     maximumScale: 1,
     viewportFit: 'cover',
+    userScalable: false, // Prevent zoom on inputs
   },
 }
 

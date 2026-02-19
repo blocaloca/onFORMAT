@@ -56,6 +56,30 @@
   }
 }
 
+@layer components {
+
+  /* Mobile-First Hard Reset: Compact Instrument */
+  @media (max-width: 639px) {
+    .p-6 {
+      padding: 1rem !important;
+      /* Reduce from 1.5rem to 1rem (~33%) */
+    }
+
+    .text-base {
+      font-size: 0.875rem !important;
+      /* Force text-sm */
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-size: 0.875rem;
+      /* Ensure inputs don't zoom */
+    }
+  }
+}
+
 :root {
   /* Anodized Light Palette (Zinc-100 base) */
   --background: #f4f4f5;
