@@ -414,8 +414,10 @@ export const ExperimentalWorkspaceNav = ({
                                                     }
                                                 `}
                                             >
-                                                {activeTool === tool.key && (
-                                                    <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-blue-500`} />
+                                                {activeTool === tool.key ? (
+                                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]`} />
+                                                ) : (
+                                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-zinc-300 opacity-50`} />
                                                 )}
                                                 {alerts?.[tool.key] && (
                                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_4px_rgba(239,68,68,0.5)]" />
