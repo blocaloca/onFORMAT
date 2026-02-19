@@ -276,11 +276,11 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 </div>
             </header>
 
-            <div className="flex-1 h-full overflow-hidden flex flex-row divide-x divide-zinc-900 w-full bg-zinc-950">
+            {/* SPLIT PANE CONSOLE LAYOUT */}
+            <div className="flex-1 relative w-full bg-zinc-950 overflow-hidden">
 
-                {/* --- Sidebar: The "List" --- */}
-                {/* LEFT COL: CONTROLS (Span 7) */}
-                <div className="w-64 shrink-0 overflow-y-auto bg-zinc-950 py-6 px-4 space-y-8 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700">
+                {/* --- LEFT RAIL: FIXED CONTROLS (z-index 50) --- */}
+                <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-zinc-950 border-r border-zinc-900 z-50 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700 py-6 px-4 space-y-8">
 
                     {/* 1. COVER PAGE CONTROLS */}
                     <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4">
@@ -366,10 +366,10 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                             </div>
                         ))}
                     </div>
-                </div>
+                </aside>
 
-                {/* RIGHT COL: PREVIEW STACK (Span 5) */}
-                <div className="flex-1 h-full overflow-hidden bg-zinc-950 border-l border-zinc-900 relative flex flex-col">
+                {/* --- RIGHT PANE: OUTPUT PREVIEW (z-index 10) --- */}
+                <main className="absolute left-[280px] right-0 top-0 bottom-0 bg-zinc-950 z-10 flex flex-col">
 
                     {/* Preview Toolbar */}
                     <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
@@ -396,8 +396,8 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     </div>
 
                     {/* Scrollable Preview Area */}
-                    <div className="flex-1 h-full overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center pt-8 pb-20 px-8">
-                        <div className="flex flex-col items-center gap-8 w-full">
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center pt-8 pb-20 px-8">
+                        <div className="flex flex-col items-center gap-8 w-full max-w-5xl">
                             {/* Render the actual content but scaled */}
                             <PrintPreview
                                 scale={1.0}
@@ -424,9 +424,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                             />
                         </div>
                     </div>
-                </div>
-
-
+                </main>
 
             </div>
         </div>

@@ -151,20 +151,20 @@ export default function OnSetPage() {
                                                             <p className="text-[9px] font-mono text-white/80 uppercase tracking-wider font-bold">{p.client_name || 'Production'}</p>
                                                         </div>
                                                         <div className="flex items-center gap-1.5">
-                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
-                                                            <span className="text-[9px] font-bold uppercase text-emerald-500 tracking-wide">Live</span>
+                                                            <span className="w-2 h-2 rounded-full bg-[#3B82F6] animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
+                                                            <span className="text-[9px] font-bold uppercase text-[#3B82F6] tracking-wide">Live</span>
                                                         </div>
                                                     </div>
 
-                                                    <h3 className="text-2xl font-black text-white mb-2 tracking-tight group-hover:text-emerald-50 transition-colors">{p.name || 'Untitled Project'}</h3>
+                                                    <h3 className="text-2xl font-black text-white mb-2 tracking-tight group-hover:text-blue-100 transition-colors">{p.name || 'Untitled Project'}</h3>
 
                                                     <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent my-4"></div>
 
                                                     <div className="flex items-center justify-between">
-                                                        <div className="flex items-center gap-2 text-emerald-500">
-                                                            <span className="text-[10px] font-bold uppercase tracking-widest group-hover:underline decoration-2 underline-offset-4 decoration-emerald-500/50">Enter Production</span>
+                                                        <div className="flex items-center gap-2 text-[#3B82F6]">
+                                                            <span className="text-[10px] font-bold uppercase tracking-widest group-hover:underline decoration-2 underline-offset-4 decoration-blue-500/50">Enter Production</span>
                                                         </div>
-                                                        <ChevronRight className="text-zinc-600 group-hover:text-emerald-500 transition-all transform group-hover:translate-x-1" size={16} />
+                                                        <ChevronRight className="text-zinc-600 group-hover:text-[#3B82F6] transition-all transform group-hover:translate-x-1" size={16} />
                                                     </div>
                                                 </div>
                                             </div>
