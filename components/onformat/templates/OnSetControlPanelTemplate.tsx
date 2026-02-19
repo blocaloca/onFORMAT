@@ -70,9 +70,9 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                     <button
                         onClick={() => !isLocked && onUpdate({ isLive: !data.isLive })}
                         disabled={isLocked}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
+                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
                             ${data.isLive
-                                ? 'bg-[#3B82F6] border-[#3B82F6] text-white shadow-[0_0_10px_rgba(59,130,246,0.3)] hover:bg-blue-500'
+                                ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] hover:bg-emerald-600'
                                 : 'bg-transparent border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
                             }`}
                     >
