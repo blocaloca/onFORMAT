@@ -1,4 +1,5 @@
 'use client';
+// Mobile Polish Update
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { getClient } from '@/lib/supabase';

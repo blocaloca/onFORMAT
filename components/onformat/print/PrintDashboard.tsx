@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+// Mobile Polish Update
 import React, { useEffect, useMemo, useState } from 'react';
 import { X, Printer, Eye, ChevronDown, Layers, RectangleVertical, RectangleHorizontal, Check } from 'lucide-react';
 import { PrintItem } from './types';

@@ -1,4 +1,5 @@
 'use client';
+// Mobile Polish Update
 import React, { useEffect, useState } from 'react';
 import { Menu, ChevronRight, Clapperboard, Calendar, LogOut, UserCircle, Wifi, X } from 'lucide-react';
 import Link from 'next/link';
