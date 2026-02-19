@@ -49,10 +49,8 @@ export const DocumentLayout = ({
         return (
             <div className={`
                 w-full h-full flex flex-col gap-6 
-                bg-white dark:bg-zinc-950 
-                border-x border-b border-zinc-200 dark:border-zinc-800 
-                first:border-t
-                p-6 sm:p-10
+                bg-white border border-zinc-200/80 rounded-xl mb-6 shadow-sm
+                p-6
                 transition-colors duration-200
                 ${className}
             `}>
@@ -120,7 +118,7 @@ export const DocumentLayout = ({
             `}</style>
 
             <div
-                className={`document-page bg-white shadow-xl mx-auto relative flex flex-col gap-8 ${className}`}
+                className={`document-page bg-white border border-zinc-200/80 rounded-xl mb-6 shadow-sm mx-auto relative flex flex-col gap-8 ${className}`}
                 style={{
                     width: `${width}px`,
                     height: `${height}px`,
