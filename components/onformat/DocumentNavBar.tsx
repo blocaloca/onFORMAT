@@ -50,7 +50,7 @@ export const DocumentNavBar = ({
 
                 {/* Title */}
                 <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold uppercase tracking-wide mr-2 ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>{title}</span>
+                    {/* Title removed per user request */}
 
                     {/* Day Navigator Pill */}
                     <div className="flex items-center bg-black rounded-sm border border-zinc-800 h-8">

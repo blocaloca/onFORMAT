@@ -214,7 +214,7 @@ export const ChatInterface = ({
 
     return (
         <section
-            className="fixed bg-white shadow-2xl flex flex-col border border-zinc-300 rounded-lg overflow-hidden z-50"
+            className="fixed bg-white/95 backdrop-blur-xl shadow-2xl flex flex-col border border-zinc-300 rounded-lg overflow-hidden z-50"
             style={{
                 left: position.x,
                 top: position.y,
