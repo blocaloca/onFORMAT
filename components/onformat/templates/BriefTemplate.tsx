@@ -40,7 +40,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         onUpdate?.({ [field]: value });
     };
 
-    const inputStyle = "w-full bg-zinc-50 border border-zinc-200 p-3 text-xs outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 min-h-[60px] font-sans";
+    const inputStyle = "w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-xs outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 min-h-[60px] font-sans";
     const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {
@@ -61,7 +61,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                     onChange={(e) => handleChange(key, e.target.value)}
                     placeholder={placeholder}
                 />
-                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-xs font-sans leading-normal text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 p-3 rounded-sm`}>
+                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-xs font-sans leading-normal text-black whitespace-pre-wrap bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 rounded-sm`}>
                     {textVal || "—"}
                 </div>
             </>

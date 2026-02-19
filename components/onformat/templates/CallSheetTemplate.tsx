@@ -474,12 +474,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Notes</h3>
                                         {isPrinting ? (
-                                            <div className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
+                                            <div className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
                                         ) : (
                                             <textarea
                                                 value={data.notes || ''}
                                                 onChange={(e) => updateField('notes', e.target.value)}
-                                                className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
                                                 placeholder="General production notes..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -491,12 +491,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Basecamp</h3>
                                         {isPrinting ? (
-                                            <div className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
+                                            <div className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
                                         ) : (
                                             <textarea
                                                 value={data.basecamp || ''}
                                                 onChange={(e) => updateField('basecamp', e.target.value)}
-                                                className="w-full bg-zinc-50 border border-zinc-200 p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
                                                 placeholder="Basecamp Address..."
                                                 rows={3}
                                                 disabled={isLocked}

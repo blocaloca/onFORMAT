@@ -212,7 +212,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     value={data.overview || ''}
                                     onChange={(e) => onUpdate({ overview: e.target.value })}
                                     placeholder="Describe the visual direction, tone, and style..."
-                                    className={`w-full bg-zinc-50 border border-zinc-200 p-3 text-xs min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                    className={`w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-xs min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                 />
                                 <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-xs min-h-[60px] whitespace-pre-wrap break-words text-black`}>
                                     {data.overview || "—"}
