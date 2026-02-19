@@ -1,5 +1,5 @@
 'use client';
-// Mobile Polish Update
+// Mobile Polish Update - RETRY 2 - 10:47 AM
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { getClient } from '@/lib/supabase';
