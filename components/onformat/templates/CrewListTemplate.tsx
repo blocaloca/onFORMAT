@@ -279,7 +279,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             <div className="flex justify-end pb-2 gap-4 items-center">
                                 <span className="text-[9px] uppercase font-bold tracking-widest text-zinc-400">Status:</span>
                                 <div className="flex items-center gap-1.5">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]"></div>
+                                    <div className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_4px_rgba(34,197,94,0.5)]"></div>
                                     <span className="text-[10px] font-bold text-zinc-500">Online</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
@@ -404,7 +404,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         <div className="flex justify-center items-center">
                                             <div
                                                 className={`w-2.5 h-2.5 rounded-full transition-all ${isOnline
-                                                    ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]'
+                                                    ? 'bg-[#22C55E] shadow-[0_0_6px_rgba(34,197,94,0.6)]'
                                                     : 'bg-zinc-200'
                                                     }`}
                                                 title={isOnline ? 'Online via onSet Mobile' : 'Offline'}
