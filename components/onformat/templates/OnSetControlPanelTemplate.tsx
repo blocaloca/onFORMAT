@@ -146,7 +146,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                                                     key={group}
                                                                     onClick={() => toggleGroup(tool.key, group)}
                                                                     disabled={isLocked}
-                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
+                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 hover:opacity-100 grayscale hover:grayscale-0'}`}
                                                                 >
                                                                     <UnitBadge unit={group} size="sm" />
                                                                 </button>

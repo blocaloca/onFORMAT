@@ -192,7 +192,7 @@ export const ExperimentalDashboardNav = ({
 }: DashboardSidebarProps) => {
 
     return (
-        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-card border-border`}>
+        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 border-zinc-300 backdrop-blur-md`}>
             <NavHeader />
 
             {/* AI Slot (Preserving Dashboard Chat functionality) */}
@@ -202,14 +202,25 @@ export const ExperimentalDashboardNav = ({
                 </div>
             )}
 
-            {/* New Project Action */}
+            {/* New Project Action - Premium Glass Refactor */}
             {onNewProject && (
                 <div className="px-4 mb-2">
                     <button
                         onClick={onNewProject}
-                        className={`w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest rounded-md transition-all shadow-sm bg-primary text-primary-foreground hover:opacity-90 border border-transparent`}
+                        className={`
+                            group relative w-full flex items-center justify-center gap-2 px-3 py-2.5 
+                            text-xs font-bold uppercase tracking-widest rounded-sm transition-all duration-300
+                            bg-white/40 backdrop-blur-sm border border-white/50 shadow-sm
+                            text-blue-600 hover:text-blue-500
+                            hover:bg-white/60 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]
+                            active:scale-[0.98]
+                        `}
                     >
-                        <Plus size={14} /> New Project
+                        {/* Top Highlights */}
+                        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-100" />
+
+                        <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
+                        New Project
                     </button>
                 </div>
             )}
@@ -295,11 +306,11 @@ export const ExperimentalWorkspaceNav = ({
     };
 
     return (
-        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-card border-border`}>
+        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 border-zinc-300 backdrop-blur-md`}>
             <NavHeader />
 
             <div className="px-8 mb-6">
-                <Link href="/dashboard" className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-colors text-muted-foreground hover:text-foreground`}>
+                <Link href="/dashboard" className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider transition-colors text-zinc-500 hover:text-zinc-900 border border-transparent hover:border-zinc-200 rounded px-2 py-1 -ml-2 w-fit`}>
                     <ChevronLeft size={12} /> Back to Projects
                 </Link>
             </div>
@@ -310,21 +321,24 @@ export const ExperimentalWorkspaceNav = ({
                 <div className="px-4 mb-6">
                     <button
                         onClick={() => onToolSelect('onset-mobile-control', 'ON_SET')}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all group relative overflow-hidden
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border transition-all group relative overflow-hidden
                             ${mobileStatus?.hasAlert
                                 ? 'bg-destructive/10 border-destructive text-destructive'
                                 : mobileStatus?.isLive
                                     ? 'bg-emerald-900/10 border-emerald-500/50 text-emerald-500'
-                                    : 'bg-muted/30 text-muted-foreground border-border hover:border-foreground/20 hover:text-foreground'
+                                    : 'bg-white/40 backdrop-blur-sm border-white/50 shadow-sm text-zinc-600 hover:bg-white/60 hover:text-zinc-900 hover:shadow-[0_0_15px_rgba(255,255,255,0.6)]'
                             }
                         `}
                     >
+                        {/* Top Highlight for Premium Glass Feel */}
+                        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+
                         {/* Status Indicator (Only Live) */}
                         {mobileStatus?.isLive && <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]" />}
 
                         <div className={`p-1.5 rounded-lg ${mobileStatus?.hasAlert ? 'bg-destructive/20 text-destructive' :
                             mobileStatus?.isLive ? 'bg-emerald-500/20 text-emerald-500' :
-                                'bg-muted text-muted-foreground group-hover:text-foreground'
+                                'bg-zinc-100/50 text-zinc-500 group-hover:text-zinc-900'
                             }`}>
                             <Smartphone size={18} />
                             {mobileStatus?.hasAlert && (
@@ -333,7 +347,7 @@ export const ExperimentalWorkspaceNav = ({
                         </div>
 
                         <div className="text-left w-full overflow-hidden">
-                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-emerald-400' : 'text-foreground'}`}>
+                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-emerald-400' : 'text-zinc-700 group-hover:text-black'}`}>
                                 onSET Mobile
                             </div>
                             {mobileStatus?.hasAlert ? (
@@ -341,7 +355,7 @@ export const ExperimentalWorkspaceNav = ({
                                     {mobileStatus.alertMsg || 'UPDATED'}
                                 </div>
                             ) : (
-                                <div className="text-[9px] font-bold opacity-60">
+                                <div className="text-[9px] font-bold opacity-60 font-mono">
                                     {mobileStatus?.isLive ? 'Link Active' : 'Control Panel'}
                                 </div>
                             )}
@@ -359,15 +373,15 @@ export const ExperimentalWorkspaceNav = ({
                         const isActiveContext = activePhase === phase.key;
 
                         return (
-                            <div key={phase.key} className={`border rounded-lg overflow-hidden transition-all mb-2 border-border bg-card`}>
+                            <div key={phase.key} className={`rounded-sm overflow-hidden transition-all mb-2 bg-white/40 backdrop-blur-sm border border-white/50 shadow-sm`}>
                                 {/* Accordion Header */}
                                 <button
                                     onClick={() => togglePhase(phase.key)}
                                     className={`
-                                        w-full flex items-center justify-between px-4 py-3 text-xs font-bold uppercase tracking-wide transition-colors
+                                        w-full flex items-center justify-between px-4 py-3 font-sans text-[10px] font-bold uppercase tracking-widest transition-colors
                                         ${isActiveContext
-                                            ? 'text-foreground'
-                                            : 'text-muted-foreground hover:bg-muted/50'
+                                            ? 'text-zinc-900'
+                                            : 'text-zinc-500 hover:bg-white/40 hover:text-zinc-700'
                                         }
                                     `}
                                 >
@@ -375,8 +389,8 @@ export const ExperimentalWorkspaceNav = ({
                                     <ChevronDown
                                         size={14}
                                         className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''} ${isExpanded
-                                            ? 'text-foreground'
-                                            : 'text-muted-foreground'
+                                            ? 'text-zinc-900'
+                                            : 'text-zinc-400'
                                             }`}
                                     />
                                 </button>
@@ -388,24 +402,24 @@ export const ExperimentalWorkspaceNav = ({
                                         ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
                                     `}
                                 >
-                                    <div className={`py-2 bg-muted/20`}>
+                                    <div className={`py-2 bg-zinc-50/50 border-t border-white/20`}>
                                         {tools.map(tool => (
                                             <button
                                                 key={tool.key}
                                                 onClick={() => onToolSelect(tool.key, phase.key)}
                                                 className={`
-                                                    w-full text-left px-4 pl-8 py-2 text-[11px] transition-colors relative block
+                                                    w-full text-left px-4 pl-8 py-2 font-mono text-xs transition-colors relative block
                                                     ${activeTool === tool.key
-                                                        ? 'text-foreground font-bold'
-                                                        : 'text-muted-foreground hover:text-foreground font-medium'
+                                                        ? 'text-zinc-900 font-bold bg-white/50'
+                                                        : 'text-zinc-500 hover:text-zinc-800 hover:bg-white/30 font-medium'
                                                     }
                                                 `}
                                             >
                                                 {activeTool === tool.key && (
-                                                    <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-primary`} />
+                                                    <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-r-full bg-blue-500`} />
                                                 )}
                                                 {alerts?.[tool.key] && (
-                                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-destructive animate-pulse shadow-[0_0_4px_rgba(239,68,68,0.5)]" />
+                                                    <div className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_4px_rgba(239,68,68,0.5)]" />
                                                 )}
                                                 {tool.label}
                                             </button>
