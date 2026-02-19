@@ -207,7 +207,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-transparent outline-none focus:border-black text-left uppercase tracking-widest h-4 leading-4"
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-transparent outline-none focus:border-zinc-400 focus:bg-white text-left uppercase tracking-widest h-4 leading-4"
                                                     placeholder="00"
                                                     value={item.imageNumber || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}
@@ -302,7 +302,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <div className="w-full text-[10px] font-mono text-gray-500 whitespace-pre-wrap break-words block mt-1">{item.caption}</div>
                                             ) : (
                                                 <textarea
-                                                    className="w-full text-[10px] font-mono text-gray-500 bg-transparent outline-none border-b border-transparent focus:border-black placeholder-gray-300 resize-none overflow-hidden mt-1"
+                                                    className="w-full text-[10px] font-mono text-gray-500 bg-transparent outline-none border-b border-transparent focus:border-zinc-400 focus:bg-white placeholder-gray-300 resize-none overflow-hidden mt-1"
                                                     placeholder="Add notes..."
                                                     rows={2}
                                                     value={item.caption}

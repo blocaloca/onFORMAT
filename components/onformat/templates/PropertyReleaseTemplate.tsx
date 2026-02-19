@@ -236,7 +236,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.address || ''}
                                 onChange={e => handleChange('address', e.target.value)}
                                 onBlur={() => handleBlur('address')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs font-bold focus:border-black outline-none transition-colors"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs font-bold focus:border-zinc-400 focus:bg-white outline-none transition-colors"
                                 placeholder="123 Location St, City, State"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -249,7 +249,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.ownerName || ''}
                                 onChange={e => handleChange('ownerName', e.target.value)}
                                 onBlur={() => handleBlur('ownerName')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-zinc-400 focus:bg-white outline-none transition-colors"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -260,7 +260,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.compensation || ''}
                                 onChange={e => handleChange('compensation', e.target.value)}
                                 onBlur={() => handleBlur('compensation')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-zinc-400 focus:bg-white outline-none transition-colors"
                                 placeholder="$ Amount"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -271,7 +271,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.email || ''}
                                 onChange={e => handleChange('email', e.target.value)}
                                 onBlur={() => handleBlur('email')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-zinc-400 focus:bg-white outline-none transition-colors"
                                 placeholder="Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -282,7 +282,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.phone || ''}
                                 onChange={e => handleChange('phone', e.target.value)}
                                 onBlur={() => handleBlur('phone')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-black outline-none transition-colors"
+                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-xs focus:border-zinc-400 focus:bg-white outline-none transition-colors"
                                 placeholder="Phone"
                                 disabled={isLocked || !!data.signatureUrl}
                             />

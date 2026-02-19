@@ -180,7 +180,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                 <select
                                                     value={item.category}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { category: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900"
+                                                    className="w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[10px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     {categoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -196,7 +196,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                 <select
                                                     value={item.subCategory}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { subCategory: e.target.value })}
-                                                    className="w-full appearance-none bg-transparent hover:bg-zinc-100 border border-transparent hover:border-zinc-200 text-[10px] font-medium px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900"
+                                                    className="w-full appearance-none bg-transparent hover:bg-zinc-100 border border-transparent hover:border-zinc-200 text-[10px] font-medium px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     {subCats.length > 0 ? (
@@ -215,7 +215,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-transparent text-xs font-normal focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-zinc-800"
+                                                    className="w-full bg-transparent text-xs font-normal focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-800"
                                                     placeholder="Details..."
                                                     disabled={isLocked}
                                                 />
@@ -230,7 +230,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                 <select
                                                     value={item.rateType}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { rateType: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-50 hover:bg-zinc-100 text-[10px] uppercase font-bold tracking-wider px-1 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-black/10 text-center text-zinc-900"
+                                                    className="w-full appearance-none bg-zinc-50 hover:bg-zinc-100 text-[10px] uppercase font-bold tracking-wider px-1 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-center text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     {RATE_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -247,7 +247,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     type="number"
                                                     value={item.rate || ''}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { rate: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-transparent text-xs font-mono text-right focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent text-xs font-mono text-right focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
                                                     placeholder="0.00"
                                                     disabled={isLocked}
                                                 />
@@ -263,7 +263,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     type="number"
                                                     value={item.quantity || ''}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { quantity: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-transparent text-xs font-mono text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent text-xs font-mono text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
                                                     placeholder="1"
                                                     disabled={isLocked}
                                                 />

@@ -40,7 +40,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         onUpdate?.({ [field]: value });
     };
 
-    const inputStyle = "w-full bg-zinc-50 border border-zinc-200 p-3 text-xs outline-none focus:border-black resize-none placeholder-zinc-300 min-h-[60px] font-sans";
+    const inputStyle = "w-full bg-zinc-50 border border-zinc-200 p-3 text-xs outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 min-h-[60px] font-sans";
     const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {

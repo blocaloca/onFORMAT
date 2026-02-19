@@ -156,7 +156,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         type="text"
                                         value={data.date || ''}
                                         onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
-                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 focus:border-black outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                         placeholder="MM/DD/YYYY"
                                         disabled={isLocked}
                                     />
@@ -176,7 +176,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const ampm = (data.callTime || "").split(" ")[1] || "AM";
                                                 onUpdate({ callTime: `${time} ${ampm}`.trim() });
                                             }}
-                                            className="flex-1 bg-transparent font-mono font-bold text-sm border-b border-zinc-200 focus:border-black outline-none py-1"
+                                            className="flex-1 bg-transparent font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1"
                                             placeholder="00:00"
                                             disabled={isLocked}
                                         />
@@ -263,7 +263,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.time}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { time: formatTimeInput(e.target.value) })}
-                                                    className="w-full bg-transparent text-xs font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent text-xs font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
                                                     placeholder="00:00"
                                                     disabled={isLocked}
                                                 />
@@ -279,7 +279,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.scene}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { scene: e.target.value })}
-                                                    className="w-full bg-transparent text-xs font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent text-xs font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
@@ -306,7 +306,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.set}
                                                         onChange={(e) => handleUpdateItem(globalIdx, { set: e.target.value })}
-                                                        className="w-full bg-transparent text-xs font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 min-w-0 text-black"
+                                                        className="w-full bg-transparent text-xs font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 min-w-0 text-black"
                                                         placeholder="SETTING"
                                                         disabled={isLocked}
                                                     />
@@ -339,7 +339,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-transparent text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-black/10 rounded px-1 py-1 text-zinc-600"
+                                                    className="w-full bg-transparent text-xs focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-600"
                                                     placeholder="Action / Notes..."
                                                     disabled={isLocked}
                                                 />

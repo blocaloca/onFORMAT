@@ -108,7 +108,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                     onChange={(e) => updateLocation(index, field, e.target.value)}
                     placeholder={placeholder}
                     disabled={isLocked}
-                    className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-black outline-none py-1 placeholder:text-zinc-200 transition-colors"
+                    className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-200 transition-colors"
                 />
             )}
         </div>
@@ -170,7 +170,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                         <select
                                             value={loc.usageType || 'Set'}
                                             onChange={(e) => updateLocation(index, 'usageType', e.target.value)}
-                                            className="w-full text-sm font-bold text-black bg-transparent border-b border-zinc-200 focus:border-black outline-none py-1 cursor-pointer"
+                                            className="w-full text-sm font-bold text-black bg-transparent border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 cursor-pointer"
                                             disabled={isLocked}
                                         >
                                             <option value="Set">Set / Location</option>
@@ -190,7 +190,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                             value={loc.activeDays || ''}
                                             onChange={(e) => updateLocation(index, 'activeDays', e.target.value)}
                                             placeholder="e.g. Day 1, 10/24"
-                                            className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-black outline-none py-1 placeholder:text-zinc-300"
+                                            className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-300"
                                             disabled={isLocked}
                                         />
                                     )}

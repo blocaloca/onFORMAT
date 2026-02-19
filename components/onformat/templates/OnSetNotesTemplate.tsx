@@ -208,7 +208,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         <textarea
                                             value={item.body}
                                             onChange={e => handleUpdateItem(idx, { body: e.target.value })}
-                                            className={`w-full bg-zinc-50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white focus:ring-1 focus:ring-black border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`w-full bg-zinc-50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white focus:ring-1 focus:ring-zinc-400 border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="Write report details here..."
                                             rows={Math.max(3, item.body.split('\n').length)}
                                             disabled={isLocked}
