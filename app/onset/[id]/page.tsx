@@ -696,10 +696,10 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+        <div className="h-[100dvh] max-w-[100vw] bg-black text-white font-sans flex flex-col md:max-w-md md:mx-auto md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
             {/* HEADER */}
-            <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50 pt-safe transition-all">
+            <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50 pt-safe transition-all w-full">
                 <div className="h-16 md:h-18 flex items-center justify-between px-6">
                     <Link href="/onset" className="flex items-center gap-3 active:opacity-50 transition-opacity">
                         <img src="/onset_logo.png" className="h-6 w-auto object-contain" alt="onSET" />
@@ -858,8 +858,8 @@ export default function OnSetMobilePage() {
             }
 
             {/* MAIN CONTENT SCROLLER */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden pb-32 touch-pan-y relative bg-black">
-                <div className="w-full max-w-lg mx-auto px-6 py-8">
+            <main className="flex-1 overflow-y-auto overflow-x-hidden pb-32 touch-pan-y relative bg-black z-10">
+                <div className="w-full max-w-lg mx-auto px-4 py-8">
                     {activeTab === '' ? (
                         <MobileLanding
                             projectName={data.project?.name}
@@ -917,7 +917,7 @@ export default function OnSetMobilePage() {
             </main>
 
             {/* BOTTOM NAV (SCROLLABLE ROWS) */}
-            <nav className="fixed bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-50 pb-safe transition-all pl-safe pr-safe">
+            <nav className="fixed bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                 <div className="flex items-center h-16 overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                     {(() => {
                         const mobileControl = data.docs['onset-mobile-control'];
