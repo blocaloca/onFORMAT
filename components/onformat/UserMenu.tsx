@@ -54,7 +54,7 @@ export const UserMenu = ({ email }: { email?: string }) => {
 
     return (
         <>
-            <div className="relative mt-auto p-4 border-t border-transparent bg-zinc-900">
+            <div className="relative mt-auto p-4 border-t border-zinc-300 bg-zinc-100">
                 {/* Popover */}
                 {isOpen && (
                     <div className="absolute bottom-full left-4 right-4 mb-2 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-sm overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2">
@@ -96,9 +96,9 @@ export const UserMenu = ({ email }: { email?: string }) => {
                 {/* Trigger Button */}
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`w-full flex items-center gap-3 p-2 rounded-sm transition-all border ${isOpen ? 'bg-zinc-800 border-zinc-600' : 'hover:bg-zinc-800/50 border-transparent hover:border-zinc-700'}`}
+                    className={`w-full flex items-center gap-3 p-2 rounded-sm transition-all border ${isOpen ? 'bg-zinc-200 border-zinc-300' : 'hover:bg-zinc-200/50 border-transparent hover:border-zinc-300'}`}
                 >
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-800 border border-zinc-600 flex items-center justify-center text-white font-bold text-xs shadow-inner">
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-200 border border-zinc-300 flex items-center justify-center text-zinc-600 font-bold text-xs shadow-inner">
                         {avatarUrl ? (
                             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -106,8 +106,8 @@ export const UserMenu = ({ email }: { email?: string }) => {
                         )}
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                        <p className="text-xs font-bold text-zinc-200 truncate tracking-wide">Account</p>
-                        <p className="text-[10px] text-zinc-400 truncate">{email || 'user@example.com'}</p>
+                        <p className="text-xs font-bold text-zinc-700 truncate tracking-wide">Account</p>
+                        <p className="text-[10px] text-zinc-500 truncate">{email || 'user@example.com'}</p>
                     </div>
                     <ChevronUp size={14} className={`text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>

@@ -68,7 +68,7 @@ export default function OnSetPage() {
                     </div>
                     <button
                         onClick={() => setShowMenu(true)}
-                        className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700"
+                        className="w-10 h-10 rounded-full bg-zinc-800/50 backdrop-blur-md flex items-center justify-center text-zinc-400 hover:text-white transition-all border border-white/10 shadow-lg active:scale-95"
                     >
                         <Menu size={18} />
                     </button>
@@ -104,7 +104,7 @@ export default function OnSetPage() {
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider bg-black/20 p-3 rounded-lg border border-zinc-800/50">
                                     <span className="flex items-center gap-2"><Wifi size={14} /> Network</span>
-                                    <span className="text-emerald-500 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 box-shadow-glow"></span> Online</span>
+                                    <span className="text-[#22C55E] flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] box-shadow-glow"></span> Online</span>
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,7 @@ export default function OnSetPage() {
                         <div className="border-t border-zinc-800 pt-6 pb-safe">
                             <button
                                 onClick={handleLogout}
-                                className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
+                                className="w-full bg-zinc-800/50 backdrop-blur-md text-red-500 border border-white/10 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-800/80 transition-all shadow-lg active:scale-95">
                                 <LogOut size={14} /> Disconnect
                             </button>
                         </div>

@@ -210,14 +210,13 @@ export const ExperimentalDashboardNav = ({
                         className={`
                             group relative w-full flex items-center justify-center gap-2 px-3 py-2.5 
                             text-xs font-bold uppercase tracking-widest rounded-sm transition-all duration-300
-                            bg-white/40 backdrop-blur-sm border border-white/50 shadow-sm
-                            text-blue-600 hover:text-blue-500
-                            hover:bg-white/60 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]
+                            bg-[#3B82F6] border border-blue-400 shadow-md text-white
+                            hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]
                             active:scale-[0.98]
                         `}
                     >
                         {/* Top Highlights */}
-                        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-100" />
+                        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-100" />
 
                         <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
                         New Project
