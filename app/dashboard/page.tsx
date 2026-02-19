@@ -83,7 +83,7 @@ export default function DashboardPage() {
         try {
             await fetch('/api/projects', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('supabase_session')?.access_token}` },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
                 body: JSON.stringify({
                     projectId: projectToMove.id,
                     data: { ...projectToMove.data, folderId }
@@ -157,7 +157,7 @@ export default function DashboardPage() {
 
             await fetch('/api/projects', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('supabase_session')?.access_token}` },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
                 body: JSON.stringify(payload)
             });
 
@@ -318,7 +318,7 @@ export default function DashboardPage() {
         try {
             const res = await fetch('/api/projects', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('supabase_session')?.access_token}` },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
                 body: JSON.stringify(payload)
             });
 
