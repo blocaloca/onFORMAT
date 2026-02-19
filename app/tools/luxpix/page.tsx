@@ -68,7 +68,7 @@ function LuxPixContent() {
     try {
       const response = await fetch('/api/projects', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
         body: JSON.stringify({
           userId: user.id,
           productType: 'LuxPixPro',
@@ -91,7 +91,7 @@ function LuxPixContent() {
     try {
       await fetch('/api/projects', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
         body: JSON.stringify({
           projectId: project.id,
           data: { ...project.data, ...newData },
