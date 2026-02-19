@@ -22,15 +22,18 @@ export const UnitBadge = ({ unit, className, size = 'md' }: UnitBadgeProps) => {
         'lg': 'w-8 h-8 text-xs',
     };
 
+    const colorClass = colors[unit] || 'bg-zinc-500 text-white'; // Fallback
+    const sizeClass = sizes[size] || sizes['md'];
+
     return (
         <div className={cn(
             "flex items-center justify-center font-mono font-bold rounded-sm shadow-sm select-none",
-            colors[unit],
-            sizes[size],
+            colorClass,
+            sizeClass,
             "border border-white/10", // Subtle inner highlight
             className
         )}>
-            {unit}
+            {unit || '?'}
         </div>
     );
 };

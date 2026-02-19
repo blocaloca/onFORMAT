@@ -60,7 +60,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             Sync Control
                         </span>
                         <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-500">
+                        <span className={`font-mono text-[10px] uppercase tracking-widest ${data.isLive ? 'text-[#3B82F6]' : 'text-zinc-500'}`}>
                             {data.isLive ? 'Link Active' : 'Offline'}
                         </span>
                     </div>
@@ -72,11 +72,11 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         disabled={isLocked}
                         className={`flex items-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
                             ${data.isLive
-                                ? 'bg-emerald-500 border-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.3)] hover:bg-emerald-400'
+                                ? 'bg-[#3B82F6] border-[#3B82F6] text-white shadow-[0_0_10px_rgba(59,130,246,0.3)] hover:bg-blue-500'
                                 : 'bg-transparent border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
                             }`}
                     >
-                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-black animate-pulse' : 'bg-zinc-500'}`}></div>
+                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white animate-pulse' : 'bg-zinc-500'}`}></div>
                         {data.isLive ? 'LIVE' : 'GO LIVE'}
                     </button>
                     {isLocked && <div className="flex items-center gap-1 text-zinc-600 text-[10px] uppercase font-bold"><Lock size={10} /> Locked</div>}

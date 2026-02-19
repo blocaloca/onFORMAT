@@ -324,7 +324,7 @@ export const ExperimentalWorkspaceNav = ({
                             ${mobileStatus?.hasAlert
                                 ? 'bg-destructive/10 border-destructive text-destructive'
                                 : mobileStatus?.isLive
-                                    ? 'bg-emerald-900/10 border-emerald-500/50 text-emerald-500'
+                                    ? 'bg-blue-500/10 border-blue-500/50 text-blue-500'
                                     : 'bg-white/40 backdrop-blur-sm border-white/50 shadow-sm text-zinc-600 hover:bg-white/60 hover:text-zinc-900 hover:shadow-[0_0_15px_rgba(255,255,255,0.6)]'
                             }
                         `}
@@ -333,10 +333,10 @@ export const ExperimentalWorkspaceNav = ({
                         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
 
                         {/* Status Indicator (Only Live) */}
-                        {mobileStatus?.isLive && <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.5)]" />}
+                        {mobileStatus?.isLive && <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#3B82F6] animate-pulse shadow-[0_0_5px_rgba(59,130,246,0.5)]" />}
 
                         <div className={`p-1.5 rounded-lg ${mobileStatus?.hasAlert ? 'bg-destructive/20 text-destructive' :
-                            mobileStatus?.isLive ? 'bg-emerald-500/20 text-emerald-500' :
+                            mobileStatus?.isLive ? 'bg-[#3B82F6]/20 text-[#3B82F6]' :
                                 'bg-zinc-100/50 text-zinc-500 group-hover:text-zinc-900'
                             }`}>
                             <Smartphone size={18} />
@@ -346,7 +346,7 @@ export const ExperimentalWorkspaceNav = ({
                         </div>
 
                         <div className="text-left w-full overflow-hidden">
-                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-emerald-400' : 'text-zinc-700 group-hover:text-black'}`}>
+                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-[#3B82F6]' : 'text-zinc-700 group-hover:text-black'}`}>
                                 onSET Mobile
                             </div>
                             {mobileStatus?.hasAlert ? (
