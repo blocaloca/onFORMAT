@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 type Theme = 'dark' | 'light';
 
@@ -15,15 +16,30 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setThemeState] = useState<Theme>('dark');
 
+    const pathname = usePathname();
+
     useEffect(() => {
-        // FORCE LIGHT MODE (Machined Glass Pivot)
-        setThemeState('light');
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-    }, []);
+        // Exception: OnSET Mobile is ALWAYS Dark Mode
+        if (pathname?.startsWith('/onset')) {
+            setThemeState('dark');
+            document.documentElement.classList.add('dark');
+            // We don't save to localStorage to avoid flipping the desktop app preference
+        } else {
+            // FORCE LIGHT MODE (Machined Glass Pivot) for main app
+            setThemeState('light');
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        }
+    }, [pathname]);
 
     const setTheme = (newTheme: Theme) => {
-        // Enforce Light Mode override
+        // Enforce Light Mode override unless on mobile path
+        if (pathname?.startsWith('/onset')) {
+            setThemeState('dark');
+            document.documentElement.classList.add('dark');
+            return;
+        }
+
         const forcedTheme = 'light';
         setThemeState(forcedTheme);
         localStorage.setItem('theme', forcedTheme);
