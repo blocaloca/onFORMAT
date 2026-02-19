@@ -165,6 +165,23 @@ textarea,
 select {
   font-family: var(--font-geist-mono), monospace;
   letter-spacing: -0.02em;
+  /* Contrast Lockdown */
+  background-color: var(--input-bg, #f4f4f5);
+  /* Fallback to zinc-100 */
+  color: var(--input-fg, #09090b);
+  /* Fallback to solid black */
+}
+
+/* Specific Override for Light Mode (Root without .dark class) */
+:root:not(.dark) input,
+:root:not(.dark) textarea,
+:root:not(.dark) select {
+  background-color: #f4f4f5 !important;
+  /* zinc-100 */
+  color: #09090b !important;
+  /* Solid Black */
+  border-color: #e4e4e7;
+  /* zinc-200 */
 }
 
 /* Scrollbar styling */

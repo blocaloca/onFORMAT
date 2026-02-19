@@ -1,9 +1,9 @@
 'use client';
 // Mobile Polish Update - RETRY 2 - 10:47 AM
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { getClient } from '@/lib/supabase';
-import { Menu } from 'lucide-react';
+import { Menu, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 
 // Import Views
@@ -65,6 +65,7 @@ interface MobileState {
 export default function OnSetMobilePage() {
     const supabase = getClient()
     const params = useParams();
+    const pathname = usePathname();
     const id = params.id as string;
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<Tab>('');
@@ -698,6 +699,16 @@ export default function OnSetMobilePage() {
     return (
         <div className="h-[100dvh] max-w-md mx-auto bg-black text-white font-sans flex flex-col md:border-x md:border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
+            {/* BOTTOM NAV RAIL */}
+            <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-800 pb-[calc(env(safe-area-inset-bottom)+12px)] pt-3 px-6 flex justify-between items-center shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
+                <Link href={`/onset/${params.id}`} className={`flex flex-col items-center gap-1 ${pathname === `/onset/${params.id}` ? 'text-blue-500' : 'text-zinc-500 hover:text-zinc-300'} transition-colors group`}>
+                    <div className={`p-1.5 rounded-lg transition-all ${pathname === `/onset/${params.id}` ? 'bg-blue-500/10 shadow-[0_0_10px_rgba(59,130,246,0.3)]' : ''}`}>
+                        <LayoutGrid size={20} className={`transform transition-transform group-active:scale-90 ${pathname === `/onset/${params.id}` ? 'stroke-[2.5px]' : ''}`} />
+                    </div>
+                    <span className="text-[9px] font-bold uppercase tracking-widest">Grid</span>
+                </Link>
+            </nav>
+
             {/* HEADER */}
             <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 sticky top-0 z-50 pt-safe transition-all w-full">
                 <div className="h-16 md:h-18 flex items-center justify-between px-6">
@@ -708,8 +719,16 @@ export default function OnSetMobilePage() {
                             <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
                             <div className="flex items-center gap-2">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-                                    <span className="text-[9px] font-mono text-[#22C55E] uppercase leading-none font-bold">Live Sync</span>
+                                    <span
+                                        className="w-2 h-2 rounded-full animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+                                        style={{ backgroundColor: data.project.data?.color || '#22C55E' }}
+                                    ></span>
+                                    <span
+                                        className="text-[9px] font-mono uppercase leading-none font-bold"
+                                        style={{ color: data.project.data?.color || '#22C55E' }}
+                                    >
+                                        Live Sync
+                                    </span>
                                 </div>
 
                                 {/* Unit Badges Injection */}

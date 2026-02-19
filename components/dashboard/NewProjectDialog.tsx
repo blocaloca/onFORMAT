@@ -15,18 +15,18 @@ interface NewProjectDialogProps {
 }
 
 export const PROJECT_COLORS = [
-    { id: 'green', bg: 'bg-emerald-900', border: 'border-emerald-700', label: '#064e3b' },
-    { id: 'purple', bg: 'bg-purple-900', border: 'border-purple-700', label: '#581c87' },
-    { id: 'orange', bg: 'bg-orange-900', border: 'border-orange-700', label: '#7c2d12' },
-    { id: 'blue', bg: 'bg-blue-900', border: 'border-blue-700', label: '#1e3a8a' },
-    { id: 'red', bg: 'bg-red-900', border: 'border-red-700', label: '#7f1d1d' },
+    { id: '#3B82F6', bg: 'bg-[#3B82F6]', border: 'border-blue-500', label: 'Digital Blue' },
+    { id: '#FBBF24', bg: 'bg-[#FBBF24]', border: 'border-amber-400', label: 'Sun Yellow' },
+    { id: '#22C55E', bg: 'bg-[#22C55E]', border: 'border-emerald-500', label: 'Signal Green' },
+    { id: '#A855F7', bg: 'bg-[#A855F7]', border: 'border-purple-500', label: 'Soft Lavender' },
+    { id: '#71717A', bg: 'bg-[#71717A]', border: 'border-zinc-500', label: 'Machined Silver' },
 ];
 
 export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', initialData }: NewProjectDialogProps) => {
     const [name, setName] = useState('');
     const [client, setClient] = useState('');
     const [producer, setProducer] = useState('');
-    const [selectedColor, setSelectedColor] = useState('green');
+    const [selectedColor, setSelectedColor] = useState('#3B82F6');
 
     useEffect(() => {
         if (isOpen) {
@@ -34,12 +34,12 @@ export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', i
                 setName(initialData.name);
                 setClient(initialData.client);
                 setProducer(initialData.producer);
-                setSelectedColor(initialData.color || 'green');
+                setSelectedColor(initialData.color || '#3B82F6');
             } else {
                 setName('');
                 setClient('');
                 setProducer('');
-                setSelectedColor('green');
+                setSelectedColor('#3B82F6');
             }
         }
     }, [isOpen, mode, initialData]);

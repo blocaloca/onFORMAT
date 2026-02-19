@@ -6,7 +6,7 @@ import { getAllTemplates } from '@/lib/project-templates'
 interface NewProjectModalProps {
   isOpen: boolean
   onClose: () => void
-  onCreate: (projectName: string, templateId: string) => void
+  onCreate: (projectName: string, templateId: string, color: string) => void
   onBrowseTemplates: () => void
   customTemplates: any[]
 }
@@ -20,6 +20,7 @@ export default function NewProjectModal({
 }: NewProjectModalProps) {
   const [projectName, setProjectName] = useState('')
   const [selectedTemplate, setSelectedTemplate] = useState('')
+  const [selectedColor, setSelectedColor] = useState('#3B82F6') // Default Digital Blue
 
   const builtInTemplates = getAllTemplates()
   const allTemplates = [...customTemplates, ...builtInTemplates]
@@ -28,6 +29,7 @@ export default function NewProjectModal({
     if (isOpen) {
       setProjectName('')
       setSelectedTemplate('')
+      setSelectedColor('#3B82F6')
     }
   }, [isOpen])
 
@@ -40,7 +42,7 @@ export default function NewProjectModal({
       alert('Please select a template')
       return
     }
-    onCreate(projectName, selectedTemplate)
+    onCreate(projectName, selectedTemplate, selectedColor)
   }
 
   if (!isOpen) return null
@@ -72,6 +74,29 @@ export default function NewProjectModal({
               className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-sm text-sm font-bold text-white placeholder-zinc-700 focus:outline-none focus:border-emerald-500 focus:bg-zinc-900 transition-all uppercase tracking-wide"
               autoFocus
             />
+          </div>
+
+          {/* Project Color */}
+          <div className="space-y-2">
+            <label className="block text-[10px] font-bold uppercase text-zinc-500 tracking-wider">
+              System Color
+            </label>
+            <div className="flex gap-3">
+              {[
+                { name: 'Digital Blue', value: '#3B82F6', bg: 'bg-blue-500' },
+                { name: 'Sun Yellow', value: '#FBBF24', bg: 'bg-amber-400' },
+                { name: 'Signal Green', value: '#22C55E', bg: 'bg-emerald-500' },
+                { name: 'Soft Lavender', value: '#A855F7', bg: 'bg-purple-500' },
+                { name: 'Machined Silver', value: '#71717A', bg: 'bg-zinc-500' },
+              ].map((color) => (
+                <button
+                  key={color.value}
+                  onClick={() => setSelectedColor(color.value)}
+                  className={`w-8 h-8 rounded-full ${color.bg} transition-all ${selectedColor === color.value ? 'ring-2 ring-white ring-offset-2 ring-offset-zinc-950 scale-110' : 'opacity-50 hover:opacity-100'}`}
+                  title={color.name}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Template Selector */}
