@@ -82,7 +82,7 @@ const NavHeader = () => (
 );
 
 const NavSectionTitle = ({ children }: { children: React.ReactNode }) => (
-    <div className={`px-4 text-[10px] font-bold uppercase tracking-widest mb-2 mt-6 text-muted-foreground`}>
+    <div className={`px-4 font-sans text-[10px] font-bold uppercase tracking-widest mb-2 mt-6 text-zinc-500`}>
         {children}
     </div>
 );
@@ -112,16 +112,16 @@ const NavItem = ({
 }: NavItemProps) => {
     const content = (
         <div className="flex items-center gap-3 truncate">
-            {Icon && <Icon size={16} className={active ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'} />}
-            <span className={active ? 'font-bold truncate' : 'truncate'}>{children}</span>
+            {Icon && <Icon size={16} className={active ? 'text-black' : 'text-zinc-400 group-hover:text-black'} />}
+            <span className={active ? 'font-bold truncate text-black font-mono text-xs' : 'truncate font-mono text-xs text-zinc-700 group-hover:text-black'}>{children}</span>
         </div>
     );
 
     const className = `
         w-full flex items-center justify-between px-4 py-3 text-xs font-medium transition-all group relative block
         ${active
-            ? 'text-foreground bg-muted'
-            : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            ? 'text-black bg-zinc-200'
+            : 'text-zinc-500 hover:text-black hover:bg-zinc-100'
         }
     `;
 
@@ -140,8 +140,8 @@ const NavItem = ({
             )}
 
             {onAction && (
-                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAction(e); }} className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all absolute right-2 hover:bg-background`}>
-                    <MoreVertical size={12} className={'text-muted-foreground'} />
+                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAction(e); }} className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all absolute right-2 hover:bg-zinc-200`}>
+                    <MoreVertical size={12} className={'text-zinc-500'} />
                 </div>
             )}
         </>
