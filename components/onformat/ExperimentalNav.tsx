@@ -310,7 +310,7 @@ export const ExperimentalWorkspaceNav = ({
             <NavHeader />
 
             <div className="px-8 mb-6">
-                <Link href="/dashboard" className={`flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider transition-colors text-zinc-500 hover:text-zinc-900 border border-transparent hover:border-zinc-200 rounded px-2 py-1 -ml-2 w-fit`}>
+                <Link href="/dashboard" className={`flex items-center gap-2 text-[10px] uppercase tracking-wider transition-colors text-zinc-500 hover:text-zinc-900 border border-transparent hover:border-zinc-200 rounded px-2 py-1 -ml-2 w-fit font-bold`}>
                     <ChevronLeft size={12} /> Back to Projects
                 </Link>
             </div>
@@ -408,7 +408,7 @@ export const ExperimentalWorkspaceNav = ({
                                                 key={tool.key}
                                                 onClick={() => onToolSelect(tool.key, phase.key)}
                                                 className={`
-                                                    w-full text-left px-4 pl-8 py-2 font-mono text-xs transition-colors relative block
+                                                    w-full text-left px-4 pl-8 py-2 text-xs transition-colors relative block
                                                     ${activeTool === tool.key
                                                         ? 'text-zinc-900 font-bold bg-white/50'
                                                         : 'text-zinc-500 hover:text-zinc-800 hover:bg-white/30 font-medium'

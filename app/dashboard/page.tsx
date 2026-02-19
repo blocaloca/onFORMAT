@@ -8,12 +8,12 @@ import { MoveToFolderDialog } from '@/components/dashboard/MoveToFolderDialog';
 import { FolderActionsDialog } from '@/components/dashboard/FolderActionsDialog';
 
 import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav';
-import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock, Sun, Moon } from 'lucide-react';
+import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock } from 'lucide-react';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
 import { hasAccess } from '@/lib/permissions';
-import { useTheme } from '@/components/ThemeProvider';
+// import { useTheme } from '@/components/ThemeProvider';
 
 import { DEMO_PROJECT_DATA } from '@/lib/demoProject';
 
@@ -38,8 +38,8 @@ export default function DashboardPage() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
     const router = useRouter();
-    const { theme, setTheme } = useTheme();
-    const darkMode = theme === 'dark';
+    // const { theme, setTheme } = useTheme();
+    // const darkMode = theme === 'dark';
 
     const [user, setUser] = useState<string | null>(null);
     const [view, setView] = useState<'grid' | 'list' | 'timeline'>('grid');
@@ -412,14 +412,6 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setTheme(darkMode ? 'light' : 'dark')}
-                            className={`p-2 rounded-full transition-colors ${darkMode ? 'text-zinc-400 hover:text-white hover:bg-zinc-800' : 'text-zinc-400 hover:text-black hover:bg-zinc-200'}`}
-                            title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                        >
-                            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
-                        </button>
-
                         <div className={`flex border rounded-sm p-1 bg-muted border-border`}>
                             <button
                                 onClick={() => setView('grid')}
