@@ -57,6 +57,8 @@ export default function DashboardPage() {
     const [projectToMove, setProjectToMove] = useState<Project | null>(null);
     const [projectToDuplicate, setProjectToDuplicate] = useState<Project | null>(null);
 
+    const [toastMessage, setToastMessage] = useState<{ title: string, description?: string, type: 'error' | 'success' } | null>(null);
+
     const creationLock = React.useRef(false);
 
     // --- HELPER FUNCTIONS ---
@@ -137,7 +139,10 @@ export default function DashboardPage() {
                 setProjects(updatedProjects);
 
                 projectsInFolder.forEach(async (p) => {
-                    await fetch(`/api/projects?projectId=${p.id}`, { method: 'DELETE' });
+                    await fetch(`/api/projects?projectId=${p.id}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
+                    });
                 });
             }
             // Archive just keeps them in the now-archived folder
@@ -350,6 +355,7 @@ export default function DashboardPage() {
             try {
                 const res = await fetch(`/api/projects?projectId=${id}`, {
                     method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
                 });
 
                 if (!res.ok) {
@@ -358,8 +364,12 @@ export default function DashboardPage() {
                 }
 
                 fetchProjects();
+                setToastMessage({ title: 'Project Deleted', type: 'success' });
+                setTimeout(() => setToastMessage(null), 3000);
             } catch (error: any) {
-                alert('Error deleting project: ' + error.message);
+                console.error(error);
+                setToastMessage({ title: 'Deletion Failed', description: error.message, type: 'error' });
+                setTimeout(() => setToastMessage(null), 5000);
             }
         }
     };
@@ -645,6 +655,21 @@ export default function DashboardPage() {
                 onClose={() => setIsUpgradeOpen(false)}
             />
 
+            {/* Custom Toast */}
+            {toastMessage && (
+                <div className={`fixed bottom-6 right-6 z-[100] p-4 rounded-xl shadow-2xl border flex items-start gap-3 backdrop-blur-md animate-in slide-in-from-bottom-5 ${toastMessage.type === 'error' ? 'bg-red-950/90 border-red-900/50 text-red-100' : 'bg-zinc-950/90 border-zinc-800 text-emerald-400'}`}>
+                    <div className="mt-0.5">
+                        {toastMessage.type === 'error' ? '❌' : '✅'}
+                    </div>
+                    <div>
+                        <p className="text-sm font-bold tracking-tight">{toastMessage.title}</p>
+                        {toastMessage.description && <p className="text-xs opacity-80 mt-1 max-w-xs">{toastMessage.description}</p>}
+                    </div>
+                    <button onClick={() => setToastMessage(null)} className="ml-4 opacity-50 hover:opacity-100 transition-opacity">
+                        ✕
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
