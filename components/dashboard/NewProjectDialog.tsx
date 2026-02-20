@@ -19,7 +19,7 @@ export const PROJECT_COLORS = [
     { id: '#FBBF24', bg: 'bg-[#FBBF24]', border: 'border-amber-400', label: 'Sun Yellow' },
     { id: '#22C55E', bg: 'bg-[#22C55E]', border: 'border-emerald-500', label: 'Signal Green' },
     { id: '#A855F7', bg: 'bg-[#A855F7]', border: 'border-purple-500', label: 'Soft Lavender' },
-    { id: '#71717A', bg: 'bg-[#71717A]', border: 'border-zinc-500', label: 'Machined Silver' },
+    { id: '#FFFFFF', bg: 'bg-white', border: 'border-zinc-200', label: 'Pure White' },
 ];
 
 export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', initialData }: NewProjectDialogProps) => {
@@ -139,9 +139,9 @@ export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', i
                                         key={color.id}
                                         type="button"
                                         onClick={() => setSelectedColor(color.id)}
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${color.bg} ${selectedColor === color.id ? 'ring-2 ring-zinc-900 dark:ring-white ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 scale-110' : 'hover:scale-110 opacity-80 hover:opacity-100'}`}
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${color.bg} ${color.id === '#FFFFFF' ? 'border border-zinc-200' : ''} ${selectedColor === color.id ? 'ring-2 ring-zinc-900 dark:ring-white ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 scale-110' : 'hover:scale-110 opacity-80 hover:opacity-100'}`}
                                     >
-                                        {selectedColor === color.id && <Check size={12} className="text-white" />}
+                                        {selectedColor === color.id && <Check size={12} className={color.id === '#FFFFFF' || color.id === '#FBBF24' ? 'text-zinc-900' : 'text-white'} />}
                                     </button>
                                 ))}
                             </div>
