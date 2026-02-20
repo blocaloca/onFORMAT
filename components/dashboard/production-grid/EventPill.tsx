@@ -2,6 +2,7 @@ import React from 'react';
 import { ProductionEvent } from '@/lib/production-grid/types';
 import { tokens } from '@/lib/theme/tokens';
 import { Sparkles, MapPin, Video, Calendar } from 'lucide-react';
+import { PROJECT_COLORS } from '@/components/dashboard/NewProjectDialog';
 
 interface EventPillProps {
     event: ProductionEvent;
@@ -16,18 +17,13 @@ interface EventPillProps {
 export const EventPill = ({ event, width, left, onClick, isClashing, onMouseEnter, onMouseLeave }: EventPillProps) => {
 
     // Style logic based on event type
-    // Map Project Colors to Pill Colors (Brighter variants for visibility against dark/light modes)
-    const COLOR_MAP: Record<string, string> = {
-        'green': 'bg-emerald-600 border-emerald-500',
-        'purple': 'bg-purple-600 border-purple-500',
-        'orange': 'bg-orange-600 border-orange-500',
-        'blue': 'bg-blue-600 border-blue-500',
-        'red': 'bg-red-600 border-red-500',
-    };
+    // Map Project Colors to Pill Colors (Using PROJECT_COLORS)
+    const colorDef = PROJECT_COLORS.find(c => c.id === event.projectColor) || PROJECT_COLORS[0];
 
-    // Default Fallback
-    let bgClass = COLOR_MAP[event.projectColor || ''] || "bg-zinc-800 border-zinc-700";
-    let textClass = "text-white";
+    // Convert text to text-zinc-900 if sun yellow to match other UI places? 
+    // Or just use the bg/border classes directly
+    let bgClass = `${colorDef.bg} ${colorDef.border}`;
+    let textClass = colorDef.id === '#FBBF24' ? 'text-zinc-900' : 'text-white';
     let Icon = Calendar;
 
     // Icon Logic remains Type-Based

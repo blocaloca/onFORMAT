@@ -131,9 +131,9 @@ const NavItem = ({
 
     const inner = (
         <>
-            {active && (
-                <div className={`absolute left-0 top-0 bottom-0 w-[4px] rounded-r-sm bg-primary`} />
-            )}
+            {/* {active && (
+                <div className={`absolute left-0 top-0 bottom-0 w-[4px] rounded-r-sm bg-emerald-500`} />
+            )} */}
 
             {content}
 
@@ -239,15 +239,11 @@ export const ExperimentalDashboardNav = ({
             )}
 
             <div className="flex-1 overflow-y-auto pt-2 scrollbar-hide">
-                <NavSectionTitle>Views</NavSectionTitle>
+                <NavSectionTitle>Folders</NavSectionTitle>
                 <div className="px-2 space-y-1">
                     <NavItem icon={LayoutGrid} active={activeFolder === null} onClick={() => setActiveFolder(null)} count={allProjectsCount}>
                         All Projects
                     </NavItem>
-                </div>
-
-                <NavSectionTitle>Folders</NavSectionTitle>
-                <div className="px-2 space-y-1">
                     {folders?.filter(f => f.type !== 'archived').map(f => {
                         const count = projects.filter(p => p.data?.folderId === f.id).length;
                         return (
