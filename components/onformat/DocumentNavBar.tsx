@@ -53,11 +53,11 @@ export const DocumentNavBar = ({
                     {/* Title removed per user request */}
 
                     {/* Day Navigator Pill */}
-                    <div className="flex items-center bg-black rounded-sm border border-zinc-800 h-8">
+                    <div className={`flex items-center rounded-sm border h-8 transition-colors ${darkMode ? 'bg-black border-zinc-800' : 'bg-white border-zinc-300'}`}>
                         <button
                             onClick={() => onSelectVersion(Math.max(0, activeVersionIndex - 1))}
                             disabled={activeVersionIndex === 0}
-                            className="h-full px-2 hover:text-white text-zinc-600 disabled:opacity-30 disabled:hover:text-zinc-600 transition-colors border-r border-zinc-800/50"
+                            className={`h-full px-2 transition-colors border-r disabled:opacity-30 ${darkMode ? 'hover:text-white text-zinc-600 disabled:hover:text-zinc-600 border-zinc-800/50' : 'text-zinc-500 hover:text-black border-zinc-200 disabled:hover:text-zinc-500'}`}
                         >
                             <ChevronLeft size={14} />
                         </button>
@@ -76,7 +76,7 @@ export const DocumentNavBar = ({
                         <button
                             onClick={() => onSelectVersion(Math.min(versions.length - 1, activeVersionIndex + 1))}
                             disabled={activeVersionIndex === versions.length - 1}
-                            className={`h-full px-2 transition-colors border-l ${darkMode ? 'text-zinc-600 hover:text-white border-zinc-800/50 disabled:hover:text-zinc-600' : 'text-zinc-400 hover:text-black hover:bg-zinc-100 border-zinc-200 disabled:hover:text-zinc-400'}`}
+                            className={`h-full px-2 transition-colors border-l ${darkMode ? 'text-zinc-600 hover:text-white border-zinc-800/50 disabled:hover:text-zinc-600' : 'text-zinc-500 hover:text-black border-zinc-200 disabled:hover:text-zinc-500 disabled:opacity-30'}`}
                         >
                             <ChevronRight size={14} />
                         </button>

@@ -46,8 +46,8 @@ export default function LandingPage() {
 
         {/* Left: Logo & Pricing */}
         <div className="flex items-center gap-8 pointer-events-auto">
-          <div className="w-60 relative h-20">
-            <img src="/logo-white.png" alt="onFORMAT" className="h-full object-contain object-left" />
+          <div className="flex items-center h-20">
+            <span className="font-sans font-black tracking-tighter text-4xl">onFORMAT</span>
           </div>
           <Link href="/pricing" className="hidden md:block text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
             Pricing

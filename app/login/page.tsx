@@ -68,9 +68,8 @@ export default function LoginPage() {
 
         {/* LOGO & HEADER */}
         <div className="text-center mb-10">
-          <div className="w-48 mx-auto mb-6">
-            {/* Invert logo for Light Mode compatibility */}
-            <img src="/logo-white.png" alt="onFORMAT" className="w-full h-auto object-contain invert opacity-90" />
+          <div className="w-48 mx-auto mb-6 flex justify-center">
+            <span className="font-sans font-black tracking-tighter text-4xl">onFORMAT</span>
           </div>
           <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">
             Production Operating System

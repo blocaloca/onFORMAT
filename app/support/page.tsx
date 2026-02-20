@@ -96,10 +96,8 @@ export default function SupportPage() {
             {/* Nav */}
             <nav className="fixed top-0 left-0 w-full z-50 px-8 py-4 flex items-center justify-between bg-background/80 backdrop-blur-md border-b border-border">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="w-8 h-8 relative">
-                        <img src="/logo-white.png" alt="onFORMAT" className="w-full h-full object-contain" />
-                    </div>
-                    <span className="text-sm font-bold tracking-widest uppercase">Support</span>
+                    <span className="font-sans font-black tracking-tighter text-xl">onFORMAT</span>
+                    <span className="text-sm font-bold tracking-widest uppercase ml-2 text-zinc-500">Support</span>
                 </Link>
                 <Link href="/dashboard" className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
                     Back to Dashboard

@@ -53,10 +53,8 @@ export default function PricingPage() {
             {/* Nav */}
             <nav className="fixed top-0 left-0 w-full z-50 px-8 py-4 flex items-center justify-between bg-black/80 backdrop-blur-md border-b border-white/5">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="w-8 h-8 relative">
-                        <img src="/logo-white.png" alt="onFORMAT" className="w-full h-full object-contain" />
-                    </div>
-                    <span className="text-sm font-bold tracking-widest uppercase">Pricing</span>
+                    <span className="font-sans font-black tracking-tighter text-xl">onFORMAT</span>
+                    <span className="text-sm font-bold tracking-widest uppercase ml-2 text-zinc-500">Pricing</span>
                 </Link>
                 <Link href={user ? "/dashboard" : "/login"} className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
                     {user ? "Back to Dashboard" : "Log In"}
