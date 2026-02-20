@@ -706,10 +706,10 @@ export default function OnSetMobilePage() {
 
     return (
         <div className="fixed inset-0 w-full h-[100dvh] bg-zinc-950 flex items-center justify-center z-[100]">
-            <div className="h-full w-full max-w-md bg-black text-white font-sans grid grid-rows-[auto_1fr_auto] overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+            <div className="h-full w-full max-w-md min-w-0 flex flex-col bg-black text-white font-sans overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
                 {/* TOP ROW: Header & Alerts */}
-                <div className="flex flex-col z-50">
+                <div className="flex flex-col z-50 shrink-0">
                     {/* HEADER */}
                     <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 pt-safe transition-all w-full relative">
                         <div className="h-16 md:h-18 flex items-center justify-between px-6">
@@ -879,7 +879,7 @@ export default function OnSetMobilePage() {
                 }
 
                 {/* MAIN CONTENT SCROLLER */}
-                <main className="w-full overflow-y-auto no-scrollbar relative bg-black z-10 touch-pan-y">
+                <main className="flex-1 w-full min-h-0 overflow-y-auto no-scrollbar relative bg-black z-10 touch-pan-y">
                     <div className="w-full max-w-lg mx-auto px-4 py-8">
                         {activeTab === '' ? (
                             <MobileLanding
@@ -938,8 +938,8 @@ export default function OnSetMobilePage() {
                 </main>
 
                 {/* BOTTOM NAV ROWS */}
-                <nav className="w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
-                    <div className="flex items-center h-16 overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
+                <nav className="shrink-0 w-full min-w-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+                    <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                         {(() => {
                             const mobileControl = data.docs['onset-mobile-control'];
                             let availableKeys: string[] = [];

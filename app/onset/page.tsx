@@ -58,9 +58,9 @@ export default function OnSetPage() {
 
     return (
         <div className="fixed inset-0 w-full h-[100dvh] bg-zinc-950 flex items-center justify-center z-[100]">
-            <div className="h-full w-full max-w-md bg-black text-white font-sans flex flex-col md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative overflow-x-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+            <div className="h-full w-full max-w-md min-w-0 bg-black text-white font-sans flex flex-col md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative overflow-hidden pl-safe pr-safe shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
                 {/* Header */}
-                <header className="bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-20 pt-safe transition-all">
+                <header className="shrink-0 w-full bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-20 pt-safe transition-all">
                     <div className="px-6 py-4 flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <img src="/onset_logo.png" className="h-6 w-auto object-contain" alt="onSET" />
@@ -122,7 +122,7 @@ export default function OnSetPage() {
                 )}
 
                 {/* Project List */}
-                <main className="flex-1 p-6 space-y-6 overflow-y-auto pb-safe">
+                <main className="flex-1 w-full min-h-0 p-6 space-y-6 overflow-y-auto pb-safe">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-24 space-y-4">
                             <div className="w-8 h-8 border-2 border-zinc-800 border-t-emerald-500 rounded-full animate-spin"></div>
@@ -189,7 +189,7 @@ export default function OnSetPage() {
                 </main>
 
                 {/* Footer */}
-                <div className="p-6 text-center border-t border-zinc-900 bg-black pb-safe">
+                <div className="shrink-0 w-full p-6 text-center border-t border-zinc-900 bg-black pb-safe">
                     <p className="text-[9px] text-zinc-700 font-mono uppercase tracking-widest">
                         onFORMAT Mobile v1.0
                     </p>
