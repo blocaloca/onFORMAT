@@ -404,6 +404,7 @@ export default function DashboardPage() {
                 userEmail={user || undefined}
                 darkMode={true}
                 onNewProject={() => setIsDialogOpen(true)}
+                projects={projects}
             />
 
             <main className="flex-1 p-12 max-w-[1600px] overflow-y-auto h-screen">
@@ -496,7 +497,7 @@ export default function DashboardPage() {
                                         className={`
                                     transition-all cursor-pointer group relative hover:scale-[1.02] active:scale-100 duration-300
                                     ${view === 'grid'
-                                                ? `${colorMap.bg} ${colorMap.border} shadow-xl hover:shadow-2xl text-white rounded-sm rounded-tr-[3rem]`
+                                                ? `bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 border-t-[6px] ${colorMap.border} shadow-lg hover:shadow-xl text-zinc-900 dark:text-white rounded-sm rounded-tr-[3rem]`
                                                 : `p-6 flex items-center justify-between bg-card border border-border rounded-lg shadow-sm hover:shadow-md text-foreground transition-all`
                                             }
                                     ${view === 'grid' ? 'aspect-[3/2] p-8' : ''}
@@ -509,7 +510,7 @@ export default function DashboardPage() {
                                                     <div className="flex justify-between items-start mb-4">
                                                         <div className="flex flex-col gap-1 items-start">
                                                             {p.data?.folderId && (
-                                                                <div className="flex items-center gap-1 text-[9px] font-bold uppercase text-white/40 mb-1">
+                                                                <div className="flex items-center gap-1 text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-400 mb-1">
                                                                     <FolderOpen size={10} />
                                                                     {folders.find(f => f.id === p.data.folderId)?.name}
                                                                 </div>
@@ -518,21 +519,21 @@ export default function DashboardPage() {
                                                         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); setProjectToMove(p); }}
-                                                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-full transition-colors"
+                                                                className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors"
                                                                 title="Move to Folder"
                                                             >
                                                                 <FolderInput size={14} />
                                                             </button>
                                                             <button
                                                                 onClick={(e) => handleDuplicate(e, p)}
-                                                                className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-full transition-colors"
+                                                                className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors"
                                                                 title="Duplicate"
                                                             >
                                                                 <Copy size={14} />
                                                             </button>
                                                             <button
                                                                 onClick={(e) => deleteProject(e, p.id, p.name)}
-                                                                className="p-1.5 text-zinc-400 hover:text-red-500 hover:bg-zinc-800 rounded-full transition-colors"
+                                                                className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-red-500 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-full transition-colors"
                                                                 title="Delete"
                                                             >
                                                                 <Trash2 size={14} />
@@ -543,21 +544,21 @@ export default function DashboardPage() {
 
                                                 <div className="absolute bottom-8 left-6 right-6 flex flex-col gap-4">
                                                     <div>
-                                                        <div className="text-[9px] font-bold text-white/40 uppercase mb-1">PROJECT:</div>
-                                                        <h3 className="text-xl font-black uppercase leading-tight tracking-tight line-clamp-2 text-white transition-colors">
+                                                        <div className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 uppercase mb-1">PROJECT:</div>
+                                                        <h3 className="text-xl font-black uppercase leading-tight tracking-tight line-clamp-2 text-zinc-900 dark:text-white transition-colors">
                                                             {p.name || 'Untitled'}
                                                         </h3>
                                                     </div>
 
-                                                    <div className="border-t border-white/10 pt-2">
+                                                    <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2">
                                                         <div className="flex justify-between items-end">
                                                             <div>
-                                                                <div className="text-[9px] font-bold text-white/40 uppercase mb-0.5">CLIENT:</div>
-                                                                <div className="text-xs font-bold uppercase text-white/90 truncate leading-none">
+                                                                <div className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400 uppercase mb-0.5">CLIENT:</div>
+                                                                <div className="text-xs font-bold uppercase text-zinc-800 dark:text-zinc-200 truncate leading-none">
                                                                     {p.data?.clientName || 'No Client'}
                                                                 </div>
                                                             </div>
-                                                            <p className="text-[9px] font-mono text-white/30 uppercase">
+                                                            <p className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500 uppercase">
                                                                 {new Date(p.updated_at).toLocaleDateString()}
                                                             </p>
                                                         </div>

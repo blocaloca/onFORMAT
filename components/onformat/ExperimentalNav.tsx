@@ -98,6 +98,7 @@ interface NavItemProps {
     darkMode?: boolean;
     onAction?: (e: React.MouseEvent) => void;
     href?: string;
+    count?: number;
 }
 
 const NavItem = ({
@@ -108,20 +109,23 @@ const NavItem = ({
     hasSubmenu = false,
     isOpen = false,
     onAction,
-    href
+    href,
+    count
 }: NavItemProps) => {
     const content = (
         <div className="flex items-center gap-3 truncate">
-            {Icon && <Icon size={16} className={active ? 'text-black' : 'text-zinc-400 group-hover:text-black'} />}
-            <span className={active ? 'font-bold truncate text-black font-mono text-xs' : 'truncate font-mono text-xs text-zinc-700 group-hover:text-black'}>{children}</span>
+            {Icon && <Icon size={16} className={active ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-300'} />}
+            <span className={active ? 'font-bold truncate text-zinc-900 dark:text-white font-mono text-[11px] tracking-wide uppercase' : 'truncate font-mono text-[11px] font-bold tracking-wide uppercase text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-300 transition-colors'}>
+                {children}
+            </span>
         </div>
     );
 
     const className = `
-        w-full flex items-center justify-between px-4 py-3 text-xs font-medium transition-all group relative block
+        w-full flex items-center justify-between px-3 py-2.5 transition-all group relative block rounded-md
         ${active
-            ? 'text-black bg-zinc-200'
-            : 'text-zinc-500 hover:text-black hover:bg-zinc-100'
+            ? 'bg-zinc-300/50 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
+            : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-300/30 dark:hover:bg-zinc-800/50'
         }
     `;
 
@@ -136,6 +140,12 @@ const NavItem = ({
             {hasSubmenu && (
                 <div className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
                     <ChevronDown size={12} className="text-muted-foreground" />
+                </div>
+            )}
+
+            {count !== undefined && (
+                <div className={`ml-auto shrink-0 flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[9px] font-bold font-mono transition-colors border ${active ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-600' : 'bg-zinc-200/50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 group-hover:border-zinc-300 dark:group-hover:border-zinc-600'}`}>
+                    {count}
                 </div>
             )}
 
@@ -178,6 +188,7 @@ interface DashboardSidebarProps {
     onToggleAi?: () => void;
     heading?: string;
     isAiDocked?: boolean;
+    projects?: any[];
 }
 
 export const ExperimentalDashboardNav = ({
@@ -188,8 +199,11 @@ export const ExperimentalDashboardNav = ({
     onFolderAction,
     userEmail,
     onNewProject,
-    AiComponent
+    AiComponent,
+    projects = []
 }: DashboardSidebarProps) => {
+
+    const allProjectsCount = projects.length;
 
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 border-zinc-300 backdrop-blur-md`}>
@@ -226,29 +240,32 @@ export const ExperimentalDashboardNav = ({
 
             <div className="flex-1 overflow-y-auto pt-2 scrollbar-hide">
                 <NavSectionTitle>Views</NavSectionTitle>
-                <NavItem icon={LayoutGrid} active={activeFolder === null} onClick={() => setActiveFolder(null)}>
-                    All Projects
-                </NavItem>
-                <NavItem icon={Archive} active={activeFolder === 'ARCHIVED'} onClick={() => setActiveFolder('ARCHIVED')}>
-                    Archived
-                </NavItem>
+                <div className="px-2 space-y-1">
+                    <NavItem icon={LayoutGrid} active={activeFolder === null} onClick={() => setActiveFolder(null)} count={allProjectsCount}>
+                        All Projects
+                    </NavItem>
+                </div>
 
                 <NavSectionTitle>Folders</NavSectionTitle>
-                <div className="space-y-0.5">
-                    {folders?.filter(f => f.type !== 'archived').map(f => (
-                        <NavItem
-                            key={f.id}
-                            icon={activeFolder === f.id ? FolderOpen : Folder}
-                            active={activeFolder === f.id}
-                            onClick={() => setActiveFolder(f.id)}
-                            onAction={onFolderAction ? () => onFolderAction(f) : undefined}
-                        >
-                            {f.name}
-                        </NavItem>
-                    ))}
+                <div className="px-2 space-y-1">
+                    {folders?.filter(f => f.type !== 'archived').map(f => {
+                        const count = projects.filter(p => p.data?.folderId === f.id).length;
+                        return (
+                            <NavItem
+                                key={f.id}
+                                icon={activeFolder === f.id ? FolderOpen : Folder}
+                                active={activeFolder === f.id}
+                                onClick={() => setActiveFolder(f.id)}
+                                onAction={onFolderAction ? () => onFolderAction(f) : undefined}
+                                count={count}
+                            >
+                                {f.name}
+                            </NavItem>
+                        );
+                    })}
                     <button
                         onClick={onComposeFolder}
-                        className={`w-full flex items-center gap-2 px-4 py-3 text-[10px] font-bold uppercase tracking-widest transition-colors text-muted-foreground hover:text-foreground`}
+                        className={`w-full flex items-center justify-center gap-2 mt-4 px-4 py-2 border border-zinc-300 dark:border-zinc-800 rounded bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900/50 dark:hover:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest transition-colors text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300`}
                     >
                         <Plus size={12} /> New Folder
                     </button>

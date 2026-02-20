@@ -31,11 +31,11 @@ export const CreateFolderDialog = ({ isOpen, onClose, onCreate }: CreateFolderDi
                 onClick={onClose}
             />
 
-            {/* Industrial Panel */}
-            <div className="relative bg-zinc-900 border border-zinc-700 w-full max-w-md shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            {/* Solid Panel */}
+            <div className="relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 w-full max-w-md shadow-2xl dark:shadow-2xl animate-in fade-in zoom-in-95 duration-200 rounded-sm">
 
                 {/* Header Bar */}
-                <div className="flex justify-between items-center bg-zinc-900 border-b border-zinc-800 p-3 select-none">
+                <div className="flex justify-between items-center bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 p-3 select-none rounded-t-sm">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-emerald-500" />
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 font-mono">
@@ -44,7 +44,7 @@ export const CreateFolderDialog = ({ isOpen, onClose, onCreate }: CreateFolderDi
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-zinc-500 hover:text-white transition-colors"
+                        className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
                     >
                         <X size={14} />
                     </button>
@@ -62,7 +62,7 @@ export const CreateFolderDialog = ({ isOpen, onClose, onCreate }: CreateFolderDi
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="ENTER FOLDER NAME..."
-                                className="w-full p-3 bg-zinc-950 border border-zinc-800 text-sm font-bold text-white focus:border-emerald-500 focus:ring-0 outline-none transition-all placeholder:text-zinc-600 rounded-sm"
+                                className="w-full p-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-sm font-bold text-zinc-900 dark:text-white focus:border-zinc-400 dark:focus:border-emerald-500 focus:ring-0 outline-none transition-all placeholder:text-zinc-400 dark:placeholder:text-zinc-600 rounded-sm"
                             />
                         </div>
 
@@ -74,7 +74,7 @@ export const CreateFolderDialog = ({ isOpen, onClose, onCreate }: CreateFolderDi
                                 <select
                                     value={type}
                                     onChange={(e) => setType(e.target.value)}
-                                    className="w-full bg-zinc-950 border border-zinc-800 p-3 text-xs font-bold text-zinc-300 focus:border-zinc-600 appearance-none rounded-sm outline-none"
+                                    className="w-full bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-3 text-xs font-bold text-zinc-900 dark:text-zinc-300 focus:border-zinc-400 dark:focus:border-zinc-600 appearance-none rounded-sm outline-none"
                                 >
                                     <option value="General">General</option>
                                     <option value="Pitch">Pitch Projects</option>
@@ -92,14 +92,14 @@ export const CreateFolderDialog = ({ isOpen, onClose, onCreate }: CreateFolderDi
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors border border-transparent hover:border-zinc-700 rounded-sm"
+                                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors border border-transparent dark:hover:border-zinc-700 rounded-sm"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={!name.trim()}
-                                className="flex-[2] py-3 bg-emerald-500 text-black border border-emerald-400 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg rounded-sm"
+                                className="flex-[2] py-3 bg-emerald-500 dark:bg-emerald-600 text-emerald-950 dark:text-black border border-emerald-400 dark:border-emerald-500 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-400 dark:hover:bg-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg rounded-sm"
                             >
                                 Create Directory
                             </button>
