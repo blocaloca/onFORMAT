@@ -705,7 +705,7 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="w-full h-full max-w-md min-w-0 flex flex-col bg-black text-white font-sans overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)] z-10">
+        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-black text-white font-sans overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)] z-10">
 
             {/* TOP ROW: Header & Alerts */}
             <div className="flex flex-col z-50 shrink-0">
@@ -752,7 +752,7 @@ export default function OnSetMobilePage() {
                             <BetaFeedbackTrigger variant="icon" />
                             <button
                                 onClick={() => setShowMenu(true)}
-                                className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700 shrink-0">
+                                className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 md:hover:text-white transition-colors border border-transparent md:hover:border-zinc-700 shrink-0">
                                 <Menu size={18} />
                             </button>
                         </div>
@@ -989,7 +989,7 @@ export default function OnSetMobilePage() {
                                 border-t border-white/20 border-x border-b border-black/50 shadow-sm
                                 ${activeTab === key
                                         ? 'bg-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] border-t-white/40' // Active State: Blue
-                                        : 'bg-zinc-900 text-zinc-500 hover:text-zinc-300 bg-gradient-to-b from-white/5 to-transparent' // Inactive: Hardware Keycap
+                                        : 'bg-zinc-900 text-zinc-500 md:hover:text-zinc-300 bg-gradient-to-b from-white/5 to-transparent' // Inactive: Hardware Keycap
                                     }
                             `}
                             >

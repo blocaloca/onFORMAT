@@ -57,7 +57,7 @@ export default function OnSetPage() {
     };
 
     return (
-        <div className="w-full h-full max-w-md min-w-0 bg-black text-white font-sans flex flex-col md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative overflow-hidden z-10 shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+        <div className="w-full h-full max-w-md mx-auto min-w-0 bg-black text-white font-sans flex flex-col md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative overflow-hidden z-10 shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
             {/* Header */}
             <header className="shrink-0 w-full bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-20 pt-safe transition-all">
                 <div className="px-6 py-4 flex justify-between items-center">

@@ -133,9 +133,9 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                             return (
                                                 <div
                                                     key={tool.key}
-                                                    className="flex items-center justify-between p-2 pl-0 hover:bg-zinc-900/30 rounded transition-colors group"
+                                                    className="flex items-center justify-between p-2 pl-0 md:hover:bg-zinc-900/30 rounded transition-colors group"
                                                 >
-                                                    <span className="text-xs font-bold uppercase text-zinc-300 group-hover:text-white transition-colors">{tool.label}</span>
+                                                    <span className="text-xs font-bold uppercase text-zinc-300 md:group-hover:text-white transition-colors">{tool.label}</span>
 
                                                     {/* GROUP TOGGLES */}
                                                     <div className="flex items-center gap-1">
@@ -146,7 +146,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                                                     key={group}
                                                                     onClick={() => toggleGroup(tool.key, group)}
                                                                     disabled={isLocked}
-                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 hover:opacity-100'}`}
+                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 md:hover:opacity-100'}`}
                                                                 >
                                                                     <UnitBadge unit={group} size="sm" />
                                                                 </button>
