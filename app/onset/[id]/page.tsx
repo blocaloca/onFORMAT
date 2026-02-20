@@ -705,85 +705,85 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="h-full w-full max-w-md mx-auto bg-black text-white font-sans grid grid-rows-[auto_1fr_auto] overflow-hidden rounded-2xl md:border-x border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+        <div className="fixed inset-0 w-full h-[100dvh] bg-zinc-950 flex items-center justify-center z-[100]">
+            <div className="h-full w-full max-w-md bg-black text-white font-sans grid grid-rows-[auto_1fr_auto] overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
 
-            {/* TOP ROW: Header & Alerts */}
-            <div className="flex flex-col z-50">
-                {/* HEADER */}
-                <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 pt-safe transition-all w-full relative">
-                    <div className="h-16 md:h-18 flex items-center justify-between px-6">
-                        <Link href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2">
-                            <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
-                            <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
-                        </Link>
-                        <div className="h-4 w-[1px] bg-zinc-700 mx-3"></div>
-                        <div className="flex flex-col flex-1">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate max-w-[150px]">{data.project.name}</span>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <div className="flex items-center gap-1.5">
-                                    <span
-                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive ? 'animate-pulse' : ''}`}
-                                        style={{ backgroundColor: !data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a') }}
-                                    ></span>
-                                    <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-400">
-                                        LIVE
-                                    </span>
+                {/* TOP ROW: Header & Alerts */}
+                <div className="flex flex-col z-50">
+                    {/* HEADER */}
+                    <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 pt-safe transition-all w-full relative">
+                        <div className="h-16 md:h-18 flex items-center justify-between px-6">
+                            <Link href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2 shrink-0">
+                                <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
+                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
+                            </Link>
+                            <div className="h-4 w-[1px] bg-zinc-700 mx-3 shrink-0"></div>
+                            <div className="flex flex-col flex-1 min-w-0">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate">{data.project.name}</span>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <div className="flex items-center gap-1.5">
+                                        <span
+                                            className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive ? 'animate-pulse' : ''}`}
+                                            style={{ backgroundColor: !data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a') }}
+                                        ></span>
+                                        <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-400">
+                                            LIVE
+                                        </span>
+                                    </div>
+
+                                    {/* Unit Badges Injection */}
+                                    {(() => {
+                                        const crew = data.docs['crew-list']?.crew || [];
+                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                        const units = me?.onSetGroups || [];
+
+                                        if (units.length === 0) return null;
+
+                                        return (
+                                            <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
+                                                {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-red-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(220,38,38,0.5)]">A</span>}
+                                                {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-blue-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(37,99,235,0.5)]">B</span>}
+                                                {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-amber-500 text-white rounded-[1px] shadow-[0_0_5px_rgba(245,158,11,0.5)]">C</span>}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
-
-                                {/* Unit Badges Injection */}
-                                {(() => {
-                                    const crew = data.docs['crew-list']?.crew || [];
-                                    const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                    const units = me?.onSetGroups || [];
-
-                                    if (units.length === 0) return null;
-
-                                    return (
-                                        <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
-                                            {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-red-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(220,38,38,0.5)]">A</span>}
-                                            {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-blue-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(37,99,235,0.5)]">B</span>}
-                                            {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-amber-500 text-white rounded-[1px] shadow-[0_0_5px_rgba(245,158,11,0.5)]">C</span>}
-                                        </div>
-                                    );
-                                })()}
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0 ml-2">
+                                <BetaFeedbackTrigger variant="icon" />
+                                <button
+                                    onClick={() => setShowMenu(true)}
+                                    className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700 shrink-0">
+                                    <Menu size={18} />
+                                </button>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <BetaFeedbackTrigger variant="icon" />
-                            <button
-                                onClick={() => setShowMenu(true)}
-                                className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-transparent hover:border-zinc-700">
-                                <Menu size={18} />
-                            </button>
-                        </div>
-                    </div>
-                </header>
+                    </header>
 
-                {/* GLOBAL MEDIA ALERT BANNER */}
-                {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
-                    <button
-                        onClick={() => setActiveTab('dit-log')}
-                        className="w-full bg-emerald-500 text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="bg-black/10 p-1.5 rounded-full">
-                                <HardDrive size={16} />
+                    {/* GLOBAL MEDIA ALERT BANNER */}
+                    {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
+                        <button
+                            onClick={() => setActiveTab('dit-log')}
+                            className="w-full bg-emerald-500 text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="bg-black/10 p-1.5 rounded-full">
+                                    <HardDrive size={16} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5">Media Alert</p>
+                                    <p className="text-xs font-bold leading-none">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                                </div>
                             </div>
-                            <div className="text-left">
-                                <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5">Media Alert</p>
-                                <p className="text-xs font-bold leading-none">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                            <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                                View
                             </div>
-                        </div>
-                        <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide">
-                            View
-                        </div>
-                    </button>
-                )}
+                        </button>
+                    )}
 
-                {/* SYSTEM MENU DRAWER */}
-                {
-                    showMenu && (
-                        <div className="fixed inset-0 z-[100] flex justify-end">
+                    {/* SYSTEM MENU DRAWER */}
+                    {showMenu && (
+                        <div className="absolute inset-0 z-[100] flex justify-end">
                             {/* Backdrop */}
                             <div
                                 className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
@@ -855,152 +855,153 @@ export default function OnSetMobilePage() {
                             </div>
                         </div>
                     )
+                    }
+
+                    {/* CONFIDENTIAL BANNER */}
+                    <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
+                        <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-600">Confidential Materials • {new Date().getFullYear()}</p>
+                    </div>
+                </div>
+
+                {/* WATERMARK OVERLAY */}
+                {
+                    userEmail && (
+                        <div className="absolute inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
+                            <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
+                                {Array.from({ length: 12 }).map((_, i) => (
+                                    <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
+                                        {userEmail} • {userRole || 'Crew'}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )
                 }
 
-                {/* CONFIDENTIAL BANNER */}
-                <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
-                    <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-600">Confidential Materials • {new Date().getFullYear()}</p>
-                </div>
-            </div>
+                {/* MAIN CONTENT SCROLLER */}
+                <main className="w-full overflow-y-auto no-scrollbar relative bg-black z-10 touch-pan-y">
+                    <div className="w-full max-w-lg mx-auto px-4 py-8">
+                        {activeTab === '' ? (
+                            <MobileLanding
+                                projectName={data.project?.name}
+                                // Determine status message based on whether there ARE keys but none selected, or NO keys
+                                status={(() => {
+                                    // Re-run small check or assume 'availableKeys' from context? 
+                                    // We don't have availableKeys in scope here easily without re-calc.
+                                    // But if activeTab is empty, likely we are in landing mode.
+                                    return "Production Standby";
+                                })()}
+                            />
+                        ) : (
+                            <>
+                                {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
+                                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
+                                {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} scheduleData={data.docs['schedule']} />}
+                                {activeTab === 'dit-log' && <MobileDITLogView
+                                    data={data.docs['dit-log']}
+                                    onAdd={handleUpdateDIT}
+                                    projectId={id}
+                                    mediaAlerts={mediaAlerts}
+                                    setMediaAlerts={setMediaAlerts}
+                                />}
+                                {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
+                                {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
+                                {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
+                                {activeTab === 'on-set-notes' && <MobileOnSetNotesView
+                                    data={data.docs['on-set-notes']}
+                                    onAdd={handleAddOnSetNote}
+                                    onUpdate={handleEditOnSetNote}
+                                    onDelete={handleDeleteOnSetNote}
+                                />}
+                                {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
+                                {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
+                                {activeTab === 'script-notes' && <MobileScriptNotesView
+                                    data={data.docs['script-notes']}
+                                    onAdd={(item: any) => handleUpdateScriptNotes('add', item)}
+                                    onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
+                                    onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
+                                />}
+                                {activeTab === 'sound-report' && <MobileSoundReportView
+                                    data={data.docs['sound-report']}
+                                    onAdd={(item: any) => handleUpdateSoundReport('add', item)}
+                                    onUpdate={(item: any) => handleUpdateSoundReport('update', item)}
+                                    onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
+                                />}
 
-            {/* WATERMARK OVERLAY */}
-            {
-                userEmail && (
-                    <div className="fixed inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
-                        <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
-                            {Array.from({ length: 12 }).map((_, i) => (
-                                <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
-                                    {userEmail} • {userRole || 'Crew'}
-                                </div>
-                            ))}
-                        </div>
+                                {/* Fallback for other docs */}
+                                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report'].includes(activeTab) && (
+                                    <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
+                                )}
+                            </>
+                        )}
                     </div>
-                )
-            }
+                </main>
 
-            {/* MAIN CONTENT SCROLLER */}
-            <main className="w-full overflow-y-auto no-scrollbar relative bg-black z-10 touch-pan-y">
-                <div className="w-full max-w-lg mx-auto px-4 py-8">
-                    {activeTab === '' ? (
-                        <MobileLanding
-                            projectName={data.project?.name}
-                            // Determine status message based on whether there ARE keys but none selected, or NO keys
-                            status={(() => {
-                                // Re-run small check or assume 'availableKeys' from context? 
-                                // We don't have availableKeys in scope here easily without re-calc.
-                                // But if activeTab is empty, likely we are in landing mode.
-                                return "Production Standby";
-                            })()}
-                        />
-                    ) : (
-                        <>
-                            {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
-                            {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
-                            {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} scheduleData={data.docs['schedule']} />}
-                            {activeTab === 'dit-log' && <MobileDITLogView
-                                data={data.docs['dit-log']}
-                                onAdd={handleUpdateDIT}
-                                projectId={id}
-                                mediaAlerts={mediaAlerts}
-                                setMediaAlerts={setMediaAlerts}
-                            />}
-                            {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
-                            {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
-                            {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
-                            {activeTab === 'on-set-notes' && <MobileOnSetNotesView
-                                data={data.docs['on-set-notes']}
-                                onAdd={handleAddOnSetNote}
-                                onUpdate={handleEditOnSetNote}
-                                onDelete={handleDeleteOnSetNote}
-                            />}
-                            {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
-                            {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
-                            {activeTab === 'script-notes' && <MobileScriptNotesView
-                                data={data.docs['script-notes']}
-                                onAdd={(item: any) => handleUpdateScriptNotes('add', item)}
-                                onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
-                                onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
-                            />}
-                            {activeTab === 'sound-report' && <MobileSoundReportView
-                                data={data.docs['sound-report']}
-                                onAdd={(item: any) => handleUpdateSoundReport('add', item)}
-                                onUpdate={(item: any) => handleUpdateSoundReport('update', item)}
-                                onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
-                            />}
+                {/* BOTTOM NAV ROWS */}
+                <nav className="w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+                    <div className="flex items-center h-16 overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
+                        {(() => {
+                            const mobileControl = data.docs['onset-mobile-control'];
+                            let availableKeys: string[] = [];
+                            const isLive = mobileControl?.isLive;
 
-                            {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report'].includes(activeTab) && (
-                                <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
-                            )}
-                        </>
-                    )}
-                </div>
-            </main>
+                            // Security: If Offline, hide Nav
+                            if (mobileControl && !isLive) return null;
 
-            {/* BOTTOM NAV ROWS */}
-            <nav className="w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
-                <div className="flex items-center h-16 overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
-                    {(() => {
-                        const mobileControl = data.docs['onset-mobile-control'];
-                        let availableKeys: string[] = [];
-                        const isLive = mobileControl?.isLive;
+                            if (mobileControl?.toolGroups) {
+                                const crewListDoc = data.docs['crew-list'];
+                                const me = crewListDoc?.crew?.find((c: any) =>
+                                    c.email && c.email.toLowerCase() === userEmail?.toLowerCase()
+                                );
+                                const myGroups = me?.onSetGroups || [];
+                                const isOwner = userRole === 'Owner';
 
-                        // Security: If Offline, hide Nav
-                        if (mobileControl && !isLive) return null;
+                                availableKeys = Object.entries(mobileControl.toolGroups)
+                                    .filter(([_, allowedGroups]: any) => {
+                                        if (!Array.isArray(allowedGroups) || allowedGroups.length === 0) return false;
+                                        if (isOwner) return true;
+                                        return allowedGroups.some((g: string) => myGroups.includes(g));
+                                    })
+                                    .map(([key]) => key);
+                            } else {
+                                availableKeys = mobileControl?.selectedTools || [];
+                            }
 
-                        if (mobileControl?.toolGroups) {
-                            const crewListDoc = data.docs['crew-list'];
-                            const me = crewListDoc?.crew?.find((c: any) =>
-                                c.email && c.email.toLowerCase() === userEmail?.toLowerCase()
-                            );
-                            const myGroups = me?.onSetGroups || [];
-                            const isOwner = userRole === 'Owner';
+                            if (availableKeys.length === 0) {
+                                return null;
+                            }
 
-                            availableKeys = Object.entries(mobileControl.toolGroups)
-                                .filter(([_, allowedGroups]: any) => {
-                                    if (!Array.isArray(allowedGroups) || allowedGroups.length === 0) return false;
-                                    if (isOwner) return true;
-                                    return allowedGroups.some((g: string) => myGroups.includes(g));
-                                })
-                                .map(([key]) => key);
-                        } else {
-                            availableKeys = mobileControl?.selectedTools || [];
-                        }
+                            if (availableKeys.length === 0) {
+                                return null;
+                            }
 
-                        if (availableKeys.length === 0) {
-                            return null;
-                        }
+                            const mappedKeys = Array.from(new Set(availableKeys.map(k => {
+                                if (k === 'shot-log') return 'camera-report';
+                                if (k === 'locations-sets') return 'locations';
+                                return k;
+                            })));
 
-                        if (availableKeys.length === 0) {
-                            return null;
-                        }
-
-                        const mappedKeys = Array.from(new Set(availableKeys.map(k => {
-                            if (k === 'shot-log') return 'camera-report';
-                            if (k === 'locations-sets') return 'locations';
-                            return k;
-                        })));
-
-                        return mappedKeys.map((key: string) => (
-                            <button
-                                key={key}
-                                onClick={() => setActiveTab(key)}
-                                className={`
+                            return mappedKeys.map((key: string) => (
+                                <button
+                                    key={key}
+                                    onClick={() => setActiveTab(key)}
+                                    className={`
                                 flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all
                                 border-t border-white/20 border-x border-b border-black/50 shadow-sm
                                 ${activeTab === key
-                                        ? 'bg-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] border-t-white/40' // Active State: Blue
-                                        : 'bg-zinc-900 text-zinc-500 hover:text-zinc-300 bg-gradient-to-b from-white/5 to-transparent' // Inactive: Hardware Keycap
-                                    }
+                                            ? 'bg-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] border-t-white/40' // Active State: Blue
+                                            : 'bg-zinc-900 text-zinc-500 hover:text-zinc-300 bg-gradient-to-b from-white/5 to-transparent' // Inactive: Hardware Keycap
+                                        }
                             `}
-                            >
-                                {DOC_LABELS[key] || key}
-                            </button>
-                        ));
-                    })()}
-                </div>
-            </nav>
-        </div >
+                                >
+                                    {DOC_LABELS[key] || key}
+                                </button>
+                            ));
+                        })()}
+                    </div>
+                </nav>
+            </div>
+        </div>
     );
 }
 
