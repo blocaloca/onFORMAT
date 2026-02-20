@@ -3,6 +3,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+
+  button,
+  input,
+  textarea,
+  select {
+    @apply outline-none;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply outline-none ring-2 ring-offset-2 ring-offset-zinc-50 ring-zinc-900;
+  }
+}
+
 @layer utilities {
   .tactile {
     @apply active:scale-95 transition-transform duration-100;
@@ -197,8 +214,6 @@ select {
   border-color: #a1a1aa !important;
   /* zinc-400 */
   outline: none !important;
-  box-shadow: 0 0 0 1px #a1a1aa !important;
-  /* ring-1 ring-zinc-400 */
 }
 
 /* Scrollbar styling */

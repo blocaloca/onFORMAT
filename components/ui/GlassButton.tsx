@@ -15,18 +15,19 @@ export const GlassButton = ({
 }: GlassButtonProps) => {
 
     // INDUSTRIAL DESIGN SYSTEM OVERRIDE - Machined Glass
-    const baseStyles = "relative overflow-hidden rounded-sm font-mono font-bold uppercase tracking-widest transition-all duration-500 tactile flex items-center justify-center gap-2 select-none active:scale-[0.98]";
+    const baseStyles = "relative overflow-hidden rounded-sm font-mono font-bold uppercase tracking-widest transition-all duration-75 ease-out flex items-center justify-center gap-2 select-none active:scale-[0.98]";
 
     const variants = {
         primary: `
-            bg-zinc-900 text-white 
-            shadow-[0_1px_0_rgba(255,255,255,0.1)_inset,0_1px_2px_rgba(0,0,0,0.1)] 
-            hover:shadow-[0_0_15px_rgba(0,0,0,0.1)] hover:bg-zinc-800
+            bg-blue-500 text-white shadow-sm shadow-blue-900/20
+            shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]
+            active:shadow-[inset_0_3px_5px_rgba(0,0,0,0.2)]
+            hover:brightness-110
         `,
         secondary: `
-            bg-white/80 backdrop-blur-sm text-zinc-900 border border-zinc-200/60
-            shadow-[0_1px_0_rgba(255,255,255,0.5)_inset,0_1px_2px_rgba(0,0,0,0.05)]
-            hover:bg-white hover:border-zinc-300 hover:shadow-[0_0_15px_rgba(255,255,255,0.5)]
+            bg-zinc-200 text-zinc-900 border border-zinc-300 shadow-sm
+            active:bg-zinc-300 active:shadow-inner
+            hover:bg-white hover:border-zinc-400
         `,
         ghost: "bg-transparent text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100/50"
     };
@@ -43,7 +44,9 @@ export const GlassButton = ({
             {...props}
         >
             {/* Top Edge Highlight for Machined Glass Look */}
-            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+            {variant === 'primary' && (
+                <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+            )}
 
             {children}
         </button>
