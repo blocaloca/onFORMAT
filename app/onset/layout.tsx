@@ -13,9 +13,9 @@ export default function OnSetMobileLayout({
             <div className="absolute inset-0 w-full h-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] pointer-events-none z-50" />
 
             {/* Content Area - Filling remaining space */}
-            <div className="relative z-10 flex-1 flex flex-col items-center justify-center overflow-hidden p-3 pt-safe-top pb-[calc(env(safe-area-inset-bottom)+12px)] md:p-8 w-full">
+            <main className="relative z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden p-0">
                 {children}
-            </div>
+            </main>
         </div>
     );
 }
