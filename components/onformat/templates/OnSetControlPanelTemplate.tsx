@@ -48,18 +48,18 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
     // Editor View
     return (
-        <div className="max-w-5xl mx-auto py-10 px-6 bg-zinc-950 min-h-screen text-white rounded-xl border border-zinc-900 shadow-2xl">
+        <div className="max-w-5xl mx-auto py-10 px-6 bg-white dark:bg-zinc-950 min-h-screen text-zinc-900 dark:text-white rounded-xl border border-zinc-200 dark:border-zinc-900 shadow-xl dark:shadow-2xl transition-colors">
 
             {/* HEADER: Standardized to match Document Layout */}
-            <div className="flex items-end justify-between mb-8 border-b border-zinc-800 pb-4">
+            <div className="flex items-end justify-between mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-4 transition-colors">
                 <div>
                     {/* Smaller Title */}
-                    <h1 className="text-3xl font-black uppercase tracking-tight mb-1 text-white">onSET Mobile Control</h1>
+                    <h1 className="text-3xl font-black uppercase tracking-tight mb-1 text-zinc-900 dark:text-white">onSET Mobile Control</h1>
                     <div className="flex items-center gap-3 text-zinc-500">
                         <span className="font-mono text-[10px] uppercase tracking-widest">
                             Sync Control
                         </span>
-                        <span className="w-1 h-1 rounded-full bg-zinc-700"></span>
+                        <span className="w-1 h-1 rounded-full bg-zinc-400 dark:bg-zinc-700"></span>
                         <span className={`font-mono text-[10px] uppercase tracking-widest ${data.isLive ? 'text-[#3B82F6]' : 'text-zinc-500'}`}>
                             {data.isLive ? 'Link Active' : 'Offline'}
                         </span>
@@ -72,8 +72,8 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         disabled={isLocked}
                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
                             ${data.isLive
-                                ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] md:hover:bg-emerald-600'
-                                : 'bg-transparent border-zinc-700 text-zinc-500 md:hover:border-zinc-500 md:hover:text-zinc-300'
+                                ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] active:bg-emerald-600'
+                                : 'bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-500 active:bg-zinc-100 dark:active:bg-zinc-800'
                             }`}
                     >
                         <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white animate-pulse' : 'bg-zinc-500'}`}></div>
@@ -97,7 +97,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             <div className="space-y-2 mb-6 animate-in fade-in slide-in-from-top-2">
                                 {/* DIT ISSUES */}
                                 {issues.map((issue: any, i: number) => (
-                                    <div key={i} className="bg-red-500/10 border border-red-500/30 p-3 rounded-lg flex items-center gap-3">
+                                    <div key={i} className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 p-3 rounded-lg flex items-center gap-3 transition-colors">
                                         <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                                         <div className="flex-1">
                                             <p className="text-red-400 font-mono text-xs font-bold uppercase tracking-wider">DIT ISSUE: {issue.description || 'Check Log'}</p>
@@ -108,7 +108,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                                 {/* GENERAL NOTIFICATIONS */}
                                 {metadata?.latestNotification && (
-                                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg flex items-center gap-3">
+                                    <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-3 rounded-lg flex items-center gap-3 transition-colors">
                                         <Zap className="text-emerald-500 fill-emerald-500 animate-pulse" size={16} />
                                         <span className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">{metadata.latestNotification.msg}</span>
                                         <span className="ml-auto text-[9px] text-zinc-500 font-mono">{new Date(metadata.latestNotification.time).toLocaleTimeString()}</span>
@@ -125,7 +125,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                             return (
                                 <div key={phase}>
-                                    <h3 className="text-[10px] font-black uppercase text-zinc-500 mb-3 tracking-widest border-b border-zinc-800 pb-1">{phase.replace('_', ' ')}</h3>
+                                    <h3 className="text-[10px] font-black uppercase text-zinc-500 mb-3 tracking-widest border-b border-zinc-200 dark:border-zinc-800 pb-1 transition-colors">{phase.replace('_', ' ')}</h3>
                                     <div className="space-y-1">
                                         {visibleTools.map((tool: any) => {
                                             const groups = toolGroups[tool.key] || [];
@@ -133,9 +133,9 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                             return (
                                                 <div
                                                     key={tool.key}
-                                                    className="flex items-center justify-between p-2 pl-0 md:hover:bg-zinc-900/30 rounded transition-colors group"
+                                                    className="flex items-center justify-between p-2 pl-0 active:bg-zinc-100 dark:active:bg-zinc-900/30 rounded transition-colors group"
                                                 >
-                                                    <span className="text-xs font-bold uppercase text-zinc-300 md:group-hover:text-white transition-colors">{tool.label}</span>
+                                                    <span className="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300 transition-colors">{tool.label}</span>
 
                                                     {/* GROUP TOGGLES */}
                                                     <div className="flex items-center gap-1">
@@ -146,7 +146,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                                                     key={group}
                                                                     onClick={() => toggleGroup(tool.key, group)}
                                                                     disabled={isLocked}
-                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 md:hover:opacity-100'}`}
+                                                                    className={`transition-opacity ${isActive ? 'opacity-100' : 'opacity-30 active:opacity-100'}`}
                                                                 >
                                                                     <UnitBadge unit={group} size="sm" />
                                                                 </button>
@@ -165,7 +165,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                 {/* RIGHT COL: PROJECT ACCESS (SPAN 1) */}
                 <div>
-                    <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-xl sticky top-4">
+                    <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-xl sticky top-4 transition-colors">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-white">
                                 <Users size={16} className="text-emerald-500" />
@@ -189,11 +189,11 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             <input
                                 readOnly
                                 value={`onformat.io/join/${metadata?.projectId?.substring(0, 6)}...`}
-                                className="flex-1 bg-black border border-zinc-700 rounded px-2 py-2 text-[10px] font-mono text-zinc-300 focus:outline-none"
+                                className="flex-1 bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 rounded px-2 py-2 text-[10px] font-mono text-zinc-900 dark:text-zinc-300 focus:outline-none transition-colors"
                             />
                             <button
                                 onClick={() => navigator.clipboard.writeText(`https://onformat.io/join/${metadata?.projectId}`)}
-                                className="bg-zinc-800 md:hover:bg-zinc-700 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition-colors"
+                                className="bg-zinc-800 active:bg-zinc-700 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition-colors"
                             >
                                 Copy
                             </button>
