@@ -121,7 +121,7 @@ export default function OnSetPage() {
             )}
 
             {/* Project List */}
-            <main className="flex-1 w-full min-h-0 p-6 space-y-6 overflow-y-auto pb-safe">
+            <main className="flex-1 w-full min-h-0 p-6 space-y-6 overflow-y-auto no-scrollbar pb-safe">
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 space-y-4">
                         <div className="w-8 h-8 border-2 border-zinc-800 border-t-emerald-500 rounded-full animate-spin"></div>
@@ -139,7 +139,7 @@ export default function OnSetPage() {
                                 {projects.map(p => {
                                     // Dynamic Gradients based on project color if available, else Emerald default
                                     return (
-                                        <Link key={p.id} href={`/onset/${p.id}`}>
+                                        <Link key={p.id} href={`/onset/${p.id}`} className="block">
                                             <div className="group relative overflow-hidden rounded-2xl bg-zinc-900 border border-zinc-800 border-b-2 border-b-zinc-800 hover:border-emerald-500/50 hover:border-b-emerald-500 transition-all shadow-lg hover:shadow-emerald-900/10 active:border-b-0 active:translate-y-[2px]">
                                                 {/* Background Gradient */}
                                                 <div className="absolute inset-0 bg-gradient-to-br from-zinc-800/50 to-black opacity-100 group-hover:opacity-0 transition-opacity" />

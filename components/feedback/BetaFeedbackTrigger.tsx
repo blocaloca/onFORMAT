@@ -59,8 +59,8 @@ export function BetaFeedbackTrigger({ variant = 'fixed' }: { variant?: 'fixed' |
                 )}
             </Dialog.Trigger>
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
-                <Dialog.Content className="fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-xl bg-white p-6 shadow-2xl focus:outline-none animate-in zoom-in-95 duration-200">
+                <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] animate-in fade-in duration-200" />
+                <Dialog.Content className="fixed left-[50%] top-[50%] z-[200] w-[calc(100vw-2rem)] max-w-md max-h-[90dvh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] rounded-xl bg-white p-6 shadow-2xl focus:outline-none animate-in zoom-in-95 duration-200">
 
                     {success ? (
                         <div className="flex flex-col items-center justify-center py-8 text-center space-y-3">

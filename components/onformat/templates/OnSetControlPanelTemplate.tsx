@@ -72,8 +72,8 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         disabled={isLocked}
                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
                             ${data.isLive
-                                ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] hover:bg-emerald-600'
-                                : 'bg-transparent border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
+                                ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] md:hover:bg-emerald-600'
+                                : 'bg-transparent border-zinc-700 text-zinc-500 md:hover:border-zinc-500 md:hover:text-zinc-300'
                             }`}
                     >
                         <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white animate-pulse' : 'bg-zinc-500'}`}></div>
@@ -193,7 +193,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             />
                             <button
                                 onClick={() => navigator.clipboard.writeText(`https://onformat.io/join/${metadata?.projectId}`)}
-                                className="bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition-colors"
+                                className="bg-zinc-800 md:hover:bg-zinc-700 text-white px-3 py-2 rounded text-[10px] font-bold uppercase transition-colors"
                             >
                                 Copy
                             </button>
