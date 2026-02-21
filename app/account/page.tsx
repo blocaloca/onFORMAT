@@ -343,7 +343,7 @@ export default function AccountPage() {
                                         <button
                                             onClick={() => {
                                                 setLoading(true);
-                                                fetch('/api/stripe/checkout', {
+                                                fetch('/api/checkout', {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
                                                     body: JSON.stringify({ priceId: STRIPE_PLANS.pro.id })
@@ -363,7 +363,7 @@ export default function AccountPage() {
                                         <button
                                             onClick={() => {
                                                 setLoading(true);
-                                                fetch('/api/stripe/checkout', {
+                                                fetch('/api/checkout', {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
                                                     body: JSON.stringify({ priceId: STRIPE_PLANS.studio.id })
@@ -387,7 +387,7 @@ export default function AccountPage() {
                                     <button
                                         onClick={() => {
                                             setLoading(true);
-                                            fetch('/api/stripe/checkout', {
+                                            fetch('/api/checkout', {
                                                 method: 'POST',
                                                 headers: { 'Content-Type': 'application/json' },
                                                 body: JSON.stringify({ priceId: STRIPE_PLANS.studio.id })
@@ -411,7 +411,7 @@ export default function AccountPage() {
                                         onClick={async () => {
                                             setLoading(true);
                                             try {
-                                                const res = await fetch('/api/stripe/portal', { method: 'POST' });
+                                                const res = await fetch('/api/portal', { method: 'POST' });
                                                 const data = await res.json();
                                                 if (data.url) window.location.href = data.url;
                                                 else alert('Failed to load portal');
