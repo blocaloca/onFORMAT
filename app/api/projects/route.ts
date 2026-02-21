@@ -108,12 +108,11 @@ export async function POST(request: NextRequest) {
     let finalUserId = user.id;
     let finalUserEmail = user.email || '';
 
+    const isFounder = ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(user.email?.toLowerCase() || '');
+
     // 2. Admin/Founder Override Check (Optional - if admin wants to create for others)
     // We check if the request body tries to specify a different user.
     if (body.userId && body.userId !== user.id) {
-      const { data: profile } = await supabase.from('profiles').select('is_admin, email').eq('id', user.id).single();
-      const isFounder = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '');
-
       if (isFounder) {
         console.log(`👮‍♂️ Admin ${user.email} creating project for ${body.email || body.userId}`);
         // If admin, we allow using the body's userId - BUT we need to ensure that user exists in profiles.
@@ -177,7 +176,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Enforce Limit
     // Note: We check if count is >= max. (e.g. if max is 1, and they have 1, they cannot create another).
-    if ((projectCount || 0) >= plan.maxProjects) {
+    if (!isFounder && (projectCount || 0) >= plan.maxProjects) {
       console.warn(`⛔️ User ${finalUserId} reached project limit for tier ${tierKey}. Count: ${projectCount}, Max: ${plan.maxProjects}`);
       return NextResponse.json(
         {
@@ -189,7 +188,7 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
-    console.log(`✅ Limit Check Passed: ${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects} (Tier: ${tierKey})`);
+    console.log(`✅ Limit Check Passed: ${isFounder ? 'Founder Override' : `${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects}`} (Tier: ${tierKey})`);
     // ----------------------------
 
     // Construct proper initial state to prevent WorkspaceEditor crash
