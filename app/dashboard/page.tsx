@@ -30,6 +30,7 @@ interface Project {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: Record<string, any>;
     user_id: string;
+    is_demo?: boolean;
 }
 
 export default function DashboardPage() {

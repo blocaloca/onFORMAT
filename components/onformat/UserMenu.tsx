@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, LogOut, ChevronUp, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FeedbackDialog } from '@/components/dashboard/FeedbackDialog';
+import { isFounder } from '@/lib/permissions';
 
 import { getClient } from '@/lib/supabase';
 
@@ -69,8 +70,17 @@ export const UserMenu = ({ email }: { email?: string }) => {
                             >
                                 <User size={14} /> Account & Billing
                             </button>
-
                         </div>
+                        {isFounder(email) && (
+                            <div className="border-t border-zinc-800 py-1">
+                                <button
+                                    onClick={() => router.push('/admin')}
+                                    className="w-full text-left px-4 py-2 text-xs text-purple-400 hover:bg-zinc-800 hover:text-purple-300 flex items-center gap-2 transition-colors"
+                                >
+                                    Admin Console
+                                </button>
+                            </div>
+                        )}
                         <div className="border-t border-zinc-800 py-1">
                             <button
                                 onClick={() => {
@@ -106,7 +116,10 @@ export const UserMenu = ({ email }: { email?: string }) => {
                         )}
                     </div>
                     <div className="flex-1 text-left min-w-0">
-                        <p className="text-xs font-bold text-zinc-700 truncate tracking-wide">Account</p>
+                        <div className="flex items-center gap-1">
+                            <p className="text-xs font-bold text-zinc-700 truncate tracking-wide">Account</p>
+                            {isFounder(email) && <span className="bg-zinc-800 text-white px-1 py-0.5 text-[8px] rounded uppercase font-mono tracking-widest leading-none translate-y-px">Founder</span>}
+                        </div>
                         <p className="text-[10px] text-zinc-500 truncate">{email || 'user@example.com'}</p>
                     </div>
                     <ChevronUp size={14} className={`text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />

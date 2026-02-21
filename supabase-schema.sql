@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS projects (
   name TEXT NOT NULL,
   data JSONB DEFAULT '{}',
   current_version INTEGER DEFAULT 1,
+  is_demo BOOLEAN DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
