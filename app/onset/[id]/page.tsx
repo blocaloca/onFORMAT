@@ -199,9 +199,9 @@ export default function OnSetMobilePage() {
 
             // Try to get from Auth if not in local storage
             if (!emailToUse) {
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    emailToUse = user.email!;
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                    emailToUse = session.user.email!;
                     localStorage.setItem('onset_user_email', emailToUse);
                 }
             }
@@ -271,7 +271,8 @@ export default function OnSetMobilePage() {
             const computedData = {
                 project: projectData,
                 docs: allDrafts,
-                _role: role // Save role silently for offline recovery
+                _role: role, // Save role silently for offline recovery
+                _email: emailToUse // Save email silently for offline recovery
             };
 
             setData(computedData);
@@ -360,6 +361,7 @@ export default function OnSetMobilePage() {
                 const parsedCachedData = JSON.parse(cachedDataStr);
                 setData(parsedCachedData);
                 if (parsedCachedData._role) setUserRole(parsedCachedData._role);
+                if (parsedCachedData._email) setUserEmail(parsedCachedData._email);
                 setLastSyncTime(cachedTime || 'Unknown');
                 setIsOffline(true);
 
