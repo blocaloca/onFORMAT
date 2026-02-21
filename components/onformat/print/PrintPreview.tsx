@@ -19,6 +19,7 @@ interface PrintPreviewProps {
         subtitle: string;
         date: string;
         orientation?: 'portrait' | 'landscape';
+        studioLogo?: string | null;
     };
     orientationOverride?: 'portrait' | 'landscape';
 }
@@ -56,7 +57,12 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                             }}
                         >
                             <div className="text-center space-y-8 p-12 w-full h-full flex flex-col items-center justify-center relative">
-                                <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">{coverSettings.title}</h1>
+                                {coverSettings.studioLogo && (
+                                    <div className="absolute top-16 left-0 right-0 flex justify-center">
+                                        <img src={coverSettings.studioLogo} alt="Studio Logo" style={{ maxHeight: '48px', objectFit: 'contain', marginBottom: '24px' }} />
+                                    </div>
+                                )}
+                                <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight mt-12">{coverSettings.title}</h1>
                                 <div className="w-24 h-1.5 bg-black mx-auto" />
                                 <h2 className="text-lg font-bold tracking-[0.3em] uppercase text-zinc-500">{coverSettings.subtitle}</h2>
                                 <p className="pt-8 font-mono text-xs text-zinc-400 font-bold tracking-widest">{coverSettings.date}</p>

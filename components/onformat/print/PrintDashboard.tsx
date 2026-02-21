@@ -100,8 +100,20 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
         title: projectName,
         subtitle: clientName || '',
         date: new Date().toLocaleDateString(),
-        orientation: 'landscape' as 'portrait' | 'landscape' // Will be overridden by masterOrientation in preview
+        orientation: 'landscape' as 'portrait' | 'landscape', // Will be overridden by masterOrientation in preview
+        studioLogo: null as string | null
     });
+
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setCoverSettings(s => ({ ...s, studioLogo: reader.result as string }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     // 1. Build List regarding Context Data
     const documentList = useMemo(() => {
@@ -327,6 +339,34 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                 </div>
                             </div>
                         )}
+                    </section>
+
+                    {/* 1.5 STUDIO LOGO CONTROLS */}
+                    <section className="bg-zinc-100/50 border border-zinc-200 rounded-xl p-4">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xs font-black uppercase text-zinc-950 tracking-widest flex items-center gap-2">
+                                <Layers size={14} className="text-emerald-500" />
+                                STUDIO LOGO
+                            </h2>
+                        </div>
+                        <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
+                            <label className="w-full bg-zinc-100 shadow-inner border border-dashed border-zinc-300 rounded-md p-4 flex items-center justify-center cursor-pointer hover:bg-zinc-200/50 transition-colors">
+                                <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                                {coverSettings.studioLogo ? (
+                                    <img src={coverSettings.studioLogo} alt="Studio Logo" className="max-h-8 object-contain" />
+                                ) : (
+                                    <span className="font-mono text-[10px] text-zinc-500">+ UPLOAD BRAND MARK (PNG/JPG)</span>
+                                )}
+                            </label>
+                            {coverSettings.studioLogo && (
+                                <button
+                                    onClick={() => setCoverSettings(s => ({ ...s, studioLogo: null }))}
+                                    className="text-[10px] text-red-500 hover:text-red-600 uppercase tracking-widest font-bold text-center"
+                                >
+                                    Remove Logo
+                                </button>
+                            )}
+                        </div>
                     </section>
 
                     {/* 2. PHASED LIST */}
