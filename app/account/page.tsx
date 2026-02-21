@@ -229,7 +229,7 @@ export default function AccountPage() {
         return <img src={url} alt="Announcement" className="w-full h-full object-cover" />;
     };
 
-    if (loading) return <div className="h-screen bg-zinc-900 flex items-center justify-center text-white"><Loader2 className="animate-spin" /></div>;
+    if (loading) return <div className="h-screen bg-background flex items-center justify-center text-foreground"><Loader2 className="animate-spin" /></div>;
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans p-8 md:p-12 transition-colors duration-200">
@@ -308,15 +308,15 @@ export default function AccountPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                         {/* Subscription */}
-                        <div className="bg-black/20 border border-zinc-800 p-8 rounded-lg h-full flex flex-col justify-between">
+                        <div className="bg-card border border-border p-8 rounded-lg h-full flex flex-col justify-between">
                             <div>
-                                <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6 flex items-center gap-2">
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
                                     <CreditCard size={16} /> Subscription
                                 </h2>
 
                                 <div className="mb-6">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <p className="text-xl font-bold text-white uppercase">
+                                        <p className="text-xl font-bold text-foreground uppercase">
                                             {profile?.subscription_status === 'active'
                                                 ? (STRIPE_PLANS[profile?.subscription_tier as keyof typeof STRIPE_PLANS]?.name || 'Pro')
                                                 : 'Scout'}
@@ -328,7 +328,7 @@ export default function AccountPage() {
                                             {profile?.subscription_status === 'active' ? 'Active' : 'Free'}
                                         </span>
                                     </div>
-                                    <p className="text-zinc-500 text-xs">
+                                    <p className="text-muted-foreground text-xs">
                                         {profile?.subscription_status === 'active'
                                             ? 'Your account is fully active.'
                                             : 'Upgrade to unlock more projects.'}
@@ -354,10 +354,10 @@ export default function AccountPage() {
                                                     .finally(() => setLoading(false));
                                             }}
                                             disabled={loading}
-                                            className="w-full bg-white text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm flex items-center justify-between group"
+                                            className="w-full bg-foreground text-background px-4 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90 rounded-sm flex items-center justify-between group"
                                         >
                                             <span>Upgrade to Pro</span>
-                                            <span className="text-zinc-500 group-hover:text-black">$15/mo</span>
+                                            <span className="text-background opacity-70 group-hover:opacity-100">$15/mo</span>
                                         </button>
 
                                         <button
@@ -374,10 +374,10 @@ export default function AccountPage() {
                                                     .finally(() => setLoading(false));
                                             }}
                                             disabled={loading}
-                                            className="w-full bg-zinc-800 border border-zinc-700 text-white px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-700 rounded-sm flex items-center justify-between group"
+                                            className="w-full bg-muted border border-border text-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-muted/80 rounded-sm flex items-center justify-between group"
                                         >
                                             <span>Upgrade to Studio</span>
-                                            <span className="text-zinc-400 group-hover:text-white">$29/mo</span>
+                                            <span className="text-muted-foreground group-hover:text-foreground">$29/mo</span>
                                         </button>
                                     </>
                                 )}
@@ -398,7 +398,7 @@ export default function AccountPage() {
                                                 .finally(() => setLoading(false));
                                         }}
                                         disabled={loading}
-                                        className="w-full bg-white text-black px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 rounded-sm flex items-center justify-between"
+                                        className="w-full bg-foreground text-background px-4 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90 rounded-sm flex items-center justify-between"
                                     >
                                         <span>Upgrade to Studio</span>
                                         <span>$29/mo</span>
@@ -421,7 +421,7 @@ export default function AccountPage() {
                                                 setLoading(false);
                                             }
                                         }}
-                                        className="w-full mt-2 bg-transparent border border-zinc-700 text-zinc-400 px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:text-white hover:border-zinc-500 rounded-sm"
+                                        className="w-full mt-2 bg-transparent border border-border text-muted-foreground px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:text-foreground hover:border-foreground/30 rounded-sm transition-colors"
                                     >
                                         Manage Subscription
                                     </button>
@@ -430,13 +430,13 @@ export default function AccountPage() {
                         </div>
 
                         {/* Security */}
-                        <div className="bg-black/20 border border-zinc-800 p-8 rounded-lg h-full">
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-6 flex items-center gap-2">
+                        <div className="bg-card border border-border p-8 rounded-lg h-full">
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
                                 <Lock size={16} /> Security
                             </h2>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-xs font-bold text-zinc-500 uppercase mb-2">Update Password</label>
+                                    <label className="block text-xs font-bold text-muted-foreground uppercase mb-2">Update Password</label>
                                     <div className="flex flex-col gap-2">
                                         <div className="relative">
                                             <input
@@ -444,12 +444,12 @@ export default function AccountPage() {
                                                 value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
                                                 placeholder="New Password"
-                                                className="w-full bg-black border border-zinc-700 p-3 pr-10 text-white focus:border-white outline-none transition-colors text-sm rounded-sm"
+                                                className="w-full bg-input border border-border p-3 pr-10 text-foreground focus:border-ring outline-none transition-colors text-sm rounded-sm"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground inline-flex items-center justify-center p-2"
                                             >
                                                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                             </button>
@@ -457,7 +457,7 @@ export default function AccountPage() {
                                         <button
                                             onClick={updatePassword}
                                             disabled={saving || !newPassword}
-                                            className="bg-zinc-800 text-white border border-zinc-700 hover:bg-zinc-700 px-4 py-3 text-xs font-bold uppercase tracking-widest rounded-sm disabled:opacity-50 w-full"
+                                            className="bg-foreground text-background hover:opacity-90 px-4 py-3 text-xs font-bold uppercase tracking-widest rounded-sm disabled:opacity-50 w-full"
                                         >
                                             Update
                                         </button>
@@ -470,27 +470,27 @@ export default function AccountPage() {
 
                 {/* RIGHT COLUMN: Announcements Frame */}
                 <div className="lg:col-span-1 space-y-8">
-                    <div className="bg-zinc-800/10 border border-zinc-800 rounded-lg p-1 h-full min-h-[400px] flex flex-col">
+                    <div className="bg-muted/30 border border-border rounded-lg p-1 h-full min-h-[400px] flex flex-col">
                         {/* Header */}
-                        <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-2">
+                        <div className="p-4 border-b border-border flex items-center justify-between">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                                 <Megaphone size={14} /> Announcements
                             </h2>
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         </div>
 
                         {/* Content Area */}
-                        <div className="flex-1 bg-black/40 relative overflow-hidden flex flex-col">
+                        <div className="flex-1 bg-muted/50 relative overflow-hidden flex flex-col">
                             {announcement ? (
                                 <>
                                     {announcement.media_url && (
-                                        <div className="flex-1 w-full bg-zinc-900 border-b border-zinc-800 overflow-hidden relative">
+                                        <div className="flex-1 w-full bg-black border-b border-border overflow-hidden relative">
                                             {renderMedia(announcement.media_url)}
                                         </div>
                                     )}
                                     {announcement.message && (
                                         <div className="p-6">
-                                            <p className="text-sm text-zinc-300 leading-relaxed font-mono">
+                                            <p className="text-sm text-foreground leading-relaxed font-mono">
                                                 {announcement.message}
                                             </p>
                                         </div>
@@ -499,33 +499,33 @@ export default function AccountPage() {
                                 </>
                             ) : (
                                 <div className="flex-1 flex flex-col items-center justify-center p-8 text-center opacity-50">
-                                    <Megaphone size={32} className="mb-4 text-zinc-600" />
-                                    <p className="text-sm text-zinc-500 font-mono">No active announcements.</p>
+                                    <Megaphone size={32} className="mb-4 text-muted-foreground/50" />
+                                    <p className="text-sm text-muted-foreground font-mono">No active announcements.</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Founder Control Panel (Hidden unless authorized) */}
                         {isFounder && (
-                            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50">
+                            <div className="p-4 border-t border-border bg-card">
                                 <div className="space-y-4">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Founder Controls</p>
+                                    <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500">Founder Controls</p>
 
                                     <input
                                         type="text"
                                         placeholder="Announcement text (optional)..."
-                                        className="w-full bg-black border border-zinc-700 p-2 text-xs text-white rounded-sm mb-2"
+                                        className="w-full bg-input border border-border p-2 text-xs text-foreground rounded-sm mb-2 focus:border-ring outline-none transition-colors"
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
                                     />
 
                                     <div className="flex flex-col gap-2">
-                                        <p className="text-[10px] uppercase font-bold text-zinc-500">Video Link (YouTube/MP4) OR Upload Image</p>
+                                        <p className="text-[10px] uppercase font-bold text-muted-foreground">Video Link (YouTube/MP4) OR Upload Image</p>
 
                                         <input
                                             type="text"
                                             placeholder="Paste Video URL here..."
-                                            className="w-full bg-black border border-zinc-700 p-2 text-xs text-white rounded-sm"
+                                            className="w-full bg-input border border-border p-2 text-xs text-foreground rounded-sm focus:border-ring outline-none transition-colors"
                                             value={videoUrl}
                                             onChange={(e) => setVideoUrl(e.target.value)}
                                         />
@@ -535,7 +535,7 @@ export default function AccountPage() {
                                             <button
                                                 onClick={() => handleAnnouncementUpdate()}
                                                 disabled={uploadingAnnouncement || !videoUrl}
-                                                className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold uppercase tracking-widest py-3 rounded-sm disabled:opacity-50"
+                                                className="flex-1 bg-muted border border-border hover:bg-muted/80 text-foreground text-xs font-bold uppercase tracking-widest py-3 rounded-sm disabled:opacity-50"
                                             >
                                                 Use Link
                                             </button>

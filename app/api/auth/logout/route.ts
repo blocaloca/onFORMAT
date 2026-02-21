@@ -3,6 +3,14 @@ import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
+    return handleLogout(request);
+}
+
+export async function GET(request: Request) {
+    return handleLogout(request);
+}
+
+async function handleLogout(request: Request) {
     const cookieStore = await cookies()
 
     // 1. Create Server Client
