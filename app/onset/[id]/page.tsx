@@ -117,9 +117,9 @@ export default function OnSetMobilePage() {
                 setIsOffline(true);
                 return;
             }
-            // Safari cache busting ping
+            // Safari cache busting ping to a static asset (avoids 405 error on API route)
             try {
-                const res = await fetch('/api/projects?ping=' + new Date().getTime(), { method: 'HEAD', cache: 'no-store' });
+                const res = await fetch('/onset_logo.png?ping=' + new Date().getTime(), { method: 'HEAD', cache: 'no-store' });
                 setIsOffline(!res.ok);
             } catch (err) {
                 setIsOffline(true);
