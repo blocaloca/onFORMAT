@@ -78,6 +78,8 @@ export default function OnSetMobilePage() {
     const [userRole, setUserRole] = useState<string>('');
     const [showLogin, setShowLogin] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const [isOffline, setIsOffline] = useState(false);
+    const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
 
     const activeTabRef = useRef(activeTab);
     useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
@@ -109,8 +111,17 @@ export default function OnSetMobilePage() {
                 }
             });
 
+        // Offline Network Listeners
+        const handleOnline = () => setIsOffline(false);
+        const handleOffline = () => setIsOffline(true);
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        setIsOffline(!window.navigator.onLine);
+
         return () => {
             supabase.removeChannel(channel);
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
         };
     }, [id]);
 
@@ -192,7 +203,9 @@ export default function OnSetMobilePage() {
                 .eq('id', id)
                 .single();
 
-            if (error || !projectData) throw new Error("Project not found");
+            if (error || !projectData) {
+                throw new Error("Project not found or network offline");
+            }
 
             // 2. Fetch Role if email exists
             let role = 'Crew';
@@ -233,10 +246,18 @@ export default function OnSetMobilePage() {
                 allDrafts['locations'] = allDrafts['locations-sets'];
             }
 
-            setData({
+            const computedData = {
                 project: projectData,
                 docs: allDrafts
-            });
+            };
+
+            setData(computedData);
+
+            // CACHE FOR OFFLINE SAFETY NET
+            localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(computedData));
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            setLastSyncTime(nowTime);
+            localStorage.setItem(`onset_cache_time_${id}`, nowTime);
 
             // Determine Tabs: Support new 'toolGroups' or legacy 'selectedTools'
             const mobileControl = allDrafts['onset-mobile-control'];
@@ -303,9 +324,29 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
-        } catch (e) {
-            console.error(e);
-        } finally {
+            setLoading(false);
+        } catch (err) {
+            console.error("Fetch Data Error (Potentially Offline):", err);
+
+            // ATTEMPT TO LOAD FROM CACHE IF FETCH FAILS (OFFLINE RESCUE)
+            const cachedDataStr = localStorage.getItem(`onset_cache_data_${id}`);
+            const cachedTime = localStorage.getItem(`onset_cache_time_${id}`);
+
+            if (cachedDataStr) {
+                console.log("Loading OnSET from Offline Cache Safety Net");
+                const parsedCachedData = JSON.parse(cachedDataStr);
+                setData(parsedCachedData);
+                setLastSyncTime(cachedTime || 'Unknown');
+                setIsOffline(true);
+
+                // Keep UI functional assuming last known state
+                const mobileControl = parsedCachedData.docs['onset-mobile-control'];
+                if (mobileControl && mobileControl.isLive) {
+                    const fallbackTab = mobileControl.selectedTools ? mobileControl.selectedTools[0] : (Object.keys(mobileControl.toolGroups || {})[0] || '');
+                    if (fallbackTab && !activeTabRef.current) setActiveTab(fallbackTab);
+                }
+            }
+
             setLoading(false);
         }
     };
@@ -722,12 +763,15 @@ export default function OnSetMobilePage() {
                             <div className="flex items-center gap-2 mt-0.5">
                                 <div className="flex items-center gap-1.5">
                                     <span
-                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive ? 'animate-pulse' : ''}`}
-                                        style={{ backgroundColor: !data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a') }}
+                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive && !isOffline ? 'animate-pulse' : ''}`}
+                                        style={{ backgroundColor: isOffline ? '#F59E0B' : (!data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a')) }}
                                     ></span>
-                                    <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-600">
-                                        LIVE
+                                    <span className={`text-[9px] font-mono uppercase leading-none font-bold ${isOffline ? 'text-[#F59E0B]' : 'text-zinc-600'}`}>
+                                        {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive ? 'LIVE' : 'STANDBY')}
                                     </span>
+                                    {isOffline && lastSyncTime && (
+                                        <span className="text-[9px] font-mono text-zinc-400 ml-1 leading-none">{lastSyncTime}</span>
+                                    )}
                                 </div>
 
                                 {/* Unit Badges Injection */}
