@@ -343,18 +343,18 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
     return (
         <div className="space-y-6">
             {/* Vitals */}
-            <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-6 text-center">
+            <div className="bg-zinc-50 border border-zinc-200/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
                 <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">General Call Time</p>
-                <h2 className="text-5xl font-black text-zinc-950 tracking-tighter mb-4">{data.crewCall || scheduleData?.callTime || "TBD"}</h2>
+                <h2 className="text-5xl font-black text-zinc-400 tracking-tighter mb-4">{data.crewCall || scheduleData?.callTime || "TBD"}</h2>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-zinc-800 pt-4 text-left">
+                <div className="grid grid-cols-2 gap-4 border-t border-zinc-200 pt-4 text-left">
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Basecamp / Location</p>
-                        <p className="text-xs font-bold text-zinc-200 whitespace-pre-wrap">{data.basecamp || "TBD"}</p>
+                        <p className="text-xs font-bold text-zinc-600 whitespace-pre-wrap">{data.basecamp || "TBD"}</p>
                     </div>
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Weather</p>
-                        <p className="text-xs font-bold text-zinc-200">{data.weather || "Unknown"}</p>
+                        <p className="text-xs font-bold text-zinc-600">{data.weather || "Unknown"}</p>
                     </div>
                 </div>
             </div>
