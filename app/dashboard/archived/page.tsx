@@ -193,7 +193,7 @@ export default function DashboardPage() {
         const { data, error } = await supabase
             .from('projects')
             .select('*')
-            .eq('status', 'ACTIVE')
+            .eq('status', 'ARCHIVED')
             .order('updated_at', { ascending: false });
 
         if (error) {
@@ -597,19 +597,27 @@ export default function DashboardPage() {
                                                     <div>
                                                         <div className="flex justify-between items-center mb-1">
                                                             <h3 className={`font-sans font-black text-2xl tracking-tight leading-none truncate ${textPrimary} ${textPrimaryHover} transition-colors`}>{p.name}</h3>
-                                                            <div className="flex items-center gap-2">
+                                                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                                                 <button
-                                                                    onClick={async (e) => {
-                                                                        e.stopPropagation();
-                                                                        if (confirm('Archive this project?')) {
-                                                                            await fetch('/api/projects/archive', { method: 'POST', body: JSON.stringify({ id: p.id }) });
-                                                                            fetchProjects();
-                                                                        }
-                                                                    }}
-                                                                    title="Archive"
-                                                                    className={`p-2 rounded-sm bg-black/5 hover:bg-black/10 transition-colors ${textSecondary}`}
+                                                                    onClick={(e) => { e.stopPropagation(); setProjectToMove(p); }}
+                                                                    className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
+                                                                    title="Move to Folder"
                                                                 >
-                                                                    <Archive size={14} />
+                                                                    <FolderInput size={16} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={(e) => handleDuplicate(e, p)}
+                                                                    className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
+                                                                    title="Duplicate"
+                                                                >
+                                                                    <Copy size={16} />
+                                                                </button>
+                                                                <button
+                                                                    onClick={(e) => deleteProject(e, p.id, p.name)}
+                                                                    className={`p-2 ${textSecondary} hover:text-red-500 ${hoverBg} rounded-full transition-colors`}
+                                                                    title="Delete"
+                                                                >
+                                                                    <Trash2 size={16} />
                                                                 </button>
                                                             </div>
                                                         </div>

@@ -267,6 +267,13 @@ export const ExperimentalDashboardNav = ({
                     </button>
                 </div>
 
+                <div className="px-2 mt-8 space-y-1">
+                    <NavItem icon={Archive} href="/dashboard/archived">
+                        Archived
+                    </NavItem>
+                </div>
+
+
 
             </div>
 
