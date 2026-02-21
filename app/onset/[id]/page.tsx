@@ -111,17 +111,35 @@ export default function OnSetMobilePage() {
                 }
             });
 
-        // Offline Network Listeners
-        const handleOnline = () => setIsOffline(false);
+        // Offline Network Listeners (Enhanced Polling)
+        const checkConnectivity = async () => {
+            if (!navigator.onLine) {
+                setIsOffline(true);
+                return;
+            }
+            // Safari cache busting ping
+            try {
+                const res = await fetch('/api/projects?ping=' + new Date().getTime(), { method: 'HEAD', cache: 'no-store' });
+                setIsOffline(!res.ok);
+            } catch (err) {
+                setIsOffline(true);
+            }
+        };
+
+        const handleOnline = () => { setIsOffline(false); checkConnectivity(); };
         const handleOffline = () => setIsOffline(true);
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
-        setIsOffline(!window.navigator.onLine);
+
+        // Setup a 5-second polling interval to forcefully override the green LED if data drops
+        const offlineInterval = setInterval(checkConnectivity, 5000);
+        checkConnectivity();
 
         return () => {
             supabase.removeChannel(channel);
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
+            clearInterval(offlineInterval);
         };
     }, [id]);
 
@@ -196,12 +214,16 @@ export default function OnSetMobilePage() {
                 setUserEmail(emailToUse);
             }
 
-            // 1. Fetch Project
-            const { data: projectData, error } = await supabase
+            // 1. Fetch Project with Timeout
+            const fetchProjectPromise = supabase
                 .from('projects')
                 .select('*')
                 .eq('id', id)
                 .single();
+
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 4000));
+
+            const { data: projectData, error } = await Promise.race([fetchProjectPromise, timeoutPromise]) as any;
 
             if (error || !projectData) {
                 throw new Error("Project not found or network offline");
@@ -248,7 +270,8 @@ export default function OnSetMobilePage() {
 
             const computedData = {
                 project: projectData,
-                docs: allDrafts
+                docs: allDrafts,
+                _role: role // Save role silently for offline recovery
             };
 
             setData(computedData);
@@ -336,6 +359,7 @@ export default function OnSetMobilePage() {
                 console.log("Loading OnSET from Offline Cache Safety Net");
                 const parsedCachedData = JSON.parse(cachedDataStr);
                 setData(parsedCachedData);
+                if (parsedCachedData._role) setUserRole(parsedCachedData._role);
                 setLastSyncTime(cachedTime || 'Unknown');
                 setIsOffline(true);
 
@@ -753,10 +777,10 @@ export default function OnSetMobilePage() {
                 {/* HEADER */}
                 <header className="bg-zinc-100/90 backdrop-blur-md border-b border-zinc-200/80 pt-safe transition-all w-full relative">
                     <div className="h-16 md:h-18 flex items-center justify-between px-6">
-                        <Link href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2 shrink-0">
+                        <a href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2 shrink-0">
                             <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
                             <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
-                        </Link>
+                        </a>
                         <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
                         <div className="flex flex-col flex-1 min-w-0">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 leading-none mb-0.5 truncate">{data.project.name}</span>
