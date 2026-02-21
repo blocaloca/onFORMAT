@@ -87,12 +87,15 @@
       /* Force text-sm */
     }
 
-    button,
+    button {
+      font-size: 0.875rem;
+    }
+
     input,
     select,
     textarea {
-      font-size: 0.875rem;
-      /* Ensure inputs don't zoom */
+      font-size: 16px !important;
+      /* Absolute iOS Safari Safeguard - Must be 16px+ to prevent auto-zoom */
     }
   }
 }

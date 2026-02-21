@@ -8,7 +8,7 @@ export default function OnSetMobileLayout({
 }) {
     // Enforce Dark Mode for OnSET Mobile ("Field Monitor" aesthetic)
     return (
-        <div className="dark h-[100dvh] w-full max-w-[100vw] overflow-hidden overflow-x-hidden bg-zinc-950 text-white selection:bg-emerald-500/30 font-sans antialiased flex flex-col">
+        <div className="fixed inset-0 w-full bg-zinc-200 overflow-hidden flex flex-col font-sans antialiased text-black">
             {/* Chassis Container with Inner Shadow */}
             <div className="absolute inset-0 w-full h-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] pointer-events-none z-50" />
 

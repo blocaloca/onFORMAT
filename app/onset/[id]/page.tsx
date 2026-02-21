@@ -878,8 +878,11 @@ export default function OnSetMobilePage() {
             }
 
             {/* MAIN CONTENT SCROLLER */}
-            <main className="flex-1 w-full min-h-0 overflow-y-auto no-scrollbar relative bg-black z-10 touch-pan-y">
-                <div className="w-full max-w-lg mx-auto px-4 py-8">
+            <main
+                className="flex-1 overflow-y-auto w-full max-w-[400px] mx-auto px-4 pb-[env(safe-area-inset-bottom)] relative z-10 no-scrollbar"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+            >
+                <div className="w-full mx-auto py-8">
                     {activeTab === '' ? (
                         <MobileLanding
                             projectName={data.project?.name}
