@@ -220,16 +220,16 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
 
 
     return (
-        <div className="fixed inset-0 bg-zinc-950 z-50 flex flex-col animate-in fade-in duration-200 overflow-hidden text-zinc-200">
+        <div className="fixed inset-0 bg-zinc-50 z-50 flex flex-col animate-in fade-in duration-200 overflow-hidden text-zinc-950">
 
             {/* TOP BAR */}
-            <header className="h-14 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-6 shrink-0 z-20">
+            <header className="h-14 border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0 z-20">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800 text-emerald-500">
+                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 text-emerald-500">
                         <Printer size={16} />
                     </div>
                     <div>
-                        <h1 className="text-sm font-bold text-white uppercase tracking-widest leading-none mb-0.5">Print Room</h1>
+                        <h1 className="text-sm font-bold text-zinc-950 uppercase tracking-widest leading-none mb-0.5">Print Room</h1>
                         <p className="text-[10px] text-zinc-500 font-mono">Unified Document Manager</p>
                     </div>
                 </div>
@@ -266,27 +266,27 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     <button
                         onClick={handleExport}
                         disabled={isExporting}
-                        className="bg-[#3B82F6] hover:bg-blue-500 text-white px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg shadow-blue-900/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm border-t border-white/20 active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isExporting ? <div className="w-3 h-3 animate-spin border-2 border-white/30 border-t-white rounded-full" /> : <Printer size={14} />}
                         <span>Export PDF</span>
                     </button>
-                    <button onClick={onClose} className="p-2 rounded hover:bg-zinc-900 text-zinc-500 hover:text-white transition-colors">
+                    <button onClick={onClose} className="p-2 rounded hover:bg-zinc-100 text-zinc-500 hover:text-zinc-950 transition-colors">
                         <X size={18} />
                     </button>
                 </div>
             </header>
 
             {/* SPLIT PANE CONSOLE LAYOUT */}
-            <div className="flex-1 relative w-full bg-zinc-950 overflow-hidden isolate">
+            <div className="flex-1 relative w-full bg-zinc-50 overflow-hidden isolate">
 
                 {/* --- LEFT RAIL: FIXED CONTROLS (z-index 50) --- */}
-                <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-zinc-950 border-r border-zinc-900 z-50 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-900 [&::-webkit-scrollbar-thumb]:bg-zinc-700 py-6 px-4 space-y-8 shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+                <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-zinc-50 border-r border-zinc-200 z-50 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-100 [&::-webkit-scrollbar-thumb]:bg-zinc-300 py-6 px-4 space-y-8 shadow-[10px_0_30px_rgba(0,0,0,0.05)] text-zinc-950">
 
                     {/* 1. COVER PAGE CONTROLS */}
-                    <section className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4">
+                    <section className="bg-zinc-100/50 border border-zinc-200 rounded-xl p-4">
                         <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xs font-black uppercase text-white tracking-widest flex items-center gap-2">
+                            <h2 className="text-xs font-black uppercase text-zinc-950 tracking-widest flex items-center gap-2">
                                 <Layers size={14} className="text-emerald-500" />
                                 Cover Page
                             </h2>
@@ -305,7 +305,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                     <input
                                         value={coverSettings.title}
                                         onChange={(e) => setCoverSettings(s => ({ ...s, title: e.target.value }))}
-                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs font-bold text-white focus:border-[#3B82F6] focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all uppercase tracking-wide"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded px-3 py-2 text-xs font-bold text-black focus:border-[#3B82F6] focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all uppercase tracking-wide"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -313,7 +313,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                     <input
                                         value={coverSettings.subtitle}
                                         onChange={(e) => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
-                                        className="w-full bg-black border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-300 focus:border-[#3B82F6] focus:outline-none transition-all placeholder:text-zinc-700"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded px-3 py-2 text-xs text-black focus:border-[#3B82F6] focus:outline-none transition-all placeholder:text-zinc-400"
                                         placeholder="Client Name / Agency"
                                     />
                                 </div>
@@ -322,7 +322,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                     <input
                                         value={producer || activeProject?.owner_name || ''}
                                         readOnly
-                                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded px-3 py-2 text-xs text-zinc-500 focus:outline-none font-mono cursor-not-allowed"
+                                        className="w-full bg-zinc-200 border border-zinc-300 rounded px-3 py-2 text-xs text-zinc-500 focus:outline-none font-mono cursor-not-allowed shadow-inner"
                                     />
                                 </div>
                             </div>
@@ -345,18 +345,18 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                         return (
                                             <div
                                                 key={toolId}
-                                                className="group flex items-center justify-between p-3 rounded-md hover:bg-zinc-900/50 border border-transparent hover:border-zinc-800 transition-all cursor-pointer"
+                                                className="group flex items-center justify-between p-3 rounded-md hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all cursor-pointer"
                                                 onClick={() => toggleSelection(toolId)}
                                             >
                                                 {/* Left: Checkbox & Name */}
                                                 <div className="flex items-center gap-4">
                                                     <div
-                                                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-[#3B82F6] border-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'border-zinc-700 bg-transparent text-transparent group-hover:border-zinc-500'}`}
+                                                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-[#3B82F6] border-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'border-zinc-300 bg-white text-transparent group-hover:border-zinc-400 shadow-inner'}`}
                                                     >
                                                         <Check size={12} strokeWidth={4} className={`transform transition-transform ${isSelected ? 'scale-100' : 'scale-50 opacity-0'}`} />
                                                     </div>
 
-                                                    <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-white' : 'text-zinc-400 group-hover:text-zinc-300'}`}>
+                                                    <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-zinc-950' : 'text-zinc-500 group-hover:text-zinc-600'}`}>
                                                         {doc.label}
                                                     </span>
                                                 </div>
@@ -370,25 +370,25 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 </aside>
 
                 {/* --- RIGHT PANE: OUTPUT PREVIEW (z-index 10) --- */}
-                <main className="absolute left-[280px] right-0 top-0 bottom-0 bg-zinc-950 z-10 flex flex-col pt-0">
+                <main className="absolute left-[280px] right-0 top-0 bottom-0 bg-zinc-100 z-10 flex flex-col pt-0">
 
                     {/* Preview Toolbar */}
-                    <div className="h-12 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between px-4 shrink-0">
-                        <h2 className="text-[10px] font-black uppercase text-zinc-400 tracking-widest flex items-center gap-2">
-                            <Eye size={12} className="text-zinc-600" />
+                    <div className="h-12 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between px-4 shrink-0">
+                        <h2 className="text-[10px] font-black uppercase text-zinc-600 tracking-widest flex items-center gap-2">
+                            <Eye size={12} className="text-zinc-400" />
                             Output Preview
                         </h2>
-                        <div className="flex bg-zinc-900 p-0.5 rounded-md border border-zinc-800">
+                        <div className="flex bg-zinc-100 p-0.5 rounded-md border border-zinc-200">
                             <button
                                 onClick={() => setMasterOrientation('portrait')}
-                                className={`p-1.5 rounded transition-all ${masterOrientation === 'portrait' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                                className={`p-1.5 rounded transition-all ${masterOrientation === 'portrait' ? 'bg-white text-zinc-950 shadow-sm border border-zinc-200' : 'text-zinc-400 hover:text-zinc-600'}`}
                                 title="Portrait"
                             >
                                 <RectangleVertical size={12} />
                             </button>
                             <button
                                 onClick={() => setMasterOrientation('landscape')}
-                                className={`p-1.5 rounded transition-all ${masterOrientation === 'landscape' ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-600 hover:text-zinc-400'}`}
+                                className={`p-1.5 rounded transition-all ${masterOrientation === 'landscape' ? 'bg-white text-zinc-950 shadow-sm border border-zinc-200' : 'text-zinc-400 hover:text-zinc-600'}`}
                                 title="Landscape"
                             >
                                 <RectangleHorizontal size={12} />
@@ -397,7 +397,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     </div>
 
                     {/* Scrollable Preview Area */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-900/50 flex flex-col items-center pt-8 pb-20 px-8">
+                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-200/80 flex flex-col items-center pt-8 pb-20 px-8 opacity-[0.98]">
                         <div className="flex flex-col items-center gap-8 w-full max-w-5xl">
                             {/* Render the actual content but scaled */}
                             <PrintPreview

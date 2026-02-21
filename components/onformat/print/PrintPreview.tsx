@@ -43,7 +43,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                 return (
                     <div
                         id="print-node-COVER"
-                        className="bg-white shadow-2xl relative shrink-0 mb-8 overflow-hidden"
+                        className="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] ring-1 ring-zinc-200/50 relative shrink-0 mb-8 overflow-hidden"
                         style={{ width: scaledW, height: scaledH }}
                     >
                         <div
@@ -109,7 +109,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                     return (
                         <div key={uniqueKey} className="flex flex-col items-center w-full mb-8">
                             <div
-                                className="bg-white shadow-xl relative overflow-hidden shrink-0"
+                                className="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] ring-1 ring-zinc-200/50 relative overflow-hidden shrink-0"
                                 style={{ width: scaledW, height: scaledH }}
                             >
                                 <div
