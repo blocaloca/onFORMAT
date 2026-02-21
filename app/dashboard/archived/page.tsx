@@ -13,6 +13,7 @@ import { GlobalGridContainer } from '@/components/dashboard/production-grid/Glob
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
 import { hasAccess } from '@/lib/permissions';
+import { useTrialStatus } from '@/lib/useTrialStatus';
 // import { useTheme } from '@/components/ThemeProvider';
 
 import { DEMO_PROJECT_DATA } from '@/lib/demoProject';
@@ -54,6 +55,8 @@ export default function DashboardPage() {
     const [activeFolder, setActiveFolder] = useState<string | null>(null);
     const [folderActionTarget, setFolderActionTarget] = useState<Folder | null>(null);
     const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+
+    const { isLocked } = useTrialStatus();
 
     const [projectToMove, setProjectToMove] = useState<Project | null>(null);
     const [projectToDuplicate, setProjectToDuplicate] = useState<Project | null>(null);
@@ -405,7 +408,8 @@ export default function DashboardPage() {
                 onFolderAction={(f) => setFolderActionTarget(f)}
                 userEmail={user || undefined}
                 darkMode={true}
-                onNewProject={() => setIsDialogOpen(true)}
+                onNewProject={isLocked ? undefined : () => setIsDialogOpen(true)}
+                isLocked={isLocked}
                 projects={projects}
             />
 

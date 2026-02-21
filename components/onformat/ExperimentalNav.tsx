@@ -189,6 +189,7 @@ interface DashboardSidebarProps {
     heading?: string;
     isAiDocked?: boolean;
     projects?: any[];
+    isLocked?: boolean;
 }
 
 export const ExperimentalDashboardNav = ({
@@ -200,7 +201,8 @@ export const ExperimentalDashboardNav = ({
     userEmail,
     onNewProject,
     AiComponent,
-    projects = []
+    projects = [],
+    isLocked = false
 }: DashboardSidebarProps) => {
 
     const allProjectsCount = projects.length;
@@ -221,18 +223,20 @@ export const ExperimentalDashboardNav = ({
                 <div className="px-4 mb-2">
                     <button
                         onClick={onNewProject}
+                        disabled={isLocked}
                         className={`
                             group relative w-full flex items-center justify-center gap-2 px-3 py-2.5 
                             text-xs font-bold uppercase tracking-widest rounded-sm transition-all duration-300
-                            bg-[#3B82F6] border border-blue-400 shadow-md text-white
-                            hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]
-                            active:scale-[0.98]
+                            ${isLocked
+                                ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed border-zinc-400'
+                                : 'bg-[#3B82F6] border border-blue-400 shadow-md text-white hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] active:scale-[0.98]'
+                            }
                         `}
                     >
                         {/* Top Highlights */}
-                        <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-100" />
+                        {!isLocked && <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-100" />}
 
-                        <Plus size={14} className="group-hover:rotate-90 transition-transform duration-300" />
+                        <Plus size={14} className={!isLocked ? 'group-hover:rotate-90 transition-transform duration-300' : ''} />
                         New Project
                     </button>
                 </div>

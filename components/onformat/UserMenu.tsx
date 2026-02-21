@@ -3,6 +3,7 @@ import { User, LogOut, ChevronUp, MessageSquare } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FeedbackDialog } from '@/components/dashboard/FeedbackDialog';
 import { isFounder } from '@/lib/permissions';
+import { useTrialStatus } from '@/lib/useTrialStatus';
 
 import { getClient } from '@/lib/supabase';
 
@@ -12,6 +13,7 @@ export const UserMenu = ({ email }: { email?: string }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const { isLocked, daysLeft } = useTrialStatus();
 
     useEffect(() => {
         const fetchAvatar = async () => {
@@ -120,7 +122,13 @@ export const UserMenu = ({ email }: { email?: string }) => {
                             <p className="text-xs font-bold text-zinc-700 truncate tracking-wide">Account</p>
                             {isFounder(email) && <span className="bg-zinc-800 text-white px-1 py-0.5 text-[8px] rounded uppercase font-mono tracking-widest leading-none translate-y-px">Founder</span>}
                         </div>
-                        <p className="text-[10px] text-zinc-500 truncate">{email || 'user@example.com'}</p>
+                        <p className="text-[10px] text-zinc-500 truncate mb-1">{email || 'user@example.com'}</p>
+
+                        {!isFounder(email) && (
+                            <p className={`font-mono text-[10px] tracking-widest uppercase truncate ${daysLeft <= 3 || isLocked ? 'text-amber-500 font-bold' : 'text-zinc-500'}`}>
+                                {isLocked ? 'TRIAL EXPIRED' : `TRIAL: ${daysLeft} DAYS LEFT`}
+                            </p>
+                        )}
                     </div>
                     <ChevronUp size={14} className={`text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>

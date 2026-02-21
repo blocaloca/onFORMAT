@@ -10,6 +10,8 @@ import { ProjectOverview } from '@/components/onformat/ProjectOverview'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { PrintDashboard } from '@/components/onformat/print/PrintDashboard'
 import { getClient } from '@/lib/supabase'
+import { useTrialStatus } from '@/lib/useTrialStatus'
+import { useRouter } from 'next/navigation'
 
 type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
 
@@ -1562,7 +1564,10 @@ Context:\n"${fullContext}"`;
 
     // Default to OPEN (false) for new projects
     // Default to OPEN (false)
-    const [isAiDocked, setIsAiDocked] = useState(false);
+    const [isAiDocked, setIsAiDocked] = useState(true)
+
+    const { isLocked: trialLocked } = useTrialStatus()
+    const router = useRouter();
     const [hasLoadedState, setHasLoadedState] = useState(false);
 
     // 1. Load State on Mount
@@ -1638,6 +1643,20 @@ Context:\n"${fullContext}"`;
         <div className="h-screen bg-white flex flex-col font-sans text-foreground transition-colors duration-300">
 
             <main className="flex-1 flex overflow-hidden relative bg-zinc-50 transition-colors duration-300">
+                {trialLocked && (
+                    <div className="absolute inset-0 z-50 bg-zinc-100/70 backdrop-blur-sm flex items-center justify-center">
+                        <div className="bg-zinc-50 border border-zinc-200 shadow-xl rounded-xl p-8 max-w-md text-center">
+                            <h2 className="font-sans font-bold text-2xl mb-2 text-zinc-800 tracking-tight">TRIAL CONCLUDED</h2>
+                            <p className="text-zinc-600 text-sm mb-6">Upgrade your workspace to unlock the production console.</p>
+                            <button
+                                onClick={() => router.push('/pricing')}
+                                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition-colors text-xs uppercase tracking-widest shadow-md"
+                            >
+                                VIEW PLANS
+                            </button>
+                        </div>
+                    </div>
+                )}
                 {/* Standby Banner Removed */}
 
                 <ExperimentalWorkspaceNav
@@ -1823,7 +1842,7 @@ Context:\n"${fullContext}"`;
                         <DraftEditor
                             draft={currentDraft}
                             onDraftChange={saveDraftForActiveTool}
-                            isLocked={isToolLocked}
+                            isLocked={isToolLocked || trialLocked}
                             activeToolLabel={activeToolLabel}
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             activeToolKey={state.activeTool as any}
