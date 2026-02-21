@@ -698,34 +698,34 @@ export default function OnSetMobilePage() {
 
     if (!data.project) {
         return (
-            <div className="h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
+            <div className="h-screen bg-zinc-200 text-black flex flex-col items-center justify-center gap-4">
                 <p className="text-sm font-bold uppercase text-red-500">Project Not Found</p>
             </div>
         );
     }
 
     return (
-        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-black text-white font-sans overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-800 shadow-2xl relative shadow-[inset_0_0_20px_rgba(0,0,0,1)] z-10">
+        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 shadow-2xl relative z-10">
 
             {/* TOP ROW: Header & Alerts */}
             <div className="flex flex-col z-50 shrink-0">
                 {/* HEADER */}
-                <header className="bg-zinc-900/80 backdrop-blur-md border-b border-zinc-800 pt-safe transition-all w-full relative">
+                <header className="bg-zinc-100/90 backdrop-blur-md border-b border-zinc-200/80 pt-safe transition-all w-full relative">
                     <div className="h-16 md:h-18 flex items-center justify-between px-6">
                         <Link href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2 shrink-0">
                             <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
                             <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
                         </Link>
-                        <div className="h-4 w-[1px] bg-zinc-700 mx-3 shrink-0"></div>
+                        <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
                         <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-white leading-none mb-0.5 truncate">{data.project.name}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 leading-none mb-0.5 truncate">{data.project.name}</span>
                             <div className="flex items-center gap-2 mt-0.5">
                                 <div className="flex items-center gap-1.5">
                                     <span
                                         className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive ? 'animate-pulse' : ''}`}
                                         style={{ backgroundColor: !data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a') }}
                                     ></span>
-                                    <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-400">
+                                    <span className="text-[9px] font-mono uppercase leading-none font-bold text-zinc-600">
                                         LIVE
                                     </span>
                                 </div>
@@ -740,9 +740,9 @@ export default function OnSetMobilePage() {
 
                                     return (
                                         <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
-                                            {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-red-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(220,38,38,0.5)]">A</span>}
-                                            {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-blue-600 text-white rounded-[1px] shadow-[0_0_5px_rgba(37,99,235,0.5)]">B</span>}
-                                            {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-amber-500 text-white rounded-[1px] shadow-[0_0_5px_rgba(245,158,11,0.5)]">C</span>}
+                                            {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#22C55E] text-white rounded-[1px]">A</span>}
+                                            {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#3B82F6] text-white rounded-[1px]">B</span>}
+                                            {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EAB308] text-white rounded-[1px]">C</span>}
                                         </div>
                                     );
                                 })()}
@@ -752,7 +752,7 @@ export default function OnSetMobilePage() {
                             <BetaFeedbackTrigger variant="icon" />
                             <button
                                 onClick={() => setShowMenu(true)}
-                                className="w-10 h-10 rounded-full bg-zinc-800/50 flex items-center justify-center text-zinc-400 md:hover:text-white transition-colors border border-transparent md:hover:border-zinc-700 shrink-0">
+                                className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0">
                                 <Menu size={18} />
                             </button>
                         </div>
@@ -763,18 +763,18 @@ export default function OnSetMobilePage() {
                 {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
                     <button
                         onClick={() => setActiveTab('dit-log')}
-                        className="w-full bg-emerald-500 text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative"
+                        className="w-full bg-[#EAB308] text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative shadow-sm"
                     >
                         <div className="flex items-center gap-3">
                             <div className="bg-black/10 p-1.5 rounded-full">
                                 <HardDrive size={16} />
                             </div>
                             <div className="text-left">
-                                <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5">Media Alert</p>
-                                <p className="text-xs font-bold leading-none">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                                <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 text-black">Media Alert</p>
+                                <p className="text-xs font-bold leading-none text-black">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
                             </div>
                         </div>
-                        <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                        <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide text-black border border-black/20">
                             View
                         </div>
                     </button>
@@ -790,21 +790,21 @@ export default function OnSetMobilePage() {
                         />
 
                         {/* Drawer */}
-                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-900 border-l border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
+                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-zinc-200 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
-                                <button onClick={() => setShowMenu(false)} className="bg-black/50 p-2 rounded-full text-zinc-400">
+                                <button onClick={() => setShowMenu(false)} className="bg-zinc-200/50 hover:bg-zinc-200 p-2 rounded-full text-zinc-600 transition-colors">
                                     <Menu size={14} />
                                 </button>
                             </div>
 
                             <div className="space-y-6 flex-1">
                                 {/* Identity Card */}
-                                <div className="bg-black/50 p-4 rounded-xl border border-zinc-800">
+                                <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-zinc-200">
                                     <div className="flex items-center gap-3 mb-2">
                                         <UserCircle size={20} className="text-emerald-500" />
                                         <div>
-                                            <p className="text-xs font-bold text-white">{userRole || 'Crew Member'}</p>
+                                            <p className="text-xs font-bold text-zinc-900">{userRole || 'Crew Member'}</p>
                                             <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
                                         </div>
                                     </div>
@@ -812,20 +812,20 @@ export default function OnSetMobilePage() {
 
                                 {/* Status */}
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
                                         <span className="flex items-center gap-2"><Wifi size={12} /> Connection</span>
-                                        <span className="text-emerald-500">Stable</span>
+                                        <span className="text-emerald-600">Stable</span>
                                     </div>
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
                                         <span>Sync Status</span>
-                                        <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-500" : "text-amber-500"}>
+                                        <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-600" : "text-amber-600"}>
                                             {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
                                         </span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="border-t border-zinc-800 pt-6">
+                            <div className="border-t border-zinc-200 pt-6">
                                 <button
                                     onClick={async () => {
                                         // Explicit Presence Cleanup for Mobile
@@ -857,8 +857,8 @@ export default function OnSetMobilePage() {
                 }
 
                 {/* CONFIDENTIAL BANNER */}
-                <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-800">
-                    <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-600">Confidential Materials • {new Date().getFullYear()}</p>
+                <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-200 shadow-sm relative z-40 bg-zinc-100/50">
+                    <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
                 </div>
             </div>
 
@@ -940,7 +940,7 @@ export default function OnSetMobilePage() {
             </main>
 
             {/* BOTTOM NAV ROWS */}
-            <nav className="shrink-0 w-full min-w-0 bg-zinc-950/90 backdrop-blur-md border-t border-zinc-900 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+            <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                 <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                     {(() => {
                         const mobileControl = data.docs['onset-mobile-control'];
@@ -988,11 +988,10 @@ export default function OnSetMobilePage() {
                                 key={key}
                                 onClick={() => setActiveTab(key)}
                                 className={`
-                                flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all
-                                border-t border-white/20 border-x border-b border-black/50 shadow-sm
+                                flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200
                                 ${activeTab === key
-                                        ? 'bg-[#3B82F6] text-white shadow-[0_0_15px_rgba(59,130,246,0.4)] border-t-white/40' // Active State: Blue
-                                        : 'bg-zinc-900 text-zinc-500 md:hover:text-zinc-300 bg-gradient-to-b from-white/5 to-transparent' // Inactive: Hardware Keycap
+                                        ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
+                                        : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive
                                     }
                             `}
                             >
