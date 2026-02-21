@@ -39,7 +39,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden selection:bg-green-500 selection:text-black relative">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans overflow-x-hidden selection:bg-green-500 selection:text-black relative">
 
       {/* 1. Header (Fixed) */}
       <nav className="fixed top-0 w-full z-50 px-8 py-4 flex items-center justify-between mix-blend-difference pointer-events-none">
@@ -71,28 +71,11 @@ export default function LandingPage() {
       {/* 2. Hero Section (Full Screen) */}
       <section className="relative h-screen flex flex-col justify-center px-8 md:px-20 pt-20">
 
-        {/* ANIMATION LAYER (Absolute Background of Hero) */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0 flex items-center justify-start overflow-hidden opacity-100">
-          <video
-            ref={videoRef}
-            src="/hero-animation.mp4"
-            loop
-            muted
-            playsInline
-            className="w-[120%] h-auto md:w-[70%] md:h-auto object-cover opacity-80 mix-blend-screen -ml-20"
-          />
-        </div>
-
-        {/* INTERACTION HOTSPOT */}
-        <div
-          className="absolute top-1/2 left-0 md:left-[10%] -translate-y-1/2 w-[500px] h-[500px] z-20 cursor-default"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        />
-
         {/* HERO CONTENT */}
         <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-12 items-center pointer-events-none">
-          <div className="hidden md:block md:col-span-5"></div>
+          <div className="hidden md:block md:col-span-5 pointer-events-auto">
+            <div className="bg-zinc-100 border border-zinc-300 shadow-2xl rounded-xl aspect-video flex items-center justify-center text-zinc-400 font-mono text-sm">LIGHT MODE UI RENDER HERE</div>
+          </div>
           <div className="md:col-span-7 flex flex-col items-start pointer-events-auto">
 
             <h1 className="text-5xl md:text-7xl font-light mb-8 tracking-widest leading-none uppercase">
@@ -105,35 +88,8 @@ export default function LandingPage() {
               A production-first ai-enabled workflow for the modern creative content producer.
             </p>
 
-            <Link href="/dashboard" className="group relative inline-block w-[115px] h-[140px]">
-              {/* Button SVG */}
-              <svg className="absolute inset-0 w-full h-full shadow-lg group-hover:-translate-y-2 transition-transform duration-300 drop-shadow-xl" viewBox="0 0 144 176" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="btnGradient" x1="72" y1="0" x2="72" y2="176" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#FF6B00" />
-                    <stop offset="1" stopColor="#6BCB44" />
-                  </linearGradient>
-                </defs>
-                <path
-                  d="M0 12C0 5.37258 5.37258 0 12 0H102C106.5 0 110.5 2 113.5 5L139 30.5C142 33.5 144 37.5 144 42V164C144 170.627 138.627 176 132 176H12C5.37258 176 0 170.627 0 164V12Z"
-                  fill="url(#btnGradient)"
-                />
-              </svg>
-
-              <div className="relative z-10 w-full h-full p-4 flex flex-col justify-between group-hover:-translate-y-2 transition-transform duration-300">
-                <PlusIcon />
-                <span className="text-xs font-black uppercase leading-tight text-white mb-2 tracking-widest">
-                  <span className="inline-flex">
-                    S
-                    <span className="relative w-[1ch] h-[1em] mx-px">
-                      <span className="absolute inset-0 transition-all duration-300 group-hover:opacity-0 group-hover:-translate-y-2">T</span>
-                      <span className="absolute inset-0 transition-all duration-300 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 group-hover:-translate-x-0.5 text-green-100">M</span>
-                    </span>
-                    ART
-                  </span>
-                  <br />Producing
-                </span>
-              </div>
+            <Link href="/dashboard" className="bg-blue-500 text-white rounded-md px-8 py-3 font-bold tracking-wide hover:bg-blue-600 active:scale-[0.98] transition-all pointer-events-auto">
+              START PRODUCING
             </Link>
 
           </div>
@@ -163,13 +119,8 @@ export default function LandingPage() {
       <section className="relative w-full bg-zinc-900 overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 min-h-[80vh]">
           {/* Image Side */}
-          <div className="relative h-[60vh] md:h-auto w-full">
-            <img
-              src="/onset-mobile-dit.png"
-              alt="Hand holding onSET mobile app displaying DIT Log"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent md:hidden" />
+          <div className="relative h-[60vh] md:h-auto w-full p-12 flex items-center justify-center bg-zinc-900 border-r border-white/5">
+            <div className="bg-zinc-100 border border-zinc-300 shadow-2xl rounded-xl aspect-video w-full max-w-sm flex items-center justify-center text-zinc-400 font-mono text-sm">LIGHT MODE UI RENDER HERE</div>
           </div>
 
           {/* Content Side */}
@@ -187,8 +138,40 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 4. SCROLL SECTION: EXPLAINERS / FOUNDER */}
-      <section className="py-24 px-8 md:px-20 bg-black max-w-7xl mx-auto">
+      {/* 4. PRICING SECTION SKELETON */}
+      <section className="py-24 px-8 md:px-20 bg-zinc-950 border-t border-white/5">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-light tracking-wide uppercase mb-4">Pricing</h2>
+          <p className="text-zinc-400">Simple plans for serious productions.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {/* Tier 1 */}
+          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col">
+            <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-2">Basic</h3>
+            <p className="text-zinc-400 flex-1 mb-8">For independent producers and small teams.</p>
+            <div className="text-3xl font-light mb-8">$0<span className="text-sm text-zinc-500">/mo</span></div>
+            <button className="w-full bg-white/10 text-white rounded-md px-6 py-3 font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">Select</button>
+          </div>
+          {/* Tier 2 */}
+          <div className="bg-white/10 border border-white/20 p-8 rounded-2xl flex flex-col relative scale-[1.02] shadow-2xl">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full text-white">Recommended</div>
+            <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-2">Pro</h3>
+            <p className="text-zinc-400 flex-1 mb-8">For commercial production companies.</p>
+            <div className="text-3xl font-light mb-8">$49<span className="text-sm text-zinc-500">/mo</span></div>
+            <button className="w-full bg-blue-500 text-white rounded-md px-6 py-3 font-bold uppercase tracking-widest hover:bg-blue-600 transition-colors">Select</button>
+          </div>
+          {/* Tier 3 */}
+          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col">
+            <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-2">Enterprise</h3>
+            <p className="text-zinc-400 flex-1 mb-8">For studio-level workflows and custom integrations.</p>
+            <div className="text-3xl font-light mb-8">Custom</div>
+            <button className="w-full bg-white/10 text-white rounded-md px-6 py-3 font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">Contact Us</button>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. SCROLL SECTION: EXPLAINERS / FOUNDER */}
+      <section className="py-24 px-8 md:px-20 bg-zinc-950 max-w-7xl mx-auto border-t border-white/5">
 
         {/* Explainers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-32">
@@ -223,15 +206,15 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 text-center text-zinc-800 text-xs font-mono uppercase bg-black border-t border-white/5">
+      <footer className="py-12 text-center text-zinc-800 text-xs font-mono uppercase bg-zinc-950 border-t border-white/5">
         <div className="flex flex-col gap-4">
-          <p>&copy; 2026 onFORMAT. All rights reserved.</p>
+          <p className="text-zinc-600">&copy; 2026 onFORMAT. All rights reserved.</p>
           <div className="flex justify-center gap-6">
-            <Link href="/support" className="hover:text-green-500 transition-colors">Support</Link>
-            <span className="text-zinc-900">•</span>
-            <Link href="/support" className="hover:text-green-500 transition-colors">Terms of Service</Link>
-            <span className="text-zinc-900">•</span>
-            <Link href="/support" className="hover:text-green-500 transition-colors">Privacy Policy</Link>
+            <Link href="/support" className="text-zinc-500 hover:text-zinc-300 text-xs tracking-widest uppercase transition-colors">Support</Link>
+            <span className="text-zinc-800">•</span>
+            <Link href="/support" className="text-zinc-500 hover:text-zinc-300 text-xs tracking-widest uppercase transition-colors">Terms of Service</Link>
+            <span className="text-zinc-800">•</span>
+            <Link href="/support" className="text-zinc-500 hover:text-zinc-300 text-xs tracking-widest uppercase transition-colors">Privacy Policy</Link>
           </div>
         </div>
       </footer>
