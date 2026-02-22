@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import { fetchAdminUsers, fetchFeedback, markFeedbackRead, deleteFeedback } from './actions';
+import { fetchAdminUsers, fetchFeedback } from './actions';
 import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare, ChevronLeft, Trash2 } from 'lucide-react';
 import { UserActions } from './AdminActions';
 import { isFounder } from '@/lib/permissions';
@@ -128,7 +128,9 @@ export default async function AdminPage() {
                         <div className="flex gap-4 justify-end items-center">
                           {/* MARK READ FORM */}
                           {msg.status !== 'read' && (
-                            <form action={markFeedbackRead.bind(null, msg.id)}>
+                            <form method="POST" action="/api/admin/feedback">
+                              <input type="hidden" name="action" value="read" />
+                              <input type="hidden" name="id" value={msg.id} />
                               <button type="submit" className="text-blue-500 hover:text-blue-700 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
                                 <Check size={10} /> Mark Read
                               </button>
@@ -141,7 +143,9 @@ export default async function AdminPage() {
                           )}
 
                           {/* DELETE FORM */}
-                          <form action={deleteFeedback.bind(null, msg.id)}>
+                          <form method="POST" action="/api/admin/feedback">
+                            <input type="hidden" name="action" value="delete" />
+                            <input type="hidden" name="id" value={msg.id} />
                             <button type="submit" className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Delete Report">
                               <Trash2 size={12} />
                             </button>
