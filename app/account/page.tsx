@@ -239,7 +239,10 @@ export default function AccountPage() {
 
             <div className="flex items-end justify-between mb-12 border-b border-border pb-8">
                 <div>
-                    <h1 className="text-4xl font-light mb-2 tracking-tight">Account Control</h1>
+                    <h1 className="text-4xl font-light mb-2 tracking-tight flex items-center">
+                        Account Control
+                        {profile?.is_beta_user && <span className="ml-3 px-2 py-0.5 bg-zinc-900 text-zinc-50 text-[10px] font-bold uppercase tracking-widest rounded-full">Beta User</span>}
+                    </h1>
                     <p className="text-muted-foreground font-mono text-xs uppercase tracking-widest">Global Settings & Status</p>
                 </div>
             </div>
@@ -466,6 +469,75 @@ export default function AccountPage() {
                             </div>
                         </div>
                     </div>
+
+                    {/* FREE TRIAL UPGRADE MATRIX */}
+                    {profile?.subscription_tier === 'FREE_TRIAL' && (
+                        <div className="mt-12">
+                            <div className="flex items-center gap-2 mb-6">
+                                <CreditCard size={18} className="text-zinc-400" />
+                                <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Available Membership Plans</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* SOLO */}
+                                <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col">
+                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">Solo</h3>
+                                    <div className="flex items-baseline gap-1 mb-6">
+                                        <span className="text-3xl font-black text-zinc-950">$19</span>
+                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/mo</span>
+                                    </div>
+                                    <ul className="space-y-3 mb-8 flex-1">
+                                        {['1 Active Project', 'Unlimited Archives', 'Standard Print Room Exports', 'onSET Mobile Access'].map(f => (
+                                            <li key={f} className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
+                                                <Check size={14} className="text-zinc-300" /> {f}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <button className="mt-auto w-full bg-zinc-900 text-white py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-zinc-800 transition-all active:scale-[0.98]">
+                                        UPGRADE
+                                    </button>
+                                </div>
+
+                                {/* PRO - ANCHOR */}
+                                <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 shadow-md flex flex-col ring-1 ring-blue-500 relative transform scale-[1.02] z-10">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full whitespace-nowrap">Recommended</div>
+                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-500 mb-1">Pro</h3>
+                                    <div className="flex items-baseline gap-1 mb-6">
+                                        <span className="text-3xl font-black text-zinc-950">$49</span>
+                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/mo</span>
+                                    </div>
+                                    <ul className="space-y-3 mb-8 flex-1">
+                                        {['Unlimited Active Projects', 'Custom Studio Logo Exports', 'Multi-Unit Logic (A/B/C)', 'Offline Mobile Mode', 'AI Liaison'].map(f => (
+                                            <li key={f} className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
+                                                <Check size={14} className="text-blue-500" /> {f}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <button className="mt-auto w-full bg-blue-500 text-white py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]">
+                                        UPGRADE
+                                    </button>
+                                </div>
+
+                                {/* STUDIO */}
+                                <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col">
+                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">Studio</h3>
+                                    <div className="flex items-baseline gap-1 mb-6">
+                                        <span className="text-3xl font-black text-zinc-950">$129</span>
+                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/mo</span>
+                                    </div>
+                                    <ul className="space-y-3 mb-8 flex-1">
+                                        {['Everything in PRO', '3 Producer Seats', 'Multi-Seat Collaboration', 'Global Brand Templates', 'Priority Support'].map(f => (
+                                            <li key={f} className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
+                                                <Check size={14} className="text-zinc-300" /> {f}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <button className="mt-auto w-full bg-zinc-900 text-white py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-zinc-800 transition-all active:scale-[0.98]">
+                                        UPGRADE
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* RIGHT COLUMN: Announcements Frame */}
@@ -563,7 +635,7 @@ export default function AccountPage() {
                     </div>
                 </div>
 
-            </div >
-        </div >
+            </div>
+        </div>
     );
 }
