@@ -163,7 +163,10 @@ export async function fetchFeedback() {
 }
 
 // Action: Mark Feedback as Read
-export async function markFeedbackRead(id: string) {
+export async function markFeedbackRead(formData: FormData) {
+    const id = formData.get("id") as string;
+    if (!id) throw new Error("No ID provided");
+
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -184,7 +187,10 @@ export async function markFeedbackRead(id: string) {
 }
 
 // Action: Delete Feedback
-export async function deleteFeedback(id: string) {
+export async function deleteFeedback(formData: FormData) {
+    const id = formData.get("id") as string;
+    if (!id) throw new Error("No ID provided");
+
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -203,4 +209,3 @@ export async function deleteFeedback(id: string) {
     if (error) throw new Error(error.message);
     revalidatePath('/admin');
 }
-
