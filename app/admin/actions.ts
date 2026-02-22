@@ -1,11 +1,11 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createRawClient } from '@supabase/supabase-js';
+import { createClient as createNextClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
-// Admin Client (Service Role)
-const adminSupabase = createClient(
+// Admin Client (Service Role) - Uses Raw Client to bypass RLS for admin edits
+const adminSupabase = createRawClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
@@ -18,7 +18,6 @@ const adminSupabase = createClient(
 
 // Fetch All Users (Profiles + Subscriptions + Project Counts)
 export async function fetchAdminUsers() {
-    // 1. Fetch Profiles
     const { data: profiles, error: profilesError } = await adminSupabase
         .from('profiles')
         .select('*')
@@ -26,7 +25,6 @@ export async function fetchAdminUsers() {
 
     if (profilesError) throw new Error(profilesError.message);
 
-    // 2. Fetch Active Subscriptions Map
     const { data: subs } = await adminSupabase
         .from('subscriptions')
         .select('user_id, status, tier, updated_at')
@@ -37,9 +35,6 @@ export async function fetchAdminUsers() {
         subMap[s.user_id] = s;
     });
 
-    // 3. Fetch Project Counts (Grouped)
-    // Supabase doesn't support GROUP BY well in simple API, let's fetch essential project metadata
-    // Or just fetch all projects (might be heavy later, but okay for start)
     const { data: projects } = await adminSupabase
         .from('projects')
         .select('user_id, id');
@@ -49,7 +44,6 @@ export async function fetchAdminUsers() {
         projectCounts[p.user_id] = (projectCounts[p.user_id] || 0) + 1;
     });
 
-    // Combine Data
     return profiles.map(p => ({
         ...p,
         subscription: subMap[p.id] || null,
@@ -59,30 +53,21 @@ export async function fetchAdminUsers() {
 
 // Check if Current User is Admin
 export async function verifyAdmin(userId: string) {
-    // Hardcoded safety check + DB check
     const { data: profile } = await adminSupabase
         .from('profiles')
         .select('email, is_admin')
         .eq('id', userId)
         .single();
 
-    // Allow if is_admin OR specific email (Founder)
-    const isAuthorized = profile?.is_admin || ['casteelio@gmail.com'].includes(profile?.email?.toLowerCase() || '');
-
-    return isAuthorized;
+    return profile?.is_admin || ['casteelio@gmail.com'].includes(profile?.email?.toLowerCase() || '');
 }
 
 // Action: Toggle Manual Pro Override
 export async function toggleProOverride(userId: string, currentState: boolean) {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createNextClient(); // Uses Next.js cookies
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || !(await verifyAdmin(user.id))) {
-        throw new Error("Unauthorized");
-    }
+    if (!user || !(await verifyAdmin(user.id))) throw new Error("Unauthorized");
 
     const { error } = await adminSupabase
         .from('profiles')
@@ -95,15 +80,10 @@ export async function toggleProOverride(userId: string, currentState: boolean) {
 
 // Action: Toggle Beta User
 export async function toggleBetaUser(userId: string, currentState: boolean) {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createNextClient(); // Uses Next.js cookies
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || !(await verifyAdmin(user.id))) {
-        throw new Error("Unauthorized");
-    }
+    if (!user || !(await verifyAdmin(user.id))) throw new Error("Unauthorized");
 
     const { error } = await adminSupabase
         .from('profiles')
@@ -114,34 +94,22 @@ export async function toggleBetaUser(userId: string, currentState: boolean) {
     revalidatePath('/admin');
 }
 
-// Action: Update Subscription Tier Manually (in Subscriptions table)
+// Action: Update Subscription Tier Manually
 export async function manualUpdateTier(userId: string, tier: string) {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createNextClient(); // Uses Next.js cookies
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || !(await verifyAdmin(user.id))) {
-        throw new Error("Unauthorized");
-    }
-
-    // Determine status based on tier
-    // If 'scout', we might remove or set to canceled/inactive?
-    // If 'pro', set to active.
-
-    // This is a manual override, so we create a 'manual' subscription record if none exists
-    const status = 'active';
+    if (!user || !(await verifyAdmin(user.id))) throw new Error("Unauthorized");
 
     const { error } = await adminSupabase
         .from('subscriptions')
         .upsert({
             user_id: userId,
-            status: status,
+            status: 'active',
             tier: tier,
             price_id: 'manual_override',
             updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id' }); // Assuming user_id unique for active sub or handle appropriately
+        }, { onConflict: 'user_id' }); 
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin');
@@ -155,57 +123,54 @@ export async function fetchFeedback() {
         .order('created_at', { ascending: false });
 
     if (error) {
-        // Table might not exist yet if migration hasn't run
-        console.warn("Feedback table error (likely migration pending):", error.message);
+        console.warn("Feedback table error:", error.message);
         return [];
     }
     return data;
 }
 
-// Action: Mark Feedback as Read
+// Action: Mark Feedback as Read (Native Form Data)
 export async function markFeedbackRead(formData: FormData) {
-    const id = formData.get("id") as string;
-    if (!id) throw new Error("No ID provided");
+    try {
+        const id = formData.get("id") as string;
+        if (!id) return;
 
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    const { data: { user } } = await supabase.auth.getUser();
+        const supabase = await createNextClient(); // Uses Next.js cookies
+        const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || !(await verifyAdmin(user.id))) {
-        throw new Error("Unauthorized");
+        // Fail silently instead of crashing if unauthorized
+        if (!user || !(await verifyAdmin(user.id))) return; 
+
+        await adminSupabase
+            .from('feedback_messages')
+            .update({ status: 'read' })
+            .eq('id', id);
+
+    } catch (error) {
+        console.error("Mark read error:", error);
     }
-
-    const { error } = await adminSupabase
-        .from('feedback_messages')
-        .update({ status: 'read' })
-        .eq('id', id);
-
-    if (error) throw new Error(error.message);
     revalidatePath('/admin');
 }
 
-// Action: Delete Feedback
+// Action: Delete Feedback (Native Form Data)
 export async function deleteFeedback(formData: FormData) {
-    const id = formData.get("id") as string;
-    if (!id) throw new Error("No ID provided");
+    try {
+        const id = formData.get("id") as string;
+        if (!id) return;
 
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-    const { data: { user } } = await supabase.auth.getUser();
+        const supabase = await createNextClient(); // Uses Next.js cookies
+        const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || !(await verifyAdmin(user.id))) {
-        throw new Error("Unauthorized");
+        // Fail silently instead of crashing if unauthorized
+        if (!user || !(await verifyAdmin(user.id))) return; 
+
+        await adminSupabase
+            .from('feedback_messages')
+            .delete()
+            .eq('id', id);
+
+    } catch (error) {
+        console.error("Delete error:", error);
     }
-
-    const { error } = await adminSupabase
-        .from('feedback_messages')
-        .delete()
-        .eq('id', id);
-
-    if (error) throw new Error(error.message);
     revalidatePath('/admin');
 }
