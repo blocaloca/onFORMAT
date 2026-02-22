@@ -2,10 +2,11 @@ import React, { Suspense } from 'react';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import { fetchAdminUsers, fetchFeedback } from './actions';
-import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare } from 'lucide-react';
+import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare, ChevronLeft } from 'lucide-react';
 import { UserActions, FeedbackActions } from './AdminActions';
 import { isFounder } from '@/lib/permissions';
 import AnnouncementEditor from '@/components/admin/AnnouncementEditor';
+import Link from 'next/link';
 
 export default async function AdminPage() {
   // 1. Auth Check
@@ -70,6 +71,12 @@ export default async function AdminPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-8 py-12 space-y-12">
+        <Link
+          href="/dashboard"
+          className="text-zinc-500 hover:text-zinc-900 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2 mb-8 transition-colors"
+        >
+          <ChevronLeft size={14} /> BACK TO PROJECTS
+        </Link>
 
         {/* Announcement Editor */}
         <AnnouncementEditor user={user} />

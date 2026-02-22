@@ -182,3 +182,25 @@ export async function markFeedbackRead(id: string) {
     if (error) throw new Error(error.message);
     revalidatePath('/admin');
 }
+
+// Action: Delete Feedback
+export async function deleteFeedback(id: string) {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || !(await verifyAdmin(user.id))) {
+        throw new Error("Unauthorized");
+    }
+
+    const { error } = await adminSupabase
+        .from('feedback_messages')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw new Error(error.message);
+    revalidatePath('/admin');
+}
+
