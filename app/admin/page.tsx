@@ -72,12 +72,7 @@ export default async function AdminPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-8 py-12 space-y-12">
-        <Link
-          href="/dashboard"
-          className="text-zinc-500 hover:text-zinc-900 text-[10px] font-bold tracking-widest uppercase flex items-center gap-2 mb-8 transition-colors"
-        >
-          <ChevronLeft size={14} /> BACK TO PROJECTS
-        </Link>
+        <Link href="/dashboard" className="text-zinc-500 hover:text-zinc-900 text-xs tracking-widest uppercase flex items-center gap-2 mb-8"><ChevronLeft size={14} /> BACK TO PROJECTS</Link>
 
         {/* Announcement Editor */}
         <AnnouncementEditor user={user} />
