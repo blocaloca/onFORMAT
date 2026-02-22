@@ -91,9 +91,9 @@ export function FeedbackActions({ message }: { message: any }) {
     return (
         <div className="flex items-center justify-end gap-3">
             {message.status === 'read' ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider">
                     <CheckCircle size={12} />
-                    Message Read
+                    Report Resolved
                 </div>
             ) : (
                 <button
