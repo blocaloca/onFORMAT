@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
 import { fetchAdminUsers, fetchFeedback } from './actions';
@@ -103,11 +104,11 @@ export default async function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
                   {feedback.map((msg: any) => (
-                    <tr key={msg.id} className={`group transition-colors ${msg.status === 'new' ? 'bg-blue-50/30 hover:bg-blue-50/50' : 'hover:bg-zinc-50'}`}>
+                    <tr key={msg.id} className={`group transition-colors ${msg.status === 'new' ? 'bg-blue-50/30 hover:bg-blue-50/50' : 'bg-white hover:bg-zinc-50'}`}>
                       <td className="px-6 py-4">
                         <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${msg.type === 'bug' ? 'bg-red-100 text-red-700' :
                           msg.type === 'feature' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'
-                          }`}>
+                          } ${msg.status === 'read' ? 'opacity-50' : ''}`}>
                           {msg.type === 'bug' ? <Bug size={10} /> : msg.type === 'feature' ? <Lightbulb size={10} /> : <MessageSquare size={10} />}
                           {msg.type}
                         </div>

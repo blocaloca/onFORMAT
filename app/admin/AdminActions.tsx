@@ -90,7 +90,12 @@ export function FeedbackActions({ message }: { message: any }) {
 
     return (
         <div className="flex items-center justify-end gap-3">
-            {message.status !== 'read' ? (
+            {message.status === 'read' ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                    <CheckCircle size={12} />
+                    Message Read
+                </div>
+            ) : (
                 <button
                     onClick={handleMarkRead}
                     disabled={isPending || isDeleting}
@@ -99,16 +104,12 @@ export function FeedbackActions({ message }: { message: any }) {
                     {isPending ? <Loader2 size={12} className="animate-spin" /> : <Check size={12} />}
                     Mark Read
                 </button>
-            ) : (
-                <span className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest flex items-center gap-1">
-                    <CheckCircle size={14} /> Read
-                </span>
             )}
 
             <button
                 onClick={handleDelete}
                 disabled={isPending || isDeleting}
-                className={`text-zinc-400 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-red-50 ${isDeleting ? 'opacity-70 cursor-wait' : ''}`}
+                className={`text-zinc-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50 ${isDeleting ? 'opacity-70 cursor-wait' : ''}`}
                 title="Delete Report"
             >
                 {isDeleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
