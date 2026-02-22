@@ -176,7 +176,7 @@ export async function markFeedbackRead(id: string) {
 
     const { error } = await adminSupabase
         .from('feedback_messages')
-        .update({ status: 'read' })
+        .update({ status: 'READ' })
         .eq('id', id);
 
     if (error) throw new Error(error.message);
