@@ -52,56 +52,59 @@ export const UpgradeModal = ({ isOpen, onClose, title, description }: UpgradeMod
             />
 
             {/* Modal */}
-            <div className="relative w-full max-w-lg bg-[#09090b] border border-zinc-800 shadow-[0_0_100px_-20px_rgba(16,185,129,0.2)] rounded-lg overflow-hidden animate-in zoom-in-95 fade-in slide-in-from-bottom-4 duration-300">
-
-                {/* Decorative Header Gradient */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-900" />
+            <div className="relative w-full max-w-lg bg-zinc-50 border border-zinc-200 shadow-2xl rounded-xl overflow-hidden animate-in zoom-in-95 fade-in slide-in-from-bottom-4 duration-300">
 
                 <div className="p-8 relative overflow-hidden">
-                    {/* Background glow effect */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
                     <div className="flex justify-between items-start mb-6 relative z-10">
-                        <div className="w-12 h-12 rounded-full bg-emerald-900/20 border border-emerald-500/20 flex items-center justify-center mb-4">
-                            <Sparkles className="text-emerald-500" size={24} />
+                        <div className="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center mb-4">
+                            <Sparkles className="text-blue-500" size={24} />
                         </div>
-                        <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors">
-                            <X size={20} />
+                        <button onClick={onClose} className="text-zinc-400 hover:text-zinc-900 transition-colors bg-zinc-100 p-2 rounded-full">
+                            <X size={18} />
                         </button>
                     </div>
 
-                    <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2 relative z-10">
+                    <h2 className="text-2xl font-sans font-bold text-zinc-950 uppercase tracking-tight mb-2 relative z-10">
                         Project Limit Reached
                     </h2>
-                    <p className="text-zinc-400 text-sm leading-relaxed mb-8 relative z-10">
-                        You have reached the maximum number of active projects for your current plan. Upgrade to unlock more capacity.
+                    <p className="text-zinc-600 text-sm leading-relaxed mb-8 relative z-10">
+                        You have reached the maximum number of active projects for your current plan. Upgrade your account to unlock unlimited project capacity and advanced production tools.
                     </p>
 
                     <div className="space-y-3 mb-8 relative z-10">
-                        <div className="flex items-center gap-3 text-sm text-zinc-300">
-                            <CheckCircle2 size={16} className="text-emerald-500" />
-                            <span>Increase Project Limits</span>
+                        <div className="flex items-center gap-3 text-sm text-zinc-600 font-medium">
+                            <CheckCircle2 size={16} className="text-blue-500" />
+                            <span>Unlimited Active Projects</span>
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-zinc-300">
-                            <CheckCircle2 size={16} className="text-emerald-500" />
-                            <span>Team Collaboration & Roles</span>
+                        <div className="flex items-center gap-3 text-sm text-zinc-600 font-medium">
+                            <CheckCircle2 size={16} className="text-blue-500" />
+                            <span>Team Collaboration & Crew Roles</span>
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-zinc-300">
-                            <CheckCircle2 size={16} className="text-emerald-500" />
-                            <span>Advanced Features</span>
+                        <div className="flex items-center gap-3 text-sm text-zinc-600 font-medium">
+                            <CheckCircle2 size={16} className="text-blue-500" />
+                            <span>Premium Document Templates</span>
                         </div>
                     </div>
 
-                    <button
-                        onClick={() => router.push('/account')}
-                        className="w-full py-4 bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-zinc-200 transition-colors rounded-sm shadow-lg shadow-white/5 relative z-10 flex items-center justify-center gap-2 group"
-                    >
-                        <span>Manage Subscription</span>
-                        <Sparkles size={14} className="hidden group-hover:block text-emerald-600 animate-pulse" />
-                    </button>
+                    <div className="flex flex-col gap-3 relative z-10">
+                        <button
+                            onClick={() => router.push('/account')}
+                            className="w-full py-4 bg-blue-600 text-white font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition-colors rounded-lg shadow-lg shadow-blue-500/10 flex items-center justify-center gap-2 group"
+                        >
+                            <span>Upgrade Account</span>
+                            <Sparkles size={14} className="group-hover:block text-white animate-pulse" />
+                        </button>
 
-                    <p className="text-center mt-4 text-[10px] text-zinc-500 uppercase tracking-widest relative z-10">
-                        Cancel Anytime • Include 14-Day Money Back Guarantee
+                        <button
+                            onClick={onClose}
+                            className="w-full py-3 bg-zinc-200 text-zinc-800 font-bold uppercase tracking-widest text-xs hover:bg-zinc-300 transition-colors rounded-lg flex items-center justify-center"
+                        >
+                            Return to Dashboard
+                        </button>
+                    </div>
+
+                    <p className="text-center mt-6 text-[10px] text-zinc-400 uppercase tracking-widest font-bold relative z-10">
+                        Secure Billing • Pro Plan
                     </p>
                 </div>
             </div>
