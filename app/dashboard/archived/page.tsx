@@ -172,7 +172,11 @@ export default function DashboardPage() {
 
             localStorage.setItem(`onboarded_${userId}`, 'true');
             // Re-fetch silently
-            const { data } = await supabase.from('projects').select('*').order('updated_at', { ascending: false });
+            // Re-fetch silently scoped to local user
+            const { data } = await supabase.from('projects')
+                .select('*')
+                .eq('user_id', userId)
+                .order('updated_at', { ascending: false });
             if (data) setProjects(data);
 
         } catch (e) {
@@ -196,6 +200,7 @@ export default function DashboardPage() {
         const { data, error } = await supabase
             .from('projects')
             .select('*')
+            .eq('user_id', authUser.id)
             .eq('status', 'ARCHIVED')
             .order('updated_at', { ascending: false });
 
@@ -234,37 +239,39 @@ export default function DashboardPage() {
         const checkAuth = async () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
-                router.push('/login');
-            } else {
-                setUser(user.email || null);
+                router.replace('/login');
+                return;
+            }
 
-                // PHASE 1 HANDSHAKE: Link auth.uid to crew_membership
-                if (user.email) {
-                    try {
-                        // Attempt to link current user ID to any membership records with matching email
-                        // This ensures invited users "claim" their membership upon login
-                        const { error } = await supabase
-                            .from('crew_membership')
-                            .update({ user_id: user.id })
-                            .ilike('user_email', user.email) // Case-insensitive match
-                            .is('user_id', null); // Only if not already claimed
+            setUser(user.email || null);
 
-                        if (error) console.warn("Handshake Error (Non-Critical - Verify Schema):", error);
-                    } catch (e) {
-                        console.warn("Handshake Failed", e);
-                    }
+            // PHASE 1 HANDSHAKE: Link auth.uid to crew_membership
+            if (user.email) {
+                try {
+                    // Attempt to link current user ID to any membership records with matching email
+                    // This ensures invited users "claim" their membership upon login
+                    const { error } = await supabase
+                        .from('crew_membership')
+                        .update({ user_id: user.id })
+                        .ilike('user_email', user.email) // Case-insensitive match
+                        .is('user_id', null); // Only if not already claimed
+
+                    if (error) console.warn("Handshake Error (Non-Critical - Verify Schema):", error);
+                } catch (e) {
+                    console.warn("Handshake Failed", e);
                 }
             }
+
+            // Load Folders
+            const savedFolders = localStorage.getItem('onformat_folders');
+            if (savedFolders) {
+                try { setFolders(JSON.parse(savedFolders)); } catch { }
+            }
+
+            fetchProjects();
         };
+
         checkAuth();
-
-        // Load Folders
-        const savedFolders = localStorage.getItem('onformat_folders');
-        if (savedFolders) {
-            try { setFolders(JSON.parse(savedFolders)); } catch { }
-        }
-
-        fetchProjects();
     }, [router, fetchProjects, supabase]);
 
     // --- MAIN ACTIONS ---
