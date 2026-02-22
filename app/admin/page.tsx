@@ -2,9 +2,9 @@ import React, { Suspense } from 'react';
 export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import { fetchAdminUsers, fetchFeedback } from './actions';
-import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare, ChevronLeft } from 'lucide-react';
-import { UserActions, FeedbackActions } from './AdminActions';
+import { fetchAdminUsers, fetchFeedback, markFeedbackRead, deleteFeedback } from './actions';
+import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare, ChevronLeft, Trash2 } from 'lucide-react';
+import { UserActions } from './AdminActions';
 import { isFounder } from '@/lib/permissions';
 import AnnouncementEditor from '@/components/admin/AnnouncementEditor';
 import Link from 'next/link';
@@ -125,7 +125,28 @@ export default async function AdminPage() {
                         <span className="text-[10px] text-zinc-400 font-mono">{new Date(msg.created_at).toLocaleDateString()}</span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <FeedbackActions message={msg} />
+                        <div className="flex gap-4 justify-end items-center">
+                          {/* MARK READ FORM */}
+                          {msg.status !== 'read' && (
+                            <form action={markFeedbackRead.bind(null, msg.id)}>
+                              <button type="submit" className="text-blue-500 hover:text-blue-700 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
+                                <Check size={10} /> Mark Read
+                              </button>
+                            </form>
+                          )}
+                          {msg.status === 'read' && (
+                            <span className="text-emerald-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                              <CheckCircle size={10} /> Read
+                            </span>
+                          )}
+
+                          {/* DELETE FORM */}
+                          <form action={deleteFeedback.bind(null, msg.id)}>
+                            <button type="submit" className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Delete Report">
+                              <Trash2 size={12} />
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                   ))}
