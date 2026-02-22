@@ -2,14 +2,14 @@
 import { useState, useEffect } from 'react';
 import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check } from 'lucide-react';
+import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check, Crown } from 'lucide-react';
 import Link from 'next/link';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
 import { isFounder as checkIsFounder } from '@/lib/permissions';
 
 export default function AccountPage() {
     const router = useRouter();
-    const supabase = getClient()
+    const supabase = getClient();
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
@@ -42,7 +42,7 @@ export default function AccountPage() {
         }
         setUser(user);
 
-        const { data, error } = await supabase
+        const { data } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', user.id)
@@ -53,8 +53,6 @@ export default function AccountPage() {
             setFullName(data.full_name || '');
             setAvatarUrl(data.avatar_url || null);
 
-            // Centralized Founder Check
-            // Use profile email or auth email as fallback
             const emailToCheck = data.email || user.email;
             if (checkIsFounder(emailToCheck) || data.is_admin) {
                 setIsFounder(true);
@@ -115,8 +113,6 @@ export default function AccountPage() {
                 .eq('id', user.id);
 
             if (updateError) throw updateError;
-
-            // Reload to update header avatar
             window.location.reload();
         } catch (error: any) {
             console.error(error);
@@ -138,52 +134,50 @@ export default function AccountPage() {
         setSaving(false);
     };
 
-    // Founder Control Panel functions
+    const handleCheckout = async (priceId: string) => {
+        setLoading(true);
+        try {
+            const res = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ priceId })
+            });
+            const data = await res.json();
+            if (data.url) window.location.href = data.url;
+            else alert('Checkout failed');
+        } catch (e) {
+            alert('Error starting checkout');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleAnnouncementUpdate = async (file?: File) => {
         if (!isFounder || !user) return;
         setUploadingAnnouncement(true);
-
         try {
-            let mediaUrl = videoUrl; // Default to text input
-
-            // If file provided, upload it (overrides tex input for media_url)
+            let mediaUrl = videoUrl;
             if (file) {
                 const fileExt = file.name.split('.').pop();
                 const filePath = `announcement-${Date.now()}.${fileExt}`;
-
                 const { error: uploadError } = await supabase.storage
                     .from('announcements')
                     .upload(filePath, file, { upsert: true });
-
                 if (uploadError) throw uploadError;
-
-                const { data: { publicUrl } } = supabase.storage
-                    .from('announcements')
-                    .getPublicUrl(filePath);
-
+                const { data: { publicUrl } } = supabase.storage.from('announcements').getPublicUrl(filePath);
                 mediaUrl = publicUrl;
             }
-
-            // Create record via API
             const res = await fetch('/api/announcements', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    userId: user.id,
-                    media_url: mediaUrl,
-                    message: newMessage
-                })
+                body: JSON.stringify({ userId: user.id, media_url: mediaUrl, message: newMessage })
             });
-
             if (res.ok) {
                 alert("Announcement Updated!");
                 fetchAnnouncement();
                 setNewMessage('');
                 setVideoUrl('');
-            } else {
-                alert("Failed to update announcement record.");
             }
-
         } catch (error: any) {
             console.error(error);
             alert('Failed to update announcement.');
@@ -194,447 +188,261 @@ export default function AccountPage() {
 
     const renderMedia = (url: string) => {
         if (!url) return null;
-
-        // YouTube Embed
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
             let embedUrl = url;
-            if (url.includes('watch?v=')) {
-                embedUrl = url.replace('watch?v=', 'embed/');
-            } else if (url.includes('youtu.be/')) {
-                embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
-            }
-            // Clean params
+            if (url.includes('watch?v=')) embedUrl = url.replace('watch?v=', 'embed/');
+            else if (url.includes('youtu.be/')) embedUrl = url.replace('youtu.be/', 'www.youtube.com/embed/');
             if (embedUrl.includes('&')) embedUrl = embedUrl.split('&')[0];
-
             return (
                 <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
-                    <iframe
-                        src={embedUrl}
-                        className="absolute top-0 left-0 w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    />
+                    <iframe src={embedUrl} className="absolute top-0 left-0 w-full h-full" allowFullScreen />
                 </div>
             );
         }
-
-        // MP4 Video
         if (url.match(/\.(mp4|webm|ogg)$/i)) {
-            return (
-                <video src={url} controls className="w-full h-full object-cover" />
-            );
+            return <video src={url} controls className="w-full h-full object-cover" />;
         }
-
-        // Default Image
         return <img src={url} alt="Announcement" className="w-full h-full object-cover" />;
     };
 
-    if (loading) return <div className="h-screen bg-background flex items-center justify-center text-foreground"><Loader2 className="animate-spin" /></div>;
+    if (loading && !profile) return <div className="h-screen bg-zinc-50 flex items-center justify-center text-zinc-900"><Loader2 className="animate-spin" /></div>;
+
+    // Corrected Display Logic
+    const needsUpgrade = !profile?.subscription_status || profile?.subscription_status !== 'active' || profile?.subscription_tier === 'scout';
 
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans p-8 md:p-12 transition-colors duration-200">
-            <Link href="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors text-xs font-bold uppercase tracking-widest tactile">
-                <ArrowLeft size={16} /> Back to Dashboard
+        <div className="min-h-screen bg-zinc-50 text-zinc-950 font-sans p-6 md:p-12">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 text-zinc-400 hover:text-zinc-900 mb-10 transition-colors text-xs font-bold uppercase tracking-widest">
+                <ArrowLeft size={16} /> BACK TO DASHBOARD
             </Link>
 
-            <div className="flex items-end justify-between mb-12 border-b border-border pb-8">
+            {/* HEADER WITH BETA BADGE */}
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-zinc-200 pb-8">
                 <div>
-                    <h1 className="text-4xl font-light mb-2 tracking-tight flex items-center">
-                        Account Control
-                        {profile?.is_beta_user && <span className="ml-3 px-2 py-0.5 bg-zinc-900 text-zinc-50 text-[10px] font-bold uppercase tracking-widest rounded-full">Beta User</span>}
+                    <h1 className="text-4xl font-black text-zinc-900 tracking-tight flex items-center">
+                        ACCOUNT CONTROL
+                        {profile?.is_beta_user && (
+                            <span className="ml-4 px-3 py-1 bg-zinc-900 text-zinc-50 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm">
+                                Beta User
+                            </span>
+                        )}
                     </h1>
-                    <p className="text-muted-foreground font-mono text-xs uppercase tracking-widest">Global Settings & Status</p>
+                    <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest mt-2 px-1">Global Settings & Configuration</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                {/* LEFT COLUMN: The "Control Panel" (Identity + Sub + Security) */}
-                <div className="lg:col-span-2 space-y-8">
-
-                    {/* Identity Section */}
-                    <div className="bg-card border border-border p-8 rounded-none relative overflow-hidden group">
-                        <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
-
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+                <div className="lg:col-span-3 space-y-12">
+                    {/* IDENTITY SECTION */}
+                    <section className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm">
+                        <div className="flex flex-col md:flex-row gap-10">
                             {/* Avatar */}
-                            <div className="relative w-24 h-24 rounded-full overflow-hidden bg-muted border border-border shrink-0 group-hover:border-foreground transition-colors">
-                                {avatarUrl ? (
-                                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                        <User size={32} />
-                                    </div>
-                                )}
-                                <label className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-white">Upload</span>
+                            <div className="relative group shrink-0">
+                                <div className="w-28 h-28 rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-inner">
+                                    {avatarUrl ? (
+                                        <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-zinc-300">
+                                            <User size={40} />
+                                        </div>
+                                    )}
+                                </div>
+                                <label className="absolute inset-x-0 bottom-0 py-2 bg-black/70 text-[9px] font-black uppercase tracking-widest text-white text-center rounded-b-2xl opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    Change
                                     <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" disabled={saving} />
                                 </label>
                             </div>
 
-                            {/* Identity Inputs */}
-                            <div className="flex-1 w-full space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-bold text-muted-foreground uppercase mb-2">Display Name</label>
+                            <div className="flex-1 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Display Name</label>
                                         <input
                                             type="text"
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
-                                            placeholder="Enter your full name"
-                                            className="w-full bg-input border border-transparent focus:border-ring p-3 text-foreground outline-none transition-all text-sm font-mono rounded-none"
+                                            className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                                         />
                                     </div>
-                                    <div>
-                                        <label className="block text-xs font-bold text-muted-foreground uppercase mb-2">Email Address</label>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Email Address</label>
                                         <input
                                             type="email"
-                                            value={user.email}
+                                            value={user?.email || ''}
                                             disabled
-                                            className="w-full bg-muted border border-transparent p-3 text-muted-foreground cursor-not-allowed text-sm font-mono rounded-none"
+                                            className="w-full bg-zinc-100 border border-zinc-200 rounded-xl px-4 py-3 text-sm font-mono text-zinc-500 cursor-not-allowed"
                                         />
                                     </div>
                                 </div>
-                                <div className="flex justify-start">
-                                    <button
-                                        onClick={updateProfile}
-                                        disabled={saving}
-                                        className="bg-foreground text-background px-6 py-2 text-xs font-bold uppercase tracking-widest hover:opacity-90 rounded-none tactile"
-                                    >
-                                        {saving ? 'Saving...' : 'Save Identity'}
+                                <button onClick={updateProfile} disabled={saving} className="bg-zinc-900 text-white px-8 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-all active:scale-[0.98]">
+                                    {saving ? 'Saving...' : 'SAVE CHANGES'}
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* SECURITY SECTION */}
+                    <section className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm max-w-xl">
+                        <div className="flex items-center gap-3 mb-8">
+                            <Lock size={18} className="text-zinc-900" />
+                            <h2 className="text-xs font-black uppercase tracking-widest">Security Configuration</h2>
+                        </div>
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Update Password</label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        placeholder="Enter new password"
+                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
+                                    />
+                                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-900">
+                                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                     </button>
                                 </div>
                             </div>
+                            <button onClick={updatePassword} disabled={saving || !newPassword} className="bg-zinc-100 text-zinc-900 px-8 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-200 transition-all active:scale-[0.98]">
+                                UPDATE PASSWORD
+                            </button>
                         </div>
-                    </div>
+                    </section>
 
-                    {/* Subscription & Security Split */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                        {/* Subscription */}
-                        <div className="bg-card border border-border p-8 rounded-lg h-full flex flex-col justify-between">
-                            <div>
-                                <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-                                    <CreditCard size={16} /> Subscription
-                                </h2>
-
-                                <div className="mb-6">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <p className="text-xl font-bold text-foreground uppercase">
-                                            {profile?.subscription_status === 'active'
-                                                ? (STRIPE_PLANS[profile?.subscription_tier as keyof typeof STRIPE_PLANS]?.name || 'Pro')
-                                                : 'Scout'}
-                                        </p>
-                                        <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide font-bold ${profile?.subscription_status === 'active'
-                                            ? 'bg-emerald-900/30 text-emerald-500 border border-emerald-900'
-                                            : 'bg-zinc-800 text-zinc-500 border border-zinc-700'
-                                            }`}>
-                                            {profile?.subscription_status === 'active' ? 'Active' : 'Free'}
-                                        </span>
-                                    </div>
-                                    <p className="text-muted-foreground text-xs">
-                                        {profile?.subscription_status === 'active'
-                                            ? 'Your account is fully active.'
-                                            : 'Upgrade to unlock more projects.'}
-                                    </p>
-                                </div>
+                    {/* PRICING MATRIX */}
+                    {needsUpgrade && (
+                        <section className="mt-16">
+                            <div className="flex items-center gap-2 mb-8">
+                                <CreditCard size={18} className="text-zinc-900" />
+                                <h2 className="text-xs font-black uppercase tracking-widest">Membership Upgrades</h2>
                             </div>
-
-                            <div className="space-y-3 mt-4">
-                                {/* Upgrade Logic */}
-                                {(!profile?.subscription_status || profile.subscription_status !== 'active') && (
-                                    <>
-                                        <button
-                                            onClick={() => {
-                                                setLoading(true);
-                                                fetch('/api/checkout', {
-                                                    method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ priceId: STRIPE_PLANS.pro.id })
-                                                })
-                                                    .then(res => res.json())
-                                                    .then(data => { if (data.url) window.location.href = data.url; })
-                                                    .catch(() => alert('Checkout failed'))
-                                                    .finally(() => setLoading(false));
-                                            }}
-                                            disabled={loading}
-                                            className="w-full bg-foreground text-background px-4 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90 rounded-sm flex items-center justify-between group"
-                                        >
-                                            <span>Upgrade to Pro</span>
-                                            <span className="text-background opacity-70 group-hover:opacity-100">$15/mo</span>
-                                        </button>
-
-                                        <button
-                                            onClick={() => {
-                                                setLoading(true);
-                                                fetch('/api/checkout', {
-                                                    method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ priceId: STRIPE_PLANS.studio.id })
-                                                })
-                                                    .then(res => res.json())
-                                                    .then(data => { if (data.url) window.location.href = data.url; })
-                                                    .catch(() => alert('Checkout failed'))
-                                                    .finally(() => setLoading(false));
-                                            }}
-                                            disabled={loading}
-                                            className="w-full bg-muted border border-border text-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-muted/80 rounded-sm flex items-center justify-between group"
-                                        >
-                                            <span>Upgrade to Studio</span>
-                                            <span className="text-muted-foreground group-hover:text-foreground">$29/mo</span>
-                                        </button>
-                                    </>
-                                )}
-
-                                {/* Studio Upgrade */}
-                                {profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro' && (
-                                    <button
-                                        onClick={() => {
-                                            setLoading(true);
-                                            fetch('/api/checkout', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ priceId: STRIPE_PLANS.studio.id })
-                                            })
-                                                .then(res => res.json())
-                                                .then(data => { if (data.url) window.location.href = data.url; })
-                                                .catch(() => alert('Checkout failed'))
-                                                .finally(() => setLoading(false));
-                                        }}
-                                        disabled={loading}
-                                        className="w-full bg-foreground text-background px-4 py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90 rounded-sm flex items-center justify-between"
-                                    >
-                                        <span>Upgrade to Studio</span>
-                                        <span>$29/mo</span>
-                                    </button>
-                                )}
-
-                                {/* Portal Link */}
-                                {profile?.subscription_status === 'active' && (
-                                    <button
-                                        onClick={async () => {
-                                            setLoading(true);
-                                            try {
-                                                const res = await fetch('/api/portal', { method: 'POST' });
-                                                const data = await res.json();
-                                                if (data.url) window.location.href = data.url;
-                                                else alert('Failed to load portal');
-                                            } catch (e) {
-                                                alert('Error loading portal');
-                                            } finally {
-                                                setLoading(false);
-                                            }
-                                        }}
-                                        className="w-full mt-2 bg-transparent border border-border text-muted-foreground px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:text-foreground hover:border-foreground/30 rounded-sm transition-colors"
-                                    >
-                                        Manage Subscription
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Security */}
-                        <div className="bg-card border border-border p-8 rounded-lg h-full">
-                            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-                                <Lock size={16} /> Security
-                            </h2>
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-muted-foreground uppercase mb-2">Update Password</label>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="relative">
-                                            <input
-                                                type={showPassword ? "text" : "password"}
-                                                value={newPassword}
-                                                onChange={(e) => setNewPassword(e.target.value)}
-                                                placeholder="New Password"
-                                                className="w-full bg-input border border-border p-3 pr-10 text-foreground focus:border-ring outline-none transition-colors text-sm rounded-sm"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground inline-flex items-center justify-center p-2"
-                                            >
-                                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                                            </button>
-                                        </div>
-                                        <button
-                                            onClick={updatePassword}
-                                            disabled={saving || !newPassword}
-                                            className="bg-foreground text-background hover:opacity-90 px-4 py-3 text-xs font-bold uppercase tracking-widest rounded-sm disabled:opacity-50 w-full"
-                                        >
-                                            Update
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* FREE TRIAL UPGRADE MATRIX */}
-                    {profile?.subscription_tier === 'FREE_TRIAL' && (
-                        <div className="mt-12">
-                            <div className="flex items-center gap-2 mb-6">
-                                <CreditCard size={18} className="text-zinc-400" />
-                                <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Available Membership Plans</h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                                 {/* SOLO */}
-                                <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col">
-                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">Solo</h3>
-                                    <div className="flex items-baseline gap-1 mb-6">
-                                        <span className="text-3xl font-black text-zinc-950">$19</span>
-                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/mo</span>
+                                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col hover:border-zinc-300 transition-colors">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Solo Tier</h3>
+                                    <div className="flex items-baseline gap-1 mb-8">
+                                        <span className="text-4xl font-black text-zinc-950">$19</span>
+                                        <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                                     </div>
-                                    <ul className="space-y-3 mb-8 flex-1">
-                                        {['1 Active Project', 'Unlimited Archives', 'Standard Print Room Exports', 'onSET Mobile Access'].map(f => (
-                                            <li key={f} className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
-                                                <Check size={14} className="text-zinc-300" /> {f}
+                                    <ul className="space-y-4 mb-10 flex-1">
+                                        {['1 Active Project', 'Unlimited Archives', 'Standard Print Room', 'onSET Mobile Access'].map(f => (
+                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
+                                                <Check size={14} className="text-zinc-400" /> {f}
                                             </li>
                                         ))}
                                     </ul>
-                                    <button className="mt-auto w-full bg-zinc-900 text-white py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-zinc-800 transition-all active:scale-[0.98]">
-                                        UPGRADE
+                                    <button disabled className="w-full bg-zinc-200 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                        CURRENT PLAN
                                     </button>
                                 </div>
 
-                                {/* PRO - ANCHOR */}
-                                <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 shadow-md flex flex-col ring-1 ring-blue-500 relative transform scale-[1.02] z-10">
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full whitespace-nowrap">Recommended</div>
-                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-500 mb-1">Pro</h3>
-                                    <div className="flex items-baseline gap-1 mb-6">
-                                        <span className="text-3xl font-black text-zinc-950">$49</span>
-                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/mo</span>
+                                {/* PRO */}
+                                <div className="bg-white border-2 border-blue-500 rounded-2xl p-8 shadow-xl flex flex-col relative transform scale-[1.03] z-10 ring-4 ring-blue-500/5">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">RECOMMENDED</div>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-2">Pro Tier</h3>
+                                    <div className="flex items-baseline gap-1 mb-8">
+                                        <span className="text-4xl font-black text-blue-600">$49</span>
+                                        <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                                     </div>
-                                    <ul className="space-y-3 mb-8 flex-1">
-                                        {['Unlimited Active Projects', 'Custom Studio Logo Exports', 'Multi-Unit Logic (A/B/C)', 'Offline Mobile Mode', 'AI Liaison'].map(f => (
-                                            <li key={f} className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
+                                    <ul className="space-y-4 mb-10 flex-1">
+                                        {['Unlimited Active Projects', 'Custom Studio Branding', 'Multi-Unit Logic', 'Offline Mobile Mode', 'AI Liaison'].map(f => (
+                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-900 uppercase tracking-tight">
                                                 <Check size={14} className="text-blue-500" /> {f}
                                             </li>
                                         ))}
                                     </ul>
-                                    <button className="mt-auto w-full bg-blue-500 text-white py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-blue-600 transition-all shadow-lg active:scale-[0.98]">
-                                        UPGRADE
+                                    <button onClick={() => handleCheckout(STRIPE_PLANS.pro.id)} className="w-full bg-blue-600 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]">
+                                        UPGRADE TO PRO
                                     </button>
                                 </div>
 
                                 {/* STUDIO */}
-                                <div className="bg-zinc-50 border border-zinc-200 rounded-xl p-6 shadow-sm flex flex-col">
-                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-1">Studio</h3>
-                                    <div className="flex items-baseline gap-1 mb-6">
-                                        <span className="text-3xl font-black text-zinc-950">$129</span>
-                                        <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/mo</span>
+                                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col hover:border-zinc-300 transition-colors">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Studio Tier</h3>
+                                    <div className="flex items-baseline gap-1 mb-8">
+                                        <span className="text-4xl font-black text-zinc-950">$129</span>
+                                        <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                                     </div>
-                                    <ul className="space-y-3 mb-8 flex-1">
-                                        {['Everything in PRO', '3 Producer Seats', 'Multi-Seat Collaboration', 'Global Brand Templates', 'Priority Support'].map(f => (
-                                            <li key={f} className="flex items-center gap-2 text-xs font-semibold text-zinc-600">
-                                                <Check size={14} className="text-zinc-300" /> {f}
+                                    <ul className="space-y-4 mb-10 flex-1">
+                                        {['Everything in PRO', '3 Producer Seats', 'Multi-Seat Collab', 'Global Templates', 'Priority Support'].map(f => (
+                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
+                                                <Check size={14} className="text-zinc-400" /> {f}
                                             </li>
                                         ))}
                                     </ul>
-                                    <button className="mt-auto w-full bg-zinc-900 text-white py-3 text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-zinc-800 transition-all active:scale-[0.98]">
-                                        UPGRADE
+                                    <button onClick={() => handleCheckout(STRIPE_PLANS.studio.id)} className="w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-all active:scale-[0.98]">
+                                        UPGRADE TO STUDIO
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     )}
                 </div>
 
-                {/* RIGHT COLUMN: Announcements Frame */}
-                <div className="lg:col-span-1 space-y-8">
-                    <div className="bg-muted/30 border border-border rounded-lg p-1 h-full min-h-[400px] flex flex-col">
-                        {/* Header */}
-                        <div className="p-4 border-b border-border flex items-center justify-between">
-                            <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                <Megaphone size={14} /> Announcements
-                            </h2>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        </div>
-
-                        {/* Content Area */}
-                        <div className="flex-1 bg-muted/50 relative overflow-hidden flex flex-col">
-                            {announcement ? (
-                                <>
-                                    {announcement.media_url && (
-                                        <div className="flex-1 w-full bg-black border-b border-border overflow-hidden relative">
-                                            {renderMedia(announcement.media_url)}
-                                        </div>
-                                    )}
-                                    {announcement.message && (
-                                        <div className="p-6">
-                                            <p className="text-sm text-foreground leading-relaxed font-mono">
-                                                {announcement.message}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                </>
-                            ) : (
-                                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center opacity-50">
-                                    <Megaphone size={32} className="mb-4 text-muted-foreground/50" />
-                                    <p className="text-sm text-muted-foreground font-mono">No active announcements.</p>
+                {/* SIDEBAR: ANNOUNCEMENTS */}
+                <div className="lg:col-span-1 border-l border-zinc-200 pl-8">
+                    <div className="sticky top-12 space-y-8">
+                        <div>
+                            <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center gap-2 text-zinc-900">
+                                    <Megaphone size={16} />
+                                    <h3 className="text-xs font-black uppercase tracking-widest">BULLETINS</h3>
                                 </div>
-                            )}
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                            </div>
+
+                            <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
+                                {announcement ? (
+                                    <>
+                                        {announcement.media_url && (
+                                            <div className="aspect-video bg-black">
+                                                {renderMedia(announcement.media_url)}
+                                            </div>
+                                        )}
+                                        {announcement.message && (
+                                            <div className="p-5 font-mono text-[11px] leading-relaxed text-zinc-600 whitespace-pre-wrap">
+                                                {announcement.message}
+                                            </div>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="p-8 text-center text-[10px] font-bold text-zinc-300 uppercase tracking-widest">No Bulletins</div>
+                                )}
+                            </div>
                         </div>
 
-                        {/* Founder Control Panel (Hidden unless authorized) */}
+                        {/* FOUNDER EDITOR */}
                         {isFounder && (
-                            <div className="p-4 border-t border-border bg-card">
+                            <div className="pt-8 border-t border-zinc-100">
+                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Founder Controls</p>
                                 <div className="space-y-4">
-                                    <p className="text-[10px] font-bold uppercase tracking-widest text-indigo-500">Founder Controls</p>
-
-                                    <input
-                                        type="text"
-                                        placeholder="Announcement text (optional)..."
-                                        className="w-full bg-input border border-border p-2 text-xs text-foreground rounded-sm mb-2 focus:border-ring outline-none transition-colors"
+                                    <textarea
+                                        placeholder="Broadcast message..."
+                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-[11px] font-mono outline-none focus:ring-2 focus:ring-blue-500/10 min-h-[100px]"
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
                                     />
-
-                                    <div className="flex flex-col gap-2">
-                                        <p className="text-[10px] uppercase font-bold text-muted-foreground">Video Link (YouTube/MP4) OR Upload Image</p>
-
-                                        <input
-                                            type="text"
-                                            placeholder="Paste Video URL here..."
-                                            className="w-full bg-input border border-border p-2 text-xs text-foreground rounded-sm focus:border-ring outline-none transition-colors"
-                                            value={videoUrl}
-                                            onChange={(e) => setVideoUrl(e.target.value)}
-                                        />
-
-                                        <div className="flex gap-2">
-                                            {/* Publish Link Button */}
-                                            <button
-                                                onClick={() => handleAnnouncementUpdate()}
-                                                disabled={uploadingAnnouncement || !videoUrl}
-                                                className="flex-1 bg-muted border border-border hover:bg-muted/80 text-foreground text-xs font-bold uppercase tracking-widest py-3 rounded-sm disabled:opacity-50"
-                                            >
-                                                Use Link
-                                            </button>
-
-                                            {/* Upload File Button */}
-                                            <label className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-widest py-3 rounded-sm cursor-pointer transition-colors">
-                                                {uploadingAnnouncement ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
-                                                <span>Upload</span>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                    onChange={(e) => {
-                                                        if (e.target.files?.[0]) handleAnnouncementUpdate(e.target.files[0]);
-                                                    }}
-                                                    disabled={uploadingAnnouncement}
-                                                />
-                                            </label>
-                                        </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Video Link..."
+                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-[11px] font-mono outline-none"
+                                        value={videoUrl}
+                                        onChange={(e) => setVideoUrl(e.target.value)}
+                                    />
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button onClick={() => handleAnnouncementUpdate()} disabled={uploadingAnnouncement} className="bg-zinc-100 text-zinc-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-200">
+                                            PUBLISH
+                                        </button>
+                                        <label className="bg-blue-50 text-blue-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-100 text-center cursor-pointer">
+                                            {uploadingAnnouncement ? '...' : 'UPLOAD'}
+                                            <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && handleAnnouncementUpdate(e.target.files[0])} />
+                                        </label>
                                     </div>
-
                                 </div>
                             </div>
                         )}
                     </div>
                 </div>
-
             </div>
         </div>
     );
