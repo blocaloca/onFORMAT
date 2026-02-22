@@ -13,17 +13,28 @@ export default function OnSetPage() {
     const [userEmail, setUserEmail] = useState<string>('');
 
     useEffect(() => {
-        // Identity Check
-        const stored = localStorage.getItem('onset_user_email');
-        if (stored) setUserEmail(stored);
-        fetchProjects();
+        const init = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                // If not logged in, they shouldn't see the project hub
+                window.location.href = '/login';
+                return;
+            }
+
+            // Identity Check
+            const stored = localStorage.getItem('onset_user_email');
+            if (stored) setUserEmail(stored);
+            fetchProjects(user.id);
+        };
+        init();
     }, []);
 
-    const fetchProjects = async () => {
+    const fetchProjects = async (userId: string) => {
         try {
             const { data, error } = await supabase
                 .from('projects')
                 .select('*')
+                .eq('user_id', userId)
                 .order('updated_at', { ascending: false });
 
             if (data) {

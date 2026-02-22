@@ -19,6 +19,17 @@ export default async function DebugProjectsPage() {
 
     const supabase = createClient(url, key)
 
+    // 0. AUTH & ADMIN CHECK (MANDATORY)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return <div className="p-10 text-red-500">Authentication Required</div>
+
+    const { data: profile } = await supabase.from('profiles').select('is_admin, email').eq('id', user.id).single()
+    const isAdmin = profile?.is_admin || ['casteelio@gmail.com', 'davidcasteel@gmail.com'].includes(profile?.email?.toLowerCase() || '')
+
+    if (!isAdmin) {
+        return <div className="p-10 text-red-500 font-mono">FORBIDDEN: Admin Access Required. Logged in as: {user.email}</div>
+    }
+
     // 1. List Projects (Admin Mode)
     const { data: projects, error: projectsError } = await supabase.from('projects').select('*')
 

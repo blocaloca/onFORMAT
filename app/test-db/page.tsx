@@ -29,7 +29,11 @@ export default function TestDBPage() {
 
         // 2. Test Read
         addLog("Testing SELECT * ...");
-        const { data: readData, error: readError } = await supabase.from('projects').select('*').limit(5);
+        const { data: readData, error: readError } = await supabase
+            .from('projects')
+            .select('*')
+            .eq('user_id', user.id)
+            .limit(5);
         if (readError) {
             addLog("❌ SELECT Error: " + JSON.stringify(readError));
         } else {
