@@ -129,48 +129,42 @@ export async function fetchFeedback() {
     return data;
 }
 
-// Action: Mark Feedback as Read (Native Form Data)
+// Action: Mark Feedback as Read
 export async function markFeedbackRead(formData: FormData) {
+    const id = formData.get("id") as string;
+    if (!id) return;
+
+    console.log("SERVER ACTION: Marking read for ID", id);
+
     try {
-        const id = formData.get("id") as string;
-        if (!id) return;
-
-        const supabase = await createNextClient(); // Uses Next.js cookies
-        const { data: { user } } = await supabase.auth.getUser();
-
-        // Fail silently instead of crashing if unauthorized
-        if (!user || !(await verifyAdmin(user.id))) return; 
-
         await adminSupabase
             .from('feedback_messages')
             .update({ status: 'read' })
             .eq('id', id);
-
+            
     } catch (error) {
-        console.error("Mark read error:", error);
+        console.error("Database update error:", error);
     }
+    
     revalidatePath('/admin');
 }
 
-// Action: Delete Feedback (Native Form Data)
+// Action: Delete Feedback
 export async function deleteFeedback(formData: FormData) {
+    const id = formData.get("id") as string;
+    if (!id) return;
+
+    console.log("SERVER ACTION: Deleting ID", id);
+
     try {
-        const id = formData.get("id") as string;
-        if (!id) return;
-
-        const supabase = await createNextClient(); // Uses Next.js cookies
-        const { data: { user } } = await supabase.auth.getUser();
-
-        // Fail silently instead of crashing if unauthorized
-        if (!user || !(await verifyAdmin(user.id))) return; 
-
         await adminSupabase
             .from('feedback_messages')
             .delete()
             .eq('id', id);
-
+            
     } catch (error) {
-        console.error("Delete error:", error);
+        console.error("Database delete error:", error);
     }
+    
     revalidatePath('/admin');
 }
