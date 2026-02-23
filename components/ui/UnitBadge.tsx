@@ -12,9 +12,9 @@ interface UnitBadgeProps {
 
 export const UnitBadge = ({ unit, className, size = 'md' }: UnitBadgeProps) => {
     const colors = {
-        'A': 'bg-[#3B82F6] text-white shadow-blue-900/20 border border-blue-400/50', // Digital Blue
-        'B': 'bg-[#FBBF24] text-white shadow-amber-900/20 border border-amber-400/50', // Amber
-        'C': 'bg-[#22C55E] text-white shadow-green-900/20 border border-green-400/50', // Signal Green
+        'A': 'bg-[#22C55E] text-white shadow-green-900/20 border border-green-400/50', // Signal Green
+        'B': 'bg-[#3B82F6] text-white shadow-blue-900/20 border border-blue-400/50', // Digital Blue
+        'C': 'bg-[#FBBF24] text-white shadow-amber-900/20 border border-amber-400/50', // Amber
     };
 
     const sizes = {

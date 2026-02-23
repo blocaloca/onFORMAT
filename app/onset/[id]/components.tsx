@@ -101,7 +101,7 @@ export const CrewListView = ({ data }: { data: any }) => {
                                     {m.onSetGroups && m.onSetGroups.length > 0 && (
                                         <div className="flex gap-1 mt-1">
                                             {m.onSetGroups.map((g: string) => (
-                                                <span key={g} className={`text-[8px] font-black uppercase px-1 rounded ${g === 'A' ? 'bg-emerald-900 text-emerald-400' : g === 'B' ? 'bg-blue-900 text-blue-400' : 'bg-amber-900 text-amber-400'}`}>{g}</span>
+                                                <span key={g} className={`text-[8px] font-black uppercase px-2 py-0.5 rounded shadow-sm ${g === 'A' ? 'bg-[#22C55E] text-white' : g === 'B' ? 'bg-[#3B82F6] text-white' : 'bg-[#FBBF24] text-white'}`}>{g}</span>
                                             ))}
                                         </div>
                                     )}
@@ -835,7 +835,10 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                         <button
                                             key={cam}
                                             onClick={() => setRollForm({ ...rollForm, camera: cam })}
-                                            className={`flex-1 py-3 text-sm font-black rounded border ${rollForm.camera === cam ? 'bg-emerald-500 text-black border-emerald-500' : 'bg-zinc-950 text-zinc-500 border-zinc-800'}`}
+                                            className={`flex-1 py-3 text-sm font-black rounded border transition-all ${rollForm.camera === cam
+                                                    ? (cam === 'A' ? 'bg-[#22C55E] text-white border-[#22C55E]' : cam === 'B' ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-[#FBBF24] text-white border-[#FBBF24]')
+                                                    : 'bg-zinc-950 text-zinc-500 border-zinc-800'
+                                                }`}
                                         >
                                             {cam}
                                         </button>
