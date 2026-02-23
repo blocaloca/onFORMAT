@@ -8,6 +8,7 @@ import { Trash2 } from 'lucide-react';
 
 // User Actions Component
 export function UserActions({ user }: { user: any }) {
+    const router = useRouter();
     const [isPendingPro, setIsPendingPro] = useState(false);
     const [isPendingBeta, setIsPendingBeta] = useState(false);
 
@@ -15,6 +16,7 @@ export function UserActions({ user }: { user: any }) {
         setIsPendingPro(true);
         try {
             await toggleProOverride(user.id, user.manual_pro_override || false);
+            router.refresh();
         } finally {
             setIsPendingPro(false);
         }
@@ -24,6 +26,7 @@ export function UserActions({ user }: { user: any }) {
         setIsPendingBeta(true);
         try {
             await toggleBetaUser(user.id, user.is_beta_user || false);
+            router.refresh();
         } finally {
             setIsPendingBeta(false);
         }

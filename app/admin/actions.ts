@@ -63,34 +63,62 @@ export async function verifyAdmin(userId: string) {
 }
 
 // Action: Toggle Manual Pro Override
-export async function toggleProOverride(userId: string, currentState: boolean) {
-    const supabase = await createNextClient(); // Uses Next.js cookies
-    const { data: { user } } = await supabase.auth.getUser();
+export async function toggleProOverride(userIdOrFormData: string | FormData, currentState?: boolean) {
+    let userId: string;
+    let state: boolean;
 
-    if (!user || !(await verifyAdmin(user.id))) throw new Error("Unauthorized");
+    if (userIdOrFormData instanceof FormData) {
+        userId = userIdOrFormData.get('userId') as string;
+        state = userIdOrFormData.get('currentState') === 'true';
+    } else {
+        userId = userIdOrFormData as string;
+        state = currentState!;
+    }
 
-    const { error } = await adminSupabase
-        .from('profiles')
-        .update({ manual_pro_override: !currentState })
-        .eq('id', userId);
+    console.log(`SERVER ACTION: Toggling Pro Override for ${userId} (From: ${state})`);
 
-    if (error) throw new Error(error.message);
+    try {
+        const { error } = await adminSupabase
+            .from('profiles')
+            .update({ manual_pro_override: !state })
+            .eq('id', userId);
+
+        if (error) throw error;
+    } catch (error: any) {
+        console.error("Pro Toggle Error:", error.message);
+        throw new Error(error.message);
+    }
+
     revalidatePath('/admin');
 }
 
 // Action: Toggle Beta User
-export async function toggleBetaUser(userId: string, currentState: boolean) {
-    const supabase = await createNextClient(); // Uses Next.js cookies
-    const { data: { user } } = await supabase.auth.getUser();
+export async function toggleBetaUser(userIdOrFormData: string | FormData, currentState?: boolean) {
+    let userId: string;
+    let state: boolean;
 
-    if (!user || !(await verifyAdmin(user.id))) throw new Error("Unauthorized");
+    if (userIdOrFormData instanceof FormData) {
+        userId = userIdOrFormData.get('userId') as string;
+        state = userIdOrFormData.get('currentState') === 'true';
+    } else {
+        userId = userIdOrFormData as string;
+        state = currentState!;
+    }
 
-    const { error } = await adminSupabase
-        .from('profiles')
-        .update({ is_beta_user: !currentState })
-        .eq('id', userId);
+    console.log(`SERVER ACTION: Toggling Beta for ${userId} (From: ${state})`);
 
-    if (error) throw new Error(error.message);
+    try {
+        const { error } = await adminSupabase
+            .from('profiles')
+            .update({ is_beta_user: !state })
+            .eq('id', userId);
+
+        if (error) throw error;
+    } catch (error: any) {
+        console.error("Beta Toggle Error:", error.message);
+        throw new Error(error.message);
+    }
+
     revalidatePath('/admin');
 }
 
@@ -109,7 +137,7 @@ export async function manualUpdateTier(userId: string, tier: string) {
             tier: tier,
             price_id: 'manual_override',
             updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id' }); 
+        }, { onConflict: 'user_id' });
 
     if (error) throw new Error(error.message);
     revalidatePath('/admin');
@@ -141,11 +169,11 @@ export async function markFeedbackRead(formData: FormData) {
             .from('feedback_messages')
             .update({ status: 'read' })
             .eq('id', id);
-            
+
     } catch (error) {
         console.error("Database update error:", error);
     }
-    
+
     revalidatePath('/admin');
 }
 
@@ -161,10 +189,10 @@ export async function deleteFeedback(formData: FormData) {
             .from('feedback_messages')
             .delete()
             .eq('id', id);
-            
+
     } catch (error) {
         console.error("Database delete error:", error);
     }
-    
+
     revalidatePath('/admin');
 }

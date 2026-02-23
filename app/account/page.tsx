@@ -261,6 +261,9 @@ export default function AccountPage() {
                                             type="text"
                                             value={fullName}
                                             onChange={(e) => setFullName(e.target.value)}
+                                            autoComplete="off"
+                                            data-lpignore="true"
+                                            data-1p-ignore="true"
                                             className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:ring-2 focus:ring-zinc-900/5 transition-all"
                                         />
                                     </div>
