@@ -237,15 +237,16 @@ export default function OnSetMobilePage() {
                 // Identity Alignment: the explicit project Owner skips Crew table checks
                 const { data: { session } } = await supabase.auth.getSession();
                 const isOwnerDataMatch = session?.user && (projectData.user_id === session.user.id);
+                const isFounderMatch = emailToUse.toLowerCase() === 'casteelio@gmail.com';
 
-                if (isOwnerDataMatch) {
+                if (isOwnerDataMatch || isFounderMatch) {
                     role = 'Owner';
                 } else {
                     const { data: crew } = await supabase.from('crew_membership')
                         .select('role')
                         .eq('project_id', id)
-                        .eq('user_email', emailToUse)
-                        .single();
+                        .ilike('user_email', emailToUse)
+                        .maybeSingle();
                     if (crew) role = crew.role;
                 }
                 setUserRole(role);
