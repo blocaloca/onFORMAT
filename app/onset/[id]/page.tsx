@@ -29,7 +29,8 @@ import {
     MobileLookbookView,
     MobileWardrobeView,
     MobileCastingView,
-    MobilePropsView
+    MobilePropsView,
+    MobileClientSelectsView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -299,6 +300,9 @@ export default function OnSetMobilePage() {
             if (allDrafts['wardrobe-styling'] && !allDrafts['wardrobe']) allDrafts['wardrobe'] = allDrafts['wardrobe-styling'];
             if (allDrafts['project-vision'] && !allDrafts['storyboard']) allDrafts['storyboard'] = allDrafts['project-vision'];
             if (allDrafts['budget-actual'] && !allDrafts['budget']) allDrafts['budget'] = allDrafts['budget-actual'];
+            if (allDrafts['brief'] && !allDrafts['creative-brief']) allDrafts['creative-brief'] = allDrafts['brief'];
+            if (allDrafts['deliverables-licensing'] && !allDrafts['deliverables']) allDrafts['deliverables'] = allDrafts['deliverables-licensing'];
+            if (allDrafts['archive-log'] && !allDrafts['archive']) allDrafts['archive'] = allDrafts['archive-log'];
 
             const computedData = {
                 project: projectData,
@@ -333,7 +337,7 @@ export default function OnSetMobilePage() {
                 'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
                 'script-notes', 'sound-report',
                 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard',
-                'creative-brief', 'treatment', 'client-selects', 'deliverables', 'lookbook'
+                'creative-brief', 'treatment', 'client-selects', 'deliverables', 'lookbook', 'archive'
             ];
 
             // SECURITY: Respect "Go Live" toggle. If Offline, show nothing (unless Owner).
@@ -836,6 +840,50 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e) }
     };
 
+    const handleUpdateClientSelects = async (action: 'add' | 'update' | 'delete', payload: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            let logPhaseKey = 'POST';
+
+            Object.keys(phases).forEach(p => {
+                if (phases[p]?.drafts?.['client-selects']) logPhaseKey = p;
+            });
+
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let raw = updatedPhases[logPhaseKey].drafts['client-selects'];
+            let doc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(doc)) {
+                if (doc.length > 0) history = doc.slice(1);
+                doc = doc[0];
+            }
+            if (!doc) doc = {};
+            if (!doc.items) doc.items = [];
+
+            let list = [...doc.items];
+            if (action === 'add') list.push(payload);
+            else if (action === 'update') {
+                const idx = list.findIndex((i: any) => i.id === payload.id);
+                if (idx >= 0) list[idx] = payload;
+            } else if (action === 'delete') {
+                list = list.filter((i: any) => i.id !== payload);
+            }
+
+            doc.items = list;
+            updatedPhases[logPhaseKey].drafts['client-selects'] = JSON.stringify([doc, ...history]);
+
+            await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    };
+
     if (showLogin) {
         return <EmailEntryGate onJoin={handleJoin} projectName={data.project?.name} />;
     }
@@ -1150,8 +1198,9 @@ export default function OnSetMobilePage() {
                             {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" />}
 
                             {/* Phase 2: Missing Documents leveraging lists */}
-                            {activeTab === 'client-selects' && <MobileReadOnlyListView data={data.docs['client-selects']} titleKey="description" subtitleKey="fileNumber" detailKeys={['status', 'notes']} />}
-                            {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="description" subtitleKey="fileNumber" detailKeys={['dueDate', 'format', 'type', 'notes']} imageKey="thumbnailUrl" />}
+                            {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} />}
+                            {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} />}
+                            {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} />}
 
                             {/* Phase 3: Missing Document Views & Visual Cards */}
                             {activeTab === 'creative-brief' && <MobileBriefView data={data.docs['creative-brief']} />}
@@ -1162,7 +1211,7 @@ export default function OnSetMobilePage() {
                             {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} />}
 
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>

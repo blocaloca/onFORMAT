@@ -32,6 +32,7 @@ export const DOC_LABELS: Record<string, string> = {
     'treatment': 'Treatment',
     'client-selects': 'Client Selects',
     'deliverables': 'Deliverables',
+    'archive': 'Archive Log',
     'lookbook': 'Lookbook',
     // Existing
     'av-script': 'AV Script',
@@ -2585,6 +2586,192 @@ export const MobilePropsView = ({ data }: { data: any }) => {
                     </div>
                 </div>
             ))}
+        </div>
+    );
+};
+
+export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    const [form, setForm] = useState({
+        fileNumber: '',
+        description: '',
+        notes: '',
+        status: ''
+    });
+
+    const items = data?.items || [];
+
+    const handleStartAdd = () => {
+        setForm({ fileNumber: '', description: '', notes: '', status: '' });
+        setEditingId(null);
+        setIsAdding(true);
+    };
+
+    const handleStartEdit = (item: any) => {
+        setForm({
+            fileNumber: item.fileNumber || '',
+            description: item.description || '',
+            notes: item.notes || '',
+            status: item.status || ''
+        });
+        setEditingId(item.id);
+        setIsAdding(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancel = () => {
+        setIsAdding(false);
+        setEditingId(null);
+    };
+
+    const handleSubmit = () => {
+        if (!form.fileNumber && !form.description) return;
+
+        if (editingId && onUpdate) {
+            onUpdate({ id: editingId, ...form });
+        } else if (onAdd) {
+            onAdd({ id: `selects-${Date.now()}`, ...form });
+        }
+        setIsAdding(false);
+        setEditingId(null);
+    };
+
+    const STATUS_OPTIONS = [
+        { value: '', label: '-', className: 'text-zinc-500 bg-zinc-200' },
+        { value: 'approved', label: 'APPROVED', className: 'text-green-700 bg-green-100 border-green-200' },
+        { value: 'edit', label: 'EDIT', className: 'text-blue-700 bg-blue-100 border-blue-200' },
+        { value: 'reshoot', label: 'RESHOOT', className: 'text-orange-700 bg-orange-100 border-orange-200' },
+        { value: 'kill', label: 'KILL', className: 'text-red-700 bg-red-100 border-red-200' },
+    ];
+
+    return (
+        <div className="space-y-4 pb-8">
+            {/* Header Actions */}
+            {(onAdd || onUpdate) && !isAdding && (
+                <div className="mb-6 animate-in slide-in-from-bottom-2 fade-in">
+                    <button
+                        onClick={handleStartAdd}
+                        className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+                    >
+                        <Plus size={16} />
+                        <span>Add Select</span>
+                    </button>
+                </div>
+            )}
+
+            {/* Form */}
+            {isAdding && (
+                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-4 mb-6">
+                    <div className="flex justify-between items-center mb-4 border-b border-zinc-300 pb-2">
+                        <span className="text-xs font-bold uppercase text-zinc-950 tracking-widest">{editingId ? 'Edit Select' : 'New Select'}</span>
+                        <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
+                    </div>
+
+                    <div className="flex gap-4 mb-4">
+                        <div className="flex-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">File Number</label>
+                            <input
+                                value={form.fileNumber}
+                                onChange={e => setForm({ ...form, fileNumber: e.target.value })}
+                                className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded text-center font-bold outline-none focus:bg-white"
+                                placeholder="..."
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Status</label>
+                            <select
+                                value={form.status}
+                                onChange={e => setForm({ ...form, status: e.target.value })}
+                                className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded text-center font-bold text-xs uppercase outline-none focus:bg-white h-[38px] appearance-none"
+                            >
+                                {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="mb-4">
+                        <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Description</label>
+                        <textarea
+                            value={form.description}
+                            onChange={e => setForm({ ...form, description: e.target.value })}
+                            className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded h-20 outline-none focus:bg-white resize-none"
+                            placeholder="Describe what happens..."
+                        />
+                    </div>
+
+                    <div className="mb-5">
+                        <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Notes (Optional)</label>
+                        <textarea
+                            value={form.notes}
+                            onChange={e => setForm({ ...form, notes: e.target.value })}
+                            className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded h-16 outline-none focus:bg-white resize-none text-xs italic"
+                            placeholder="Additional context or editor notes..."
+                        />
+                    </div>
+
+                    <button onClick={handleSubmit} className="w-full bg-emerald-600 text-white font-bold uppercase tracking-widest text-xs py-3 rounded flex items-center justify-center gap-2">
+                        <Save size={14} />
+                        <span>{editingId ? 'Update' : 'Save'}</span>
+                    </button>
+                </div>
+            )}
+
+            {/* List */}
+            {items.length === 0 && !isAdding ? (
+                <EmptyState label="Client Selects" />
+            ) : (
+                <div className="space-y-3">
+                    {items.map((item: any) => {
+                        const isConfirming = deleteConfirmId === item.id;
+                        const statusObj = STATUS_OPTIONS.find(o => o.value === item.status) || STATUS_OPTIONS[0];
+
+                        return (
+                            <div key={item.id} className="bg-zinc-100 shadow-sm border border-slate-500 rounded-xl p-4 relative flex gap-4 overflow-hidden group">
+                                {/* Left Col: Status & File Number */}
+                                <div className="flex flex-col gap-2 min-w-[70px] w-[70px] flex-shrink-0">
+                                    <div className={`text-[9px] font-black uppercase text-center py-1 px-1 rounded border ${statusObj.className} tracking-wider`}>
+                                        {statusObj.label}
+                                    </div>
+                                    <div className="bg-white border border-slate-300 rounded text-center py-1">
+                                        <span className="block text-[8px] font-bold text-zinc-400 uppercase tracking-widest">FILE</span>
+                                        <span className="block text-xs font-black text-zinc-800 break-all px-1 leading-none pb-0.5">{item.fileNumber || '-'}</span>
+                                    </div>
+                                </div>
+
+                                {/* Right Col: Content */}
+                                <div className="flex-1 min-w-0 pr-8">
+                                    <p className="text-sm font-bold text-zinc-950 leading-snug whitespace-pre-wrap">{item.description || 'No Description'}</p>
+                                    {item.notes && <p className="text-xs text-zinc-600 italic whitespace-pre-wrap mt-2">{item.notes}</p>}
+                                </div>
+
+                                {/* Actions Toolbox */}
+                                <div className="absolute right-2 top-2 bottom-2 w-8 flex flex-col justify-center gap-3">
+                                    {onUpdate && !isConfirming && (
+                                        <button onClick={() => handleStartEdit(item)} className="text-zinc-400 hover:text-zinc-900 transition-colors mx-auto"><Edit2 size={14} /></button>
+                                    )}
+                                    {onDelete && !isConfirming && (
+                                        <button onClick={() => setDeleteConfirmId(item.id)} className="text-zinc-400 hover:text-red-500 transition-colors mx-auto"><Trash2 size={14} /></button>
+                                    )}
+                                </div>
+
+                                {/* Delete Confirmation Overlay */}
+                                {isConfirming && (
+                                    <div className="absolute inset-0 bg-red-50 flex flex-col items-center justify-center p-4 z-10">
+                                        <span className="text-xs font-bold text-red-600 uppercase mb-3 tracking-widest">Delete Select?</span>
+                                        <div className="flex gap-4 w-full">
+                                            <button onClick={() => setDeleteConfirmId(null)} className="flex-1 text-xs font-bold text-zinc-600 bg-white border border-zinc-300 py-2 rounded uppercase tracking-wider">Cancel</button>
+                                            <button onClick={() => { onDelete && onDelete(item.id); setDeleteConfirmId(null); }} className="flex-1 text-xs font-bold text-white bg-red-600 py-2 rounded uppercase tracking-wider shadow-sm shadow-red-500/30 border border-red-700">Delete</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     );
 };
