@@ -28,6 +28,12 @@ const DEFAULT_PROPERTY_TEXT = `I, the undersigned owner or authorized agent of t
  * -------------------------------------------------------------------------------- */
 
 export const DOC_LABELS: Record<string, string> = {
+    'creative-brief': 'Creative Brief',
+    'treatment': 'Treatment',
+    'client-selects': 'Client Selects',
+    'deliverables': 'Deliverables',
+    'lookbook': 'Lookbook',
+    // Existing
     'av-script': 'AV Script',
     'shot-scene-book': 'Shot List',
     'call-sheet': 'Call Sheet',
@@ -2352,6 +2358,66 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     })
                 )}
             </div>
+        </div>
+    );
+};
+
+export const MobileBriefView = ({ data }: { data: any }) => {
+    if (!data) return <EmptyState label="Creative Brief" />;
+
+    const fields = [
+        { key: 'product', label: 'Vision' },
+        { key: 'objective', label: 'Objective' },
+        { key: 'targetAudience', label: 'Target Audience' },
+        { key: 'tone', label: 'Tone & Style' },
+        { key: 'keyMessage', label: 'Key Message' },
+        { key: 'narrative', label: 'Narrative Approach' },
+        { key: 'talent', label: 'Talent / Casting' },
+        { key: 'location', label: 'Location / Setting' },
+        { key: 'deliverables', label: 'Deliverables' }
+    ];
+
+    return (
+        <div className="space-y-4 pb-8">
+            {fields.map((field) => {
+                const value = data[field.key];
+                if (!value || typeof value === 'object') return null;
+                return (
+                    <div key={field.key} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-5">
+                        <span className="text-[10px] font-bold uppercase text-emerald-600 tracking-widest block mb-2">{field.label}</span>
+                        <p className="text-sm font-medium text-zinc-900 leading-relaxed whitespace-pre-wrap">{value}</p>
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+export const MobileTreatmentView = ({ data }: { data: any }) => {
+    const slides = data?.slides || [];
+    if (slides.length === 0) return <EmptyState label="Treatment" />;
+
+    return (
+        <div className="space-y-6 pb-8">
+            {slides.map((slide: any, i: number) => (
+                <div key={slide.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                    {slide.url && slide.mediaType === 'image' && (
+                        <div className="w-full aspect-video bg-zinc-800 relative">
+                            <img src={slide.url} className="w-full h-full object-cover" />
+                        </div>
+                    )}
+                    {slide.url && slide.mediaType === 'video' && (
+                        <div className="w-full aspect-video bg-zinc-800 relative">
+                            <video src={slide.url} className="w-full h-full object-cover" controls preload="metadata" />
+                        </div>
+                    )}
+                    <div className="p-4">
+                        <span className="text-[10px] uppercase font-bold text-emerald-600 block mb-1">{slide.category}</span>
+                        {slide.title && <h3 className="text-xl font-black uppercase text-zinc-950 tracking-tight leading-none mb-3">{slide.title}</h3>}
+                        {slide.text && <p className="text-sm text-zinc-700 leading-relaxed whitespace-pre-wrap">{slide.text}</p>}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
