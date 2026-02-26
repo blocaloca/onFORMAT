@@ -341,6 +341,21 @@ export default function OnSetMobilePage() {
             ];
 
             // SECURITY: Respect "Go Live" toggle. If Offline, show nothing (unless Owner).
+            const mapMobileKey = (k: string) => {
+                const map: Record<string, string> = {
+                    'shot-log': 'camera-report',
+                    'locations-sets': 'locations',
+                    'casting-talent': 'casting',
+                    'wardrobe-styling': 'wardrobe',
+                    'project-vision': 'storyboard',
+                    'budget-actual': 'budget',
+                    'brief': 'creative-brief',
+                    'deliverables-licensing': 'deliverables',
+                    'archive-log': 'archive'
+                };
+                return map[k] || k;
+            };
+
             if (mobileControl && !isLive && !isOwner) {
                 computedAvailableKeys = [];
             } else if (mobileControl?.toolGroups) {
@@ -357,8 +372,8 @@ export default function OnSetMobilePage() {
                     // Owner sees ALL supported tools that are registered in the mobile control, OR have data.
                     computedAvailableKeys = MOBILE_SUPPORTED.filter(k =>
                         allDrafts[k] ||
-                        (mobileControl?.selectedTools || []).includes(k) ||
-                        (mobileControl?.toolGroups && mobileControl.toolGroups[k])
+                        (mobileControl?.selectedTools || []).map(mapMobileKey).includes(k) ||
+                        (mobileControl?.toolGroups && Object.keys(mobileControl.toolGroups).map(mapMobileKey).includes(k))
                     );
                 } else {
                     // Crew sees tools matching their groups, regardless of data (Empty State Standard)
@@ -368,11 +383,11 @@ export default function OnSetMobilePage() {
                             if (allowedGroups.length === 0) return false;
                             return allowedGroups.some((g: string) => myGroups.includes(g));
                         })
-                        .map(([key]) => key === 'shot-log' ? 'camera-report' : key);
+                        .map(([key]) => mapMobileKey(key));
                 }
             } else if (mobileControl) {
                 // Legacy system if toolGroups is undefined but mobileControl exists
-                computedAvailableKeys = (mobileControl.selectedTools || []).map((k: string) => k === 'shot-log' ? 'camera-report' : k);
+                computedAvailableKeys = (mobileControl.selectedTools || []).map((k: string) => mapMobileKey(k));
             }
 
             // Strict Permission: No defaults.
