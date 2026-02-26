@@ -215,7 +215,7 @@ export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, o
                     <div className="pt-6 flex flex-col gap-3">
                         <button
                             onClick={handleSubmit}
-                            className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                            className="w-full bg-emerald-500 text-zinc-950 font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
                         >
                             <Save size={18} />
                             <span>{editingMember ? 'Update Member' : 'Save to Crew List'}</span>
@@ -240,7 +240,7 @@ export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, o
     return (
         <div className="space-y-4">
             {/* Search & Add */}
-            <div className="sticky top-0 z-10 bg-black pb-2 pt-2 flex gap-2">
+            <div className="sticky top-0 z-10 bg-zinc-200 pb-2 pt-2 flex gap-2">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={14} />
                     <input
@@ -253,7 +253,7 @@ export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, o
                 {isOwner && (
                     <button
                         onClick={handleStartAdd}
-                        className="bg-emerald-500 text-black p-3 rounded-lg shadow-lg active:scale-95 transition-transform"
+                        className="bg-emerald-500 text-zinc-950 p-3 rounded-lg shadow-lg active:scale-95 transition-transform"
                     >
                         <Plus size={20} />
                     </button>
@@ -262,7 +262,7 @@ export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, o
 
             {Object.entries(grouped).map(([dept, members]) => (
                 <div key={dept} className="space-y-2">
-                    <div className="sticky top-14 z-0 bg-black/90 backdrop-blur py-1 border-b border-zinc-800">
+                    <div className="sticky top-14 z-0 bg-zinc-200/90 backdrop-blur py-1 border-b border-zinc-300">
                         <h3 className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">{dept}</h3>
                     </div>
                     <div className="grid gap-2">
@@ -290,12 +290,12 @@ export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, o
                                 </div>
                                 <div className="flex gap-2">
                                     {m.phone && (
-                                        <a href={`tel:${m.phone}`} className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors">
+                                        <a href={`tel:${m.phone}`} className="w-8 h-8 rounded-full bg-zinc-300 flex items-center justify-center text-zinc-600 hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors">
                                             <Phone size={14} />
                                         </a>
                                     )}
                                     {m.email && (
-                                        <a href={`mailto:${m.email}`} className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-500 hover:text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                        <a href={`mailto:${m.email}`} className="w-8 h-8 rounded-full bg-zinc-300 flex items-center justify-center text-zinc-600 hover:text-blue-500 hover:bg-blue-500/10 transition-colors">
                                             <Mail size={14} />
                                         </a>
                                     )}
@@ -385,7 +385,7 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
     }
 
     return (
-        <div className="h-screen bg-black text-zinc-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-screen bg-zinc-200 text-zinc-950 flex flex-col items-center justify-center p-6 text-center">
             <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Welcome to Set</h1>
             <p className="text-xs text-zinc-500 mb-8 uppercase font-bold tracking-widest">Please identify yourself</p>
 
@@ -394,13 +394,13 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                 placeholder="Enter your email..."
                 value={val}
                 onChange={e => setVal(e.target.value)}
-                className="w-[90%] max-w-[340px] bg-zinc-900 border border-zinc-700 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none placeholder:text-zinc-400 font-mono"
+                className="w-[90%] max-w-[340px] bg-zinc-100 border border-zinc-300 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none placeholder:text-zinc-400 font-mono"
             />
 
             <button
                 onClick={() => onJoin(val)}
                 disabled={!val}
-                className="w-[90%] max-w-[340px] bg-emerald-500 text-black font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
+                className="w-[90%] max-w-[340px] bg-emerald-500 text-zinc-950 font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
             >
                 Enter
             </button>

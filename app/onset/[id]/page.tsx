@@ -1093,8 +1093,8 @@ export default function OnSetMobilePage() {
 
     if (loading) {
         return (
-            <div className="h-screen bg-black text-white flex flex-col items-center justify-center gap-4">
-                <img src="/onset_logo.png" className="w-16 animate-pulse opacity-50" />
+            <div className="h-screen bg-zinc-200 text-zinc-900 flex flex-col items-center justify-center gap-4">
+                <img src="/onset_logo.png" className="w-16 animate-pulse opacity-50 contrast-0" />
                 <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Connecting/...</p>
             </div>
         );
