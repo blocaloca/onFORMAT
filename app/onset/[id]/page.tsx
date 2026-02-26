@@ -298,8 +298,16 @@ export default function OnSetMobilePage() {
             let computedAvailableKeys: string[] = [];
             const isLive = mobileControl?.isLive;
 
-            // SECURITY: Respect "Go Live" toggle. If Offline, show nothing.
-            if (mobileControl && !isLive) {
+            const isOwner = role === 'Owner';
+            const MOBILE_SUPPORTED = [
+                'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
+                'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
+                'script-notes', 'sound-report',
+                'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard'
+            ];
+
+            // SECURITY: Respect "Go Live" toggle. If Offline, show nothing (unless Owner).
+            if (mobileControl && !isLive && !isOwner) {
                 computedAvailableKeys = [];
             } else if (mobileControl?.toolGroups) {
                 // New System: Group-Based Access (A/B/C)
@@ -310,17 +318,9 @@ export default function OnSetMobilePage() {
                 );
 
                 const myGroups = me?.onSetGroups || [];
-                const isOwner = role === 'Owner';
 
                 if (isOwner) {
-                    // Owner sees ALL supported tools that are registered in the mobile control
-                    const MOBILE_SUPPORTED = [
-                        'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
-                        'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
-                        'script-notes', 'sound-report',
-                        'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard'
-                    ];
-                    // Every tool that has data OR is explicitly selected in the registry
+                    // Owner sees ALL supported tools that are registered in the mobile control, OR have data.
                     computedAvailableKeys = MOBILE_SUPPORTED.filter(k =>
                         allDrafts[k] ||
                         (mobileControl?.selectedTools || []).includes(k) ||
@@ -336,16 +336,17 @@ export default function OnSetMobilePage() {
                         })
                         .map(([key]) => key === 'shot-log' ? 'camera-report' : key);
                 }
-            } else {
-                computedAvailableKeys = (mobileControl?.selectedTools || []).map((k: string) => k === 'shot-log' ? 'camera-report' : k);
+            } else if (mobileControl) {
+                // Legacy system if toolGroups is undefined but mobileControl exists
+                computedAvailableKeys = (mobileControl.selectedTools || []).map((k: string) => k === 'shot-log' ? 'camera-report' : k);
             }
 
             // Strict Permission: No defaults.
             let availableKeys = computedAvailableKeys;
 
-            // REMOVED: Default fallback logic. If empty, it stays empty.
+            // DEFAULT FALLBACK: If there's NO mobileControl object at all, default to showing everything that has data
             if (availableKeys.length === 0 && !mobileControl) {
-                // STRICT MODE: Do nothing.
+                availableKeys = MOBILE_SUPPORTED.filter(k => allDrafts[k]);
             }
 
             const currentTab = activeTabRef.current;
