@@ -279,14 +279,14 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
     if (!data || !data.shots || data.shots.length === 0) return <EmptyState label="Shot List" />;
 
     return (
-        <div className="flex flex-col divide-y divide-zinc-300">
+        <div className="flex flex-col space-y-3">
             {data.shots.map((shot: any, i: number) => {
                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                 const isConfirming = confirmingId === shot.id;
 
                 if (isConfirming) {
                     return (
-                        <div key={shot.id || i} className="p-6 bg-zinc-50 border border-slate-500 shadow-sm border-l-4 border-l-emerald-500 animate-in fade-in">
+                        <div key={shot.id || i} className="p-4 bg-zinc-50 border border-slate-500 rounded-md shadow-sm border-l-4 border-l-emerald-500 animate-in fade-in">
                             <p className="text-sm font-bold text-zinc-950 mb-4">Mark Shot {shot.scene}-{shot.shot} Complete?</p>
                             <div className="flex gap-3">
                                 <button
@@ -314,8 +314,8 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                 }
 
                 return (
-                    <div key={shot.id || i} className="py-6 flex gap-4 bg-transparent">
-                        <div className="shrink-0 flex flex-col items-center gap-1 w-10">
+                    <div key={shot.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 group relative flex items-start gap-4">
+                        <div className="shrink-0 flex flex-col items-center gap-1 w-10 mt-1">
                             <span className="text-[8px] text-zinc-500 uppercase font-bold">SCENE</span>
                             <span className="text-lg font-black text-zinc-950 leading-none">{shot.scene || '-'}</span>
                         </div>
@@ -330,14 +330,24 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                             <p className="text-[10px] text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
                         </div>
 
-                        {/* Mobile Read Only: Approve Button Removed */}
-                        {isComplete && (
-                            <div className="shrink-0 flex items-center">
-                                <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/50">
-                                    <Check size={14} className="text-emerald-600" />
-                                </div>
-                            </div>
-                        )}
+                        {/* Editable Checkbox */}
+                        <div className="shrink-0 flex items-center pt-1">
+                            <button
+                                onClick={() => {
+                                    if (isComplete) {
+                                        onCheckShot && onCheckShot(shot.id, 'PENDING', false);
+                                    } else {
+                                        setConfirmingId(shot.id);
+                                    }
+                                }}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${isComplete
+                                        ? 'bg-emerald-500 border-emerald-500 text-white'
+                                        : 'bg-zinc-200 border-zinc-400 text-transparent hover:border-zinc-500 hover:text-zinc-400'
+                                    }`}
+                            >
+                                <Check size={16} />
+                            </button>
+                        </div>
                     </div>
                 );
             })}

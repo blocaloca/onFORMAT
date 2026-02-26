@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, jsx-a11y/alt-text */
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
-import { Trash2, Plus, FileInput } from 'lucide-react';
+import { Trash2, Plus, FileInput, Check } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
 interface Shot {
@@ -139,13 +139,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     <div className="space-y-4 h-full flex flex-col">
 
                         {/* Table Header */}
-                        <div className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px] gap-2 border-b-2 pb-2 items-end ${darkMode ? 'border-zinc-800' : 'border-black'}`}>
+                        <div className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px_30px] gap-2 border-b-2 pb-2 items-end ${darkMode ? 'border-zinc-800' : 'border-black'}`}>
                             <span className={`text-[10px] font-bold uppercase tracking-widest text-center ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>#</span>
                             <span className={`text-[10px] font-bold uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>Scene</span>
                             <span className={`text-[10px] font-bold uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>Size</span>
                             <span className={`text-[10px] font-bold uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>Angle</span>
                             <span className={`text-[10px] font-bold uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>Movement</span>
                             <span className={`text-[10px] font-bold uppercase tracking-widest ${darkMode ? 'text-zinc-500' : 'text-zinc-400'}`}>Description</span>
+                            <span className="text-center"><Check size={12} className={darkMode ? 'text-zinc-500 mx-auto' : 'text-zinc-300 mx-auto'} /></span>
                             <span className="px-1"></span>
                         </div>
 
@@ -155,7 +156,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                                 return (
-                                    <div key={shot.id} className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px] gap-2 py-2 items-start transition-colors group ${isComplete
+                                    <div key={shot.id} className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px_30px] gap-2 py-2 items-start transition-colors group ${isComplete
                                         ? (darkMode ? 'bg-emerald-900/10' : 'bg-emerald-50/50')
                                         : (darkMode ? 'hover:bg-zinc-800/30' : 'hover:bg-zinc-50')
                                         }`}>
@@ -255,6 +256,20 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     style={{ height: 'auto' }} // Initial reset
                                                 />
                                             )}
+                                        </div>
+
+                                        {/* Status Toggle Checkbox */}
+                                        <div className="flex justify-center pt-2 w-full">
+                                            <button
+                                                onClick={() => handleUpdateShot(globalIdx, { status: isComplete ? 'PENDING' : 'COMPLETE' })}
+                                                disabled={isLocked}
+                                                className={`w-[14px] h-[14px] rounded-sm border transition-colors flex items-center justify-center ${isComplete
+                                                        ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
+                                                        : (darkMode ? 'border-zinc-700 hover:border-zinc-500 bg-black' : 'border-zinc-300 hover:border-zinc-400 bg-white')
+                                                    } ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                            >
+                                                {isComplete && <Check size={10} strokeWidth={3} />}
+                                            </button>
                                         </div>
 
                                         {/* Delete Button with Confirmation Popover */}
