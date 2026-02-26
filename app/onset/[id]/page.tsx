@@ -832,10 +832,10 @@ export default function OnSetMobilePage() {
                 {/* HEADER */}
                 <header className="bg-zinc-100/90 backdrop-blur-md border-b border-zinc-200/80 pt-safe transition-all w-full relative">
                     <div className="h-16 md:h-18 flex items-center justify-between px-6">
-                        <a href="/onset" className="flex flex-col items-start active:opacity-50 transition-opacity mt-2 shrink-0">
+                        <div className="flex flex-col items-start mt-2 shrink-0">
                             <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
                             <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
-                        </a>
+                        </div>
                         <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
                         <div className="flex flex-col flex-1 min-w-0">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 leading-none mb-0.5 truncate">{data.project.name}</span>
@@ -872,15 +872,6 @@ export default function OnSetMobilePage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-3 shrink-0 ml-2">
-                            <button
-                                onClick={() => {
-                                    setLoading(true);
-                                    fetchData();
-                                }}
-                                className={`w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0 ${loading ? 'animate-spin' : ''}`}
-                            >
-                                <RefreshCw size={16} />
-                            </button>
                             <BetaFeedbackTrigger variant="icon" />
                             <button
                                 onClick={() => setShowMenu(true)}
