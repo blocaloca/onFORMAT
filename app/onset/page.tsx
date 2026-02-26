@@ -23,19 +23,32 @@ export default function OnSetPage() {
 
             // Identity Check
             const stored = localStorage.getItem('onset_user_email');
-            if (stored) setUserEmail(stored);
-            fetchProjects(user.id);
+            const actualEmail = stored || user.email || '';
+            if (actualEmail) setUserEmail(actualEmail);
+            fetchProjects(user.id, actualEmail);
         };
         init();
     }, []);
 
-    const fetchProjects = async (userId: string) => {
+    const fetchProjects = async (userId: string, email: string) => {
         try {
-            const { data, error } = await supabase
-                .from('projects')
-                .select('*')
-                .eq('user_id', userId)
-                .order('updated_at', { ascending: false });
+            // First find projects where the user is a crew member
+            const { data: crewData } = await supabase
+                .from('crew_membership')
+                .select('project_id')
+                .ilike('user_email', email);
+
+            const crewProjectIds = crewData?.map(c => c.project_id) || [];
+
+            let query = supabase.from('projects').select('*').order('updated_at', { ascending: false });
+
+            if (crewProjectIds.length > 0) {
+                query = query.or(`user_id.eq.${userId},id.in.(${crewProjectIds.join(',')})`);
+            } else {
+                query = query.eq('user_id', userId);
+            }
+
+            const { data, error } = await query;
 
             if (data) {
                 // Parse Settings & Filter for LIVE projects

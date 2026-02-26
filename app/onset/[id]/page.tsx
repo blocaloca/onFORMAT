@@ -33,9 +33,6 @@ import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
  * -------------------------------------------------------------------------------- */
 const MobileLanding = ({ projectName, status }: any) => (
     <div className="flex flex-col items-center justify-center h-[80vh] text-center p-8 animate-in fade-in duration-700">
-        <div className="mb-8 opacity-20">
-            <img src="/onset_logo.png" className="w-24 grayscale" />
-        </div>
         <h1 className="text-xl font-bold uppercase tracking-widest text-white mb-2">
             {projectName}
         </h1>
@@ -948,10 +945,24 @@ export default function OnSetMobilePage() {
                                 {/* Status */}
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
-                                        <span className="flex items-center gap-2"><Wifi size={12} /> Connection</span>
-                                        <span className="text-emerald-600">Stable</span>
+                                        <span>Permissions</span>
+                                        {(() => {
+                                            const crew = data.docs['crew-list']?.crew || [];
+                                            const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                            const units = me?.onSetGroups || [];
+
+                                            if (units.length === 0) return <span className="text-zinc-500">None</span>;
+
+                                            return (
+                                                <div className="flex items-center gap-1">
+                                                    {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-[2px]">A</span>}
+                                                    {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-[2px]">B</span>}
+                                                    {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-[2px]">C</span>}
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
+                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider mt-4">
                                         <span>Sync Status</span>
                                         <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-600" : "text-amber-600"}>
                                             {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
