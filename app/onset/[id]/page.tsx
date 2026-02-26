@@ -1442,6 +1442,25 @@ export default function OnSetMobilePage() {
                                 return k;
                             })));
 
+                            // DOCUMENT ORDER ALIGNMENT: Sort to match Desktop Site order
+                            const NAV_ORDER = [
+                                'storyboard', 'creative-brief', 'av-script', 'treatment', 'lookbook',
+                                'shot-scene-book', 'budget', 'crew-list', 'releases', 'casting',
+                                'locations', 'equipment-list', 'wardrobe', 'props-list',
+                                'schedule', 'call-sheet', 'on-set-notes', 'camera-report',
+                                'script-notes', 'sound-report', 'dit-log',
+                                'client-selects', 'deliverables', 'archive'
+                            ];
+
+                            mappedKeys.sort((a, b) => {
+                                const idxA = NAV_ORDER.indexOf(a);
+                                const idxB = NAV_ORDER.indexOf(b);
+                                if (idxA === -1 && idxB === -1) return 0;
+                                if (idxA === -1) return 1;
+                                if (idxB === -1) return -1;
+                                return idxA - idxB;
+                            });
+
                             const crew = data.docs['crew-list']?.crew || [];
                             const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
                             const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
