@@ -24,7 +24,7 @@ import {
     MobileScriptNotesView,
     MobileSoundReportView
 } from './components';
-import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive } from 'lucide-react';
+import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
 
 /* --------------------------------------------------------------------------------
@@ -58,6 +58,7 @@ type Tab = string;
 interface MobileState {
     project: any | null;
     docs: Record<string, any>;
+    availableKeys?: string[];
 }
 
 /* --------------------------------------------------------------------------------
@@ -241,23 +242,24 @@ export default function OnSetMobilePage() {
                 setUserRole(role);
             }
 
-            // Parse ALL drafts across all phases
+            // 3. Parse Drafts with Reverse Phase Search & Array Unwrapping
             const allDrafts: Record<string, any> = {};
-            if (projectData.data?.phases) {
-                Object.values(projectData.data.phases).forEach((phase: any) => {
-                    if (phase.drafts) {
-                        Object.entries(phase.drafts).forEach(([key, val]) => {
-                            const parsed = safeParse(val as string);
-                            // Safety: Handle Array Versions (take latest/first)
-                            if (Array.isArray(parsed)) {
-                                allDrafts[key] = parsed[0];
-                            } else if (parsed) {
-                                allDrafts[key] = parsed;
-                            }
-                        });
-                    }
-                });
-            }
+            const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'ON_SET', 'POST'];
+
+            phaseOrder.forEach(phaseKey => {
+                const phase = projectData.data?.phases?.[phaseKey];
+                if (phase?.drafts) {
+                    Object.entries(phase.drafts).forEach(([key, val]) => {
+                        const parsed = safeParse(val as string);
+                        // Array Unwrapping: Take the LATEST index (Day 3 > Day 1)
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            allDrafts[key] = parsed[parsed.length - 1];
+                        } else if (parsed) {
+                            allDrafts[key] = parsed;
+                        }
+                    });
+                }
+            });
 
             // VIRTUAL MIGRATION: Support legacy Shot Log data
             if (allDrafts['shot-log'] && !allDrafts['camera-report']) {
@@ -271,11 +273,10 @@ export default function OnSetMobilePage() {
             const computedData = {
                 project: projectData,
                 docs: allDrafts,
-                _role: role, // Save role silently for offline recovery
-                _email: emailToUse // Save email silently for offline recovery
+                _role: role,
+                _email: emailToUse,
+                availableKeys: [] as string[] // Will be filled below
             };
-
-            setData(computedData);
 
             // CACHE FOR OFFLINE SAFETY NET
             localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(computedData));
@@ -304,14 +305,20 @@ export default function OnSetMobilePage() {
                 const isOwner = role === 'Owner';
 
                 if (isOwner) {
-                    // Owner sees ALL supported tools that exist in drafts
+                    // Owner sees ALL supported tools that are registered in the mobile control
                     const MOBILE_SUPPORTED = [
                         'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
-                        'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases'
+                        'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
+                        'script-notes', 'sound-report'
                     ];
-                    computedAvailableKeys = MOBILE_SUPPORTED.filter(k => allDrafts[k]);
+                    // Every tool that has data OR is explicitly selected in the registry
+                    computedAvailableKeys = MOBILE_SUPPORTED.filter(k =>
+                        allDrafts[k] ||
+                        (mobileControl?.selectedTools || []).includes(k) ||
+                        (mobileControl?.toolGroups && mobileControl.toolGroups[k])
+                    );
                 } else {
-                    // Crew sees only tools matching their groups
+                    // Crew sees tools matching their groups, regardless of data (Empty State Standard)
                     computedAvailableKeys = Object.entries(mobileControl.toolGroups)
                         .filter(([_, allowedGroups]: any) => {
                             if (!Array.isArray(allowedGroups)) return false;
@@ -348,6 +355,7 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
+            setData({ ...computedData, availableKeys });
             setLoading(false);
         } catch (err) {
             console.error("Fetch Data Error (Potentially Offline):", err);
@@ -476,6 +484,36 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts['camera-report'] = JSON.stringify(logDoc);
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+
+            // REALTIME BROADCAST: Trigger DIT Alert if new roll pulled
+            if (item.roll) {
+                const channel = supabase.channel(`project-live-${id}`);
+                channel.subscribe((status) => {
+                    if (status === 'SUBSCRIBED') {
+                        channel.send({
+                            type: 'broadcast',
+                            event: 'NEW_ROLL_PULLED',
+                            payload: {
+                                roll: item.roll,
+                                camera: item.camera || 'A',
+                                mediaType: item.mediaType || 'ProRes 4444',
+                                fps: item.fps || '23.98',
+                                iso: item.iso || '800'
+                            }
+                        });
+                        // Also signal pulse for Workspace Nav
+                        const pulse = supabase.channel('production_pulse');
+                        pulse.subscribe(() => {
+                            pulse.send({
+                                type: 'broadcast',
+                                event: 'DIT_ALERT',
+                                payload: { projectId: id, msg: `Roll ${item.roll} Pulled` }
+                            });
+                        });
+                    }
+                });
+            }
+
             fetchData();
         } catch (e) { console.error(e) }
     }
@@ -819,6 +857,15 @@ export default function OnSetMobilePage() {
                             </div>
                         </div>
                         <div className="flex items-center gap-3 shrink-0 ml-2">
+                            <button
+                                onClick={() => {
+                                    setLoading(true);
+                                    fetchData();
+                                }}
+                                className={`w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0 ${loading ? 'animate-spin' : ''}`}
+                            >
+                                <RefreshCw size={16} />
+                            </button>
                             <BetaFeedbackTrigger variant="icon" />
                             <button
                                 onClick={() => setShowMenu(true)}
@@ -953,6 +1000,19 @@ export default function OnSetMobilePage() {
                 style={{ WebkitOverflowScrolling: 'touch' }}
             >
                 <div className="w-full mx-auto py-8">
+                    {/* BACK BUTTON for Documents */}
+                    {activeTab !== '' && (
+                        <button
+                            onClick={() => setActiveTab('')}
+                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-6 active:opacity-50 transition-all hover:text-black group"
+                        >
+                            <div className="bg-zinc-100 p-2 rounded-full border border-zinc-200 group-hover:border-zinc-400">
+                                <ChevronLeft size={16} />
+                            </div>
+                            <span>Dashboard</span>
+                        </button>
+                    )}
+
                     {activeTab === '' ? (
                         <MobileLanding
                             projectName={data.project?.name}
@@ -1013,39 +1073,8 @@ export default function OnSetMobilePage() {
             <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                 <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                     {(() => {
-                        const mobileControl = data.docs['onset-mobile-control'];
-                        let availableKeys: string[] = [];
-                        const isLive = mobileControl?.isLive;
-
-                        // Security: If Offline, hide Nav
-                        if (mobileControl && !isLive) return null;
-
-                        if (mobileControl?.toolGroups) {
-                            const crewListDoc = data.docs['crew-list'];
-                            const me = crewListDoc?.crew?.find((c: any) =>
-                                c.email && c.email.toLowerCase() === userEmail?.toLowerCase()
-                            );
-                            const myGroups = me?.onSetGroups || [];
-                            const isOwner = userRole === 'Owner';
-
-                            availableKeys = Object.entries(mobileControl.toolGroups)
-                                .filter(([_, allowedGroups]: any) => {
-                                    if (!Array.isArray(allowedGroups) || allowedGroups.length === 0) return false;
-                                    if (isOwner) return true;
-                                    return allowedGroups.some((g: string) => myGroups.includes(g));
-                                })
-                                .map(([key]) => key);
-                        } else {
-                            availableKeys = mobileControl?.selectedTools || [];
-                        }
-
-                        if (availableKeys.length === 0) {
-                            return null;
-                        }
-
-                        if (availableKeys.length === 0) {
-                            return null;
-                        }
+                        const availableKeys = data.availableKeys || [];
+                        if (availableKeys.length === 0) return null;
 
                         const mappedKeys = Array.from(new Set(availableKeys.map(k => {
                             if (k === 'shot-log') return 'camera-report';

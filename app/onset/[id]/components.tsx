@@ -132,15 +132,21 @@ export const CrewListView = ({ data }: { data: any }) => {
 };
 
 export const EmptyState = ({ label }: { label: string }) => (
-    <div className="flex flex-col items-center justify-center p-12 text-center">
-        <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mb-6 border border-zinc-800 relative">
-            <div className="absolute inset-0 bg-emerald-500/10 rounded-full animate-ping opacity-75"></div>
-            <span className="text-zinc-500 font-mono text-xl">/</span>
+    <div className="flex flex-col items-center justify-center p-12 text-center animate-in fade-in duration-500">
+        <div className="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center mb-6 border border-zinc-200 shadow-inner relative">
+            <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl animate-pulse"></div>
+            <AlertCircle size={24} className="text-zinc-300" />
         </div>
-        <p className="text-sm uppercase font-black tracking-wider text-zinc-500 mb-2">No {label}</p>
-        <p className="text-[10px] text-zinc-600 font-mono max-w-[200px] leading-relaxed">
-            Data has not been synced yet. Use the Desktop Editor to draft and publish this document.
-        </p>
+        <p className="text-xs uppercase font-black tracking-widest text-zinc-400 mb-1">Document Registry</p>
+        <h3 className="text-sm font-black text-zinc-900 mb-6 uppercase tracking-tight">{label}</h3>
+
+        <div className="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm max-w-[220px]">
+            <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
+                No active data found. <br />
+                <span className="text-emerald-600">Draft in Desktop Editor</span><br />
+                to sync this tool.
+            </p>
+        </div>
     </div>
 );
 
@@ -474,6 +480,24 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
     const items = data?.items || [];
 
+    if (items.length === 0 && !isAdding) {
+        return (
+            <div className="space-y-4">
+                {/* Still show the Log Activity button if user has permission */}
+                {onAdd && (
+                    <button
+                        onClick={() => setIsAdding(true)}
+                        className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                    >
+                        <Plus size={16} />
+                        <span>Log Activity</span>
+                    </button>
+                )}
+                <EmptyState label="DIT Log" />
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-4">
 
@@ -551,14 +575,14 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
                     <div className="mb-3">
                         <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Event Type</label>
-                        <div className="flex bg-zinc-950 p-1 rounded border border-zinc-800">
-                            {['offload', 'issue', 'qc'].map(t => (
+                        <div className="grid grid-cols-3 gap-1 bg-zinc-950 p-1 rounded border border-zinc-800">
+                            {['offload', 'backup', 'transcode', 'qc', 'transfer', 'issue'].map(t => (
                                 <button
                                     key={t}
-                                    onClick={() => setForm({ ...form, eventType: t })}
-                                    className={`flex-1 text-[10px] uppercase font-bold py-2 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-zinc-950' : 'text-zinc-500'}`}
+                                    onClick={() => setForm({ ...form, eventType: t as any })}
+                                    className={`text-[9px] uppercase font-bold py-2 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-zinc-950' : 'text-zinc-500'}`}
                                 >
-                                    {t}
+                                    {t === 'transfer' ? 'Send' : t}
                                 </button>
                             ))}
                         </div>
@@ -568,7 +592,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                         <div>
                             <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Source</label>
                             <input
-                                placeholder="A001"
+                                placeholder="Roll A001"
                                 value={form.source}
                                 onChange={e => setForm({ ...form, source: e.target.value })}
                                 className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
@@ -577,10 +601,31 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                         <div>
                             <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Dest</label>
                             <input
-                                placeholder="Drive 1"
+                                placeholder="Backup 1"
                                 value={form.destination}
                                 onChange={e => setForm({ ...form, destination: e.target.value })}
                                 className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Data Size (GB)</label>
+                            <input
+                                placeholder="128"
+                                value={(form as any).dataSize || ''}
+                                onChange={e => setForm({ ...form, dataSize: e.target.value } as any)}
+                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Checksum</label>
+                            <input
+                                placeholder="xxhash"
+                                value={(form as any).checksum || ''}
+                                onChange={e => setForm({ ...form, checksum: e.target.value } as any)}
+                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-sm p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-mono"
                             />
                         </div>
                     </div>
@@ -619,7 +664,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
             <div className="space-y-3">
                 {items.length === 0 && !isAdding ? (
-                    <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No logs yet.</p></div>
+                    <EmptyState label="DIT Log" />
                 ) : (
                     items.map((item: any, i: number) => (
                         <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4">
@@ -836,8 +881,8 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                             key={cam}
                                             onClick={() => setRollForm({ ...rollForm, camera: cam })}
                                             className={`flex-1 py-3 text-sm font-black rounded border transition-all ${rollForm.camera === cam
-                                                    ? (cam === 'A' ? 'bg-[#22C55E] text-white border-[#22C55E]' : cam === 'B' ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-[#FBBF24] text-white border-[#FBBF24]')
-                                                    : 'bg-zinc-950 text-zinc-500 border-zinc-800'
+                                                ? (cam === 'A' ? 'bg-[#22C55E] text-white border-[#22C55E]' : cam === 'B' ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-[#FBBF24] text-white border-[#FBBF24]')
+                                                : 'bg-zinc-950 text-zinc-500 border-zinc-800'
                                                 }`}
                                         >
                                             {cam}
@@ -1097,13 +1142,12 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
             <div className="space-y-3">
                 {items.length === 0 && !isAdding ? (
-                    <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No shots logged.</p></div>
+                    <EmptyState label="Camera Report" />
                 ) : (
                     items.map((item: any, i: number) => (
                         <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4 flex gap-4 items-center">
                             <div className="text-center w-12 shrink-0">
                                 <span className="block text-[10px] font-mono text-zinc-500">{item.time}</span>
-                                <span className="block text-xl font-black text-zinc-950">{item.shot || item.shotId || '?'}</span>
                                 <span className="block text-xl font-black text-zinc-950">{item.shot || item.shotId || '?'}</span>
                                 {item.scene && <span className="block text-[9px] font-bold text-zinc-500">Sc {item.scene}</span>}
                                 {item.roll && <span className="block text-[8px] font-mono text-zinc-600 mt-1">{item.roll}</span>}
@@ -1329,7 +1373,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
             {/* List */}
             <div className="space-y-3">
                 {items.length === 0 && !isAdding ? (
-                    <div className="text-center py-8 opacity-50"><p className="text-xs text-zinc-500">No notes recorded.</p></div>
+                    <EmptyState label="On-Set Notes" />
                 ) : (
                     items.slice().reverse().map((item: any, i: number) => {
                         const isConfirming = deleteConfirmId === item.id;
@@ -1404,14 +1448,6 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
 
 export const MobileLocationsView = ({ data }: { data: any }) => {
     const items = data?.items || [];
-
-    // Assuming EmptyState is a component that exists and is accessible
-    // If not, you might need to define it or import it.
-    const EmptyState = ({ label }: { label: string }) => (
-        <div className="text-center py-8 opacity-50">
-            <p className="text-xs text-zinc-500">No {label} recorded.</p>
-        </div>
-    );
 
     if (items.length === 0) return <EmptyState label="Locations" />;
 
@@ -1503,13 +1539,28 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
     const [newReleaseName, setNewReleaseName] = useState('');
 
     const releases = data?.releases || [];
-    const activeRelease = releases.find((r: any) => r.id === activeId);
 
     const handleCreateWrapper = () => {
         setNewReleaseName('');
         setNewReleaseType('talent');
         setView('create');
     };
+
+    if (releases.length === 0 && view === 'list') {
+        return (
+            <div className="space-y-4">
+                <button
+                    onClick={handleCreateWrapper}
+                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                >
+                    <Plus size={16} />
+                    <span>Create Release</span>
+                </button>
+                <EmptyState label="Releases" />
+            </div>
+        );
+    }
+    const activeRelease = releases.find((r: any) => r.id === activeId);
 
     const submitCreate = () => {
         if (!newReleaseName || !onUpdate) return;
@@ -2236,7 +2287,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
             {/* List */}
             <div className="space-y-2">
                 {takes.length === 0 && !isAdding ? (
-                    <EmptyState label="Takes" />
+                    <EmptyState label="Sound Report" />
                 ) : (
                     takes.slice().reverse().map((take: any, i: number) => {
                         const isConfirming = deleteConfirmId === take.id;
