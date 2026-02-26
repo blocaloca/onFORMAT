@@ -35,7 +35,6 @@ export const DOC_LABELS: Record<string, string> = {
     'deliverables': 'Deliverables',
     'archive': 'Archive Log',
     'lookbook': 'Lookbook',
-    'mobile-control': 'Edit Mode Panel',
     // Existing
     'av-script': 'AV Script',
     'shot-scene-book': 'Shot List',
@@ -63,12 +62,27 @@ export const DOC_LABELS: Record<string, string> = {
 
 import { Phone, Mail, Search } from 'lucide-react';
 
-export const CrewListView = ({ data }: { data: any }) => {
+export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+    const { isOwner } = useProjectData();
     const [search, setSearch] = useState('');
+    const [isAdding, setIsAdding] = useState(false);
+    const [editingMember, setEditingMember] = useState<any | null>(null);
+    const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-    if (!data || !data.crew || data.crew.length === 0) return <EmptyState label="Crew List" />;
+    const [form, setForm] = useState({
+        name: '',
+        role: '',
+        department: '',
+        phone: '',
+        email: '',
+        onSetGroups: [] as string[]
+    });
 
-    const filtered = data.crew.filter((m: any) =>
+    if (!data) return <EmptyState label="Crew List" />;
+
+    const crew = data.crew || [];
+
+    const filtered = crew.filter((m: any) =>
         (m.name || '').toLowerCase().includes(search.toLowerCase()) ||
         (m.role || '').toLowerCase().includes(search.toLowerCase()) ||
         (m.department || '').toLowerCase().includes(search.toLowerCase())
@@ -82,11 +96,152 @@ export const CrewListView = ({ data }: { data: any }) => {
         grouped[d].push(m);
     });
 
+    const handleStartAdd = () => {
+        setForm({ name: '', role: '', department: '', phone: '', email: '', onSetGroups: [] });
+        setEditingMember(null);
+        setIsAdding(true);
+    };
+
+    const handleStartEdit = (m: any) => {
+        setForm({
+            name: m.name || '',
+            role: m.role || '',
+            department: m.department || '',
+            phone: m.phone || '',
+            email: m.email || '',
+            onSetGroups: m.onSetGroups || []
+        });
+        setEditingMember(m);
+        setIsAdding(true);
+    };
+
+    const handleSubmit = () => {
+        if (!form.name || !form.role) return;
+        if (editingMember && onUpdate) {
+            onUpdate({ ...editingMember, ...form });
+        } else if (onAdd) {
+            onAdd({ id: `crew-${Date.now()}`, ...form });
+        }
+        setIsAdding(false);
+        setEditingMember(null);
+    };
+
+    const toggleGroup = (group: string) => {
+        const current = form.onSetGroups;
+        const updated = current.includes(group)
+            ? current.filter(g => g !== group)
+            : [...current, group];
+        setForm({ ...form, onSetGroups: updated });
+    };
+
+    if (isAdding) {
+        return (
+            <div className="space-y-6 pb-20 animate-in slide-in-from-bottom-4 duration-300">
+                <div className="flex items-center justify-between mb-4 mt-2">
+                    <h3 className="text-xl font-black uppercase tracking-tight text-zinc-900">{editingMember ? 'Edit Member' : 'Add Crew Member'}</h3>
+                    <button onClick={() => setIsAdding(false)} className="bg-zinc-200 p-2 rounded-full text-zinc-600"><X size={18} /></button>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 ml-1">Full Name</label>
+                        <input
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 font-bold placeholder:text-zinc-400 outline-none focus:border-emerald-500"
+                            placeholder="NAME"
+                            value={form.name}
+                            onChange={e => setForm({ ...form, name: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Role / Position</label>
+                            <input
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold uppercase outline-none focus:border-zinc-500"
+                                placeholder="ROLE"
+                                value={form.role}
+                                onChange={e => setForm({ ...form, role: e.target.value })}
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Department</label>
+                            <input
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold uppercase outline-none focus:border-zinc-500"
+                                placeholder="DEPT"
+                                value={form.department}
+                                onChange={e => setForm({ ...form, department: e.target.value })}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Email Address</label>
+                        <input
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold outline-none focus:border-zinc-500"
+                            placeholder="EMAIL"
+                            value={form.email}
+                            onChange={e => setForm({ ...form, email: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Phone Number</label>
+                        <input
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold outline-none focus:border-zinc-500"
+                            placeholder="PHONE"
+                            value={form.phone}
+                            onChange={e => setForm({ ...form, phone: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">ABCD Permissions</label>
+                        <div className="flex gap-4 items-center">
+                            {['A', 'B', 'C', 'D'].map(g => (
+                                <button
+                                    key={g}
+                                    onClick={() => toggleGroup(g)}
+                                    className={`w-12 h-12 rounded-xl border flex items-center justify-center font-black text-xl shadow-sm transition-all tactile
+                                        ${form.onSetGroups.includes(g)
+                                            ? (g === 'A' ? 'bg-[#22C55E] border-[#22C55E] text-white scale-110' : g === 'B' ? 'bg-[#3B82F6] border-[#3B82F6] text-white scale-110' : g === 'C' ? 'bg-[#EAB308] border-[#EAB308] text-white scale-110' : 'bg-[#EF4444] border-[#EF4444] text-white scale-110')
+                                            : 'bg-zinc-100 border-slate-500 text-zinc-400 opacity-60'}`}
+                                >
+                                    {g}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="pt-6 flex flex-col gap-3">
+                        <button
+                            onClick={handleSubmit}
+                            className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        >
+                            <Save size={18} />
+                            <span>{editingMember ? 'Update Member' : 'Save to Crew List'}</span>
+                        </button>
+                        {editingMember && onDelete && (
+                            <button
+                                onClick={() => {
+                                    onDelete(editingMember.id);
+                                    setIsAdding(false);
+                                }}
+                                className="w-full bg-red-500/10 text-red-500 font-bold uppercase tracking-widest py-4 rounded-2xl border border-red-500/20"
+                            >
+                                Remove from Crew
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-4">
-            {/* Search */}
-            <div className="sticky top-0 z-10 bg-black pb-2 pt-2">
-                <div className="relative">
+            {/* Search & Add */}
+            <div className="sticky top-0 z-10 bg-black pb-2 pt-2 flex gap-2">
+                <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={14} />
                     <input
                         className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-lg py-3 pl-10 pr-4 text-base text-zinc-950 placeholder:text-zinc-400 outline-none focus:border-emerald-500 uppercase font-bold tracking-wide"
@@ -95,6 +250,14 @@ export const CrewListView = ({ data }: { data: any }) => {
                         onChange={e => setSearch(e.target.value)}
                     />
                 </div>
+                {isOwner && (
+                    <button
+                        onClick={handleStartAdd}
+                        className="bg-emerald-500 text-black p-3 rounded-lg shadow-lg active:scale-95 transition-transform"
+                    >
+                        <Plus size={20} />
+                    </button>
+                )}
             </div>
 
             {Object.entries(grouped).map(([dept, members]) => (
@@ -104,15 +267,23 @@ export const CrewListView = ({ data }: { data: any }) => {
                     </div>
                     <div className="grid gap-2">
                         {members.map((m: any) => (
-                            <div key={m.id} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-bold text-zinc-950 leading-none mb-1">{m.name || 'Unnamed'}</p>
+                            <div key={m.id} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex items-center justify-between group">
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <p className="text-sm font-bold text-zinc-950 leading-none">{m.name || 'Unnamed'}</p>
+                                        {isOwner && (
+                                            <button onClick={() => handleStartEdit(m)} className="p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Edit2 size={10} className="text-emerald-600" />
+                                            </button>
+                                        )}
+                                    </div>
                                     <p className="text-[10px] uppercase font-bold text-emerald-600 tracking-wide mb-0.5">{m.role}</p>
                                     {/* Groups Pill */}
                                     {m.onSetGroups && m.onSetGroups.length > 0 && (
                                         <div className="flex gap-1 mt-1">
                                             {m.onSetGroups.map((g: string) => (
-                                                <span key={g} className={`text-[8px] font-black uppercase px-2 py-0.5 rounded shadow-sm ${g === 'A' ? 'bg-[#22C55E] text-white' : g === 'B' ? 'bg-[#3B82F6] text-white' : 'bg-[#FBBF24] text-white'}`}>{g}</span>
+                                                <span key={g} className={`text-[8px] font-black uppercase px-2 py-0.5 rounded shadow-sm 
+                                                    ${g === 'A' ? 'bg-[#22C55E] text-white' : g === 'B' ? 'bg-[#3B82F6] text-white' : g === 'C' ? 'bg-[#EAB308] text-white' : 'bg-[#EF4444] text-white'}`}>{g}</span>
                                             ))}
                                         </div>
                                     )}
@@ -1549,15 +1720,29 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
     );
 };
 
-export const MobileLocationsView = ({ data }: { data: any }) => {
+export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const items = data?.items || [];
 
-    if (items.length === 0) return <EmptyState label="Locations" />;
+    if (items.length === 0 && !isOwner) return <EmptyState label="Locations" />;
 
     return (
         <div className="space-y-6 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `loc-${Date.now()}`, name: 'New Location', address: '' })}
+                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Location
+                </button>
+            )}
             {items.map((loc: any, i: number) => (
-                <div key={loc.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                <div key={loc.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                    {isOwner && onDelete && (
+                        <button onClick={() => onDelete(loc.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    )}
                     {/* Main Image Banner */}
                     <div className="w-full aspect-video bg-zinc-800 relative">
                         {loc.mainImage ? (
@@ -1568,8 +1753,13 @@ export const MobileLocationsView = ({ data }: { data: any }) => {
                                 <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
                             </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
-                            <h3 className="text-xl font-black uppercase text-zinc-950 tracking-tight leading-none mb-1">{loc.name || 'Unknown Location'}</h3>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                            <EditableInput
+                                value={loc.name || 'Unknown Location'}
+                                onSave={(val) => onUpdate?.({ ...loc, name: val })}
+                                isEditable={isOwner}
+                                className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
+                            />
                             {loc.address && (
                                 <a
                                     href={`https://maps.google.com/?q=${encodeURIComponent(loc.address)}`}
@@ -2493,14 +2683,28 @@ export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable }
     );
 };
 
-export const MobileTreatmentView = ({ data }: { data: any }) => {
+export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const slides = data?.slides || [];
-    if (slides.length === 0) return <EmptyState label="Treatment" />;
+    if (slides.length === 0 && !isOwner) return <EmptyState label="Treatment" />;
 
     return (
         <div className="space-y-6 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `slide-${Date.now()}`, title: 'New Slide', category: 'Treatment', text: '' })}
+                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Slide
+                </button>
+            )}
             {slides.map((slide: any, i: number) => (
-                <div key={slide.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                <div key={slide.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                    {isOwner && onDelete && (
+                        <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    )}
                     {slide.url && slide.mediaType === 'image' && (
                         <div className="w-full aspect-video bg-zinc-800 relative">
                             <img src={slide.url} className="w-full h-full object-cover" />
@@ -2512,9 +2716,24 @@ export const MobileTreatmentView = ({ data }: { data: any }) => {
                         </div>
                     )}
                     <div className="p-4">
-                        <span className="text-[10px] uppercase font-bold text-emerald-600 block mb-1">{slide.category}</span>
-                        {slide.title && <h3 className="text-xl font-black uppercase text-zinc-950 tracking-tight leading-none mb-3">{slide.title}</h3>}
-                        {slide.text && <p className="text-sm text-zinc-700 leading-relaxed whitespace-pre-wrap">{slide.text}</p>}
+                        <EditableInput
+                            value={slide.category || 'CATEGORY'}
+                            onSave={(val) => onUpdate?.({ ...slide, category: val })}
+                            isEditable={isOwner}
+                            className="text-[10px] font-black uppercase text-emerald-600 block mb-1 p-0 bg-transparent border-none text-left"
+                        />
+                        <EditableInput
+                            value={slide.title || 'Slide Title'}
+                            onSave={(val) => onUpdate?.({ ...slide, title: val })}
+                            isEditable={isOwner}
+                            className="text-xl font-black uppercase text-zinc-950 tracking-tight leading-none mb-3 p-0 bg-transparent border-none text-left"
+                        />
+                        <EditableInput
+                            value={slide.text || ''}
+                            onSave={(val) => onUpdate?.({ ...slide, text: val })}
+                            isEditable={isOwner}
+                            className="text-sm text-zinc-700 leading-relaxed whitespace-pre-wrap p-0 bg-transparent border-none text-left"
+                        />
                     </div>
                 </div>
             ))}
@@ -2522,49 +2741,100 @@ export const MobileTreatmentView = ({ data }: { data: any }) => {
     );
 };
 
-export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys, imageKey }: { data: any, titleKey: string, subtitleKey?: string, detailKeys?: string[], imageKey?: string }) => {
+export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys, imageKey, onUpdate, onDelete, onAdd }: { data: any, titleKey: string, subtitleKey?: string, detailKeys?: string[], imageKey?: string, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const items = data?.items || data?.roles || data?.looks || [];
 
     if (!items || items.length === 0) return <EmptyState label="Document" />;
 
     return (
         <div className="space-y-3 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `item-${Date.now()}`, [titleKey]: 'New Item' })}
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-3 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] mb-4 flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={14} /> Add New Entry
+                </button>
+            )}
+
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white shadow-sm border border-slate-500 rounded-md p-4 flex gap-4 overflow-hidden items-center group">
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-4 flex gap-4 overflow-hidden items-center group relative">
                     {imageKey && item[imageKey] && (
-                        <div className="w-16 h-16 shrink-0 bg-zinc-100 rounded-md overflow-hidden border border-slate-500">
+                        <div className="w-16 h-16 shrink-0 bg-zinc-200 rounded-lg overflow-hidden border border-slate-500">
                             <img src={item[imageKey]} className="w-full h-full object-cover" />
                         </div>
                     )}
                     <div className="flex-1 min-w-0">
-                        {subtitleKey && item[subtitleKey] && (
-                            <p className="text-[10px] font-black uppercase text-emerald-600 tracking-wide mb-0.5 truncate">{item[subtitleKey]}</p>
+                        {subtitleKey && (
+                            <div className="mb-0.5">
+                                <EditableInput
+                                    value={item[subtitleKey] || ''}
+                                    onSave={(val) => onUpdate?.({ ...item, [subtitleKey]: val })}
+                                    isEditable={isOwner}
+                                    className="text-[10px] font-black uppercase text-emerald-600 tracking-wide truncate p-0 bg-transparent border-none text-left"
+                                />
+                            </div>
                         )}
-                        <p className="text-base font-bold text-zinc-950 leading-tight mb-1 truncate">{item[titleKey] || 'Unnamed Item'}</p>
+                        <EditableInput
+                            value={item[titleKey] || 'Unnamed Item'}
+                            onSave={(val) => onUpdate?.({ ...item, [titleKey]: val })}
+                            isEditable={isOwner}
+                            className="text-base font-bold text-zinc-950 leading-tight p-0 bg-transparent border-none text-left"
+                        />
 
                         {detailKeys && detailKeys.length > 0 && (
                             <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-500 mt-2">
-                                {detailKeys.map((k: string) => {
-                                    if (!item[k]) return null;
-                                    return <span key={k} className="bg-zinc-100 px-2 py-0.5 rounded border border-slate-500 truncate">{k.toUpperCase()}: {item[k]}</span>
-                                })}
+                                {detailKeys.map((k: string) => (
+                                    <div key={k} className="bg-white px-2 py-0.5 rounded border border-slate-500 flex items-center gap-1">
+                                        <span className="opacity-50">{k.toUpperCase()}:</span>
+                                        <EditableInput
+                                            value={item[k] || ''}
+                                            onSave={(val) => onUpdate?.({ ...item, [k]: val })}
+                                            isEditable={isOwner}
+                                            className="p-0 bg-transparent border-none text-[10px] font-mono font-bold text-zinc-900"
+                                        />
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </div>
+                    {isOwner && onDelete && (
+                        <button
+                            onClick={() => onDelete(item.id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-red-500 hover:bg-red-500/10 rounded-full"
+                        >
+                            <X size={14} />
+                        </button>
+                    )}
                 </div>
             ))}
         </div>
     );
 };
 
-export const MobileLookbookView = ({ data }: { data: any }) => {
+export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const items = data?.items || [];
-    if (items.length === 0) return <EmptyState label="Lookbook" />;
+    if (items.length === 0 && !isOwner) return <EmptyState label="Lookbook" />;
 
     return (
         <div className="space-y-6 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `look-${Date.now()}`, title: 'New Image', caption: '' })}
+                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Image
+                </button>
+            )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                    {isOwner && onDelete && (
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    )}
                     <div className="w-full bg-zinc-800 relative" style={{ aspectRatio: item.aspectRatio === '9:16' ? '9/16' : item.aspectRatio === '1:1' ? '1/1' : item.aspectRatio === '4:5' ? '4/5' : '16/9' }}>
                         {item.url ? (
                             <img src={item.url} className="w-full h-full object-cover" />
@@ -2575,7 +2845,12 @@ export const MobileLookbookView = ({ data }: { data: any }) => {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
                             {item.imageNumber && <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-0.5">{item.imageNumber}</span>}
-                            <h3 className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1">{item.title || 'Untitled Image'}</h3>
+                            <EditableInput
+                                value={item.title || 'Untitled Image'}
+                                onSave={(val) => onUpdate?.({ ...item, title: val })}
+                                isEditable={isOwner}
+                                className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
+                            />
                         </div>
                     </div>
                     {item.showCaption && item.caption && (
@@ -2589,14 +2864,28 @@ export const MobileLookbookView = ({ data }: { data: any }) => {
     );
 };
 
-export const MobileWardrobeView = ({ data }: { data: any }) => {
+export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const items = data?.looks || data?.items || [];
-    if (items.length === 0) return <EmptyState label="Wardrobe" />;
+    if (items.length === 0 && !isOwner) return <EmptyState label="Wardrobe" />;
 
     return (
         <div className="space-y-6 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `ward-${Date.now()}`, character: 'New Character', description: 'TBD' })}
+                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Character
+                </button>
+            )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                    {isOwner && onDelete && (
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    )}
                     <div className="w-full aspect-[4/5] bg-zinc-800 relative">
                         {item.imageUrl ? (
                             <img src={item.imageUrl} className="w-full h-full object-cover" />
@@ -2607,18 +2896,33 @@ export const MobileWardrobeView = ({ data }: { data: any }) => {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
                             <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-0.5">Character</span>
-                            <h3 className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1">{item.character || 'TBD'}</h3>
+                            <EditableInput
+                                value={item.character || 'TBD'}
+                                onSave={(val) => onUpdate?.({ ...item, character: val })}
+                                isEditable={isOwner}
+                                className="text-xl font-black uppercase text-white tracking-tight leading-none p-0 bg-transparent border-none text-left"
+                            />
                         </div>
                     </div>
                     <div className="p-4 space-y-3">
                         <div>
                             <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Description</span>
-                            <p className="text-sm text-zinc-900 leading-snug font-medium">{item.description || '-'}</p>
+                            <EditableInput
+                                value={item.description || ''}
+                                onSave={(val) => onUpdate?.({ ...item, description: val })}
+                                isEditable={isOwner}
+                                className="text-sm text-zinc-900 leading-snug font-medium p-0 bg-transparent border-none text-left"
+                            />
                         </div>
-                        {item.notes && (
+                        {(item.notes || isOwner) && (
                             <div>
                                 <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Notes</span>
-                                <p className="text-xs text-zinc-600 leading-snug italic">{item.notes}</p>
+                                <EditableInput
+                                    value={item.notes || ''}
+                                    onSave={(val) => onUpdate?.({ ...item, notes: val })}
+                                    isEditable={isOwner}
+                                    className="text-xs text-zinc-600 leading-snug italic p-0 bg-transparent border-none text-left"
+                                />
                             </div>
                         )}
                     </div>
@@ -2628,14 +2932,28 @@ export const MobileWardrobeView = ({ data }: { data: any }) => {
     );
 };
 
-export const MobileCastingView = ({ data }: { data: any }) => {
+export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const items = data?.roles || data?.items || [];
-    if (items.length === 0) return <EmptyState label="Casting" />;
+    if (items.length === 0 && !isOwner) return <EmptyState label="Casting" />;
 
     return (
         <div className="space-y-6 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `cast-${Date.now()}`, role: 'New Role', name: 'TBD' })}
+                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Role
+                </button>
+            )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col group relative">
+                    {isOwner && onDelete && (
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    )}
                     <div className="flex p-4 gap-4 items-center">
                         <div className="w-20 h-20 rounded-full bg-zinc-300 border border-slate-500 overflow-hidden flex-shrink-0">
                             {item.imageUrl ? (
@@ -2646,14 +2964,29 @@ export const MobileCastingView = ({ data }: { data: any }) => {
                         </div>
                         <div className="flex-1">
                             <span className="text-[10px] uppercase font-bold text-emerald-600 block mb-0.5">Role</span>
-                            <h3 className="text-lg font-black uppercase text-zinc-950 tracking-tight leading-none mb-1">{item.role || 'TBD'}</h3>
-                            <p className="text-sm font-bold text-zinc-600 leading-snug">{item.name || 'Actor Name TBD'}</p>
+                            <EditableInput
+                                value={item.role || 'TBD'}
+                                onSave={(val) => onUpdate?.({ ...item, role: val })}
+                                isEditable={isOwner}
+                                className="text-lg font-black uppercase text-zinc-950 tracking-tight leading-none p-0 bg-transparent border-none text-left"
+                            />
+                            <EditableInput
+                                value={item.name || 'Actor Name TBD'}
+                                onSave={(val) => onUpdate?.({ ...item, name: val })}
+                                isEditable={isOwner}
+                                className="text-sm font-bold text-zinc-600 leading-snug p-0 bg-transparent border-none text-left"
+                            />
                         </div>
                     </div>
-                    {item.notes && (
+                    {(item.notes || isOwner) && (
                         <div className="p-4 bg-zinc-50 border-t border-slate-500">
                             <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Casting Notes</span>
-                            <p className="text-xs text-zinc-700 leading-snug italic">{item.notes}</p>
+                            <EditableInput
+                                value={item.notes || ''}
+                                onSave={(val) => onUpdate?.({ ...item, notes: val })}
+                                isEditable={isOwner}
+                                className="text-xs text-zinc-700 leading-snug italic p-0 bg-transparent border-none text-left"
+                            />
                         </div>
                     )}
                 </div>
@@ -2662,14 +2995,28 @@ export const MobileCastingView = ({ data }: { data: any }) => {
     );
 };
 
-export const MobilePropsView = ({ data }: { data: any }) => {
+export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
     const items = data?.items || [];
-    if (items.length === 0) return <EmptyState label="Props" />;
+    if (items.length === 0 && !isOwner) return <EmptyState label="Props" />;
 
     return (
         <div className="space-y-4 pb-8">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => onAdd({ id: `prop-${Date.now()}`, name: 'New Prop', category: 'Props' })}
+                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Prop
+                </button>
+            )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex gap-4 p-4 items-center">
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex gap-4 p-4 items-center group relative">
+                    {isOwner && onDelete && (
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <X size={14} />
+                        </button>
+                    )}
                     {item.imageUrl && (
                         <div className="w-20 h-20 bg-zinc-800 rounded-md border border-slate-500 overflow-hidden flex-shrink-0">
                             <img src={item.imageUrl} className="w-full h-full object-cover" />
@@ -2677,11 +3024,40 @@ export const MobilePropsView = ({ data }: { data: any }) => {
                     )}
                     <div className="flex-1 min-w-0">
                         <div className="flex justify-between items-start mb-1">
-                            <span className="text-[9px] uppercase font-bold text-emerald-600 tracking-widest">{item.category || 'Uncategorized'}</span>
-                            {item.quantity && <span className="text-[10px] font-mono text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded border border-zinc-300">QTY: {item.quantity}</span>}
+                            <div className="flex-1">
+                                <EditableInput
+                                    value={item.category || 'Uncategorized'}
+                                    onSave={(val) => onUpdate?.({ ...item, category: val })}
+                                    isEditable={isOwner}
+                                    className="text-[9px] uppercase font-bold text-emerald-600 tracking-widest p-0 bg-transparent border-none text-left"
+                                />
+                            </div>
+                            {(item.quantity || isOwner) && (
+                                <div className="flex items-center gap-1 bg-zinc-200 px-1.5 py-0.5 rounded border border-zinc-300">
+                                    <span className="text-[10px] font-mono text-zinc-500">QTY:</span>
+                                    <EditableInput
+                                        value={item.quantity || '1'}
+                                        onSave={(val) => onUpdate?.({ ...item, quantity: val })}
+                                        isEditable={isOwner}
+                                        className="text-[10px] font-mono font-bold text-zinc-900 p-0 bg-transparent border-none"
+                                    />
+                                </div>
+                            )}
                         </div>
-                        <h3 className="text-base font-black uppercase text-zinc-950 leading-tight mb-1 truncate">{item.name || 'Unnamed Prop'}</h3>
-                        {item.description && <p className="text-xs text-zinc-600 leading-snug truncate">{item.description}</p>}
+                        <EditableInput
+                            value={item.name || 'Unnamed Prop'}
+                            onSave={(val) => onUpdate?.({ ...item, name: val })}
+                            isEditable={isOwner}
+                            className="text-base font-black uppercase text-zinc-950 leading-tight p-0 bg-transparent border-none text-left"
+                        />
+                        {(item.description || isOwner) && (
+                            <EditableInput
+                                value={item.description || ''}
+                                onSave={(val) => onUpdate?.({ ...item, description: val })}
+                                isEditable={isOwner}
+                                className="text-xs text-zinc-600 leading-snug p-0 bg-transparent border-none text-left"
+                            />
+                        )}
                     </div>
                 </div>
             ))}

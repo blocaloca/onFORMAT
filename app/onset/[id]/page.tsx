@@ -985,6 +985,108 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e) }
     };
 
+    const handleUpdateCrewList = async (action: 'add' | 'update' | 'delete', payload: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            let logPhaseKey = 'PRE_PRODUCTION';
+            Object.keys(phases).forEach(p => {
+                if (phases[p]?.drafts?.['crew-list']) logPhaseKey = p;
+            });
+
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let raw = updatedPhases[logPhaseKey].drafts['crew-list'];
+            let doc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(doc)) {
+                if (doc.length > 0) history = doc.slice(1);
+                doc = doc[0];
+            }
+            if (!doc) doc = {};
+            if (!doc.crew) doc.crew = [];
+
+            let list = [...doc.crew];
+            if (action === 'add') list.push(payload);
+            else if (action === 'update') {
+                const idx = list.findIndex((i: any) => i.id === payload.id);
+                if (idx >= 0) list[idx] = payload;
+            } else if (action === 'delete') {
+                list = list.filter((i: any) => i.id !== payload);
+            }
+
+            doc.crew = list;
+            updatedPhases[logPhaseKey].drafts['crew-list'] = JSON.stringify([doc, ...history]);
+
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    };
+
+    const handleUpdateList = async (toolId: string, action: 'add' | 'update' | 'delete', payload: any, listKey: string = 'items') => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const reverseMap: Record<string, string> = {
+                'creative-brief': 'brief',
+                'storyboard': 'project-vision',
+                'budget': 'budget-actual',
+                'deliverables': 'deliverables-licensing',
+                'archive': 'archive-log',
+                'locations': 'locations-sets',
+                'wardrobe': 'wardrobe-styling',
+                'props-list': 'props-list',
+                'casting': 'casting-talent',
+                'equipment-list': 'equipment-list'
+            };
+            const originalKey = reverseMap[toolId] || toolId;
+
+            let logPhaseKey = 'PRODUCTION';
+            Object.keys(phases).forEach(p => {
+                if (phases[p]?.drafts?.[originalKey]) logPhaseKey = p;
+            });
+
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
+            if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
+
+            let raw = updatedPhases[logPhaseKey].drafts[originalKey];
+            let doc = safeParse(raw);
+            let history: any[] = [];
+            if (Array.isArray(doc)) {
+                if (doc.length > 0) history = doc.slice(1);
+                doc = doc[0];
+            }
+            if (!doc) doc = {};
+            if (!doc[listKey]) doc[listKey] = [];
+
+            let list = [...doc[listKey]];
+            if (action === 'add') list.push(payload);
+            else if (action === 'update') {
+                const idx = list.findIndex((i: any) => i.id === payload.id);
+                if (idx >= 0) list[idx] = payload;
+            } else if (action === 'delete') {
+                list = list.filter((i: any) => i.id !== payload);
+            }
+
+            doc[listKey] = list;
+            updatedPhases[logPhaseKey].drafts[originalKey] = JSON.stringify([doc, ...history]);
+
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    };
+
     if (showLogin) {
         return <EmailEntryGate onJoin={handleJoin} projectName={data.project?.name} />;
     }
@@ -1261,7 +1363,14 @@ export default function OnSetMobilePage() {
                                     setMediaAlerts={setMediaAlerts}
                                 />}
                                 {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
-                                {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
+                                {activeTab === 'crew-list' && (
+                                    <CrewListView
+                                        data={data.docs['crew-list']}
+                                        onAdd={(m) => handleUpdateCrewList('add', m)}
+                                        onUpdate={(m) => handleUpdateCrewList('update', m)}
+                                        onDelete={(id) => handleUpdateCrewList('delete', id)}
+                                    />
+                                )}
                                 {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
                                 {activeTab === 'on-set-notes' && <MobileOnSetNotesView
                                     data={data.docs['on-set-notes']}
@@ -1269,7 +1378,7 @@ export default function OnSetMobilePage() {
                                     onUpdate={handleEditOnSetNote}
                                     onDelete={handleDeleteOnSetNote}
                                 />}
-                                {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
+                                {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} onAdd={(m) => handleUpdateList('locations', 'add', m)} onUpdate={(m) => handleUpdateList('locations', 'update', m)} onDelete={(id) => handleUpdateList('locations', 'delete', id)} />}
                                 {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
                                 {activeTab === 'script-notes' && <MobileScriptNotesView
                                     data={data.docs['script-notes']}
@@ -1284,15 +1393,15 @@ export default function OnSetMobilePage() {
                                     onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
                                 />}
 
-                                {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" />}
-                                {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} />}
-                                {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} />}
-                                {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" />}
+                                {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" onAdd={(m) => handleUpdateList('dashboard', 'add', m)} onUpdate={(m) => handleUpdateList('dashboard', 'update', m)} onDelete={(id) => handleUpdateList('dashboard', 'delete', id)} />}
+                                {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} onAdd={(m) => handleUpdateList('budget', 'add', m)} onUpdate={(m) => handleUpdateList('budget', 'update', m)} onDelete={(id) => handleUpdateList('budget', 'delete', id)} />}
+                                {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} onAdd={(m) => handleUpdateList('equipment-list', 'add', m)} onUpdate={(m) => handleUpdateList('equipment-list', 'update', m)} onDelete={(id) => handleUpdateList('equipment-list', 'delete', id)} />}
+                                {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" onAdd={(m) => handleUpdateList('storyboard', 'add', m)} onUpdate={(m) => handleUpdateList('storyboard', 'update', m)} onDelete={(id) => handleUpdateList('storyboard', 'delete', id)} />}
 
                                 {/* Phase 2: Missing Documents leveraging lists */}
                                 {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} />}
-                                {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} />}
-                                {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} />}
+                                {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} onAdd={(m) => handleUpdateList('deliverables', 'add', m)} onUpdate={(m) => handleUpdateList('deliverables', 'update', m)} onDelete={(id) => handleUpdateList('deliverables', 'delete', id)} />}
+                                {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} onAdd={(m) => handleUpdateList('archive', 'add', m)} onUpdate={(m) => handleUpdateList('archive', 'update', m)} onDelete={(id) => handleUpdateList('archive', 'delete', id)} />}
 
                                 {/* Phase 3: Missing Document Views & Visual Cards */}
                                 {activeTab === 'creative-brief' && (
@@ -1301,23 +1410,12 @@ export default function OnSetMobilePage() {
                                         onUpdate={(newData) => handleUpdateDraft('creative-brief', newData)}
                                     />
                                 )}
-                                {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} />}
-                                {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} />}
-                                {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} />}
-                                {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} />}
-                                {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} />}
+                                {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} onAdd={(m) => handleUpdateList('treatment', 'add', m, 'slides')} onUpdate={(m) => handleUpdateList('treatment', 'update', m, 'slides')} onDelete={(id) => handleUpdateList('treatment', 'delete', id, 'slides')} />}
+                                {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} onAdd={(m) => handleUpdateList('lookbook', 'add', m)} onUpdate={(m) => handleUpdateList('lookbook', 'update', m)} onDelete={(id) => handleUpdateList('lookbook', 'delete', id)} />}
+                                {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} onAdd={(m) => handleUpdateList('wardrobe', 'add', m)} onUpdate={(m) => handleUpdateList('wardrobe', 'update', m)} onDelete={(id) => handleUpdateList('wardrobe', 'delete', id)} />}
+                                {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} onAdd={(m) => handleUpdateList('casting', 'add', m)} onUpdate={(m) => handleUpdateList('casting', 'update', m)} onDelete={(id) => handleUpdateList('casting', 'delete', id)} />}
+                                {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} onAdd={(m) => handleUpdateList('props-list', 'add', m)} onUpdate={(m) => handleUpdateList('props-list', 'update', m)} onDelete={(id) => handleUpdateList('props-list', 'delete', id)} />}
 
-                                {activeTab === 'mobile-control' && (
-                                    <MobileControlView
-                                        data={data.docs['onset-mobile-control']}
-                                        onUpdate={(tool: string, units: string[]) => {
-                                            const updatedControl = { ...data.docs['onset-mobile-control'] };
-                                            if (!updatedControl.toolGroups) updatedControl.toolGroups = {};
-                                            updatedControl.toolGroups[tool] = units;
-                                            handleUpdateDraft('onset-mobile-control', updatedControl);
-                                        }}
-                                    />
-                                )}
                                 {/* Fallback for other docs */}
                                 {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
                                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
@@ -1348,12 +1446,8 @@ export default function OnSetMobilePage() {
                             const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
                             const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
 
-                            if (isDelegate && !mappedKeys.includes('mobile-control')) {
-                                mappedKeys.push('mobile-control');
-                            }
 
                             return mappedKeys.map((key: string) => {
-                                const isDelegated = data.docs['onset-mobile-control']?.toolGroups?.[key]?.includes('D');
                                 return (
                                     <button
                                         key={key}
@@ -1367,9 +1461,6 @@ export default function OnSetMobilePage() {
                                 `}
                                     >
                                         {DOC_LABELS[key] || key}
-                                        {isDelegated && (
-                                            <span className="absolute top-0 right-0 -mr-1 -mt-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-[6px] text-white font-black border border-white shadow-sm ring-1 ring-red-600/20">D</span>
-                                        )}
                                     </button>
                                 );
                             });
