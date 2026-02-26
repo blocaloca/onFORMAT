@@ -973,7 +973,7 @@ export default function OnSetMobilePage() {
                                 </div>
                             </div>
 
-                            <div className="border-t border-slate-500 pt-6">
+                            <div className="border-t border-slate-500 pt-6 space-y-3">
                                 <button
                                     onClick={async () => {
                                         // Explicit Presence Cleanup for Mobile
@@ -995,8 +995,32 @@ export default function OnSetMobilePage() {
                                         localStorage.removeItem('onset_user_email');
                                         window.location.reload();
                                     }}
+                                    className="w-full bg-zinc-200/50 text-zinc-600 border border-zinc-300 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors">
+                                    <LogOut size={14} /> Disconnect from Set
+                                </button>
+
+                                <button
+                                    onClick={async () => {
+                                        // Explicit Presence Cleanup for Mobile
+                                        if (userEmail && id) {
+                                            await supabase
+                                                .from('crew_membership')
+                                                .update({ is_online: false })
+                                                .eq('project_id', id)
+                                                .eq('user_email', userEmail);
+                                            const channels = supabase.getChannels();
+                                            for (const channel of channels) {
+                                                await channel.untrack();
+                                            }
+                                            await supabase.removeAllChannels();
+                                        }
+                                        localStorage.removeItem('onset_user_email');
+                                        await supabase.auth.signOut();
+                                        localStorage.clear();
+                                        window.location.href = '/api/auth/logout';
+                                    }}
                                     className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
-                                    <LogOut size={14} /> Disconnect
+                                    <LogOut size={14} /> Log Out Completely
                                 </button>
                             </div>
                         </div>
