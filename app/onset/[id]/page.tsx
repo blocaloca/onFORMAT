@@ -332,7 +332,8 @@ export default function OnSetMobilePage() {
                 'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
                 'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
                 'script-notes', 'sound-report',
-                'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard'
+                'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard',
+                'creative-brief', 'treatment', 'client-selects', 'deliverables', 'lookbook'
             ];
 
             // SECURITY: Respect "Go Live" toggle. If Offline, show nothing (unless Owner).
