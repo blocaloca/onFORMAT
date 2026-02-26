@@ -86,8 +86,9 @@
     display: block;
     width: 100%;
     padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.25rem;
+    font-size: 1rem;
+    /* Minimum 16px for readability */
+    line-height: 1.5rem;
     color: var(--doc-text);
     background-color: var(--doc-surface);
     border: 1px solid var(--doc-border);
@@ -111,6 +112,24 @@
     box-shadow: 0 0 0 3px var(--doc-focus-ring);
 }
 
+/* Ensure interactive elements meet 44x44px touch target */
+.document-viewport button,
+.document-viewport a,
+.document-viewport [role="button"] {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Specific fix for icon buttons using w-10 h-10 (40x40) */
+.document-viewport .w-10.h-10 {
+    width: 44px !important;
+    height: 44px !important;
+}
+
+
 /* Placeholder styling */
 .document-viewport ::placeholder {
     color: #9ca3af;
@@ -122,11 +141,14 @@
 /* Card / Section container */
 .doc-card {
     background: white;
-    border: 1px solid var(--doc-border);
+    border: 0.5pt solid #708090;
+    /* Slate border */
     border-radius: 0.75rem;
     /* xl */
     overflow: hidden;
     margin-bottom: 1.5rem;
+    font-family: var(--font-body);
+    /* Ensure Inter typography */
 }
 
 .doc-card-header {
