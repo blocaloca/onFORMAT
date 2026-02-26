@@ -349,11 +349,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                         {/* onSET Groups */}
                                         <div className="flex justify-center gap-1">
-                                            {['A', 'B', 'C'].map(g => {
+                                            {['A', 'B', 'C', 'D'].map(g => {
                                                 const isActive = groups.includes(g);
                                                 const activeClass = g === 'A' ? 'bg-emerald-500 text-black border-emerald-500'
                                                     : g === 'B' ? 'bg-blue-500 text-white border-blue-500'
-                                                        : 'bg-amber-500 text-black border-amber-500';
+                                                        : g === 'C' ? 'bg-amber-500 text-black border-amber-500'
+                                                            : 'bg-red-500 text-white border-red-500';
 
                                                 if (isPrinting) {
                                                     return isActive ? (

@@ -34,6 +34,7 @@ export const DOC_LABELS: Record<string, string> = {
     'deliverables': 'Deliverables',
     'archive': 'Archive Log',
     'lookbook': 'Lookbook',
+    'mobile-control': 'Edit Mode Panel',
     // Existing
     'av-script': 'AV Script',
     'shot-scene-book': 'Shot List',
@@ -362,35 +363,75 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
     );
 };
 
-export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?: any }) => {
+import { EditableInput } from '@/components/ui/EditableInput';
+
+export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable }: { data: any, scheduleData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
     if (!data) return <EmptyState label="Call Sheet" />;
+
+    const updateField = (field: string, newValue: string) => {
+        if (onUpdate) {
+            onUpdate({ ...data, [field]: newValue });
+        }
+    };
+
+    const updateEventField = (index: number, field: string, newValue: string) => {
+        if (onUpdate) {
+            const newEvents = [...(data.events || [])];
+            newEvents[index] = { ...newEvents[index], [field]: newValue };
+            onUpdate({ ...data, events: newEvents });
+        }
+    };
 
     return (
         <div className="space-y-6">
             {/* Vitals */}
             <div className="bg-zinc-50 border border-slate-500/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
                 <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">General Call Time</p>
-                <h2 className="text-5xl font-black text-zinc-400 tracking-tighter mb-4">{data.crewCall || scheduleData?.callTime || "TBD"}</h2>
+                <div className="text-5xl font-black text-zinc-400 tracking-tighter mb-4 flex justify-center">
+                    <EditableInput
+                        value={data.crewCall || scheduleData?.callTime || "TBD"}
+                        onSave={(val) => updateField('crewCall', val)}
+                        isEditable={!!isEditable}
+                        placeholder="TBD"
+                    />
+                </div>
 
                 <div className="grid grid-cols-2 gap-4 border-t border-slate-500 pt-4 text-left">
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Basecamp / Location</p>
-                        <p className="text-xs font-bold text-zinc-600 whitespace-pre-wrap">{data.basecamp || "TBD"}</p>
+                        <EditableInput
+                            value={data.basecamp || "TBD"}
+                            onSave={(val) => updateField('basecamp', val)}
+                            isEditable={!!isEditable}
+                            className="text-xs font-bold text-zinc-600 whitespace-pre-wrap block"
+                            placeholder="TBD"
+                        />
                     </div>
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Weather</p>
-                        <p className="text-xs font-bold text-zinc-600">{data.weather || "Unknown"}</p>
+                        <EditableInput
+                            value={data.weather || "Unknown"}
+                            onSave={(val) => updateField('weather', val)}
+                            isEditable={!!isEditable}
+                            className="text-xs font-bold text-zinc-600 block"
+                            placeholder="Unknown"
+                        />
                     </div>
                 </div>
             </div>
 
             {/* Notes */}
-            {data.notes && (
-                <div className="bg-emerald-900/10 border border-emerald-900/30 p-4 rounded-sm">
-                    <p className="text-[10px] font-bold uppercase text-emerald-600 mb-1">Producer Notes</p>
-                    <p className="text-xs text-emerald-100/80 italic whitespace-pre-wrap">{data.notes}</p>
-                </div>
-            )}
+            <div className="bg-emerald-900/10 border border-emerald-900/30 p-4 rounded-sm">
+                <p className="text-[10px] font-bold uppercase text-emerald-600 mb-1">Producer Notes</p>
+                <EditableInput
+                    value={data.notes || ""}
+                    onSave={(val) => updateField('notes', val)}
+                    isEditable={!!isEditable}
+                    type="textarea"
+                    className="text-xs text-emerald-100/80 italic whitespace-pre-wrap block"
+                    placeholder="Enter notes..."
+                />
+            </div>
 
             {/* Schedule */}
             <div>
@@ -422,14 +463,37 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
                         ))
                     ) : (data.events && data.events.length > 0 ? (
                         data.events.map((evt: any, i: number) => (
-                            <div key={i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-emerald-500 flex gap-3">
-                                <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{evt.time || '00:00'}</span>
+                            <div key={evt.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-emerald-500 flex gap-3 p-2">
+                                <div className="w-12 shrink-0">
+                                    <EditableInput
+                                        value={evt.time || '00:00'}
+                                        onSave={(val) => updateEventField(i, 'time', val)}
+                                        isEditable={!!isEditable}
+                                        className="text-xs font-mono font-bold text-emerald-400 block"
+                                    />
+                                </div>
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex justify-between items-baseline">
-                                        <span className="text-[10px] font-black uppercase text-zinc-600">{evt.type}</span>
-                                        <span className="text-[9px] font-mono text-zinc-600 uppercase truncate max-w-[80px]">{evt.location}</span>
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <EditableInput
+                                            value={evt.type || 'EVENT'}
+                                            onSave={(val) => updateEventField(i, 'type', val)}
+                                            isEditable={!!isEditable}
+                                            className="text-[10px] font-black uppercase text-zinc-600 block"
+                                        />
+                                        <EditableInput
+                                            value={evt.location || ''}
+                                            onSave={(val) => updateEventField(i, 'location', val)}
+                                            isEditable={!!isEditable}
+                                            className="text-[9px] font-mono text-zinc-600 uppercase truncate"
+                                        />
                                     </div>
-                                    <p className="text-xs text-zinc-500 truncate">{evt.description}</p>
+                                    <EditableInput
+                                        value={evt.description || ''}
+                                        onSave={(val) => updateEventField(i, 'description', val)}
+                                        isEditable={!!isEditable}
+                                        className="text-xs text-zinc-500 block truncate"
+                                        placeholder="Add description..."
+                                    />
                                 </div>
                             </div>
                         ))
@@ -446,14 +510,30 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
                 <p className="text-[9px] text-zinc-600 uppercase font-bold">Emergency? Call 911</p>
                 <div className="inline-block bg-red-900/20 border border-red-900/40 px-3 py-2 rounded">
                     <p className="text-[9px] text-red-500 uppercase font-bold mb-0.5">Nearest Hospital</p>
-                    <p className="text-[10px] text-red-400 font-mono">{data.hospital || "Lookup required"}</p>
+                    <EditableInput
+                        value={data.hospital || "Lookup required"}
+                        onSave={(val) => updateField('hospital', val)}
+                        isEditable={!!isEditable}
+                        className="text-[10px] text-red-400 font-mono block"
+                        placeholder="Lookup required"
+                    />
                 </div>
                 {/* Debug: Sunrise check */}
-                {data.sunriseSunset && <p className="text-[9px] text-zinc-700">Sun: {data.sunriseSunset}</p>}
+                {data.sunriseSunset && (
+                    <div className="flex justify-center">
+                        <EditableInput
+                            value={data.sunriseSunset}
+                            onSave={(val) => updateField('sunriseSunset', val)}
+                            isEditable={!!isEditable}
+                            className="text-[9px] text-zinc-700 block"
+                        />
+                    </div>
+                )}
             </div>
         </div>
     )
 }
+
 
 export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], setMediaAlerts }: { data: any, onAdd?: (item: any) => void, projectId?: string, mediaAlerts?: any[], setMediaAlerts?: React.Dispatch<React.SetStateAction<any[]>> }) => {
     const [isAdding, setIsAdding] = useState(false);
@@ -2363,8 +2443,14 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
     );
 };
 
-export const MobileBriefView = ({ data }: { data: any }) => {
+export const MobileBriefView = ({ data, onUpdate, isEditable }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
     if (!data) return <EmptyState label="Creative Brief" />;
+
+    const updateField = (field: string, newValue: string) => {
+        if (onUpdate) {
+            onUpdate({ ...data, [field]: newValue });
+        }
+    };
 
     const fields = [
         { key: 'product', label: 'Vision' },
@@ -2382,11 +2468,17 @@ export const MobileBriefView = ({ data }: { data: any }) => {
         <div className="space-y-4 pb-8">
             {fields.map((field) => {
                 const value = data[field.key];
-                if (!value || typeof value === 'object') return null;
                 return (
                     <div key={field.key} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-5">
                         <span className="text-[10px] font-bold uppercase text-emerald-600 tracking-widest block mb-2">{field.label}</span>
-                        <p className="text-sm font-medium text-zinc-900 leading-relaxed whitespace-pre-wrap">{value}</p>
+                        <EditableInput
+                            value={(typeof value === 'string' ? value : '') || ""}
+                            onSave={(val) => updateField(field.key, val)}
+                            isEditable={!!isEditable}
+                            type="textarea"
+                            className="text-sm font-medium text-zinc-900 leading-relaxed whitespace-pre-wrap block"
+                            placeholder={`Enter ${field.label.toLowerCase()}...`}
+                        />
                     </div>
                 );
             })}
@@ -2772,6 +2864,40 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                     })}
                 </div>
             )}
+        </div>
+    );
+};
+
+export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (tool: string, units: string[]) => void }) => {
+    const sortedTools = Object.keys(DOC_LABELS).sort();
+
+    return (
+        <div className="space-y-4 pb-8">
+            <h3 className="text-xs font-black uppercase text-zinc-500 mb-4 pl-1">Delegation Dashboard</h3>
+            <div className="grid gap-2">
+                {sortedTools.map(key => {
+                    const groups = data?.toolGroups?.[key] || [];
+                    const isDelegated = groups.includes('D');
+
+                    return (
+                        <div key={key} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-4 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-bold text-zinc-950 uppercase">{DOC_LABELS[key] || key}</p>
+                                <p className="text-[10px] text-zinc-500 font-mono">ID: {key}</p>
+                            </div>
+                            <button
+                                onClick={() => {
+                                    const newGroups = isDelegated ? groups.filter((g: string) => g !== 'D') : [...groups, 'D'];
+                                    onUpdate(key, newGroups);
+                                }}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-white transition-all ${isDelegated ? 'bg-red-500 shadow-lg scale-110' : 'bg-zinc-300'}`}
+                            >
+                                D
+                            </button>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 };

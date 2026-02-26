@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-type UnitType = 'A' | 'B' | 'C';
+type UnitType = 'A' | 'B' | 'C' | 'D';
 
 interface UnitBadgeProps {
     unit: UnitType;
@@ -11,10 +11,11 @@ interface UnitBadgeProps {
 }
 
 export const UnitBadge = ({ unit, className, size = 'md' }: UnitBadgeProps) => {
-    const colors = {
+    const colors: Record<UnitType, string> = {
         'A': 'bg-[#22C55E] text-white shadow-green-900/20 border border-green-400/50', // Signal Green
         'B': 'bg-[#3B82F6] text-white shadow-blue-900/20 border border-blue-400/50', // Digital Blue
         'C': 'bg-[#FBBF24] text-white shadow-amber-900/20 border border-amber-400/50', // Amber
+        'D': 'bg-[#EF4444] text-white shadow-red-900/20 border border-red-400/50', // Red
     };
 
     const sizes = {

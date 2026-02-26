@@ -137,9 +137,8 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                                 >
                                                     <span className="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300 transition-colors">{tool.label}</span>
 
-                                                    {/* GROUP TOGGLES */}
                                                     <div className="flex items-center gap-1">
-                                                        {(['A', 'B', 'C'] as const).map(group => {
+                                                        {(['A', 'B', 'C', 'D'] as const).map(group => {
                                                             const isActive = groups.includes(group);
                                                             return (
                                                                 <button
@@ -174,7 +173,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         </div>
 
                         <p className="text-[10px] text-zinc-500 mb-4 leading-relaxed">
-                            Invite crew to specific groups (A/B/C) via the Crew List document.
+                            Invite crew to specific groups (A/B/C/D) via the Crew List document.
                         </p>
 
                         <div className="flex justify-center bg-white p-2 rounded-lg mb-4">

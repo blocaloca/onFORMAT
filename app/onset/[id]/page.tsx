@@ -30,7 +30,8 @@ import {
     MobileWardrobeView,
     MobileCastingView,
     MobilePropsView,
-    MobileClientSelectsView
+    MobileClientSelectsView,
+    MobileControlView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -775,6 +776,90 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e); }
     };
 
+    const handleUpdateCallSheet = async (updatedDoc: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
+            let phaseKey = 'PRODUCTION';
+            for (const p of phaseOrder) {
+                if (phases[p]?.drafts?.['call-sheet']) {
+                    phaseKey = p;
+                    break;
+                }
+            }
+
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
+
+            let raw = updatedPhases[phaseKey].drafts['call-sheet'];
+            let docList = safeParse(raw);
+            let history: any[] = [];
+
+            if (Array.isArray(docList)) {
+                if (docList.length > 0) history = docList.slice(1);
+                // Head is docList[0], but we are replacing it with updatedDoc
+            } else if (docList) {
+                // Single object case (legacy)
+            }
+
+            const finalDraft = JSON.stringify([updatedDoc, ...history]);
+            updatedPhases[phaseKey].drafts['call-sheet'] = finalDraft;
+
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    }
+
+    const handleUpdateDraft = async (toolId: string, updatedDoc: any) => {
+        if (!data.project) return;
+        try {
+            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            if (error || !latest) return;
+
+            const phases = latest.data.phases;
+            const reverseMap: Record<string, string> = {
+                'creative-brief': 'brief',
+                'storyboard': 'project-vision',
+                'budget': 'budget-actual',
+                'deliverables': 'deliverables-licensing',
+                'archive': 'archive-log'
+            };
+            const originalKey = reverseMap[toolId] || toolId;
+
+            const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
+            let phaseKey = 'PRODUCTION';
+            for (const p of phaseOrder) {
+                if (phases[p]?.drafts?.[originalKey]) {
+                    phaseKey = p;
+                    break;
+                }
+            }
+
+            let updatedPhases = { ...phases };
+            if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
+
+            let raw = updatedPhases[phaseKey].drafts[originalKey];
+            let docList = safeParse(raw);
+            let history: any[] = [];
+
+            if (Array.isArray(docList)) {
+                if (docList.length > 0) history = docList.slice(1);
+            }
+
+            const finalDraft = JSON.stringify([updatedDoc, ...history]);
+            updatedPhases[phaseKey].drafts[originalKey] = finalDraft;
+
+            const updatedProjectData = { ...latest.data, phases: updatedPhases };
+            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            fetchData();
+        } catch (e) { console.error(e) }
+    }
+
     const handleUpdateScriptNotes = async (action: 'add' | 'update' | 'delete', payload: any) => {
         if (!data.project) return;
         try {
@@ -954,7 +1039,7 @@ export default function OnSetMobilePage() {
                                     const crew = data.docs['crew-list']?.crew || [];
                                     const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
                                     let units = me?.onSetGroups || [];
-                                    if (userRole === 'Owner') units = ['A', 'B', 'C'];
+                                    if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
 
                                     if (units.length === 0) return null;
 
@@ -963,6 +1048,7 @@ export default function OnSetMobilePage() {
                                             {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#22C55E] text-white rounded-[1px]">A</span>}
                                             {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#3B82F6] text-white rounded-[1px]">B</span>}
                                             {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EAB308] text-white rounded-[1px]">C</span>}
+                                            {units.includes('D') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EF4444] text-white rounded-[1px]">D</span>}
                                         </div>
                                     );
                                 })()}
@@ -1038,7 +1124,7 @@ export default function OnSetMobilePage() {
                                             const crew = data.docs['crew-list']?.crew || [];
                                             const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
                                             let units = me?.onSetGroups || [];
-                                            if (userRole === 'Owner') units = ['A', 'B', 'C'];
+                                            if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
 
                                             if (units.length === 0) return <span className="text-zinc-500">None</span>;
 
@@ -1047,6 +1133,7 @@ export default function OnSetMobilePage() {
                                                     {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-[2px]">A</span>}
                                                     {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-[2px]">B</span>}
                                                     {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-[2px]">C</span>}
+                                                    {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white rounded-[2px]">D</span>}
                                                 </div>
                                             );
                                         })()}
@@ -1175,7 +1262,18 @@ export default function OnSetMobilePage() {
                         <>
                             {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                             {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
-                            {activeTab === 'call-sheet' && <CallSheetView data={data.docs['call-sheet']} scheduleData={data.docs['schedule']} />}
+                            {activeTab === 'call-sheet' && (
+                                <CallSheetView
+                                    data={data.docs['call-sheet']}
+                                    scheduleData={data.docs['schedule']}
+                                    onUpdate={handleUpdateCallSheet}
+                                    isEditable={(() => {
+                                        const crew = data.docs['crew-list']?.crew || [];
+                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                        return userRole === 'Owner' || me?.onSetGroups?.includes('D');
+                                    })()}
+                                />
+                            )}
                             {activeTab === 'dit-log' && <MobileDITLogView
                                 data={data.docs['dit-log']}
                                 onAdd={handleUpdateDIT}
@@ -1218,13 +1316,34 @@ export default function OnSetMobilePage() {
                             {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} />}
 
                             {/* Phase 3: Missing Document Views & Visual Cards */}
-                            {activeTab === 'creative-brief' && <MobileBriefView data={data.docs['creative-brief']} />}
+                            {activeTab === 'creative-brief' && (
+                                <MobileBriefView
+                                    data={data.docs['creative-brief']}
+                                    onUpdate={(newData) => handleUpdateDraft('creative-brief', newData)}
+                                    isEditable={(() => {
+                                        const crew = data.docs['crew-list']?.crew || [];
+                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                        return userRole === 'Owner' || me?.onSetGroups?.includes('D');
+                                    })()}
+                                />
+                            )}
                             {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} />}
                             {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} />}
                             {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} />}
                             {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} />}
                             {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} />}
 
+                            {activeTab === 'mobile-control' && (
+                                <MobileControlView
+                                    data={data.docs['onset-mobile-control']}
+                                    onUpdate={(tool: string, units: string[]) => {
+                                        const updatedControl = { ...data.docs['onset-mobile-control'] };
+                                        if (!updatedControl.toolGroups) updatedControl.toolGroups = {};
+                                        updatedControl.toolGroups[tool] = units;
+                                        handleUpdateDraft('onset-mobile-control', updatedControl);
+                                    }}
+                                />
+                            )}
                             {/* Fallback for other docs */}
                             {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
@@ -1251,21 +1370,35 @@ export default function OnSetMobilePage() {
                             return k;
                         })));
 
-                        return mappedKeys.map((key: string) => (
-                            <button
-                                key={key}
-                                onClick={() => setActiveTab(key)}
-                                className={`
-                                flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200
-                                ${activeTab === key
-                                        ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
-                                        : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive
-                                    }
-                            `}
-                            >
-                                {DOC_LABELS[key] || key}
-                            </button>
-                        ));
+                        const crew = data.docs['crew-list']?.crew || [];
+                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                        const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
+
+                        if (isDelegate && !mappedKeys.includes('mobile-control')) {
+                            mappedKeys.push('mobile-control');
+                        }
+
+                        return mappedKeys.map((key: string) => {
+                            const isDelegated = data.docs['onset-mobile-control']?.toolGroups?.[key]?.includes('D');
+                            return (
+                                <button
+                                    key={key}
+                                    onClick={() => setActiveTab(key)}
+                                    className={`
+                                    flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200 relative
+                                    ${activeTab === key
+                                            ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
+                                            : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive
+                                        }
+                                `}
+                                >
+                                    {DOC_LABELS[key] || key}
+                                    {isDelegated && (
+                                        <span className="absolute top-0 right-0 -mr-1 -mt-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-[6px] text-white font-black border border-white shadow-sm ring-1 ring-red-600/20">D</span>
+                                    )}
+                                </button>
+                            );
+                        });
                     })()}
                 </div>
             </nav>
