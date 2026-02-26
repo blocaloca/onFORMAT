@@ -279,14 +279,14 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
     if (!data || !data.shots || data.shots.length === 0) return <EmptyState label="Shot List" />;
 
     return (
-        <div className="flex flex-col divide-y divide-zinc-800/50">
+        <div className="flex flex-col divide-y divide-zinc-300">
             {data.shots.map((shot: any, i: number) => {
                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                 const isConfirming = confirmingId === shot.id;
 
                 if (isConfirming) {
                     return (
-                        <div key={shot.id || i} className="p-6 bg-zinc-900 border-l-4 border-emerald-500 animate-in fade-in">
+                        <div key={shot.id || i} className="p-6 bg-zinc-50 border border-slate-500 shadow-sm border-l-4 border-l-emerald-500 animate-in fade-in">
                             <p className="text-sm font-bold text-zinc-950 mb-4">Mark Shot {shot.scene}-{shot.shot} Complete?</p>
                             <div className="flex gap-3">
                                 <button
@@ -303,7 +303,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                         onCheckShot && onCheckShot(shot.id, 'COMPLETE', false);
                                         setConfirmingId(null);
                                     }}
-                                    className="flex-1 bg-zinc-800 text-zinc-950 font-bold uppercase text-xs py-3 rounded"
+                                    className="flex-1 bg-zinc-200 text-zinc-950 font-bold uppercase text-xs py-3 rounded"
                                 >
                                     Just Complete
                                 </button>
@@ -314,7 +314,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                 }
 
                 return (
-                    <div key={shot.id || i} className="py-6 flex gap-4 bg-black">
+                    <div key={shot.id || i} className="py-6 flex gap-4 bg-transparent">
                         <div className="shrink-0 flex flex-col items-center gap-1 w-10">
                             <span className="text-[8px] text-zinc-500 uppercase font-bold">SCENE</span>
                             <span className="text-lg font-black text-zinc-950 leading-none">{shot.scene || '-'}</span>
@@ -322,9 +322,9 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 
                         <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap gap-2 mb-2">
-                                <span className="bg-zinc-800 text-zinc-600 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
-                                <span className="bg-zinc-800 text-zinc-600 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
-                                <span className="bg-zinc-800 text-zinc-600 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
+                                <span className="bg-zinc-200 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
+                                <span className="bg-zinc-200 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
+                                <span className="bg-zinc-200 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
                             </div>
                             <p className="text-xs text-zinc-600 font-medium leading-normal mb-1">{shot.description}</p>
                             <p className="text-[10px] text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
@@ -2240,11 +2240,11 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-3 bg-zinc-950 p-2 rounded border border-zinc-800 cursor-pointer" onClick={() => setForm({ ...form, circled: !form.circled })}>
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${form.circled ? 'bg-emerald-500 border-emerald-500 text-black' : 'border-zinc-600'}`}>
+                    <div className="flex items-center gap-2 mb-3 bg-zinc-100 p-2 rounded border border-zinc-300 cursor-pointer" onClick={() => setForm({ ...form, circled: !form.circled })}>
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${form.circled ? 'bg-emerald-500 border-emerald-500 text-black' : 'border-zinc-400'}`}>
                             {form.circled && <Check size={10} />}
                         </div>
-                        <span className="text-[10px] uppercase font-bold text-zinc-500 select-none">Circle Take (Best)</span>
+                        <span className="text-[10px] uppercase font-bold text-zinc-600 select-none">Circle Take (Best)</span>
                     </div>
 
                     <div className="mb-3">
@@ -2294,13 +2294,13 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     takes.slice().reverse().map((take: any, i: number) => {
                         const isConfirming = deleteConfirmId === take.id;
                         return (
-                            <div key={take.id || i} className={`bg-zinc-900 p-3 rounded-lg border relative flex items-center gap-3 ${take.circled ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.1)]' : 'border-zinc-800'}`}>
+                            <div key={take.id || i} className={`bg-zinc-50 p-3 rounded-lg border relative flex items-center gap-3 ${take.circled ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.1)]' : 'border-slate-500'}`}>
 
                                 {/* Scene/Take Badge */}
-                                <div className="flex flex-col items-center justify-center min-w-[50px] bg-zinc-950 rounded border border-zinc-800 p-1">
+                                <div className="flex flex-col items-center justify-center min-w-[50px] bg-zinc-100 rounded border border-slate-500 p-1">
                                     <span className="text-[10px] font-bold text-zinc-500 leading-none">SCN</span>
                                     <span className="text-base font-black text-zinc-950 leading-tight">{take.scene}</span>
-                                    <div className="w-full h-px bg-zinc-800 my-0.5" />
+                                    <div className="w-full h-px bg-zinc-300 my-0.5" />
                                     <span className="text-[10px] font-bold text-zinc-500 leading-none">TK</span>
                                     <span className={`text-base font-black leading-tight ${take.circled ? 'text-emerald-600' : 'text-zinc-950'}`}>{take.take}</span>
                                 </div>
@@ -2313,7 +2313,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                     </div>
                                     <p className="text-xs font-bold text-zinc-950 truncate mb-0.5">{take.description || 'No Description'}</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {take.tracks && <span className="text-[9px] bg-zinc-800 px-1 rounded text-zinc-500 font-mono border border-zinc-700">{take.tracks}</span>}
+                                        {take.tracks && <span className="text-[9px] bg-zinc-200 px-1 rounded text-zinc-600 font-mono border border-zinc-300">{take.tracks}</span>}
                                         {take.notes && <span className="text-[9px] text-zinc-500 italic truncate">{take.notes}</span>}
                                     </div>
                                 </div>
@@ -2329,10 +2329,10 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                 </div>
 
                                 {isConfirming && (
-                                    <div className="absolute inset-0 bg-zinc-900 flex items-center justify-between px-4 rounded-lg z-10 border border-red-500">
+                                    <div className="absolute inset-0 bg-zinc-50 flex items-center justify-between px-4 rounded-lg z-10 border border-red-500">
                                         <span className="text-xs font-bold text-red-500 uppercase">Delete?</span>
                                         <div className="flex gap-2">
-                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-500 bg-zinc-800 px-3 py-1 rounded">No</button>
+                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-950 bg-zinc-200 px-3 py-1 rounded shadow-sm border border-zinc-300">No</button>
                                             <button onClick={() => { onDelete && onDelete(take.id); setDeleteConfirmId(null); }} className="text-xs text-zinc-950 bg-red-600 px-3 py-1 rounded">Yes</button>
                                         </div>
                                     </div>

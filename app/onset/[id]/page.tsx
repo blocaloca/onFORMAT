@@ -79,6 +79,7 @@ export default function OnSetMobilePage() {
     const [showMenu, setShowMenu] = useState(false);
     const [isOffline, setIsOffline] = useState(false);
     const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+    const [myProjects, setMyProjects] = useState<any[]>([]);
 
     const activeTabRef = useRef(activeTab);
     useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
@@ -145,6 +146,22 @@ export default function OnSetMobilePage() {
     // PRESENCE & STATUS LOGIC
     useEffect(() => {
         if (!id || !userEmail) return;
+
+        // Fetch My Projects
+        const fetchMyProjects = async () => {
+            try {
+                const res = await fetch(`/api/onset/my-projects?email=${encodeURIComponent(userEmail)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.projects) {
+                        setMyProjects(data.projects.filter((p: any) => p.id !== id));
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load my projects", e);
+            }
+        };
+        fetchMyProjects();
 
         // 1. Update DB Status (On Join)
         const updateStatus = async (online: boolean) => {
@@ -973,7 +990,23 @@ export default function OnSetMobilePage() {
                                 </div>
                             </div>
 
-                            <div className="border-t border-slate-500 pt-6 space-y-3">
+                            {myProjects.length > 0 && (
+                                <div className="space-y-2 mt-2 pt-6 border-t border-slate-500">
+                                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Other Active Sets</h3>
+                                    <div className="space-y-2">
+                                        {myProjects.map(p => (
+                                            <Link key={p.id} href={`/onset/${p.id}`} className="block">
+                                                <div className="bg-zinc-100 hover:bg-zinc-200 transition-colors p-3 rounded-lg border border-zinc-300 flex items-center justify-between group">
+                                                    <span className="text-xs font-bold text-zinc-900 truncate flex-1 pr-4">{p.name}</span>
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-pulse"></div>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="border-t border-slate-500 mt-6 pt-6 space-y-3">
                                 <button
                                     onClick={async () => {
                                         // Explicit Presence Cleanup for Mobile
