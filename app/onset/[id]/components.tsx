@@ -2456,3 +2456,135 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
         </div>
     );
 };
+
+export const MobileLookbookView = ({ data }: { data: any }) => {
+    const items = data?.items || [];
+    if (items.length === 0) return <EmptyState label="Lookbook" />;
+
+    return (
+        <div className="space-y-6 pb-8">
+            {items.map((item: any, i: number) => (
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                    <div className="w-full bg-zinc-800 relative" style={{ aspectRatio: item.aspectRatio === '9:16' ? '9/16' : item.aspectRatio === '1:1' ? '1/1' : item.aspectRatio === '4:5' ? '4/5' : '16/9' }}>
+                        {item.url ? (
+                            <img src={item.url} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600">
+                                <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                            {item.imageNumber && <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-0.5">{item.imageNumber}</span>}
+                            <h3 className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1">{item.title || 'Untitled Image'}</h3>
+                        </div>
+                    </div>
+                    {item.showCaption && item.caption && (
+                        <div className="p-4 bg-zinc-100 border-t border-slate-500">
+                            <p className="text-sm font-medium text-zinc-900 leading-relaxed whitespace-pre-wrap">{item.caption}</p>
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export const MobileWardrobeView = ({ data }: { data: any }) => {
+    const items = data?.looks || data?.items || [];
+    if (items.length === 0) return <EmptyState label="Wardrobe" />;
+
+    return (
+        <div className="space-y-6 pb-8">
+            {items.map((item: any, i: number) => (
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
+                    <div className="w-full aspect-[4/5] bg-zinc-800 relative">
+                        {item.imageUrl ? (
+                            <img src={item.imageUrl} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600">
+                                <span className="text-[10px] font-bold uppercase tracking-widest">No Image</span>
+                            </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                            <span className="text-[10px] uppercase font-bold text-emerald-400 block mb-0.5">Character</span>
+                            <h3 className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1">{item.character || 'TBD'}</h3>
+                        </div>
+                    </div>
+                    <div className="p-4 space-y-3">
+                        <div>
+                            <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Description</span>
+                            <p className="text-sm text-zinc-900 leading-snug font-medium">{item.description || '-'}</p>
+                        </div>
+                        {item.notes && (
+                            <div>
+                                <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Notes</span>
+                                <p className="text-xs text-zinc-600 leading-snug italic">{item.notes}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export const MobileCastingView = ({ data }: { data: any }) => {
+    const items = data?.roles || data?.items || [];
+    if (items.length === 0) return <EmptyState label="Casting" />;
+
+    return (
+        <div className="space-y-6 pb-8">
+            {items.map((item: any, i: number) => (
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                    <div className="flex p-4 gap-4 items-center">
+                        <div className="w-20 h-20 rounded-full bg-zinc-300 border border-slate-500 overflow-hidden flex-shrink-0">
+                            {item.imageUrl ? (
+                                <img src={item.imageUrl} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-zinc-800 text-zinc-500 font-bold uppercase text-[10px]">No Pic</div>
+                            )}
+                        </div>
+                        <div className="flex-1">
+                            <span className="text-[10px] uppercase font-bold text-emerald-600 block mb-0.5">Role</span>
+                            <h3 className="text-lg font-black uppercase text-zinc-950 tracking-tight leading-none mb-1">{item.role || 'TBD'}</h3>
+                            <p className="text-sm font-bold text-zinc-600 leading-snug">{item.name || 'Actor Name TBD'}</p>
+                        </div>
+                    </div>
+                    {item.notes && (
+                        <div className="p-4 bg-zinc-50 border-t border-slate-500">
+                            <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Casting Notes</span>
+                            <p className="text-xs text-zinc-700 leading-snug italic">{item.notes}</p>
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export const MobilePropsView = ({ data }: { data: any }) => {
+    const items = data?.items || [];
+    if (items.length === 0) return <EmptyState label="Props" />;
+
+    return (
+        <div className="space-y-4 pb-8">
+            {items.map((item: any, i: number) => (
+                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex gap-4 p-4 items-center">
+                    {item.imageUrl && (
+                        <div className="w-20 h-20 bg-zinc-800 rounded-md border border-slate-500 overflow-hidden flex-shrink-0">
+                            <img src={item.imageUrl} className="w-full h-full object-cover" />
+                        </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start mb-1">
+                            <span className="text-[9px] uppercase font-bold text-emerald-600 tracking-widest">{item.category || 'Uncategorized'}</span>
+                            {item.quantity && <span className="text-[10px] font-mono text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded border border-zinc-300">QTY: {item.quantity}</span>}
+                        </div>
+                        <h3 className="text-base font-black uppercase text-zinc-950 leading-tight mb-1 truncate">{item.name || 'Unnamed Prop'}</h3>
+                        {item.description && <p className="text-xs text-zinc-600 leading-snug truncate">{item.description}</p>}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};

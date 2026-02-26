@@ -26,7 +26,10 @@ import {
     MobileReadOnlyListView,
     MobileBriefView,
     MobileTreatmentView,
-    MobileLookbookView
+    MobileLookbookView,
+    MobileWardrobeView,
+    MobileCastingView,
+    MobilePropsView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -1140,21 +1143,22 @@ export default function OnSetMobilePage() {
                                 onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
                             />}
 
+                            {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" />}
                             {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} />}
                             {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} />}
-                            {activeTab === 'casting' && <MobileReadOnlyListView data={data.docs['casting']} titleKey="name" subtitleKey="role" imageKey="imageUrl" />}
-                            {activeTab === 'wardrobe' && <MobileReadOnlyListView data={data.docs['wardrobe']} titleKey="description" subtitleKey="character" imageKey="imageUrl" />}
-                            {activeTab === 'props-list' && <MobileReadOnlyListView data={data.docs['props-list']} titleKey="name" subtitleKey="category" detailKeys={['quantity']} />}
                             {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" />}
 
                             {/* Phase 2: Missing Documents leveraging lists */}
                             {activeTab === 'client-selects' && <MobileReadOnlyListView data={data.docs['client-selects']} titleKey="description" subtitleKey="fileNumber" detailKeys={['status', 'notes']} />}
                             {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="description" subtitleKey="fileNumber" detailKeys={['dueDate', 'format', 'type', 'notes']} imageKey="thumbnailUrl" />}
 
-                            {/* Phase 3: Missing Document Views */}
+                            {/* Phase 3: Missing Document Views & Visual Cards */}
                             {activeTab === 'creative-brief' && <MobileBriefView data={data.docs['creative-brief']} />}
                             {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} />}
-                            {activeTab === 'lookbook' && <div className="p-8 text-center text-zinc-500 uppercase font-bold text-xs">Lookbook View Loading...</div>}
+                            {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} />}
+                            {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} />}
+                            {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} />}
+                            {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} />}
 
                             {/* Fallback for other docs */}
                             {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook'].includes(activeTab) && (
