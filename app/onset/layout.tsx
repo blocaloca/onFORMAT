@@ -9,8 +9,7 @@ export default function OnSetMobileLayout({
     // Enforce Dark Mode for OnSET Mobile ("Field Monitor" aesthetic)
     return (
         <div className="fixed inset-0 w-full bg-zinc-200 overflow-hidden flex flex-col font-sans antialiased text-black">
-            {/* Chassis Container with Inner Shadow */}
-            <div className="absolute inset-0 w-full h-full shadow-[inset_0_0_50px_rgba(0,0,0,1)] pointer-events-none z-50" />
+            {/* Chassis Container with Inner Shadow Removed */}
 
             {/* Content Area - Filling remaining space */}
             <main className="relative z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden p-0">

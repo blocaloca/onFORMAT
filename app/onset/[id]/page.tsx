@@ -278,8 +278,6 @@ export default function OnSetMobilePage() {
                 _email: emailToUse // Save email silently for offline recovery
             };
 
-            setData(computedData);
-
             // LOG each successfully mapped document
             Object.keys(allDrafts).forEach((docId) => {
                 if (allDrafts[docId]) {
@@ -293,12 +291,6 @@ export default function OnSetMobilePage() {
             if (emptyDocs.length > 0) {
                 console.warn('[OnsetMobile] Empty or missing mobile layouts for:', emptyDocs);
             }
-
-            // CACHE FOR OFFLINE SAFETY NET
-            localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(computedData));
-            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            setLastSyncTime(nowTime);
-            localStorage.setItem(`onset_cache_time_${id}`, nowTime);
 
             // Determine Tabs: Support new 'toolGroups' or legacy 'selectedTools'
             const mobileControl = allDrafts['onset-mobile-control'];
@@ -325,7 +317,8 @@ export default function OnSetMobilePage() {
                     const MOBILE_SUPPORTED = [
                         'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
                         'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
-                        'script-notes', 'sound-report'
+                        'script-notes', 'sound-report',
+                        'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard'
                     ];
                     // Every tool that has data OR is explicitly selected in the registry
                     computedAvailableKeys = MOBILE_SUPPORTED.filter(k =>
@@ -371,7 +364,15 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
-            setData({ ...computedData, availableKeys });
+            const finalData = { ...computedData, availableKeys };
+            setData(finalData);
+
+            // CACHE FOR OFFLINE SAFETY NET (NOW INCLUDES AVAILABLE KEYS)
+            localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(finalData));
+            const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            setLastSyncTime(nowTime);
+            localStorage.setItem(`onset_cache_time_${id}`, nowTime);
+
             setLoading(false);
         } catch (err) {
             console.error("Fetch Data Error (Potentially Offline):", err);
