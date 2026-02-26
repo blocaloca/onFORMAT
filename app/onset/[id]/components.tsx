@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
 import SignatureCanvas from 'react-signature-canvas';
+import { useProjectData } from '@/lib/useProjectData';
 
 const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to THE PRODUCER and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as THE PROJECT.
 
@@ -365,7 +366,10 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 
 import { EditableInput } from '@/components/ui/EditableInput';
 
-export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable }: { data: any, scheduleData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manualIsEditable }: { data: any, scheduleData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+    const { canEditMobile } = useProjectData();
+    const isEditable = manualIsEditable ?? canEditMobile;
+
     if (!data) return <EmptyState label="Call Sheet" />;
 
     const updateField = (field: string, newValue: string) => {
@@ -2443,7 +2447,10 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
     );
 };
 
-export const MobileBriefView = ({ data, onUpdate, isEditable }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+    const { canEditMobile } = useProjectData();
+    const isEditable = manualIsEditable ?? canEditMobile;
+
     if (!data) return <EmptyState label="Creative Brief" />;
 
     const updateField = (field: string, newValue: string) => {
@@ -2683,6 +2690,7 @@ export const MobilePropsView = ({ data }: { data: any }) => {
 };
 
 export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+    const { canEditMobile } = useProjectData();
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
@@ -2742,7 +2750,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
     return (
         <div className="space-y-4 pb-8">
             {/* Header Actions */}
-            {(onAdd || onUpdate) && !isAdding && (
+            {canEditMobile && !isAdding && (
                 <div className="mb-6 animate-in slide-in-from-bottom-2 fade-in">
                     <button
                         onClick={handleStartAdd}

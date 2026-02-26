@@ -5,6 +5,7 @@ import { useParams, usePathname } from 'next/navigation';
 import { getClient } from '@/lib/supabase';
 import { Menu, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
+import { ProjectDataProvider } from '@/lib/useProjectData';
 
 // Import Views
 import {
@@ -1006,403 +1007,395 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 relative z-10">
+        <ProjectDataProvider data={data} userEmail={userEmail}>
+            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 relative z-10">
 
-            {/* TOP ROW: Header & Alerts */}
-            <div className="flex flex-col z-50 shrink-0">
-                {/* HEADER */}
-                <header className="bg-zinc-100/90 backdrop-blur-md border-b border-slate-500/80 pt-safe transition-all w-full relative">
-                    <div className="h-16 md:h-18 flex items-center justify-between px-6">
-                        <div className="flex flex-col items-start mt-2 shrink-0">
-                            <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
-                            <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
-                        </div>
-                        <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
-                        <div className="flex flex-col flex-1 min-w-0">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 leading-none mb-0.5 truncate">{data.project.name}</span>
-                            <div className="flex items-center gap-2 mt-0.5">
-                                <div className="flex items-center gap-1.5">
-                                    <span
-                                        className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive && !isOffline ? 'animate-pulse' : ''}`}
-                                        style={{ backgroundColor: isOffline ? '#F59E0B' : (!data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a')) }}
-                                    ></span>
-                                    <span className={`text-[9px] font-mono uppercase leading-none font-bold ${isOffline ? 'text-[#F59E0B]' : 'text-zinc-600'}`}>
-                                        {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive ? 'LIVE' : 'STANDBY')}
-                                    </span>
-                                    {isOffline && lastSyncTime && (
-                                        <span className="text-[9px] font-mono text-zinc-400 ml-1 leading-none">{lastSyncTime}</span>
-                                    )}
-                                </div>
-
-                                {/* Unit Badges Injection */}
-                                {(() => {
-                                    const crew = data.docs['crew-list']?.crew || [];
-                                    const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                    let units = me?.onSetGroups || [];
-                                    if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
-
-                                    if (units.length === 0) return null;
-
-                                    return (
-                                        <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
-                                            {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#22C55E] text-white rounded-[1px]">A</span>}
-                                            {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#3B82F6] text-white rounded-[1px]">B</span>}
-                                            {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EAB308] text-white rounded-[1px]">C</span>}
-                                            {units.includes('D') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EF4444] text-white rounded-[1px]">D</span>}
-                                        </div>
-                                    );
-                                })()}
+                {/* TOP ROW: Header & Alerts */}
+                <div className="flex flex-col z-50 shrink-0">
+                    {/* HEADER */}
+                    <header className="bg-zinc-100/90 backdrop-blur-md border-b border-slate-500/80 pt-safe transition-all w-full relative">
+                        <div className="h-16 md:h-18 flex items-center justify-between px-6">
+                            <div className="flex flex-col items-start mt-2 shrink-0">
+                                <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
+                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-3 shrink-0 ml-2">
-                            <BetaFeedbackTrigger variant="icon" />
-                            <button
-                                onClick={() => setShowMenu(true)}
-                                className="w-11 h-11 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0">
-                                <Menu size={18} />
-                            </button>
-                        </div>
-                    </div>
-                </header>
-
-                {/* GLOBAL MEDIA ALERT BANNER */}
-                {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
-                    <button
-                        onClick={() => setActiveTab('dit-log')}
-                        className="w-full bg-[#EAB308] text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative shadow-sm"
-                    >
-                        <div className="flex items-center gap-3">
-                            <div className="bg-black/10 p-1.5 rounded-full">
-                                <HardDrive size={16} />
-                            </div>
-                            <div className="text-left">
-                                <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 text-black">Media Alert</p>
-                                <p className="text-xs font-bold leading-none text-black">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
-                            </div>
-                        </div>
-                        <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide text-black border border-black/20">
-                            View
-                        </div>
-                    </button>
-                )}
-
-                {/* SYSTEM MENU DRAWER */}
-                {showMenu && (
-                    <div className="absolute inset-0 z-[100] flex justify-end">
-                        {/* Backdrop */}
-                        <div
-                            className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
-                            onClick={() => setShowMenu(false)}
-                        />
-
-                        {/* Drawer */}
-                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-slate-500 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
-                                <button onClick={() => setShowMenu(false)} className="bg-zinc-200/50 hover:bg-zinc-200 p-2 rounded-full text-zinc-600 transition-colors">
-                                    <Menu size={14} />
-                                </button>
-                            </div>
-
-                            <div className="space-y-6 flex-1">
-                                {/* Identity Card */}
-                                <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-slate-500">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <UserCircle size={20} className="text-emerald-500" />
-                                        <div>
-                                            <p className="text-xs font-bold text-zinc-900">{userRole || 'Crew Member'}</p>
-                                            <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Status */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
-                                        <span>Permissions</span>
-                                        {(() => {
-                                            const crew = data.docs['crew-list']?.crew || [];
-                                            const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                            let units = me?.onSetGroups || [];
-                                            if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
-
-                                            if (units.length === 0) return <span className="text-zinc-500">None</span>;
-
-                                            return (
-                                                <div className="flex items-center gap-1">
-                                                    {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-[2px]">A</span>}
-                                                    {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-[2px]">B</span>}
-                                                    {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-[2px]">C</span>}
-                                                    {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white rounded-[2px]">D</span>}
-                                                </div>
-                                            );
-                                        })()}
-                                    </div>
-                                    <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider mt-4">
-                                        <span>Sync Status</span>
-                                        <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-600" : "text-amber-600"}>
-                                            {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
+                            <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
+                            <div className="flex flex-col flex-1 min-w-0">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 leading-none mb-0.5 truncate">{data.project.name}</span>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <div className="flex items-center gap-1.5">
+                                        <span
+                                            className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive && !isOffline ? 'animate-pulse' : ''}`}
+                                            style={{ backgroundColor: isOffline ? '#F59E0B' : (!data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a')) }}
+                                        ></span>
+                                        <span className={`text-[9px] font-mono uppercase leading-none font-bold ${isOffline ? 'text-[#F59E0B]' : 'text-zinc-600'}`}>
+                                            {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive ? 'LIVE' : 'STANDBY')}
                                         </span>
+                                        {isOffline && lastSyncTime && (
+                                            <span className="text-[9px] font-mono text-zinc-400 ml-1 leading-none">{lastSyncTime}</span>
+                                        )}
                                     </div>
+
+                                    {/* Unit Badges Injection */}
+                                    {(() => {
+                                        const crew = data.docs['crew-list']?.crew || [];
+                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                        let units = me?.onSetGroups || [];
+                                        if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
+
+                                        if (units.length === 0) return null;
+
+                                        return (
+                                            <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
+                                                {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#22C55E] text-white rounded-[1px]">A</span>}
+                                                {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#3B82F6] text-white rounded-[1px]">B</span>}
+                                                {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EAB308] text-white rounded-[1px]">C</span>}
+                                                {units.includes('D') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EF4444] text-white rounded-[1px]">D</span>}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             </div>
-
-                            {myProjects.length > 0 && (
-                                <div className="space-y-2 mt-2 pt-6 border-t border-slate-500">
-                                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Other Active Sets</h3>
-                                    <div className="space-y-2">
-                                        {myProjects.map(p => (
-                                            <Link key={p.id} href={`/onset/${p.id}`} className="block">
-                                                <div className="bg-zinc-100 hover:bg-zinc-200 transition-colors p-3 rounded-lg border border-zinc-300 flex items-center justify-between group">
-                                                    <span className="text-xs font-bold text-zinc-900 truncate flex-1 pr-4">{p.name}</span>
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-pulse"></div>
-                                                </div>
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="border-t border-slate-500 mt-6 pt-6 space-y-3">
+                            <div className="flex items-center gap-3 shrink-0 ml-2">
+                                <BetaFeedbackTrigger variant="icon" />
                                 <button
-                                    onClick={async () => {
-                                        // Explicit Presence Cleanup for Mobile
-                                        if (userEmail && id) {
-                                            const { error } = await supabase
-                                                .from('crew_membership')
-                                                .update({ is_online: false })
-                                                .eq('project_id', id)
-                                                .eq('user_email', userEmail);
-
-                                            // Untrack from all channels
-                                            const channels = supabase.getChannels();
-                                            for (const channel of channels) {
-                                                await channel.untrack();
-                                            }
-                                            await supabase.removeAllChannels();
-                                        }
-
-                                        localStorage.removeItem('onset_user_email');
-                                        window.location.reload();
-                                    }}
-                                    className="w-full bg-zinc-200/50 text-zinc-600 border border-zinc-300 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors">
-                                    <LogOut size={14} /> Disconnect from Set
-                                </button>
-
-                                <button
-                                    onClick={async () => {
-                                        // Explicit Presence Cleanup for Mobile
-                                        if (userEmail && id) {
-                                            await supabase
-                                                .from('crew_membership')
-                                                .update({ is_online: false })
-                                                .eq('project_id', id)
-                                                .eq('user_email', userEmail);
-                                            const channels = supabase.getChannels();
-                                            for (const channel of channels) {
-                                                await channel.untrack();
-                                            }
-                                            await supabase.removeAllChannels();
-                                        }
-                                        localStorage.removeItem('onset_user_email');
-                                        await supabase.auth.signOut();
-                                        localStorage.clear();
-                                        window.location.href = '/api/auth/logout';
-                                    }}
-                                    className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
-                                    <LogOut size={14} /> Log Out Completely
+                                    onClick={() => setShowMenu(true)}
+                                    className="w-11 h-11 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0">
+                                    <Menu size={18} />
                                 </button>
                             </div>
                         </div>
+                    </header>
+
+                    {/* GLOBAL MEDIA ALERT BANNER */}
+                    {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
+                        <button
+                            onClick={() => setActiveTab('dit-log')}
+                            className="w-full bg-[#EAB308] text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative shadow-sm"
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className="bg-black/10 p-1.5 rounded-full">
+                                    <HardDrive size={16} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 text-black">Media Alert</p>
+                                    <p className="text-xs font-bold leading-none text-black">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                                </div>
+                            </div>
+                            <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide text-black border border-black/20">
+                                View
+                            </div>
+                        </button>
+                    )}
+
+                    {/* SYSTEM MENU DRAWER */}
+                    {showMenu && (
+                        <div className="absolute inset-0 z-[100] flex justify-end">
+                            {/* Backdrop */}
+                            <div
+                                className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
+                                onClick={() => setShowMenu(false)}
+                            />
+
+                            {/* Drawer */}
+                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-slate-500 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
+                                <div className="flex justify-between items-center mb-8">
+                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
+                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-200/50 hover:bg-zinc-200 p-2 rounded-full text-zinc-600 transition-colors">
+                                        <Menu size={14} />
+                                    </button>
+                                </div>
+
+                                <div className="space-y-6 flex-1">
+                                    {/* Identity Card */}
+                                    <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-slate-500">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <UserCircle size={20} className="text-emerald-500" />
+                                            <div>
+                                                <p className="text-xs font-bold text-zinc-900">{userRole || 'Crew Member'}</p>
+                                                <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Status */}
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
+                                            <span>Permissions</span>
+                                            {(() => {
+                                                const crew = data.docs['crew-list']?.crew || [];
+                                                const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                                                let units = me?.onSetGroups || [];
+                                                if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
+
+                                                if (units.length === 0) return <span className="text-zinc-500">None</span>;
+
+                                                return (
+                                                    <div className="flex items-center gap-1">
+                                                        {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-[2px]">A</span>}
+                                                        {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-[2px]">B</span>}
+                                                        {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-[2px]">C</span>}
+                                                        {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white rounded-[2px]">D</span>}
+                                                    </div>
+                                                );
+                                            })()}
+                                        </div>
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider mt-4">
+                                            <span>Sync Status</span>
+                                            <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-600" : "text-amber-600"}>
+                                                {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {myProjects.length > 0 && (
+                                    <div className="space-y-2 mt-2 pt-6 border-t border-slate-500">
+                                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Other Active Sets</h3>
+                                        <div className="space-y-2">
+                                            {myProjects.map(p => (
+                                                <Link key={p.id} href={`/onset/${p.id}`} className="block">
+                                                    <div className="bg-zinc-100 hover:bg-zinc-200 transition-colors p-3 rounded-lg border border-zinc-300 flex items-center justify-between group">
+                                                        <span className="text-xs font-bold text-zinc-900 truncate flex-1 pr-4">{p.name}</span>
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-pulse"></div>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="border-t border-slate-500 mt-6 pt-6 space-y-3">
+                                    <button
+                                        onClick={async () => {
+                                            // Explicit Presence Cleanup for Mobile
+                                            if (userEmail && id) {
+                                                const { error } = await supabase
+                                                    .from('crew_membership')
+                                                    .update({ is_online: false })
+                                                    .eq('project_id', id)
+                                                    .eq('user_email', userEmail);
+
+                                                // Untrack from all channels
+                                                const channels = supabase.getChannels();
+                                                for (const channel of channels) {
+                                                    await channel.untrack();
+                                                }
+                                                await supabase.removeAllChannels();
+                                            }
+
+                                            localStorage.removeItem('onset_user_email');
+                                            window.location.reload();
+                                        }}
+                                        className="w-full bg-zinc-200/50 text-zinc-600 border border-zinc-300 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors">
+                                        <LogOut size={14} /> Disconnect from Set
+                                    </button>
+
+                                    <button
+                                        onClick={async () => {
+                                            // Explicit Presence Cleanup for Mobile
+                                            if (userEmail && id) {
+                                                await supabase
+                                                    .from('crew_membership')
+                                                    .update({ is_online: false })
+                                                    .eq('project_id', id)
+                                                    .eq('user_email', userEmail);
+                                                const channels = supabase.getChannels();
+                                                for (const channel of channels) {
+                                                    await channel.untrack();
+                                                }
+                                                await supabase.removeAllChannels();
+                                            }
+                                            localStorage.removeItem('onset_user_email');
+                                            await supabase.auth.signOut();
+                                            localStorage.clear();
+                                            window.location.href = '/api/auth/logout';
+                                        }}
+                                        className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
+                                        <LogOut size={14} /> Log Out Completely
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                    }
+
+                    {/* CONFIDENTIAL BANNER */}
+                    <div className="bg-stripes-zinc text-center py-1 border-b border-slate-500 shadow-sm relative z-40 bg-zinc-100/50">
+                        <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
                     </div>
-                )
+                </div>
+
+                {/* WATERMARK OVERLAY */}
+                {
+                    userEmail && (
+                        <div className="absolute inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
+                            <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
+                                {Array.from({ length: 12 }).map((_, i) => (
+                                    <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
+                                        {userEmail} • {userRole || 'Crew'}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )
                 }
 
-                {/* CONFIDENTIAL BANNER */}
-                <div className="bg-stripes-zinc text-center py-1 border-b border-slate-500 shadow-sm relative z-40 bg-zinc-100/50">
-                    <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
-                </div>
-            </div>
+                {/* MAIN CONTENT SCROLLER */}
+                <main
+                    className="flex-1 overflow-y-auto w-full max-w-[400px] mx-auto px-4 pb-[env(safe-area-inset-bottom)] relative z-10 no-scrollbar"
+                    style={{ WebkitOverflowScrolling: 'touch' }}
+                >
+                    <div className="w-full mx-auto py-8">
+                        {/* BACK BUTTON REMOVED */}
 
-            {/* WATERMARK OVERLAY */}
-            {
-                userEmail && (
-                    <div className="absolute inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
-                        <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
-                            {Array.from({ length: 12 }).map((_, i) => (
-                                <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
-                                    {userEmail} • {userRole || 'Crew'}
-                                </div>
-                            ))}
-                        </div>
+                        {activeTab === '' ? (
+                            <MobileLanding
+                                projectName={data.project?.name}
+                                // Determine status message based on whether there ARE keys but none selected, or NO keys
+                                status={(() => {
+                                    // Re-run small check or assume 'availableKeys' from context? 
+                                    // We don't have availableKeys in scope here easily without re-calc.
+                                    // But if activeTab is empty, likely we are in landing mode.
+                                    return "Production Standby";
+                                })()}
+                            />
+                        ) : (
+                            <>
+                                {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
+                                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
+                                {activeTab === 'call-sheet' && (
+                                    <CallSheetView
+                                        data={data.docs['call-sheet']}
+                                        scheduleData={data.docs['schedule']}
+                                        onUpdate={handleUpdateCallSheet}
+                                    />
+                                )}
+                                {activeTab === 'dit-log' && <MobileDITLogView
+                                    data={data.docs['dit-log']}
+                                    onAdd={handleUpdateDIT}
+                                    projectId={id}
+                                    mediaAlerts={mediaAlerts}
+                                    setMediaAlerts={setMediaAlerts}
+                                />}
+                                {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
+                                {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
+                                {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
+                                {activeTab === 'on-set-notes' && <MobileOnSetNotesView
+                                    data={data.docs['on-set-notes']}
+                                    onAdd={handleAddOnSetNote}
+                                    onUpdate={handleEditOnSetNote}
+                                    onDelete={handleDeleteOnSetNote}
+                                />}
+                                {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
+                                {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
+                                {activeTab === 'script-notes' && <MobileScriptNotesView
+                                    data={data.docs['script-notes']}
+                                    onAdd={(item: any) => handleUpdateScriptNotes('add', item)}
+                                    onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
+                                    onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
+                                />}
+                                {activeTab === 'sound-report' && <MobileSoundReportView
+                                    data={data.docs['sound-report']}
+                                    onAdd={(item: any) => handleUpdateSoundReport('add', item)}
+                                    onUpdate={(item: any) => handleUpdateSoundReport('update', item)}
+                                    onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
+                                />}
+
+                                {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" />}
+                                {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} />}
+                                {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} />}
+                                {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" />}
+
+                                {/* Phase 2: Missing Documents leveraging lists */}
+                                {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} />}
+                                {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} />}
+                                {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} />}
+
+                                {/* Phase 3: Missing Document Views & Visual Cards */}
+                                {activeTab === 'creative-brief' && (
+                                    <MobileBriefView
+                                        data={data.docs['creative-brief']}
+                                        onUpdate={(newData) => handleUpdateDraft('creative-brief', newData)}
+                                    />
+                                )}
+                                {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} />}
+                                {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} />}
+                                {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} />}
+                                {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} />}
+                                {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} />}
+
+                                {activeTab === 'mobile-control' && (
+                                    <MobileControlView
+                                        data={data.docs['onset-mobile-control']}
+                                        onUpdate={(tool: string, units: string[]) => {
+                                            const updatedControl = { ...data.docs['onset-mobile-control'] };
+                                            if (!updatedControl.toolGroups) updatedControl.toolGroups = {};
+                                            updatedControl.toolGroups[tool] = units;
+                                            handleUpdateDraft('onset-mobile-control', updatedControl);
+                                        }}
+                                    />
+                                )}
+                                {/* Fallback for other docs */}
+                                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
+                                    <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
+                                )}
+                            </>
+                        )}
                     </div>
-                )
-            }
+                </main>
 
-            {/* MAIN CONTENT SCROLLER */}
-            <main
-                className="flex-1 overflow-y-auto w-full max-w-[400px] mx-auto px-4 pb-[env(safe-area-inset-bottom)] relative z-10 no-scrollbar"
-                style={{ WebkitOverflowScrolling: 'touch' }}
-            >
-                <div className="w-full mx-auto py-8">
-                    {/* BACK BUTTON REMOVED */}
+                {/* BOTTOM NAV ROWS */}
+                <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+                    <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
+                        {(() => {
+                            const availableKeys = data.availableKeys || [];
+                            if (availableKeys.length === 0) return null;
 
-                    {activeTab === '' ? (
-                        <MobileLanding
-                            projectName={data.project?.name}
-                            // Determine status message based on whether there ARE keys but none selected, or NO keys
-                            status={(() => {
-                                // Re-run small check or assume 'availableKeys' from context? 
-                                // We don't have availableKeys in scope here easily without re-calc.
-                                // But if activeTab is empty, likely we are in landing mode.
-                                return "Production Standby";
-                            })()}
-                        />
-                    ) : (
-                        <>
-                            {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
-                            {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
-                            {activeTab === 'call-sheet' && (
-                                <CallSheetView
-                                    data={data.docs['call-sheet']}
-                                    scheduleData={data.docs['schedule']}
-                                    onUpdate={handleUpdateCallSheet}
-                                    isEditable={(() => {
-                                        const crew = data.docs['crew-list']?.crew || [];
-                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                        return userRole === 'Owner' || me?.onSetGroups?.includes('D');
-                                    })()}
-                                />
-                            )}
-                            {activeTab === 'dit-log' && <MobileDITLogView
-                                data={data.docs['dit-log']}
-                                onAdd={handleUpdateDIT}
-                                projectId={id}
-                                mediaAlerts={mediaAlerts}
-                                setMediaAlerts={setMediaAlerts}
-                            />}
-                            {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} />}
-                            {activeTab === 'crew-list' && <CrewListView data={data.docs['crew-list']} />}
-                            {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
-                            {activeTab === 'on-set-notes' && <MobileOnSetNotesView
-                                data={data.docs['on-set-notes']}
-                                onAdd={handleAddOnSetNote}
-                                onUpdate={handleEditOnSetNote}
-                                onDelete={handleDeleteOnSetNote}
-                            />}
-                            {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} />}
-                            {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
-                            {activeTab === 'script-notes' && <MobileScriptNotesView
-                                data={data.docs['script-notes']}
-                                onAdd={(item: any) => handleUpdateScriptNotes('add', item)}
-                                onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
-                                onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
-                            />}
-                            {activeTab === 'sound-report' && <MobileSoundReportView
-                                data={data.docs['sound-report']}
-                                onAdd={(item: any) => handleUpdateSoundReport('add', item)}
-                                onUpdate={(item: any) => handleUpdateSoundReport('update', item)}
-                                onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
-                            />}
+                            const mappedKeys = Array.from(new Set(availableKeys.map((k: string) => {
+                                if (k === 'shot-log') return 'camera-report';
+                                if (k === 'locations-sets') return 'locations';
+                                if (k === 'casting-talent') return 'casting';
+                                if (k === 'wardrobe-styling') return 'wardrobe';
+                                if (k === 'project-vision') return 'storyboard';
+                                if (k === 'budget-actual') return 'budget';
+                                return k;
+                            })));
 
-                            {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" />}
-                            {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} />}
-                            {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} />}
-                            {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" />}
+                            const crew = data.docs['crew-list']?.crew || [];
+                            const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                            const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
 
-                            {/* Phase 2: Missing Documents leveraging lists */}
-                            {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} />}
-                            {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} />}
-                            {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} />}
+                            if (isDelegate && !mappedKeys.includes('mobile-control')) {
+                                mappedKeys.push('mobile-control');
+                            }
 
-                            {/* Phase 3: Missing Document Views & Visual Cards */}
-                            {activeTab === 'creative-brief' && (
-                                <MobileBriefView
-                                    data={data.docs['creative-brief']}
-                                    onUpdate={(newData) => handleUpdateDraft('creative-brief', newData)}
-                                    isEditable={(() => {
-                                        const crew = data.docs['crew-list']?.crew || [];
-                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                        return userRole === 'Owner' || me?.onSetGroups?.includes('D');
-                                    })()}
-                                />
-                            )}
-                            {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} />}
-                            {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} />}
-                            {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} />}
-                            {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} />}
-                            {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} />}
-
-                            {activeTab === 'mobile-control' && (
-                                <MobileControlView
-                                    data={data.docs['onset-mobile-control']}
-                                    onUpdate={(tool: string, units: string[]) => {
-                                        const updatedControl = { ...data.docs['onset-mobile-control'] };
-                                        if (!updatedControl.toolGroups) updatedControl.toolGroups = {};
-                                        updatedControl.toolGroups[tool] = units;
-                                        handleUpdateDraft('onset-mobile-control', updatedControl);
-                                    }}
-                                />
-                            )}
-                            {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
-                                <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
-                            )}
-                        </>
-                    )}
-                </div>
-            </main>
-
-            {/* BOTTOM NAV ROWS */}
-            <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
-                <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
-                    {(() => {
-                        const availableKeys = data.availableKeys || [];
-                        if (availableKeys.length === 0) return null;
-
-                        const mappedKeys = Array.from(new Set(availableKeys.map((k: string) => {
-                            if (k === 'shot-log') return 'camera-report';
-                            if (k === 'locations-sets') return 'locations';
-                            if (k === 'casting-talent') return 'casting';
-                            if (k === 'wardrobe-styling') return 'wardrobe';
-                            if (k === 'project-vision') return 'storyboard';
-                            if (k === 'budget-actual') return 'budget';
-                            return k;
-                        })));
-
-                        const crew = data.docs['crew-list']?.crew || [];
-                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                        const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
-
-                        if (isDelegate && !mappedKeys.includes('mobile-control')) {
-                            mappedKeys.push('mobile-control');
-                        }
-
-                        return mappedKeys.map((key: string) => {
-                            const isDelegated = data.docs['onset-mobile-control']?.toolGroups?.[key]?.includes('D');
-                            return (
-                                <button
-                                    key={key}
-                                    onClick={() => setActiveTab(key)}
-                                    className={`
+                            return mappedKeys.map((key: string) => {
+                                const isDelegated = data.docs['onset-mobile-control']?.toolGroups?.[key]?.includes('D');
+                                return (
+                                    <button
+                                        key={key}
+                                        onClick={() => setActiveTab(key)}
+                                        className={`
                                     flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200 relative
                                     ${activeTab === key
-                                            ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
-                                            : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive
-                                        }
+                                                ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
+                                                : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive
+                                            }
                                 `}
-                                >
-                                    {DOC_LABELS[key] || key}
-                                    {isDelegated && (
-                                        <span className="absolute top-0 right-0 -mr-1 -mt-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-[6px] text-white font-black border border-white shadow-sm ring-1 ring-red-600/20">D</span>
-                                    )}
-                                </button>
-                            );
-                        });
-                    })()}
-                </div>
-            </nav>
-        </div>
+                                    >
+                                        {DOC_LABELS[key] || key}
+                                        {isDelegated && (
+                                            <span className="absolute top-0 right-0 -mr-1 -mt-1 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center text-[6px] text-white font-black border border-white shadow-sm ring-1 ring-red-600/20">D</span>
+                                        )}
+                                    </button>
+                                );
+                            });
+                        })()}
+                    </div>
+                </nav>
+            </div>
+        </ProjectDataProvider>
     );
 }
 

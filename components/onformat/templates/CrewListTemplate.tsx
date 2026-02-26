@@ -22,10 +22,13 @@ interface CrewMember {
     department: string;
     role: string;
     name: string;
-    onSetGroups?: string[]; // Groups A, B, C
+    onSetGroups?: string[]; // Groups A, B, C, D
     email: string;
     phone: string;
     status?: 'online' | 'offline'; // Replaces rates
+    permissions?: {
+        canEditMobile: boolean;
+    };
 }
 
 interface CrewListData {
@@ -242,10 +245,22 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const toggleGroup = (idx: number, group: string) => {
         const member = items[idx];
         const current = member.onSetGroups || [];
-        const updated = current.includes(group)
+        const isAlreadySelected = current.includes(group);
+        const updatedGroups = isAlreadySelected
             ? current.filter(g => g !== group)
             : [...current, group];
-        handleUpdateItem(idx, { onSetGroups: updated });
+
+        const updates: Partial<CrewMember> = { onSetGroups: updatedGroups };
+
+        // State Logic: If 'D' is toggled, update canEditMobile permission
+        if (group === 'D') {
+            updates.permissions = {
+                ...member.permissions,
+                canEditMobile: !isAlreadySelected
+            };
+        }
+
+        handleUpdateItem(idx, updates);
     };
 
     const handleDeleteItem = (index: number) => {
