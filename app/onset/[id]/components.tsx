@@ -256,12 +256,12 @@ export const ScriptView = ({ data }: { data: any }) => {
                             </span>
                         </div>
 
-                        <div className="font-mono text-sm leading-relaxed text-zinc-100">
+                        <div className="font-mono text-base leading-relaxed text-zinc-950">
                             <span className="text-zinc-500 uppercase text-[10px] font-bold block mb-1">Visual</span>
                             {row.visual}
                         </div>
 
-                        <div className="font-sans font-inter text-sm leading-relaxed text-zinc-600 pl-4 border-l border-emerald-500/30">
+                        <div className="font-sans font-inter text-base leading-relaxed text-zinc-800 pl-4 border-l border-emerald-500/30 w-full">
                             <span className="text-emerald-600/70 uppercase text-[10px] font-bold block mb-1">Audio</span>
                             {row.audio}
                         </div>

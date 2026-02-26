@@ -1007,18 +1007,7 @@ export default function OnSetMobilePage() {
                 style={{ WebkitOverflowScrolling: 'touch' }}
             >
                 <div className="w-full mx-auto py-8">
-                    {/* BACK BUTTON for Documents */}
-                    {activeTab !== '' && (
-                        <button
-                            onClick={() => setActiveTab('')}
-                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-6 active:opacity-50 transition-all hover:text-black group"
-                        >
-                            <div className="bg-zinc-100 p-2 rounded-full border border-slate-500 group-hover:border-zinc-400">
-                                <ChevronLeft size={16} />
-                            </div>
-                            <span>Dashboard</span>
-                        </button>
-                    )}
+                    {/* BACK BUTTON REMOVED */}
 
                     {activeTab === '' ? (
                         <MobileLanding
