@@ -18,9 +18,13 @@ export function BetaFeedbackTrigger({ variant = 'fixed' }: { variant?: 'fixed' |
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            // Get email if it's an onset mobile user
+            const localEmail = typeof window !== 'undefined' ? localStorage.getItem('onset_user_email') : undefined;
+
             await submitFeedback(message, type, {
                 url: window.location.href,
-                userAgent: navigator.userAgent
+                userAgent: navigator.userAgent,
+                email: localEmail || undefined
             });
             setSuccess(true);
             setTimeout(() => {
