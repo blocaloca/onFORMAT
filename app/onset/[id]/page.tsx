@@ -826,7 +826,7 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 shadow-2xl relative z-10">
+        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 relative z-10">
 
             {/* TOP ROW: Header & Alerts */}
             <div className="flex flex-col z-50 shrink-0">
@@ -1073,7 +1073,7 @@ export default function OnSetMobilePage() {
             </main>
 
             {/* BOTTOM NAV ROWS */}
-            <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+            <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                 <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                     {(() => {
                         const availableKeys = data.availableKeys || [];
