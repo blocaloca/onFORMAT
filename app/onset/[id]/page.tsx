@@ -1036,24 +1036,6 @@ export default function OnSetMobilePage() {
                                         )}
                                     </div>
 
-                                    {/* Unit Badges Injection */}
-                                    {(() => {
-                                        const crew = data.docs['crew-list']?.crew || [];
-                                        const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                        let units = me?.onSetGroups || [];
-                                        if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
-
-                                        if (units.length === 0) return null;
-
-                                        return (
-                                            <div className="flex items-center gap-1 pl-2 border-l border-zinc-800 ml-2">
-                                                {units.includes('A') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#22C55E] text-white rounded-[1px]">A</span>}
-                                                {units.includes('B') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#3B82F6] text-white rounded-[1px]">B</span>}
-                                                {units.includes('C') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EAB308] text-white rounded-[1px]">C</span>}
-                                                {units.includes('D') && <span className="flex items-center justify-center w-3 h-3 text-[8px] font-black bg-[#EF4444] text-white rounded-[1px]">D</span>}
-                                            </div>
-                                        );
-                                    })()}
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 shrink-0 ml-2">
