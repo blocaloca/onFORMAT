@@ -1847,6 +1847,7 @@ Context:\n"${fullContext}"`;
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             activeToolKey={state.activeTool as any}
                             persona={persona}
+                            isOwner={userRole === 'Owner'}
                             projectId={projectId}
                             projectName={state.projectName}
                             clientName={state.clientName}

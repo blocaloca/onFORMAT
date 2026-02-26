@@ -561,12 +561,21 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
         <div className="space-y-6">
             {/* Vitals */}
             <div className="bg-zinc-50 border border-slate-500/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
+                <div className="flex flex-col gap-1 mb-4">
+                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Shoot Date</p>
+                    <div className="text-xl font-black text-zinc-950 uppercase tracking-tighter">
+                        {scheduleData?.date || data.date || "TBD"}
+                    </div>
+                </div>
+
+                <div className="h-px bg-slate-500/20 w-12 mx-auto mb-4" />
+
                 <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">General Call Time</p>
                 <div className="text-5xl font-black text-zinc-400 tracking-tighter mb-4 flex justify-center">
                     <EditableInput
-                        value={data.crewCall || scheduleData?.callTime || "TBD"}
+                        value={scheduleData?.callTime || data.crewCall || "TBD"}
                         onSave={(val) => updateField('crewCall', val)}
-                        isEditable={!!isEditable}
+                        isEditable={!!isEditable && !scheduleData?.callTime}
                         placeholder="TBD"
                     />
                 </div>
@@ -1447,20 +1456,69 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
     );
 }
 
-export const ScheduleView = ({ data }: { data: any }) => {
-    if (!data || !data.items || data.items.length === 0) return <EmptyState label="Schedule" />;
+export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+    const { isOwner } = useProjectData();
+    const isEditable = manualIsEditable ?? isOwner;
+
+    if (!data) return <EmptyState label="Schedule" />;
+
+    const updateField = (field: string, newValue: string) => {
+        if (onUpdate) {
+            onUpdate({ ...data, [field]: newValue });
+        }
+    };
+
+    const updateItem = (index: number, updates: any) => {
+        if (onUpdate) {
+            const newItems = [...(data.items || [])];
+            newItems[index] = { ...newItems[index], ...updates };
+            onUpdate({ ...data, items: newItems });
+        }
+    };
+
+    const handleDeleteItem = (id: string) => {
+        if (onUpdate) {
+            const newItems = (data.items || []).filter((item: any) => item.id !== id);
+            onUpdate({ ...data, items: newItems });
+        }
+    };
+
+    const handleAddItem = () => {
+        if (onUpdate) {
+            const newItem = {
+                id: `sched-${Date.now()}`,
+                time: '08:00',
+                scene: '',
+                intExt: 'INT',
+                set: 'NEW SET',
+                dayNight: 'DAY',
+                description: 'New activity'
+            };
+            onUpdate({ ...data, items: [...(data.items || []), newItem] });
+        }
+    };
 
     return (
         <div className="space-y-6">
             {/* Header Info */}
-            <div className="flex justify-between items-end border-b border-zinc-800 pb-4">
+            <div className="flex justify-between items-end border-b border-zinc-300 pb-4">
                 <div>
                     <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Shoot Date</p>
-                    <p className="text-xl font-black text-zinc-950">{data.date || 'TBD'}</p>
+                    <EditableInput
+                        value={data.date || 'TBD'}
+                        onSave={(val) => updateField('date', val)}
+                        isEditable={!!isEditable}
+                        className="text-xl font-black text-zinc-950 block"
+                    />
                 </div>
                 <div className="text-right">
                     <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Call Time</p>
-                    <p className="text-xl font-mono text-emerald-600 font-bold">{data.callTime || 'TBD'}</p>
+                    <EditableInput
+                        value={data.callTime || 'TBD'}
+                        onSave={(val) => updateField('callTime', val)}
+                        isEditable={!!isEditable}
+                        className="text-xl font-mono text-emerald-600 font-bold block"
+                    />
                 </div>
             </div>
 
@@ -1468,43 +1526,94 @@ export const ScheduleView = ({ data }: { data: any }) => {
             <div className="space-y-4 relative">
                 <div className="absolute left-[54px] top-2 bottom-2 w-0.5 bg-zinc-300"></div>
 
-                {data.items.map((item: any, i: number) => (
+                {(data.items || []).map((item: any, i: number) => (
                     <div key={item.id || i} className="relative flex gap-4 group">
                         {/* Time Column */}
                         <div className="w-[46px] text-right pt-1 shrink-0">
-                            <span className="text-xs font-mono font-bold text-zinc-500 block">{item.time || '00:00'}</span>
+                            <EditableInput
+                                value={item.time || '00:00'}
+                                onSave={(val) => updateItem(i, { time: val })}
+                                isEditable={!!isEditable}
+                                className="text-xs font-mono font-bold text-zinc-500 block"
+                            />
                         </div>
 
                         {/* Dot */}
                         <div className="absolute left-[50px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-300 border-2 border-zinc-200 z-10 group-hover:bg-emerald-500 transition-colors"></div>
 
                         {/* Content Card */}
-                        <div className="flex-1 bg-zinc-100/80 rounded-lg p-3 border border-zinc-300 hover:border-zinc-400 transition-colors">
+                        <div className="flex-1 bg-zinc-100/80 rounded-lg p-3 border border-zinc-300 hover:border-zinc-400 transition-colors relative">
+                            {isEditable && (
+                                <button
+                                    onClick={() => handleDeleteItem(item.id)}
+                                    className="absolute -right-2 -top-2 w-6 h-6 bg-white border border-zinc-300 text-zinc-400 hover:text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow-sm"
+                                >
+                                    <Trash2 size={12} />
+                                </button>
+                            )}
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
-                                    <span className="bg-zinc-200 text-zinc-950 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
-                                        SCENE {item.scene || '-'}
-                                    </span>
-                                    <span className="text-[10px] font-black uppercase text-zinc-500">
-                                        {item.intExt}
-                                    </span>
+                                    <div className="bg-zinc-200 text-zinc-950 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                                        <span>SCENE</span>
+                                        <EditableInput
+                                            value={item.scene || '-'}
+                                            onSave={(val) => updateItem(i, { scene: val })}
+                                            isEditable={!!isEditable}
+                                            className="font-black"
+                                        />
+                                    </div>
+                                    <div className="text-[10px] font-black uppercase text-zinc-500">
+                                        <EditableInput
+                                            value={item.intExt || 'INT'}
+                                            onSave={(val) => updateItem(i, { intExt: val })}
+                                            isEditable={!!isEditable}
+                                        />
+                                    </div>
                                 </div>
-                                <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' :
+                                <div className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' :
                                     item.dayNight === 'NIGHT' ? 'bg-blue-900/30 text-blue-400' :
                                         'bg-zinc-200 text-zinc-500'
                                     }`}>
-                                    {item.dayNight}
-                                </span>
+                                    <EditableInput
+                                        value={item.dayNight || 'DAY'}
+                                        onSave={(val) => updateItem(i, { dayNight: val })}
+                                        isEditable={!!isEditable}
+                                    />
+                                </div>
                             </div>
 
-                            <p className="text-xs font-black text-zinc-950 uppercase mb-1 leading-tight">{item.set}</p>
-                            <p className="text-xs text-zinc-500 font-medium leading-relaxed">{item.description}</p>
+                            <EditableInput
+                                value={item.set || ''}
+                                onSave={(val) => updateItem(i, { set: val })}
+                                isEditable={!!isEditable}
+                                className="text-xs font-black text-zinc-950 uppercase mb-1 leading-tight block"
+                                placeholder="Set name..."
+                            />
+                            <EditableInput
+                                value={item.description || ''}
+                                onSave={(val) => updateItem(i, { description: val })}
+                                isEditable={!!isEditable}
+                                type="textarea"
+                                className="text-xs text-zinc-500 font-medium leading-relaxed block"
+                                placeholder="Description..."
+                            />
                         </div>
                     </div>
                 ))}
+
+                {isEditable && (
+                    <div className="pl-[70px] pt-2">
+                        <button
+                            onClick={handleAddItem}
+                            className="w-full py-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
+                        >
+                            <Plus size={14} /> Add Entry
+                        </button>
+                    </div>
+                )}
             </div>
 
-            <div className="h-12 text-center text-[10px] text-zinc-800 uppercase font-bold pt-8">End of Day</div>
+            <div className="h-12 text-center text-[10px] text-zinc-400 uppercase font-bold pt-8">End of Day</div>
         </div>
     );
 };

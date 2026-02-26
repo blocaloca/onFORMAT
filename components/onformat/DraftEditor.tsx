@@ -24,6 +24,7 @@ interface DraftEditorProps {
     onMagicImport?: (sourceData: any) => void
     onOpenPrintRoom?: () => void
     isAiDocked?: boolean
+    isOwner?: boolean
 }
 
 export const DraftEditor = ({
@@ -43,7 +44,8 @@ export const DraftEditor = ({
     latestNotification,
     onMagicImport,
     onOpenPrintRoom,
-    isAiDocked
+    isAiDocked,
+    isOwner
 }: DraftEditorProps) => {
 
     // Schedule Import Logic
@@ -310,6 +312,7 @@ export const DraftEditor = ({
                             importedLookbook,
                             importedLocations,
                             projectId,
+                            isOwner,
                             latestNotification
                         }}
 

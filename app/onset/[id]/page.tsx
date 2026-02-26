@@ -1371,7 +1371,12 @@ export default function OnSetMobilePage() {
                                         onDelete={(id) => handleUpdateCrewList('delete', id)}
                                     />
                                 )}
-                                {activeTab === 'schedule' && <ScheduleView data={data.docs['schedule']} />}
+                                {activeTab === 'schedule' && (
+                                    <ScheduleView
+                                        data={data.docs['schedule']}
+                                        onUpdate={(newData) => handleUpdateDraft('schedule', newData)}
+                                    />
+                                )}
                                 {activeTab === 'on-set-notes' && <MobileOnSetNotesView
                                     data={data.docs['on-set-notes']}
                                     onAdd={handleAddOnSetNote}

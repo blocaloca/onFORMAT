@@ -65,7 +65,24 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
         onUpdate({ ...data, [field]: value });
     };
 
-    const events = data.events || [];
+    const importedSchedule = (metadata as any)?.importedSchedule;
+
+    // Force items from schedule if available
+    const events = (importedSchedule?.items && importedSchedule.items.length > 0)
+        ? importedSchedule.items.map((item: any, i: number) => ({
+            id: item.id || `evt-imp-${i}`,
+            time: item.time || '',
+            type: item.intExt === 'BREAK' ? 'Break' : 'Shoot',
+            description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+            location: item.set || ''
+        }))
+        : (data.events || []);
+
+    const isScheduleImported = !!(importedSchedule?.items && importedSchedule.items.length > 0);
+    const shootDate = importedSchedule?.date || data.date || '';
+    const generalCall = importedSchedule?.callTime || data.crewCall || '';
+    const isOwner = (metadata as any)?.isOwner;
+    const canEditVitals = isOwner && !isScheduleImported;
 
     // Initialize Logic (Only if empty)
     useEffect(() => {
@@ -202,7 +219,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
     };
 
     const confirmDeleteEvent = (id: string) => {
-        const newEvents = events.filter(e => e.id !== id);
+        const newEvents = events.filter((e: any) => e.id !== id);
         onUpdate({ events: newEvents });
         setEventToDelete(null);
     };
@@ -361,11 +378,11 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         <div className="border-b border-zinc-200">
                                             <input
                                                 type="text"
-                                                value={data.date || ''}
+                                                value={shootDate}
                                                 onChange={(e) => updateField('date', formatDate(e.target.value))}
                                                 placeholder="MM/DD/YYYY"
                                                 className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
-                                                disabled={isLocked}
+                                                disabled={isLocked || !canEditVitals}
                                             />
                                         </div>
 
@@ -381,11 +398,11 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <div className="p-6 flex items-center">
                                                 <input
                                                     type="text"
-                                                    value={data.crewCall || (metadata as any)?.importedSchedule?.callTime || ''}
+                                                    value={generalCall}
                                                     onChange={e => updateField('crewCall', formatTime(e.target.value))}
                                                     className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
                                                     placeholder="00:00"
-                                                    disabled={isLocked}
+                                                    disabled={isLocked || !canEditVitals}
                                                 />
                                             </div>
                                             <div className="w-32 bg-zinc-50 border-l border-zinc-100 p-3 flex items-center justify-center">
@@ -523,7 +540,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     </div>
 
                                     <div className="space-y-0 relative border-l border-zinc-200 ml-2 pl-4 pt-0">
-                                        {pageItems.map((item, localIdx) => {
+                                        {pageItems.map((item: any, localIdx: number) => {
                                             const globalIdx = (pageIndex === 0) ? localIdx : ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                             return (
                                                 <div key={item.id} className={`relative group grid grid-cols-[50px_100px_1.5fr_1fr_30px] gap-4 mb-0.5 items-start ${eventToDelete === item.id ? 'z-50' : ''}`}>
@@ -598,7 +615,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         </div>
                                                     </div>
 
-                                                    {!isLocked && (
+                                                    {!isLocked && canEditVitals && (
                                                         <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                             {eventToDelete === item.id ? (
                                                                 <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
@@ -617,7 +634,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         })}
 
                                         {/* Actions */}
-                                        {!isLocked && (pageIndex === totalPages - 1) && (
+                                        {!isLocked && canEditVitals && (pageIndex === totalPages - 1) && (
                                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                                 <button
                                                     onClick={handleAddEvent}
@@ -644,7 +661,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div></div>
                                 </div>
                                 <div className="space-y-0 relative border-l border-zinc-200 ml-2 pl-4 pt-0">
-                                    {pageItems.map((item, localIdx) => {
+                                    {pageItems.map((item: any, localIdx: number) => {
                                         const globalIdx = ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                         return (
                                             <div key={item.id} className={`relative group grid grid-cols-[50px_100px_1.5fr_1fr_30px] gap-4 mb-0.5 items-start ${eventToDelete === item.id ? 'z-50' : ''}`}>
@@ -723,7 +740,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     )}
                                                 </div>
 
-                                                {!isLocked && (
+                                                {!isLocked && canEditVitals && (
                                                     <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                         {eventToDelete === item.id ? (
                                                             <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
@@ -741,7 +758,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )
                                     })}
 
-                                    {!isLocked && (pageIndex === totalPages - 1) && (
+                                    {!isLocked && canEditVitals && (pageIndex === totalPages - 1) && (
                                         <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                             <button
                                                 onClick={handleAddEvent}
