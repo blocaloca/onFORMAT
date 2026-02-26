@@ -244,7 +244,7 @@ export default function OnSetMobilePage() {
 
             // 3. Parse Drafts with Reverse Phase Search & Array Unwrapping
             const allDrafts: Record<string, any> = {};
-            const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'ON_SET', 'POST'];
+            const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
 
             phaseOrder.forEach(phaseKey => {
                 const phase = projectData.data?.phases?.[phaseKey];
@@ -273,10 +273,25 @@ export default function OnSetMobilePage() {
             const computedData = {
                 project: projectData,
                 docs: allDrafts,
-                _role: role,
-                _email: emailToUse,
-                availableKeys: [] as string[] // Will be filled below
+                _role: role, // Save role silently for offline recovery
+                _email: emailToUse // Save email silently for offline recovery
             };
+
+            setData(computedData);
+
+            // LOG each successfully mapped document
+            Object.keys(allDrafts).forEach((docId) => {
+                if (allDrafts[docId]) {
+                    console.log(`[OnsetMobile] Connected: toolId [${docId}]`);
+                }
+            });
+
+            // Identify empty or missing mobile layouts
+            const knownDocs = Object.keys(DOC_LABELS);
+            const emptyDocs = knownDocs.filter((k) => !allDrafts[k] || (Array.isArray(allDrafts[k]) && allDrafts[k].length === 0) || (typeof allDrafts[k] === 'object' && Object.keys(allDrafts[k]).length === 0));
+            if (emptyDocs.length > 0) {
+                console.warn('[OnsetMobile] Empty or missing mobile layouts for:', emptyDocs);
+            }
 
             // CACHE FOR OFFLINE SAFETY NET
             localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(computedData));
