@@ -234,12 +234,20 @@ export default function OnSetMobilePage() {
             // 2. Fetch Role if email exists
             let role = 'Crew';
             if (emailToUse) {
-                const { data: crew } = await supabase.from('crew_membership')
-                    .select('role')
-                    .eq('project_id', id)
-                    .eq('user_email', emailToUse)
-                    .single();
-                if (crew) role = crew.role;
+                // Identity Alignment: the explicit project Owner skips Crew table checks
+                const { data: { session } } = await supabase.auth.getSession();
+                const isOwnerDataMatch = session?.user && (projectData.user_id === session.user.id);
+
+                if (isOwnerDataMatch) {
+                    role = 'Owner';
+                } else {
+                    const { data: crew } = await supabase.from('crew_membership')
+                        .select('role')
+                        .eq('project_id', id)
+                        .eq('user_email', emailToUse)
+                        .single();
+                    if (crew) role = crew.role;
+                }
                 setUserRole(role);
             }
 
