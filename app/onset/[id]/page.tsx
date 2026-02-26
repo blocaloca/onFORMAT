@@ -22,7 +22,8 @@ import {
     MobileLocationsView,
     MobileReleasesView,
     MobileScriptNotesView,
-    MobileSoundReportView
+    MobileSoundReportView,
+    MobileReadOnlyListView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -262,13 +263,13 @@ export default function OnSetMobilePage() {
             });
 
             // VIRTUAL MIGRATION: Support legacy Shot Log data
-            if (allDrafts['shot-log'] && !allDrafts['camera-report']) {
-                allDrafts['camera-report'] = allDrafts['shot-log'];
-            }
-            // VIRTUAL MIGRATION: Alias 'locations-sets' to 'locations'
-            if (allDrafts['locations-sets'] && !allDrafts['locations']) {
-                allDrafts['locations'] = allDrafts['locations-sets'];
-            }
+            if (allDrafts['shot-log'] && !allDrafts['camera-report']) allDrafts['camera-report'] = allDrafts['shot-log'];
+            // VIRTUAL MIGRATION: Alias to simpler names for mobile
+            if (allDrafts['locations-sets'] && !allDrafts['locations']) allDrafts['locations'] = allDrafts['locations-sets'];
+            if (allDrafts['casting-talent'] && !allDrafts['casting']) allDrafts['casting'] = allDrafts['casting-talent'];
+            if (allDrafts['wardrobe-styling'] && !allDrafts['wardrobe']) allDrafts['wardrobe'] = allDrafts['wardrobe-styling'];
+            if (allDrafts['project-vision'] && !allDrafts['storyboard']) allDrafts['storyboard'] = allDrafts['project-vision'];
+            if (allDrafts['budget-actual'] && !allDrafts['budget']) allDrafts['budget'] = allDrafts['budget-actual'];
 
             const computedData = {
                 project: projectData,
@@ -825,15 +826,15 @@ export default function OnSetMobilePage() {
     }
 
     return (
-        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 shadow-2xl relative z-10">
+        <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 shadow-2xl relative z-10">
 
             {/* TOP ROW: Header & Alerts */}
             <div className="flex flex-col z-50 shrink-0">
                 {/* HEADER */}
-                <header className="bg-zinc-100/90 backdrop-blur-md border-b border-zinc-200/80 pt-safe transition-all w-full relative">
+                <header className="bg-zinc-100/90 backdrop-blur-md border-b border-slate-500/80 pt-safe transition-all w-full relative">
                     <div className="h-16 md:h-18 flex items-center justify-between px-6">
                         <div className="flex flex-col items-start mt-2 shrink-0">
-                            <span className="font-sans font-bold text-xl leading-none tracking-tight">ONSET</span>
+                            <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
                             <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
                         </div>
                         <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
@@ -875,7 +876,7 @@ export default function OnSetMobilePage() {
                             <BetaFeedbackTrigger variant="icon" />
                             <button
                                 onClick={() => setShowMenu(true)}
-                                className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0">
+                                className="w-11 h-11 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0">
                                 <Menu size={18} />
                             </button>
                         </div>
@@ -913,7 +914,7 @@ export default function OnSetMobilePage() {
                         />
 
                         {/* Drawer */}
-                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-zinc-200 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
+                        <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-slate-500 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                             <div className="flex justify-between items-center mb-8">
                                 <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
                                 <button onClick={() => setShowMenu(false)} className="bg-zinc-200/50 hover:bg-zinc-200 p-2 rounded-full text-zinc-600 transition-colors">
@@ -923,7 +924,7 @@ export default function OnSetMobilePage() {
 
                             <div className="space-y-6 flex-1">
                                 {/* Identity Card */}
-                                <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-zinc-200">
+                                <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-slate-500">
                                     <div className="flex items-center gap-3 mb-2">
                                         <UserCircle size={20} className="text-emerald-500" />
                                         <div>
@@ -948,7 +949,7 @@ export default function OnSetMobilePage() {
                                 </div>
                             </div>
 
-                            <div className="border-t border-zinc-200 pt-6">
+                            <div className="border-t border-slate-500 pt-6">
                                 <button
                                     onClick={async () => {
                                         // Explicit Presence Cleanup for Mobile
@@ -980,7 +981,7 @@ export default function OnSetMobilePage() {
                 }
 
                 {/* CONFIDENTIAL BANNER */}
-                <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-200 shadow-sm relative z-40 bg-zinc-100/50">
+                <div className="bg-stripes-zinc text-center py-1 border-b border-slate-500 shadow-sm relative z-40 bg-zinc-100/50">
                     <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
                 </div>
             </div>
@@ -1012,7 +1013,7 @@ export default function OnSetMobilePage() {
                             onClick={() => setActiveTab('')}
                             className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-6 active:opacity-50 transition-all hover:text-black group"
                         >
-                            <div className="bg-zinc-100 p-2 rounded-full border border-zinc-200 group-hover:border-zinc-400">
+                            <div className="bg-zinc-100 p-2 rounded-full border border-slate-500 group-hover:border-zinc-400">
                                 <ChevronLeft size={16} />
                             </div>
                             <span>Dashboard</span>
@@ -1066,8 +1067,15 @@ export default function OnSetMobilePage() {
                                 onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
                             />}
 
+                            {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} />}
+                            {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} />}
+                            {activeTab === 'casting' && <MobileReadOnlyListView data={data.docs['casting']} titleKey="name" subtitleKey="role" imageKey="imageUrl" />}
+                            {activeTab === 'wardrobe' && <MobileReadOnlyListView data={data.docs['wardrobe']} titleKey="description" subtitleKey="character" imageKey="imageUrl" />}
+                            {activeTab === 'props-list' && <MobileReadOnlyListView data={data.docs['props-list']} titleKey="name" subtitleKey="category" detailKeys={['quantity']} />}
+                            {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" />}
+
                             {/* Fallback for other docs */}
-                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report'].includes(activeTab) && (
+                            {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard'].includes(activeTab) && (
                                 <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                             )}
                         </>
@@ -1082,9 +1090,13 @@ export default function OnSetMobilePage() {
                         const availableKeys = data.availableKeys || [];
                         if (availableKeys.length === 0) return null;
 
-                        const mappedKeys = Array.from(new Set(availableKeys.map(k => {
+                        const mappedKeys = Array.from(new Set(availableKeys.map((k: string) => {
                             if (k === 'shot-log') return 'camera-report';
                             if (k === 'locations-sets') return 'locations';
+                            if (k === 'casting-talent') return 'casting';
+                            if (k === 'wardrobe-styling') return 'wardrobe';
+                            if (k === 'project-vision') return 'storyboard';
+                            if (k === 'budget-actual') return 'budget';
                             return k;
                         })));
 
@@ -1093,7 +1105,7 @@ export default function OnSetMobilePage() {
                                 key={key}
                                 onClick={() => setActiveTab(key)}
                                 className={`
-                                flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200
+                                flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200
                                 ${activeTab === key
                                         ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
                                         : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive

@@ -43,7 +43,9 @@ export const DOC_LABELS: Record<string, string> = {
     'on-set-notes': 'On-Set Notes',
     'releases': 'Releases',
     'script-notes': 'Script Notes',
-    'sound-report': 'Sound Report'
+    'sound-report': 'Sound Report',
+    'equipment-list': 'Equipment',
+    'props-list': 'Props'
 };
 
 /* --------------------------------------------------------------------------------
@@ -78,7 +80,7 @@ export const CrewListView = ({ data }: { data: any }) => {
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={14} />
                     <input
-                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-lg py-3 pl-10 pr-4 text-xs text-zinc-950 placeholder:text-zinc-400 outline-none focus:border-emerald-500 uppercase font-bold tracking-wide"
+                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-lg py-3 pl-10 pr-4 text-base text-zinc-950 placeholder:text-zinc-400 outline-none focus:border-emerald-500 uppercase font-bold tracking-wide"
                         placeholder="SEARCH CREW..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
@@ -93,7 +95,7 @@ export const CrewListView = ({ data }: { data: any }) => {
                     </div>
                     <div className="grid gap-2">
                         {members.map((m: any) => (
-                            <div key={m.id} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4 flex items-center justify-between">
+                            <div key={m.id} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-bold text-zinc-950 leading-none mb-1">{m.name || 'Unnamed'}</p>
                                     <p className="text-[10px] uppercase font-bold text-emerald-600 tracking-wide mb-0.5">{m.role}</p>
@@ -133,14 +135,14 @@ export const CrewListView = ({ data }: { data: any }) => {
 
 export const EmptyState = ({ label }: { label: string }) => (
     <div className="flex flex-col items-center justify-center p-12 text-center animate-in fade-in duration-500">
-        <div className="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center mb-6 border border-zinc-200 shadow-inner relative">
+        <div className="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center mb-6 border border-slate-500 shadow-inner relative">
             <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl animate-pulse"></div>
             <AlertCircle size={24} className="text-zinc-300" />
         </div>
         <p className="text-xs uppercase font-black tracking-widest text-zinc-400 mb-1">Document Registry</p>
         <h3 className="text-sm font-black text-zinc-900 mb-6 uppercase tracking-tight">{label}</h3>
 
-        <div className="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm max-w-[220px]">
+        <div className="bg-white border border-slate-500 rounded-xl p-4 shadow-sm max-w-[220px]">
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
                 No active data found. <br />
                 <span className="text-emerald-600">Draft in Desktop Editor</span><br />
@@ -243,7 +245,7 @@ export const ScriptView = ({ data }: { data: any }) => {
             {data.rows.map((row: any, i: number) => (
                 <div key={row.id || i} className="flex gap-4 group">
                     <div className="w-8 shrink-0 pt-1">
-                        <div className="w-6 h-6 rounded-full bg-zinc-100 shadow-inner border border-zinc-200 flex items-center justify-center text-[10px] font-bold text-zinc-500 font-mono">
+                        <div className="w-6 h-6 rounded-full bg-zinc-100 shadow-inner border border-slate-500 flex items-center justify-center text-[10px] font-bold text-zinc-500 font-mono">
                             {row.scene || i + 1}
                         </div>
                     </div>
@@ -259,7 +261,7 @@ export const ScriptView = ({ data }: { data: any }) => {
                             {row.visual}
                         </div>
 
-                        <div className="font-sans text-sm leading-relaxed text-zinc-600 pl-4 border-l border-emerald-500/30">
+                        <div className="font-sans font-inter text-sm leading-relaxed text-zinc-600 pl-4 border-l border-emerald-500/30">
                             <span className="text-emerald-600/70 uppercase text-[10px] font-bold block mb-1">Audio</span>
                             {row.audio}
                         </div>
@@ -349,11 +351,11 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
     return (
         <div className="space-y-6">
             {/* Vitals */}
-            <div className="bg-zinc-50 border border-zinc-200/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
+            <div className="bg-zinc-50 border border-slate-500/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
                 <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">General Call Time</p>
                 <h2 className="text-5xl font-black text-zinc-400 tracking-tighter mb-4">{data.crewCall || scheduleData?.callTime || "TBD"}</h2>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-zinc-200 pt-4 text-left">
+                <div className="grid grid-cols-2 gap-4 border-t border-slate-500 pt-4 text-left">
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Basecamp / Location</p>
                         <p className="text-xs font-bold text-zinc-600 whitespace-pre-wrap">{data.basecamp || "TBD"}</p>
@@ -379,7 +381,7 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
                 <div className="space-y-0.5">
                     {(scheduleData?.items && scheduleData.items.length > 0) ? (
                         scheduleData.items.map((item: any, i: number) => (
-                            <div key={i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-sm border-l-2 border-emerald-500 flex gap-3">
+                            <div key={i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-emerald-500 flex gap-3">
                                 <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{item.time || '00:00'}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-baseline mb-1">
@@ -403,7 +405,7 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
                         ))
                     ) : (data.events && data.events.length > 0 ? (
                         data.events.map((evt: any, i: number) => (
-                            <div key={i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-sm border-l-2 border-emerald-500 flex gap-3">
+                            <div key={i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-emerald-500 flex gap-3">
                                 <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{evt.time || '00:00'}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-baseline">
@@ -415,7 +417,7 @@ export const CallSheetView = ({ data, scheduleData }: { data: any, scheduleData?
                             </div>
                         ))
                     ) : (
-                        <div className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-sm border-l-2 border-zinc-500">
+                        <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-zinc-500">
                             <span className="text-xs text-zinc-500">No events scheduled.</span>
                         </div>
                     ))}
@@ -543,7 +545,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-950">New Entry</span>
                         <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
@@ -556,7 +558,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 type="time"
                                 value={form.time}
                                 onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
                             />
                         </div>
                         <div>
@@ -564,7 +566,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                             <select
                                 value={form.status}
                                 onChange={e => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 appearance-none"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 appearance-none"
                             >
                                 <option value="complete">Complete</option>
                                 <option value="pending">Pending</option>
@@ -595,7 +597,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="Roll A001"
                                 value={form.source}
                                 onChange={e => setForm({ ...form, source: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
                             />
                         </div>
                         <div>
@@ -604,7 +606,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="Backup 1"
                                 value={form.destination}
                                 onChange={e => setForm({ ...form, destination: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
                             />
                         </div>
                     </div>
@@ -616,7 +618,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="128"
                                 value={(form as any).dataSize || ''}
                                 onChange={e => setForm({ ...form, dataSize: e.target.value } as any)}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
                             />
                         </div>
                         <div>
@@ -625,7 +627,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="xxhash"
                                 value={(form as any).checksum || ''}
                                 onChange={e => setForm({ ...form, checksum: e.target.value } as any)}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-sm p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-mono"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-sm p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-mono"
                             />
                         </div>
                     </div>
@@ -636,7 +638,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                             placeholder="Add detailed notes here..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[80px] placeholder:text-zinc-400 resize-none"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[80px] placeholder:text-zinc-400 resize-none"
                         />
                     </div>
 
@@ -652,11 +654,11 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
             {/* Header Stats */}
             <div className="grid grid-cols-2 gap-2 text-center mb-4">
-                <div className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3">
+                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-3">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Total Offloads</div>
                     <div className="text-2xl font-black text-zinc-950">{items.filter((i: any) => i.eventType === 'offload').length}</div>
                 </div>
-                <div className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3">
+                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-3">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Issues</div>
                     <div className="text-2xl font-black text-red-500">{items.filter((i: any) => i.eventType === 'issue').length}</div>
                 </div>
@@ -667,7 +669,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                     <EmptyState label="DIT Log" />
                 ) : (
                     items.map((item: any, i: number) => (
-                        <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4">
+                        <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4">
                             <div className="flex justify-between items-center mb-3">
                                 <span className="font-mono text-emerald-400 text-xs font-bold">{item.time}</span>
                                 <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-sm ${item.status === 'complete' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-500'}`}>
@@ -868,7 +870,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
             {/* NEW ROLL VERIFICATION MODAL */}
             {isNewRollModal && (
                 <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
-                    <div className="bg-zinc-50 border border-zinc-200/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+                    <div className="bg-zinc-50 border border-slate-500/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
                         <h3 className="text-lg font-black uppercase text-zinc-950 mb-1">Start New Roll</h3>
                         <p className="text-xs text-zinc-500 mb-6">Verify technical specs for the new card.</p>
 
@@ -895,7 +897,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={rollForm.roll}
                                     onChange={e => setRollForm({ ...rollForm, roll: e.target.value })}
-                                    className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-lg font-mono p-3 rounded"
+                                    className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-lg font-mono p-3 rounded"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -904,7 +906,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.iso}
                                         onChange={e => setRollForm({ ...rollForm, iso: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -912,7 +914,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.fps}
                                         onChange={e => setRollForm({ ...rollForm, fps: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -920,7 +922,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.shutter}
                                         onChange={e => setRollForm({ ...rollForm, shutter: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -928,7 +930,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.wb}
                                         onChange={e => setRollForm({ ...rollForm, wb: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -936,7 +938,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <select
                                         value={rollForm.mediaType}
                                         onChange={e => setRollForm({ ...rollForm, mediaType: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 text-zinc-950 text-base p-2 rounded appearance-none"
+                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded appearance-none"
                                     >
                                         <option>CFexpress</option>
                                         <option>SD Card</option>
@@ -952,7 +954,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             <input
                                 value={rollForm.soundRoll}
                                 onChange={e => setRollForm({ ...rollForm, soundRoll: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded"
                                 placeholder="SR001"
                             />
                         </div>
@@ -977,7 +979,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <div>
                             <span className="text-xs font-bold uppercase text-zinc-950 block">Log Shot Actual</span>
@@ -992,7 +994,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             type="time"
                             value={form.time}
                             onChange={e => setForm({ ...form, time: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
                         />
                     </div>
                     <div className="grid grid-cols-3 gap-3 mb-3">
@@ -1002,7 +1004,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 placeholder="1"
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
                             />
                         </div>
                         <div className="col-span-1">
@@ -1011,7 +1013,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 placeholder="A"
                                 value={form.shotId}
                                 onChange={e => setForm({ ...form, shotId: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
                             />
                         </div>
                         <div className="col-span-1">
@@ -1020,7 +1022,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 type="number"
                                 value={form.take}
                                 onChange={e => setForm({ ...form, take: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center"
                             />
                         </div>
                     </div>
@@ -1125,7 +1127,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             placeholder="Lens, Filters, Action notes..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[60px] resize-none"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[60px] resize-none"
                         />
                     </div>
 
@@ -1145,7 +1147,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                     <EmptyState label="Camera Report" />
                 ) : (
                     items.map((item: any, i: number) => (
-                        <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4 flex gap-4 items-center">
+                        <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex gap-4 items-center">
                             <div className="text-center w-12 shrink-0">
                                 <span className="block text-[10px] font-mono text-zinc-500">{item.time}</span>
                                 <span className="block text-xl font-black text-zinc-950">{item.shot || item.shotId || '?'}</span>
@@ -1314,7 +1316,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
 
             {/* Add/Edit Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-950">{editingId ? 'Edit Note' : 'New Note'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -1326,7 +1328,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             type="time"
                             value={form.time}
                             onChange={e => setForm({ ...form, time: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
                         />
                     </div>
 
@@ -1336,7 +1338,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             placeholder="Topic (e.g. Safety Meeting)"
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-bold"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-bold"
                         />
                     </div>
 
@@ -1346,7 +1348,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             placeholder="Enter details..."
                             value={form.body}
                             onChange={e => setForm({ ...form, body: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[120px] placeholder:text-zinc-400 resize-none leading-relaxed"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[120px] placeholder:text-zinc-400 resize-none leading-relaxed"
                         />
                     </div>
 
@@ -1378,7 +1380,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                     items.slice().reverse().map((item: any, i: number) => {
                         const isConfirming = deleteConfirmId === item.id;
                         return (
-                            <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4 group relative">
+                            <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 group relative">
                                 <div className="flex justify-between items-center mb-2 border-b border-zinc-800 pb-2">
                                     <div className="flex items-center gap-2">
                                         <span className="font-mono text-emerald-600 text-xs font-bold">{item.time}</span>
@@ -1454,7 +1456,7 @@ export const MobileLocationsView = ({ data }: { data: any }) => {
     return (
         <div className="space-y-6 pb-8">
             {items.map((loc: any, i: number) => (
-                <div key={loc.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
+                <div key={loc.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm">
                     {/* Main Image Banner */}
                     <div className="w-full aspect-video bg-zinc-800 relative">
                         {loc.mainImage ? (
@@ -1699,7 +1701,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     <X size={14} /> Back to List
                 </button>
 
-                <div className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-xl p-6">
+                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-6">
                     <h2 className="text-lg font-black uppercase text-zinc-950 mb-6">New Release</h2>
 
                     <div className="mb-4">
@@ -1728,7 +1730,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                             value={newReleaseName}
                             onChange={(e) => setNewReleaseName(e.target.value)}
                             placeholder={newReleaseType === 'talent' ? "Enter full name..." : "Enter owner name..."}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md rounded-lg p-4 text-zinc-950 font-bold outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md rounded-lg p-4 text-zinc-950 font-bold outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
                         />
                     </div>
 
@@ -1757,7 +1759,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     <X size={14} /> Back to List
                 </button>
 
-                <div className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-xl overflow-hidden p-6 space-y-6">
+                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden p-6 space-y-6">
                     <div>
                         <span className="bg-zinc-800 text-zinc-500 text-[9px] font-black uppercase px-2 py-1 rounded inline-block mb-2">
                             {activeRelease.type} Release
@@ -1854,10 +1856,10 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     <div
                         key={r.id}
                         onClick={() => { setActiveId(r.id); setView('detail'); }}
-                        className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-lg p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
+                        className="bg-zinc-100 shadow-inner border border-slate-500 rounded-lg p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
                     >
                         <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${r.status === 'signed' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-zinc-800 text-zinc-500'}`}>
+                            <div className={`w-11 h-11 rounded-full flex items-center justify-center ${r.status === 'signed' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-zinc-800 text-zinc-500'}`}>
                                 {r.status === 'signed' ? <Check size={16} /> : <Edit2 size={16} />}
                             </div>
                             <div>
@@ -1955,7 +1957,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-950">{editingId ? 'Edit Note' : 'New Note'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -1967,7 +1969,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
                                 placeholder="#"
                             />
                         </div>
@@ -1976,7 +1978,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.bestTake}
                                 onChange={e => setForm({ ...form, bestTake: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
                                 placeholder="1"
                             />
                         </div>
@@ -1987,7 +1989,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <textarea
                             value={form.visual}
                             onChange={e => setForm({ ...form, visual: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded h-20 text-sm"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-20 text-sm"
                             placeholder="Description..."
                         />
                     </div>
@@ -1997,7 +1999,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <textarea
                             value={form.audio}
                             onChange={e => setForm({ ...form, audio: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded h-20 text-sm"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-20 text-sm"
                             placeholder="Dialogue/Sound..."
                         />
                     </div>
@@ -2007,7 +2009,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded h-20 text-sm italic text-zinc-500"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-20 text-sm italic text-zinc-500"
                             placeholder="Notes..."
                         />
                     </div>
@@ -2034,7 +2036,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     items.slice().reverse().map((item: any, i: number) => {
                         const isConfirming = deleteConfirmId === item.id;
                         return (
-                            <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-4 relative group">
+                            <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 relative group">
                                 <div className="flex justify-between items-start mb-3 border-b border-zinc-800 pb-2">
                                     <div className="flex items-center gap-3">
                                         <div className="bg-zinc-800 px-2 py-1 rounded border border-zinc-700">
@@ -2184,10 +2186,10 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                 <div className="space-y-4">
                     {/* Mini Header Stats */}
                     <div className="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-zinc-500 mb-2">
-                        <div className="bg-zinc-100 shadow-inner border border-zinc-200 p-2 rounded text-center">
+                        <div className="bg-zinc-100 shadow-inner border border-slate-500 p-2 rounded text-center">
                             Roll: <span className="text-zinc-950 ml-1">{data?.roll || '1'}</span>
                         </div>
-                        <div className="bg-zinc-100 shadow-inner border border-zinc-200 p-2 rounded text-center">
+                        <div className="bg-zinc-100 shadow-inner border border-slate-500 p-2 rounded text-center">
                             SR: <span className="text-zinc-950 ml-1">{data?.sampleRate || '48k'}</span>
                         </div>
                     </div>
@@ -2204,7 +2206,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-200/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-950">{editingId ? 'Edit Take' : 'Log Take'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -2216,7 +2218,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
                             />
                         </div>
                         <div className="flex-1">
@@ -2224,7 +2226,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.take}
                                 onChange={e => setForm({ ...form, take: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
                             />
                         </div>
                         <div className="flex-[2]">
@@ -2232,7 +2234,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.timecode}
                                 onChange={e => setForm({ ...form, timecode: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded text-center font-mono"
+                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-mono"
                                 placeholder="00:00:00:00"
                             />
                         </div>
@@ -2250,7 +2252,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <input
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded"
                             placeholder="Action description..."
                         />
                     </div>
@@ -2260,7 +2262,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <input
                             value={form.tracks}
                             onChange={e => setForm({ ...form, tracks: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded text-xs font-mono"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-xs font-mono"
                             placeholder="Boom, Lav 1, etc"
                         />
                     </div>
@@ -2270,7 +2272,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md text-zinc-950 p-2 rounded h-16 text-xs italic"
+                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-16 text-xs italic"
                             placeholder="Sound issues, planes, etc"
                         />
                     </div>
@@ -2340,6 +2342,41 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     })
                 )}
             </div>
+        </div>
+    );
+};
+
+export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys, imageKey }: { data: any, titleKey: string, subtitleKey?: string, detailKeys?: string[], imageKey?: string }) => {
+    const items = data?.items || data?.roles || data?.looks || [];
+
+    if (!items || items.length === 0) return <EmptyState label="Document" />;
+
+    return (
+        <div className="space-y-3 pb-8">
+            {items.map((item: any, i: number) => (
+                <div key={item.id || i} className="bg-white shadow-sm border border-slate-500 rounded-md p-4 flex gap-4 overflow-hidden items-center group">
+                    {imageKey && item[imageKey] && (
+                        <div className="w-16 h-16 shrink-0 bg-zinc-100 rounded-md overflow-hidden border border-slate-500">
+                            <img src={item[imageKey]} className="w-full h-full object-cover" />
+                        </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                        {subtitleKey && item[subtitleKey] && (
+                            <p className="text-[10px] font-black uppercase text-emerald-600 tracking-wide mb-0.5 truncate">{item[subtitleKey]}</p>
+                        )}
+                        <p className="text-base font-bold text-zinc-950 leading-tight mb-1 truncate">{item[titleKey] || 'Unnamed Item'}</p>
+
+                        {detailKeys && detailKeys.length > 0 && (
+                            <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-500 mt-2">
+                                {detailKeys.map((k: string) => {
+                                    if (!item[k]) return null;
+                                    return <span key={k} className="bg-zinc-100 px-2 py-0.5 rounded border border-slate-500 truncate">{k.toUpperCase()}: {item[k]}</span>
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
