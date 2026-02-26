@@ -866,7 +866,8 @@ export default function OnSetMobilePage() {
                                 {(() => {
                                     const crew = data.docs['crew-list']?.crew || [];
                                     const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                    const units = me?.onSetGroups || [];
+                                    let units = me?.onSetGroups || [];
+                                    if (userRole === 'Owner') units = ['A', 'B', 'C'];
 
                                     if (units.length === 0) return null;
 
@@ -949,7 +950,8 @@ export default function OnSetMobilePage() {
                                         {(() => {
                                             const crew = data.docs['crew-list']?.crew || [];
                                             const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                            const units = me?.onSetGroups || [];
+                                            let units = me?.onSetGroups || [];
+                                            if (userRole === 'Owner') units = ['A', 'B', 'C'];
 
                                             if (units.length === 0) return <span className="text-zinc-500">None</span>;
 
