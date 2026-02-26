@@ -341,8 +341,8 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                     }
                                 }}
                                 className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${isComplete
-                                        ? 'bg-emerald-500 border-emerald-500 text-white'
-                                        : 'bg-zinc-200 border-zinc-400 text-transparent hover:border-zinc-500 hover:text-zinc-400'
+                                    ? 'bg-emerald-500 border-emerald-500 text-white'
+                                    : 'bg-zinc-200 border-zinc-400 text-transparent hover:border-zinc-500 hover:text-zinc-400'
                                     }`}
                             >
                                 <Check size={16} />
@@ -870,7 +870,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                     </button>
                     <button
                         onClick={openNewRollModal}
-                        className="w-1/3 bg-zinc-800 text-zinc-600 font-bold uppercase tracking-wider text-[10px] py-3 rounded-lg border border-zinc-700 hover:bg-zinc-700"
+                        className="w-1/3 bg-zinc-200 text-zinc-600 font-bold uppercase tracking-wider text-[10px] py-3 rounded-lg border border-zinc-300 hover:bg-zinc-300"
                     >
                         New Roll
                     </button>
@@ -894,7 +894,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                             onClick={() => setRollForm({ ...rollForm, camera: cam })}
                                             className={`flex-1 py-3 text-sm font-black rounded border transition-all ${rollForm.camera === cam
                                                 ? (cam === 'A' ? 'bg-[#22C55E] text-white border-[#22C55E]' : cam === 'B' ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-[#FBBF24] text-white border-[#FBBF24]')
-                                                : 'bg-zinc-950 text-zinc-500 border-zinc-800'
+                                                : 'bg-zinc-200 text-zinc-600 border-zinc-300'
                                                 }`}
                                         >
                                             {cam}
@@ -972,7 +972,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsNewRollModal(false)}
-                                className="flex-1 bg-zinc-800 text-zinc-950 font-bold uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-200 text-zinc-600 font-bold uppercase text-xs py-3 rounded"
                             >
                                 Cancel
                             </button>
@@ -1038,13 +1038,13 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                     </div>
 
                     {/* Tech Specs Grid */}
-                    <div className="bg-black/50 p-2 rounded-lg border border-zinc-800 mb-3">
-                        <div className="mb-2 border-b border-zinc-800 pb-2">
+                    <div className="bg-zinc-100 p-2 rounded-lg border border-zinc-300 mb-3">
+                        <div className="mb-2 border-b border-zinc-300 pb-2">
                             <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Current Roll</label>
                             <input
                                 value={form.roll}
                                 onChange={e => setForm({ ...form, roll: e.target.value })}
-                                className="w-full bg-zinc-900 border border-zinc-700 text-zinc-950 text-xs p-1.5 rounded text-left font-mono focus:border-emerald-500"
+                                className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-left font-mono focus:border-emerald-500"
                                 placeholder="A001"
                             />
                         </div>
@@ -1054,7 +1054,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.lens}
                                     onChange={e => setForm({ ...form, lens: e.target.value })}
-                                    className="w-full bg-zinc-900 border border-zinc-700 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
                                     placeholder="mm"
                                 />
                             </div>
@@ -1063,7 +1063,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.fps}
                                     onChange={e => setForm({ ...form, fps: e.target.value })}
-                                    className="w-full bg-zinc-900 border border-zinc-700 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
                                     placeholder="24"
                                 />
                             </div>
@@ -1072,7 +1072,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.iso}
                                     onChange={e => setForm({ ...form, iso: e.target.value })}
-                                    className="w-full bg-zinc-900 border border-zinc-700 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
                                     placeholder="800"
                                 />
                             </div>
@@ -1081,19 +1081,19 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.timecode || ''}
                                     onChange={e => handleTCChange(e.target.value)}
-                                    className="w-full bg-zinc-900 border border-zinc-700 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
                                     placeholder="00:00:00:00"
                                 />
                             </div>
                         </div>
                         {/* Shutter / WB Row */}
-                        <div className="grid grid-cols-2 gap-4 mt-2 pt-2 border-t border-zinc-800/50">
+                        <div className="grid grid-cols-2 gap-4 mt-2 pt-2 border-t border-zinc-300">
                             <div>
                                 <label className="text-[8px] uppercase font-bold text-zinc-500 block mb-1">Shutter</label>
                                 <input
                                     value={form.shutter}
                                     onChange={e => setForm({ ...form, shutter: e.target.value })}
-                                    className="w-full bg-zinc-900/50 border border-zinc-800 text-zinc-600 text-[10px] p-1 rounded"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-600 text-[10px] p-1 rounded"
                                     placeholder="180"
                                 />
                             </div>
@@ -1102,7 +1102,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.wb}
                                     onChange={e => setForm({ ...form, wb: e.target.value })}
-                                    className="w-full bg-zinc-900/50 border border-zinc-800 text-zinc-600 text-[10px] p-1 rounded"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-600 text-[10px] p-1 rounded"
                                     placeholder="5600K"
                                 />
                             </div>
@@ -1123,7 +1123,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     ? (s.id === 'circle' ? 'bg-yellow-500 text-black border-yellow-500' :
                                         s.id === 'bad' ? 'bg-red-500 text-zinc-950 border-red-500' :
                                             'bg-emerald-500 text-black border-emerald-500')
-                                    : 'bg-zinc-950 text-zinc-500 border-zinc-800 hover:border-zinc-700'
+                                    : 'bg-zinc-200 text-zinc-600 border-zinc-300 hover:border-zinc-400'
                                     }`}
                             >
                                 {s.label}
@@ -1164,7 +1164,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 {item.scene && <span className="block text-[9px] font-bold text-zinc-500">Sc {item.scene}</span>}
                                 {item.roll && <span className="block text-[8px] font-mono text-zinc-600 mt-1">{item.roll}</span>}
                             </div>
-                            <div className="w-px h-8 bg-zinc-800"></div>
+                            <div className="w-px h-8 bg-zinc-300"></div>
                             <div className="flex-1">
                                 <div className="flex justify-between items-baseline mb-1">
                                     <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${item.status === 'circle' ? 'bg-yellow-500 text-black' :
