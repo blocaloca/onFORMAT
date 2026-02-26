@@ -62,8 +62,10 @@ const PHASE_GROUPS: Record<string, string[]> = {
     'Post-Production': ['budget-actual', 'deliverables-licensing', 'client-selects', 'archive-log']
 };
 
+const DOCUMENTS_REGISTRY = TOOL_TYPES;
 
 // ---------------------------------------------------------------------------
+
 // Inner Component (Accesses Context)
 // ---------------------------------------------------------------------------
 const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onClose: () => void, projectName: string, clientName?: string, producer?: string }) => {
@@ -117,7 +119,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
 
     // 1. Build List regarding Context Data
     const documentList = useMemo(() => {
-        return Object.entries(TOOL_TYPES).map(([key, meta]) => {
+        const list = Object.entries(DOCUMENTS_REGISTRY).map(([key, meta]) => {
             // Always fetch full stack to ensure index alignment with Factory
             // Fetch Stack (History) and Current Draft (Active)
             const stack = getToolStack ? getToolStack(key) || [] : [];
@@ -145,7 +147,9 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 return true;
             });
 
-            const hasData = versions.length > 0;
+            // Reconnected getToolStatus logic for "Ready" lights scanning DEVELOPMENT -> POST
+            const getToolStatus = (foundVersions: any[]) => foundVersions.length > 0;
+            const hasData = getToolStatus(versions);
 
             return {
                 id: key,
@@ -156,6 +160,9 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 versions: versions
             };
         });
+
+        console.log(`[UI-Restore] Sidebar rendering with [${list.length}] documents`);
+        return list;
     }, [getToolData, getToolStack]);
 
     // Calculate Max Days available across all docs
@@ -378,8 +385,18 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                                 </h3>
                                 <div className="space-y-1">
                                     {tools.map(toolId => {
-                                        const doc = documentList.find(d => d.id === toolId);
-                                        if (!doc) return null;
+                                        let doc = documentList.find(d => d.id === toolId);
+                                        // Emergency Visibility
+                                        if (!doc) {
+                                            doc = {
+                                                id: toolId,
+                                                label: toolId.replace('-', ' '),
+                                                defaultOrient: 'landscape',
+                                                hasData: false,
+                                                status: 'Empty',
+                                                versions: []
+                                            };
+                                        }
 
                                         const isSelected = selectedTools.has(toolId);
                                         return (
