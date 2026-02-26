@@ -474,7 +474,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                         onCheckShot && onCheckShot(shot.id, 'COMPLETE', true);
                                         setConfirmingId(null);
                                     }}
-                                    className="flex-1 bg-emerald-500 text-black font-bold uppercase text-xs py-3 rounded"
+                                    className="flex-1 bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded active:scale-95 transition-transform"
                                 >
                                     Log & Complete
                                 </button>
@@ -761,7 +761,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                 {onAdd && (
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                        className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                     >
                         <Plus size={16} />
                         <span>Log Activity</span>
@@ -808,7 +808,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
             {onAdd && !isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={16} />
                     <span>Log Activity</span>
@@ -916,7 +916,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
+                        className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Save size={16} />
                         <span>Save Entry</span>
@@ -1122,17 +1122,17 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
         <div className="space-y-4">
             {/* HEADER ACTIONS: New Roll / Add Shot */}
             {onAdd && !isAdding && (
-                <div className="flex gap-2 mb-4">
+                <div className="flex gap-2 mb-6">
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="flex-1 bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+                        className="flex-1 bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Plus size={16} />
                         <span>Log Shot</span>
                     </button>
                     <button
                         onClick={openNewRollModal}
-                        className="w-1/3 bg-zinc-200 text-zinc-600 font-bold uppercase tracking-wider text-[10px] py-3 rounded-lg border border-zinc-300 hover:bg-zinc-300"
+                        className="w-1/3 bg-zinc-200 text-zinc-500 font-bold uppercase tracking-widest text-[10px] py-4 rounded-xl border border-zinc-300 active:scale-95 transition-transform"
                     >
                         New Roll
                     </button>
@@ -1405,7 +1405,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
+                        className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Save size={16} />
                         <span>Save Shot</span>
@@ -1466,7 +1466,7 @@ export const ScheduleView = ({ data }: { data: any }) => {
 
             {/* Timeline */}
             <div className="space-y-4 relative">
-                <div className="absolute left-[54px] top-2 bottom-2 w-0.5 bg-zinc-900"></div>
+                <div className="absolute left-[54px] top-2 bottom-2 w-0.5 bg-zinc-300"></div>
 
                 {data.items.map((item: any, i: number) => (
                     <div key={item.id || i} className="relative flex gap-4 group">
@@ -1476,13 +1476,13 @@ export const ScheduleView = ({ data }: { data: any }) => {
                         </div>
 
                         {/* Dot */}
-                        <div className="absolute left-[50px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-800 border-2 border-black z-10 group-hover:bg-emerald-500 transition-colors"></div>
+                        <div className="absolute left-[50px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-300 border-2 border-zinc-200 z-10 group-hover:bg-emerald-500 transition-colors"></div>
 
                         {/* Content Card */}
-                        <div className="flex-1 bg-zinc-900 rounded-lg p-3 border border-zinc-800 hover:border-zinc-700 transition-colors">
+                        <div className="flex-1 bg-zinc-100/80 rounded-lg p-3 border border-zinc-300 hover:border-zinc-400 transition-colors">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
-                                    <span className="bg-black text-zinc-950 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
+                                    <span className="bg-zinc-200 text-zinc-950 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">
                                         SCENE {item.scene || '-'}
                                     </span>
                                     <span className="text-[10px] font-black uppercase text-zinc-500">
@@ -1491,7 +1491,7 @@ export const ScheduleView = ({ data }: { data: any }) => {
                                 </div>
                                 <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' :
                                     item.dayNight === 'NIGHT' ? 'bg-blue-900/30 text-blue-400' :
-                                        'bg-zinc-800 text-zinc-500'
+                                        'bg-zinc-200 text-zinc-500'
                                     }`}>
                                     {item.dayNight}
                                 </span>
@@ -1579,7 +1579,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
             {(onAdd || onUpdate) && !isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={16} />
                     <span>Add Note</span>
@@ -1635,7 +1635,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                         )}
                         <button
                             onClick={handleSubmit}
-                            className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2"
+                            className="flex-1 bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
                         >
                             <Save size={16} />
                             <span>{editingId ? 'Update Note' : 'Save Note'}</span>
@@ -1731,7 +1731,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `loc-${Date.now()}`, name: 'New Location', address: '' })}
-                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Location
                 </button>
@@ -1842,13 +1842,15 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
     if (releases.length === 0 && view === 'list') {
         return (
             <div className="space-y-4">
-                <button
-                    onClick={handleCreateWrapper}
-                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
-                >
-                    <Plus size={16} />
-                    <span>Create Release</span>
-                </button>
+                {(view === 'list') && (
+                    <button
+                        onClick={handleCreateWrapper}
+                        className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    >
+                        <Plus size={16} />
+                        <span>Create Release</span>
+                    </button>
+                )}
                 <EmptyState label="Releases" />
             </div>
         );
@@ -1997,16 +1999,16 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
 
                     <div className="mb-4">
                         <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-2">Type</label>
-                        <div className="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+                        <div className="flex bg-zinc-200 p-1 rounded-lg border border-zinc-300">
                             <button
                                 onClick={() => setNewReleaseType('talent')}
-                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'talent' ? 'bg-zinc-800 text-zinc-950 shadow-sm' : 'text-zinc-500'}`}
+                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'talent' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-500'}`}
                             >
                                 Talent
                             </button>
                             <button
                                 onClick={() => setNewReleaseType('property')}
-                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'property' ? 'bg-zinc-800 text-zinc-950 shadow-sm' : 'text-zinc-500'}`}
+                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'property' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-500'}`}
                             >
                                 Property
                             </button>
@@ -2084,7 +2086,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     ) : (
                         <div className="space-y-4 pt-4 border-t border-zinc-800">
                             {/* Full Legal Text Display for Mobile */}
-                            <div className="bg-zinc-950 p-4 rounded-lg border border-zinc-900 text-[10px] text-zinc-500 leading-relaxed max-h-[200px] overflow-y-auto mb-4 text-justify">
+                            <div className="bg-zinc-100 p-4 rounded-lg border border-zinc-300 text-[10px] text-zinc-600 leading-relaxed max-h-[200px] overflow-y-auto mb-4 text-justify">
                                 <p className="whitespace-pre-wrap">
                                     {d.isCustom
                                         ? (d.customLegalText || "No custom terms provided.")
@@ -2097,12 +2099,12 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                                 </p>
                             </div>
 
-                            <div className="bg-zinc-900 p-4 rounded-lg mb-4 border border-zinc-800">
+                            <div className="bg-zinc-100 p-4 rounded-lg mb-4 border border-zinc-300 shadow-inner">
                                 <label className="block text-[9px] font-bold uppercase text-zinc-500 mb-2">Type Full Name (Legal Signature)</label>
                                 <input
                                     value={typedName}
                                     onChange={(e) => setTypedName(e.target.value)}
-                                    className="w-full bg-black border border-zinc-700 p-3 rounded text-zinc-950 font-mono text-center outline-none focus:border-emerald-500 transition-colors"
+                                    className="w-full bg-zinc-50 border border-zinc-300 p-3 rounded text-zinc-950 font-mono text-center outline-none focus:border-emerald-500 transition-colors"
                                     placeholder="John Doe"
                                 />
                                 <p className="text-[9px] text-zinc-600 mt-2 text-center">
@@ -2239,7 +2241,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
             {!isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={16} />
                     <span>Add Scene Note</span>
@@ -2311,7 +2313,7 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                 Cancel
                             </button>
                         )}
-                        <button onClick={handleSubmit} className="flex-1 bg-emerald-600 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2">
+                        <button onClick={handleSubmit} className="flex-1 bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                             <Save size={14} />
                             <span>{editingId ? 'Update' : 'Save'}</span>
                         </button>
@@ -2487,7 +2489,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
 
                     <button
                         onClick={handleStartAdd}
-                        className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+                        className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Plus size={16} />
                         <span>Log Take</span>
@@ -2569,7 +2571,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     </div>
 
                     <div className="flex gap-2">
-                        <button onClick={handleSubmit} className="w-full bg-emerald-600 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2">
+                        <button onClick={handleSubmit} className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                             <Save size={14} />
                             <span>{editingId ? 'Update Take' : 'Save Take'}</span>
                         </button>
@@ -2693,7 +2695,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `slide-${Date.now()}`, title: 'New Slide', category: 'Treatment', text: '' })}
-                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Slide
                 </button>
@@ -2752,7 +2754,7 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `item-${Date.now()}`, [titleKey]: 'New Item' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-3 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] mb-4 flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] mb-6 flex items-center justify-center gap-2 active:scale-95 transition-transform"
                 >
                     <Plus size={14} /> Add New Entry
                 </button>
@@ -2823,7 +2825,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `look-${Date.now()}`, title: 'New Image', caption: '' })}
-                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Image
                 </button>
@@ -2874,7 +2876,7 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `ward-${Date.now()}`, character: 'New Character', description: 'TBD' })}
-                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Character
                 </button>
@@ -2942,7 +2944,7 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `cast-${Date.now()}`, role: 'New Role', name: 'TBD' })}
-                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Role
                 </button>
@@ -3005,7 +3007,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `prop-${Date.now()}`, name: 'New Prop', category: 'Props' })}
-                    className="w-full bg-emerald-500 text-black py-4 rounded-xl font-black uppercase text-xs tracking-widest shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Prop
                 </button>
@@ -3130,7 +3132,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                 <div className="mb-6 animate-in slide-in-from-bottom-2 fade-in">
                     <button
                         onClick={handleStartAdd}
-                        className="w-full bg-emerald-500 text-black font-black uppercase tracking-widest text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg"
+                        className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Plus size={16} />
                         <span>Add Select</span>
@@ -3188,7 +3190,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         />
                     </div>
 
-                    <button onClick={handleSubmit} className="w-full bg-emerald-600 text-white font-bold uppercase tracking-widest text-xs py-3 rounded flex items-center justify-center gap-2">
+                    <button onClick={handleSubmit} className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase tracking-widest text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                         <Save size={14} />
                         <span>{editingId ? 'Update' : 'Save'}</span>
                     </button>
