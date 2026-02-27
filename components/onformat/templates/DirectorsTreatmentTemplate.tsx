@@ -114,22 +114,16 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
         updateSlides(newSlides);
     };
 
-    const addSlide = (category: TreatmentCategory = 'Story/Narrative') => {
-        let defaultLayout: TreatmentLayout = 'Split';
-        if (category === 'Introduction/Vision' || category === 'Story/Narrative') defaultLayout = 'Text';
-        if (category === 'Production Design' || category === 'Cinematography/Editing') defaultLayout = 'Image';
-        if (category === 'Characters/Casting') defaultLayout = 'Split';
-
+    const addSlide = () => {
         const newSlide: TreatmentSlide = {
             id: `slide-${Date.now()}`,
-            category: category,
-            layout: defaultLayout,
-            title: category.split('/')[0],
+            category: 'Treatment Note' as any, // Using generic category or just ignore going forward
+            layout: 'Image', // Force to 16x9 Image + Text Layout
+            title: 'New Treatment Note',
             content: '',
             modules: { image1: '', image2: '' }
         };
         updateSlides([...slides, newSlide]);
-        setShowAddMenu(false);
     };
 
     const removeSlide = (id: string) => {
@@ -140,18 +134,11 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
     // --- Render Helpers ---
 
     const renderLayoutControls = (slide: TreatmentSlide) => {
-        if (isPrinting || plain || isLocked) return null;
-        return (
-            <div className="absolute top-0 right-0 flex items-center gap-1 bg-white border border-zinc-200 p-1 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                <button title="Text Layout" onClick={() => updateSlide(slide.id, { layout: 'Text' })} className={`p-1 rounded hover:bg-zinc-100 ${slide.layout === 'Text' ? 'text-black' : 'text-zinc-400'}`}><Type size={14} /></button>
-                <button title="Split Layout" onClick={() => updateSlide(slide.id, { layout: 'Split' })} className={`p-1 rounded hover:bg-zinc-100 ${slide.layout === 'Split' ? 'text-black' : 'text-zinc-400'}`}><Columns size={14} /></button>
-                <button title="Image Layout" onClick={() => updateSlide(slide.id, { layout: 'Image' })} className={`p-1 rounded hover:bg-zinc-100 ${slide.layout === 'Image' ? 'text-black' : 'text-zinc-400'}`}><LucideImage size={14} /></button>
-            </div>
-        );
+        // Layout controls removed to simplify to one uniform 16x9 option.
+        return null;
     };
 
     const renderSlideContent = (slide: TreatmentSlide) => {
-        // Shared Title Input
         const TitleBlock = (
             <div className="mb-4">
                 {isPrinting ? (
@@ -167,7 +154,19 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                         readOnly={isLocked}
                     />
                 )}
-                <div className="text-[10px] uppercase tracking-widest text-emerald-600 font-bold mb-2">{slide.category}</div>
+                {isPrinting ? (
+                    <div className="text-[10px] uppercase tracking-widest text-emerald-600 font-bold mb-2">
+                        {slide.category || 'Treatment Note'}
+                    </div>
+                ) : (
+                    <input
+                        className="w-full bg-transparent text-[10px] uppercase tracking-widest text-emerald-600 font-bold outline-none placeholder-emerald-300/50 mb-2"
+                        value={slide.category}
+                        onChange={(e) => updateSlide(slide.id, { category: e.target.value })}
+                        placeholder="TYPE OF TREATMENT (E.G. CINEMATOGRAPHY, WARDROBE)"
+                        readOnly={isLocked}
+                    />
+                )}
                 <div className="w-full h-px bg-zinc-200" />
             </div>
         );
@@ -344,38 +343,18 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
             {/* Empty State / Add Slide Menu */}
             {!plain && !isPrinting && !isLocked && (
                 <div className="max-w-md mx-auto py-12 text-center print-hidden relative">
-                    {!showAddMenu ? (
-                        <div className="flex flex-col gap-4">
-                            <button
-                                onClick={() => setShowAddMenu(true)}
-                                className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-6 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:border-black transition-all rounded-sm group"
-                            >
-                                <Plus size={16} className="group-hover:scale-110 transition-transform" />
-                                <span>Add New Slide</span>
-                            </button>
-                            <p className="text-[10px] text-zinc-400 font-mono">
-                                Add a new page to your Treatment Deck.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="bg-white border border-zinc-200 shadow-xl rounded-lg p-2 animate-in fade-in zoom-in-95">
-                            <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-2 px-2 pt-2">Choose Page Type</div>
-                            <div className="grid grid-cols-1 gap-1">
-                                {['Introduction/Vision', 'Story/Narrative', 'Characters/Casting', 'Production Design', 'Cinematography/Editing'].map((cat: any) => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => addSlide(cat)}
-                                        className="text-left px-3 py-2 text-xs font-bold uppercase tracking-wide text-zinc-600 hover:bg-zinc-100 hover:text-black rounded transition-colors"
-                                    >
-                                        {cat.split('/')[0]}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className="border-t border-zinc-100 mt-2 pt-2">
-                                <button onClick={() => setShowAddMenu(false)} className="text-[10px] text-red-500 font-bold uppercase tracking-widest hover:underline">Cancel</button>
-                            </div>
-                        </div>
-                    )}
+                    <div className="flex flex-col gap-4">
+                        <button
+                            onClick={() => addSlide()}
+                            className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-6 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:border-black transition-all rounded-sm group"
+                        >
+                            <Plus size={16} className="group-hover:scale-110 transition-transform" />
+                            <span>Add New Slide</span>
+                        </button>
+                        <p className="text-[10px] text-zinc-400 font-mono">
+                            Add a new page to your Treatment Deck.
+                        </p>
+                    </div>
                 </div>
             )}
         </>
