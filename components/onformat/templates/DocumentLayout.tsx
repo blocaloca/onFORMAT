@@ -45,15 +45,21 @@ export const DocumentLayout = ({
     const height = orientation === 'landscape' ? 816 : 1056;
 
     if (!isPrinting) {
-        // --- CONTROL PANEL MODE (Fluid, Dark/Light Support) ---
+        // --- CONTROL PANEL MODE (Fixed Paper Size Support) ---
         return (
             <div className={`
-                w-full h-full flex flex-col gap-6 
+                mx-auto flex flex-col gap-6 
                 bg-white border border-zinc-200/80 rounded-xl mb-6 shadow-sm
-                p-6
+                p-10
                 transition-colors duration-200
                 ${className}
-            `}>
+            `}
+                style={{
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    maxHeight: `${height}px`,
+                    overflow: 'hidden'
+                }}>
                 {/* Header (Simplified for Control Panel) */}
                 {!hideHeader && (
                     <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-2">
@@ -78,7 +84,7 @@ export const DocumentLayout = ({
                 )}
 
                 {/* Content Area */}
-                <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0 text-zinc-900 dark:text-zinc-100">
+                <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0 text-zinc-900 dark:text-zinc-100 overflow-y-auto -m-2 p-2 rounded">
                     {children}
                 </div>
             </div>

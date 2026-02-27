@@ -62,10 +62,9 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         setDeleteConfirmIndex(null);
     };
 
-    // Auto-resize for textareas
+    // Auto-resize removed to enforce strict US Letter conforming row bounds
     const autoResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        e.target.style.height = 'auto';
-        e.target.style.height = e.target.scrollHeight + 'px';
+        // Obsolete
     };
 
     const handleDurationChange = (val: string) => {
@@ -146,11 +145,8 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <div className="contents">
                                                 <textarea
                                                     value={row.visual}
-                                                    onChange={e => {
-                                                        handleUpdateRow(globalIdx, { visual: e.target.value });
-                                                        autoResize(e);
-                                                    }}
-                                                    className={`text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[80px] leading-relaxed uppercase ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    onChange={e => handleUpdateRow(globalIdx, { visual: e.target.value })}
+                                                    className={`text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="ACTION DESCRIPTION..."
                                                     disabled={isLocked}
                                                 />
@@ -161,11 +157,8 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <div className="contents">
                                                 <textarea
                                                     value={row.audio}
-                                                    onChange={e => {
-                                                        handleUpdateRow(globalIdx, { audio: e.target.value });
-                                                        autoResize(e);
-                                                    }}
-                                                    className={`text-xs font-mono bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[80px] leading-relaxed ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    onChange={e => handleUpdateRow(globalIdx, { audio: e.target.value })}
+                                                    className={`text-xs font-mono bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="Dialogue or SFX..."
                                                     disabled={isLocked}
                                                 />
