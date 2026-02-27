@@ -646,19 +646,54 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 // If the editor sends an array, it is the Authority.
                 // It means the user clicked New/Duplicate/Clear or Edited content.
                 // We just save it.
-                setState((s) => ({
-                    ...s,
-                    phases: {
-                        ...s.phases,
-                        [s.activePhase]: {
-                            ...s.phases[s.activePhase],
-                            drafts: {
-                                ...s.phases[s.activePhase].drafts,
-                                [s.activeTool]: incoming,
+                setState((s) => {
+                    const newState = {
+                        ...s,
+                        phases: {
+                            ...s.phases,
+                            [s.activePhase]: {
+                                ...s.phases[s.activePhase],
+                                drafts: {
+                                    ...s.phases[s.activePhase].drafts,
+                                    [s.activeTool]: incoming,
+                                },
                             },
                         },
-                    },
-                }));
+                    };
+
+                    // AUTO-SYNC: Schedule -> Call Sheet
+                    if (s.activeTool === 'schedule' && Array.isArray(parsedIncoming) && parsedIncoming.length > 0) {
+                        try {
+                            const schedData = parsedIncoming[0];
+                            for (const p of PHASES) {
+                                if (newState.phases[p].drafts['call-sheet']) {
+                                    const csRaw = newState.phases[p].drafts['call-sheet'] || '[]';
+                                    let csStack = JSON.parse(csRaw);
+                                    if (!Array.isArray(csStack)) csStack = [csStack];
+                                    if (csStack.length === 0) csStack = [{}];
+
+                                    csStack[0] = {
+                                        ...csStack[0],
+                                        date: schedData.date || csStack[0].date,
+                                        crewCall: schedData.callTime || csStack[0].crewCall,
+                                        events: (schedData.items && Array.isArray(schedData.items)) ? schedData.items.map((item: any, i: number) => ({
+                                            id: item.id || `evt-sync-${i}-${Date.now()}`,
+                                            time: item.time || '',
+                                            type: item.intExt === 'BREAK' ? 'Break' : 'Shoot',
+                                            description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                                            location: item.set || ''
+                                        })) : csStack[0].events
+                                    };
+                                    newState.phases[p].drafts['call-sheet'] = JSON.stringify(csStack);
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Schedule to Call Sheet sync failed", e);
+                        }
+                    }
+
+                    return newState;
+                });
                 return;
             } else if (typeof parsedIncoming === 'object' && parsedIncoming !== null) {
                 // PARTIAL UPDATE (Patch) from AI Action
@@ -668,19 +703,54 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 currentStack[0] = newHead;
 
                 const finalDraftString = JSON.stringify(currentStack);
-                setState((s) => ({
-                    ...s,
-                    phases: {
-                        ...s.phases,
-                        [s.activePhase]: {
-                            ...s.phases[s.activePhase],
-                            drafts: {
-                                ...s.phases[s.activePhase].drafts,
-                                [s.activeTool]: finalDraftString,
+                setState((s) => {
+                    const newState = {
+                        ...s,
+                        phases: {
+                            ...s.phases,
+                            [s.activePhase]: {
+                                ...s.phases[s.activePhase],
+                                drafts: {
+                                    ...s.phases[s.activePhase].drafts,
+                                    [s.activeTool]: finalDraftString,
+                                },
                             },
                         },
-                    },
-                }));
+                    };
+
+                    // AUTO-SYNC: Schedule -> Call Sheet (Partial AI Update)
+                    if (s.activeTool === 'schedule') {
+                        try {
+                            const schedData = newHead;
+                            for (const p of PHASES) {
+                                if (newState.phases[p].drafts['call-sheet']) {
+                                    const csRaw = newState.phases[p].drafts['call-sheet'] || '[]';
+                                    let csStack = JSON.parse(csRaw);
+                                    if (!Array.isArray(csStack)) csStack = [csStack];
+                                    if (csStack.length === 0) csStack = [{}];
+
+                                    csStack[0] = {
+                                        ...csStack[0],
+                                        date: schedData.date || csStack[0].date,
+                                        crewCall: schedData.callTime || csStack[0].crewCall,
+                                        events: (schedData.items && Array.isArray(schedData.items)) ? schedData.items.map((item: any, i: number) => ({
+                                            id: item.id || `evt-sync-${i}-${Date.now()}`,
+                                            time: item.time || '',
+                                            type: item.intExt === 'BREAK' ? 'Break' : 'Shoot',
+                                            description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                                            location: item.set || ''
+                                        })) : csStack[0].events
+                                    };
+                                    newState.phases[p].drafts['call-sheet'] = JSON.stringify(csStack);
+                                }
+                            }
+                        } catch (e) {
+                            console.error("Schedule to Call Sheet sync (AI Partial) failed", e);
+                        }
+                    }
+
+                    return newState;
+                });
                 return;
             }
         } catch {

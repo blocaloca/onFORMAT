@@ -564,7 +564,12 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                 <div className="flex flex-col gap-1 mb-4">
                     <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Shoot Date</p>
                     <div className="text-xl font-black text-zinc-950 uppercase tracking-tighter">
-                        {scheduleData?.date || data.date || "TBD"}
+                        <EditableInput
+                            value={scheduleData?.date || data.date || "TBD"}
+                            onSave={(val) => updateField('date', val)}
+                            isEditable={!!isEditable && !scheduleData?.date}
+                            placeholder="TBD"
+                        />
                     </div>
                 </div>
 

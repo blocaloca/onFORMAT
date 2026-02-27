@@ -855,6 +855,38 @@ export default function OnSetMobilePage() {
             const finalDraft = JSON.stringify([updatedDoc, ...history]);
             updatedPhases[phaseKey].drafts[originalKey] = finalDraft;
 
+            // AUTO-SYNC: Schedule -> Call Sheet
+            if (originalKey === 'schedule') {
+                try {
+                    const schedData = updatedDoc;
+                    // Find call sheet across all phases to ensure consistency
+                    for (const p of phaseOrder) {
+                        if (updatedPhases[p]?.drafts?.['call-sheet']) {
+                            const csRaw = updatedPhases[p].drafts['call-sheet'];
+                            let csList = safeParse(csRaw);
+                            if (Array.isArray(csList)) {
+                                if (csList.length === 0) csList = [{}];
+                                csList[0] = {
+                                    ...csList[0],
+                                    date: schedData.date || csList[0].date,
+                                    crewCall: schedData.callTime || csList[0].crewCall,
+                                    events: (schedData.items && Array.isArray(schedData.items)) ? schedData.items.map((item: any, i: number) => ({
+                                        id: item.id || `evt-sync-${i}-${Date.now()}`,
+                                        time: item.time || '',
+                                        type: item.intExt === 'BREAK' ? 'Break' : 'Shoot',
+                                        description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                                        location: item.set || ''
+                                    })) : csList[0].events
+                                };
+                                updatedPhases[p].drafts['call-sheet'] = JSON.stringify(csList);
+                            }
+                        }
+                    }
+                } catch (e) {
+                    console.error("[OnsetMobile] Schedule to Call Sheet sync failed:", e);
+                }
+            }
+
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
             fetchData();
