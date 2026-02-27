@@ -200,22 +200,22 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="flex flex-col h-full relative group">
                     {TitleBlock}
                     {renderLayoutControls(slide)}
-                    <div className="flex-1 bg-zinc-50 border border-dashed border-zinc-200 relative min-h-0 print:border-none print:bg-white overflow-hidden">
+                    <div className="w-full aspect-video bg-zinc-50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden shrink-0">
                         {isPrinting ? (
                             <img
                                 src={slide.modules.image1 || ''}
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-cover"
                                 alt="Slide Hero Visual"
                             />
                         ) : (
                             <ImageUploader
                                 currentUrl={slide.modules.image1 || ''}
                                 onUpload={(url) => updateSlide(slide.id, { modules: { image1: url } })}
-                                className="w-full h-full object-contain bg-black print:bg-transparent"
+                                className="w-full h-full object-cover bg-black print:bg-transparent"
                             />
                         )}
                     </div>
-                    <div className="mt-4 h-24 shrink-0">
+                    <div className="mt-4 flex-1">
                         {isPrinting ? (
                             <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black">
                                 {slide.content}
