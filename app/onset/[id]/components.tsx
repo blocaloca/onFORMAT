@@ -3,6 +3,7 @@ import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } f
 import { getClient } from '@/lib/supabase';
 import SignatureCanvas from 'react-signature-canvas';
 import { useProjectData } from '@/lib/useProjectData';
+import { ImageUploader } from '@/components/ui/ImageUploader';
 
 const DEFAULT_STANDARD_TEXT = `I, the undersigned, hereby grant permission to THE PRODUCER and its agents, successors, assigns, and licensees (collectively, the "Producer"), to photograph, film, and record my likeness, voice, and performance (the "Materials") in connection with the production currently known as THE PROJECT.
 
@@ -2808,7 +2809,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
         <div className="space-y-6 pb-8">
             {isOwner && onAdd && (
                 <button
-                    onClick={() => onAdd({ id: `slide-${Date.now()}`, title: 'New Slide', category: 'Treatment', text: '' })}
+                    onClick={() => onAdd({ id: `slide-${Date.now()}`, title: 'New Treatment Note', category: 'Treatment Note', content: '', layout: 'Image', modules: { image1: '' } })}
                     className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Slide
@@ -2817,26 +2818,23 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {slides.map((slide: any, i: number) => (
                 <div key={slide.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
-                    {slide.url && slide.mediaType === 'image' && (
-                        <div className="w-full aspect-video bg-zinc-800 relative">
-                            <img src={slide.url} className="w-full h-full object-cover" />
-                        </div>
-                    )}
-                    {slide.url && slide.mediaType === 'video' && (
-                        <div className="w-full aspect-video bg-zinc-800 relative">
-                            <video src={slide.url} className="w-full h-full object-cover" controls preload="metadata" />
-                        </div>
-                    )}
+                    <ImageUploader
+                        currentUrl={slide.modules?.image1 || ''}
+                        onUpload={(url) => onUpdate?.({ ...slide, modules: { ...slide.modules, image1: url } })}
+                        isLocked={!isOwner}
+                        className="w-full aspect-video bg-zinc-800 relative rounded-none border-none"
+                    />
                     <div className="p-4">
                         <EditableInput
                             value={slide.category || 'CATEGORY'}
                             onSave={(val) => onUpdate?.({ ...slide, category: val })}
                             isEditable={isOwner}
                             className="text-[10px] font-black uppercase text-emerald-600 block mb-1 p-0 bg-transparent border-none text-left"
+                            placeholder="TYPE OF TREATMENT"
                         />
                         <EditableInput
                             value={slide.title || 'Slide Title'}
@@ -2845,10 +2843,11 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
                             className="text-xl font-black uppercase text-zinc-950 tracking-tight leading-none mb-3 p-0 bg-transparent border-none text-left"
                         />
                         <EditableInput
-                            value={slide.text || ''}
-                            onSave={(val) => onUpdate?.({ ...slide, text: val })}
+                            value={slide.content || ''}
+                            onSave={(val) => onUpdate?.({ ...slide, content: val })}
                             isEditable={isOwner}
                             className="text-sm text-zinc-700 leading-relaxed whitespace-pre-wrap p-0 bg-transparent border-none text-left"
+                            placeholder={isOwner ? "Write your narrative here..." : ""}
                         />
                     </div>
                 </div>
