@@ -13,7 +13,10 @@ function normalizeDate(dateStr: string): string | null {
 
         const m = parts[0].padStart(2, '0');
         const d = parts[1].padStart(2, '0');
-        const y = parts[2];
+        let y = parts[2];
+        if (y.length === 2) {
+            y = `20${y}`;
+        }
 
         // Direct string mapping to avoid timezone shifts
         return `${y}-${m}-${d}`;
@@ -35,7 +38,10 @@ export function parseProjectEvents(project: ProjectSourceData): ProductionEvent[
     const scheduleDraft = phases.ON_SET?.drafts?.schedule;
     if (scheduleDraft) {
         try {
-            const days = JSON.parse(scheduleDraft);
+            let days = JSON.parse(scheduleDraft);
+            if (!Array.isArray(days)) {
+                days = [days]; // Normalize to array
+            }
             if (Array.isArray(days)) {
                 days.forEach((day: any, index: number) => {
                     if (day.date) {
