@@ -229,7 +229,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
 
         } catch (e) {
             console.error("Export Failed", e);
-            alert("Export failed. Please check console.");
+            alert(`Export failed: ${e instanceof Error ? e.message : String(e)}\nPlease check console for more details.`);
         } finally {
             setIsExporting(false);
         }
