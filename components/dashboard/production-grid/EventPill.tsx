@@ -23,7 +23,7 @@ export const EventPill = ({ event, width, left, onClick, isClashing, onMouseEnte
     // Convert text to text-zinc-900 if sun yellow to match other UI places? 
     // Or just use the bg/border classes directly
     let bgClass = `${colorDef.bg} ${colorDef.border}`;
-    let textClass = colorDef.id === '#FBBF24' ? 'text-zinc-900' : 'text-white';
+    let textClass = (colorDef.id === '#FBBF24' || colorDef.id === '#FFFFFF') ? 'text-zinc-900' : 'text-white';
     let Icon = Calendar;
 
     // Icon Logic remains Type-Based
