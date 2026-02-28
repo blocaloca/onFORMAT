@@ -3,6 +3,7 @@ import React from 'react';
 import { PrintItem } from './types';
 import { getTemplateForTool } from '../TemplateRegistry';
 import { useProject } from '../ProjectContext';
+import { PDFPreviewWrapper } from './PDFPreviewWrapper';
 
 interface PrintPreviewProps {
     // We now support a single target for the "Preview Pane"
@@ -42,20 +43,8 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                 const scaledH = h * scale;
 
                 return (
-                    <div
-                        id="print-node-COVER"
-                        className="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] ring-1 ring-zinc-200/50 relative shrink-0 mb-8 overflow-hidden"
-                        style={{ width: scaledW, height: scaledH }}
-                    >
-                        <div
-                            className="bg-white flex flex-col items-center justify-center text-black"
-                            style={{
-                                width: w,
-                                height: h,
-                                transform: `scale(${scale})`,
-                                transformOrigin: 'top left'
-                            }}
-                        >
+                    <PDFPreviewWrapper orientation={coverSettings.orientation || 'portrait'} scale={scale}>
+                        <div className="bg-white flex flex-col items-center justify-center text-black w-full h-full">
                             <div className="text-center space-y-8 p-12 w-full h-full flex flex-col items-center justify-center relative">
                                 {coverSettings.studioLogo && (
                                     <div className="absolute top-16 left-0 right-0 flex justify-center">
@@ -72,7 +61,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </PDFPreviewWrapper>
                 );
             })()}
 
@@ -106,45 +95,27 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                         producer: activeProject?.owner_name,
                     };
 
-                    const isItemLandscape = (orientationOverride || 'portrait') === 'landscape';
-                    const w = isItemLandscape ? 1056 : 816;
-                    const h = isItemLandscape ? 816 : 1056;
-                    const scaledW = w * scale;
-                    const scaledH = h * scale;
-
                     return (
-                        <div key={uniqueKey} className="flex flex-col items-center w-full mb-8">
-                            <div
-                                className="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] ring-1 ring-zinc-200/50 relative overflow-hidden shrink-0"
-                                style={{ width: scaledW, height: scaledH }}
-                            >
-                                <div
-                                    className="bg-white origin-top-left"
-                                    style={{
-                                        width: w,
-                                        height: h,
-                                        transform: `scale(${scale})`,
-                                    }}
-                                >
-                                    <div className="w-full h-full relative">
-                                        {Template ? (
-                                            <Template
-                                                data={versionData}
-                                                plain={false}
-                                                orientation={orientationOverride || 'portrait'}
-                                                isPrinting={true}
-                                                metadata={injectedMetadata}
-                                                onUpdate={() => { }}
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest border-2 border-dashed border-zinc-200 rounded-lg">
-                                                Template Not Found for {item.label}
-                                            </div>
-                                        )}
-                                    </div>
+                        <PDFPreviewWrapper
+                            key={uniqueKey}
+                            orientation={orientationOverride || 'portrait'}
+                            scale={scale}
+                        >
+                            {Template ? (
+                                <Template
+                                    data={versionData}
+                                    plain={false}
+                                    orientation={orientationOverride || 'portrait'}
+                                    isPrinting={true}
+                                    metadata={injectedMetadata}
+                                    onUpdate={() => { }}
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-zinc-300 text-xs font-mono uppercase tracking-widest border-2 border-dashed border-zinc-200 rounded-lg">
+                                    Template Not Found for {item.label}
                                 </div>
-                            </div>
-                        </div>
+                            )}
+                        </PDFPreviewWrapper>
                     );
                 });
             })}

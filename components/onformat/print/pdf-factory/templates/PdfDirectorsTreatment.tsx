@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { View, Text, Image, StyleSheet } from '@react-pdf/renderer';
-import { PdfThemeType } from '../PdfComponents';
+import { globalPDFStyles, COLORS } from '../globalPDFStyles';
 
 interface Slide {
     id: string;
@@ -18,15 +18,14 @@ interface Slide {
 interface PdfDirectorsTreatmentProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
-    theme: PdfThemeType;
 }
 
-const getStyles = (theme: PdfThemeType) => StyleSheet.create({
+const styles = StyleSheet.create({
     slideContainer: {
         marginBottom: 24,
         paddingBottom: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.COLORS.slate
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.slate
     },
     slideHeader: {
         flexDirection: 'row',
@@ -36,20 +35,20 @@ const getStyles = (theme: PdfThemeType) => StyleSheet.create({
     slideTitle: {
         fontSize: 14,
         fontWeight: 900,
-        color: theme.COLORS.charcoal,
+        color: COLORS.charcoal,
         textTransform: 'uppercase'
     },
     slideCategory: {
         fontSize: 8,
-        color: theme.COLORS.mutedText,
+        color: COLORS.mutedText,
         textTransform: 'uppercase',
         fontWeight: 700
     },
     contentBox: {
-        backgroundColor: theme.COLORS.lightGrey,
+        backgroundColor: COLORS.lightGrey,
         padding: 12,
         borderLeftWidth: 2,
-        borderLeftColor: theme.COLORS.charcoal,
+        borderLeftColor: COLORS.charcoal,
         minHeight: 50
     },
     // Layouts
@@ -78,8 +77,7 @@ const getStyles = (theme: PdfThemeType) => StyleSheet.create({
     }
 });
 
-export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProps) => {
-    const styles = getStyles(theme);
+export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
 
     // Handle potential array wrapper or direct object
     const rawv = Array.isArray(data) ? data[0] : data;
@@ -103,8 +101,8 @@ export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProp
 
     if (!slides || slides.length === 0) {
         return (
-            <View style={theme.globalStyles.inputBox}>
-                <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
+            <View style={globalPDFStyles.inputBox}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
                     No treatment slides found.
                 </Text>
             </View>
@@ -127,7 +125,7 @@ export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProp
                         {/* --- Layout: TEXT --- */}
                         {layout === 'Text' && (
                             <View style={styles.contentBox}>
-                                <Text style={theme.globalStyles.text}>
+                                <Text style={globalPDFStyles.text}>
                                     {slide.content || 'No content...'}
                                 </Text>
                             </View>
@@ -144,7 +142,7 @@ export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProp
                                     </View>
                                 )}
                                 <View style={styles.contentBox}>
-                                    <Text style={theme.globalStyles.text}>
+                                    <Text style={globalPDFStyles.text}>
                                         {slide.content || 'No caption...'}
                                     </Text>
                                 </View>
@@ -176,7 +174,7 @@ export const PdfDirectorsTreatment = ({ data, theme }: PdfDirectorsTreatmentProp
                                 {/* Right: Text */}
                                 <View style={styles.column}>
                                     <View style={[styles.contentBox, { height: '100%' }]}>
-                                        <Text style={theme.globalStyles.text}>
+                                        <Text style={globalPDFStyles.text}>
                                             {slide.content || 'No description...'}
                                         </Text>
                                     </View>

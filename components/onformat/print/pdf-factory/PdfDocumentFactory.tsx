@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { Document, Page, View, Text, Image } from '@react-pdf/renderer';
-import { getPDFTheme } from './PdfTheme';
-import { PdfHeader, PdfFooter, PdfThemeType } from './PdfComponents';
+import { PdfHeader, PdfFooter } from './PdfComponents';
+import { globalPDFStyles, COLORS } from './globalPDFStyles';
 
 // --- Types ---
 interface FactoryProps {
@@ -55,29 +55,29 @@ const getStackForTool = (toolId: string, phases: any) => {
 };
 
 // --- Cover Page Component ---
-const CoverPage = ({ settings, theme }: { settings: any, theme: PdfThemeType }) => (
-    <Page size="LETTER" orientation={settings.orientation || 'portrait'} style={[theme.globalStyles.page, { justifyContent: 'center', alignItems: 'center' }]}>
+const CoverPage = ({ settings, logo }: { settings: any, logo?: string }) => (
+    <Page size="LETTER" orientation={settings.orientation || 'portrait'} style={[globalPDFStyles.page, { justifyContent: 'center', alignItems: 'center' }]}>
         <View style={{ marginBottom: 40, alignItems: 'center' }}>
             {/* Optional Logo */}
-            {theme.logo && (
+            {logo && (
                 // eslint-disable-next-line jsx-a11y/alt-text
                 <Image
-                    src={theme.logo}
+                    src={logo}
                     style={{ width: 64, height: 64, marginBottom: 24, objectFit: 'contain' }}
                 />
             )}
 
-            <Text style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', color: theme.COLORS.charcoal }}>
+            <Text style={{ fontSize: 48, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 2, textAlign: 'center', color: COLORS.charcoal }}>
                 {settings.title}
             </Text>
-            <View style={{ width: 60, height: 4, backgroundColor: theme.COLORS.emerald, marginVertical: 24 }} />
-            <Text style={{ fontSize: 14, fontWeight: 400, textTransform: 'uppercase', letterSpacing: 3, color: theme.COLORS.charcoal, textAlign: 'center' }}>
+            <View style={{ width: 60, height: 4, backgroundColor: COLORS.emerald, marginVertical: 24 }} />
+            <Text style={{ fontSize: 14, fontWeight: 400, textTransform: 'uppercase', letterSpacing: 3, color: COLORS.charcoal, textAlign: 'center' }}>
                 {settings.subtitle}
             </Text>
         </View>
 
         <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
-            <Text style={{ fontSize: 10, fontFamily: 'Helvetica', color: '#9CA3AF', letterSpacing: 2 }}>
+            <Text style={{ fontSize: 10, fontFamily: 'Inter', color: '#9CA3AF', letterSpacing: 2 }}>
                 {settings.date}
             </Text>
         </View>
@@ -91,31 +91,31 @@ import { PdfLookbook } from './templates/PdfLookbook';
 import { PdfProjectVision } from './templates/PdfProjectVision';
 
 // --- Content Renderer Swouter ---
-const ContentRenderer = ({ toolId, data, theme }: { toolId: string, data: any, theme: PdfThemeType }) => {
+const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
 
     // 1. Specific Templates
     if (toolId === 'call-sheet') {
-        return <PdfCallSheet data={data} theme={theme} />;
+        return <PdfCallSheet data={data} />;
     }
     if (toolId === 'brief') {
-        return <PdfCreativeBrief data={data} theme={theme} />;
+        return <PdfCreativeBrief data={data} />;
     }
     if (toolId === 'directors-treatment') {
-        return <PdfDirectorsTreatment data={data} theme={theme} />;
+        return <PdfDirectorsTreatment data={data} />;
     }
     if (toolId === 'lookbook') {
-        return <PdfLookbook data={data} theme={theme} />;
+        return <PdfLookbook data={data} />;
     }
     if (toolId === 'project-vision') {
-        return <PdfProjectVision data={data} theme={theme} />;
+        return <PdfProjectVision data={data} />;
     }
 
     // 2. Fallback for unmapped tools (Simple Dump)
     if (data && Object.keys(data).length > 0) {
         return (
             <View>
-                <View style={[theme.globalStyles.inputBox, { marginBottom: 20 }]}>
-                    <Text style={[theme.globalStyles.text, { fontSize: 14, fontWeight: 'bold' }]}>
+                <View style={[globalPDFStyles.inputBox, { marginBottom: 20 }]}>
+                    <Text style={[globalPDFStyles.text, { fontSize: 14, fontWeight: 'bold' }]}>
                         {toolId.toUpperCase().replace(/-/g, ' ')}
                     </Text>
                 </View>
@@ -125,9 +125,9 @@ const ContentRenderer = ({ toolId, data, theme }: { toolId: string, data: any, t
                     if (typeof val === 'object') return null; // Skip nested for legacy dump
                     return (
                         <View key={key} style={{ marginBottom: 16 }} wrap={false}>
-                            <Text style={[theme.globalStyles.label, { marginBottom: 4 }]}>{key.toUpperCase()}</Text>
-                            <View style={theme.globalStyles.inputBox}>
-                                <Text style={theme.globalStyles.text}>{String(val)}</Text>
+                            <Text style={[globalPDFStyles.label, { marginBottom: 4 }]}>{key.toUpperCase()}</Text>
+                            <View style={globalPDFStyles.inputBox}>
+                                <Text style={globalPDFStyles.text}>{String(val)}</Text>
                             </View>
                         </View>
                     );
@@ -138,8 +138,8 @@ const ContentRenderer = ({ toolId, data, theme }: { toolId: string, data: any, t
 
     // 3. Fallback / Empty Data
     return (
-        <View style={theme.globalStyles.inputBox}>
-            <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
+        <View style={globalPDFStyles.inputBox}>
+            <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
                 Content placeholder (No data found, or template not implemented for {toolId})
             </Text>
         </View>
@@ -148,13 +148,11 @@ const ContentRenderer = ({ toolId, data, theme }: { toolId: string, data: any, t
 
 // --- Main Document ---
 export const GlobalPdfDocument = ({ items, phases, coverSettings, brandSettings }: FactoryProps) => {
-    // GENERATE THEME ONCE
-    const theme = getPDFTheme(brandSettings);
 
     return (
         <Document>
             {/* Cover Page */}
-            {coverSettings.showCover && <CoverPage settings={coverSettings} theme={theme} />}
+            {coverSettings.showCover && <CoverPage settings={coverSettings} logo={brandSettings?.logo_url} />}
 
             {/* Document Playlist */}
             {items.map(item => {
@@ -185,19 +183,19 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings, brandSettings 
                             key={uniqueKey}
                             size="LETTER"
                             orientation={item.orientation}
-                            style={theme.globalStyles.page}
+                            style={globalPDFStyles.page}
                             wrap
                         >
                             <PdfHeader
                                 title={item.label.toUpperCase()}
                                 projectName={coverSettings.title}
                                 date={coverSettings.date}
-                                theme={theme}
+                                status={Object.keys(data).length > 0 ? 'Ready' : 'Empty'}
                             />
 
-                            <ContentRenderer toolId={item.id} data={data} theme={theme} />
+                            <ContentRenderer toolId={item.id} data={data} />
 
-                            <PdfFooter theme={theme} />
+                            <PdfFooter />
                         </Page>
                     );
                 });

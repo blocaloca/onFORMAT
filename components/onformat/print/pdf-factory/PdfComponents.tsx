@@ -1,26 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { Text, View } from '@react-pdf/renderer';
+import { globalPDFStyles, COLORS, LAYOUT } from './globalPDFStyles';
 
 // Types
-export interface PdfThemeType {
-    COLORS: any;
-    LAYOUT: any;
-    globalStyles: any;
-    logo?: string;
-}
-
 interface PdfHeaderProps {
     title: string;
     projectName?: string;
     clientName?: string;
     producer?: string;
     date?: string;
-    theme: PdfThemeType;
+    status?: 'Ready' | 'Empty'; // For optional vector status rendering
 }
 
-export const PdfHeader = ({ title, projectName, clientName, producer, date, theme }: PdfHeaderProps) => {
-    // const { COLORS, globalStyles } = theme;
+export const PdfStatusIcon = ({ status }: { status: 'Ready' | 'Empty' }) => (
+    <View style={{
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: status === 'Ready' ? COLORS.emerald : COLORS.red
+    }} />
+);
+
+export const PdfHeader = ({ title, projectName, clientName, producer, date, status }: PdfHeaderProps) => {
     return (
         <View style={{ marginBottom: 24 }} fixed>
             {/* Top Row: Doc Title + Date */}
@@ -29,13 +31,16 @@ export const PdfHeader = ({ title, projectName, clientName, producer, date, them
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
                 borderBottomWidth: 3,
-                borderBottomColor: theme.COLORS.charcoal,
+                borderBottomColor: COLORS.charcoal,
                 paddingBottom: 12,
                 marginBottom: 0
             }}>
-                <Text style={theme.globalStyles.h1}>{title}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Text style={globalPDFStyles.h1}>{title}</Text>
+                    {status && <PdfStatusIcon status={status} />}
+                </View>
                 {date && (
-                    <Text style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText, marginBottom: 4 }}>
+                    <Text style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText, marginBottom: 4 }}>
                         {date}
                     </Text>
                 )}
@@ -47,17 +52,17 @@ export const PdfHeader = ({ title, projectName, clientName, producer, date, them
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 paddingVertical: 8,
-                borderBottomWidth: 1,
-                borderBottomColor: theme.COLORS.slate
+                borderBottomWidth: 0.5,
+                borderBottomColor: COLORS.slate
             }}>
                 {/* Left: Client // Project */}
                 <View style={{ flexDirection: 'row', gap: 8 }}>
                     {clientName && (
-                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText }}>
-                            {clientName} <Text style={{ color: theme.COLORS.slate }}>{'//'}</Text>
+                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText }}>
+                            {clientName} <Text style={{ color: COLORS.slate }}>{'//'}</Text>
                         </Text>
                     )}
-                    <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.obsidian }}>
+                    <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.obsidian }}>
                         {projectName || 'UNTITLED PROJECT'}
                     </Text>
                 </View>
@@ -65,10 +70,10 @@ export const PdfHeader = ({ title, projectName, clientName, producer, date, them
                 {/* Right: Producer */}
                 {producer && (
                     <View style={{ flexDirection: 'row', gap: 8 }}>
-                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.mutedText }}>
+                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.mutedText }}>
                             PRODUCER
                         </Text>
-                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: theme.COLORS.obsidian }}>
+                        <Text style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', color: COLORS.obsidian }}>
                             {producer}
                         </Text>
                     </View>
@@ -78,8 +83,8 @@ export const PdfHeader = ({ title, projectName, clientName, producer, date, them
     );
 };
 
-export const PdfFooter = ({ theme }: { theme: PdfThemeType }) => (
-    <View style={{ position: 'absolute', bottom: theme.LAYOUT.padding, left: theme.LAYOUT.padding, right: theme.LAYOUT.padding, borderTopWidth: 1, borderTopColor: theme.COLORS.slate, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between' }} fixed>
+export const PdfFooter = () => (
+    <View style={{ position: 'absolute', bottom: LAYOUT.padding, left: LAYOUT.padding, right: LAYOUT.padding, borderTopWidth: 0.5, borderTopColor: COLORS.slate, paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between' }} fixed>
         <Text style={{ fontSize: 7, color: '#9CA3AF' }}>GENERATED BY ONFORMAT</Text>
         <Text style={{ fontSize: 7, color: '#9CA3AF' }} render={({ pageNumber, totalPages }) => (
             `${pageNumber} / ${totalPages}`
@@ -97,24 +102,23 @@ interface Column {
 interface DataGridProps {
     columns: Column[];
     data: any[];
-    theme: PdfThemeType;
 }
 
-export const DataGrid = ({ columns, data, theme }: DataGridProps) => {
+export const DataGrid = ({ columns, data }: DataGridProps) => {
     return (
-        <View style={{ width: '100%', borderTopWidth: 1, borderTopColor: theme.COLORS.obsidian }}>
+        <View style={{ width: '100%', borderTopWidth: 0.5, borderTopColor: COLORS.obsidian }}>
             {/* Header Row */}
-            <View style={{ flexDirection: 'row', backgroundColor: theme.COLORS.lightGrey, borderBottomWidth: 1, borderBottomColor: theme.COLORS.obsidian, paddingVertical: 6 }} fixed>
+            <View style={{ flexDirection: 'row', backgroundColor: COLORS.lightGrey, borderBottomWidth: 0.5, borderBottomColor: COLORS.obsidian, paddingVertical: 6 }} fixed>
                 {columns.map((col, i) => (
                     <View key={i} style={{ width: col.width, paddingHorizontal: 4 }}>
-                        <Text style={[theme.globalStyles.label, { marginBottom: 0, textAlign: col.align || 'left' }]}>{col.header}</Text>
+                        <Text style={[globalPDFStyles.label, { marginBottom: 0, textAlign: col.align || 'left' }]}>{col.header}</Text>
                     </View>
                 ))}
             </View>
 
             {/* Data Rows */}
             {data.map((row, rowIndex) => (
-                <View key={rowIndex} style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: theme.COLORS.slate, paddingVertical: 8 }} wrap={false}>
+                <View key={rowIndex} style={{ flexDirection: 'row', borderBottomWidth: 0.5, borderBottomColor: COLORS.slate, paddingVertical: 8 }} wrap={false}>
                     {columns.map((col, colIndex) => (
                         <View key={colIndex} style={{ width: col.width, paddingHorizontal: 4 }}>
                             <Text style={[{ fontSize: 9, textAlign: col.align || 'left' }]}>

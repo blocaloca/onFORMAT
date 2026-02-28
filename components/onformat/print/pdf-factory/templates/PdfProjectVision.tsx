@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
-import { PdfThemeType } from '../PdfComponents';
+import { globalPDFStyles, COLORS } from '../globalPDFStyles';
 
 interface PdfProjectVisionProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
-    theme: PdfThemeType;
 }
 
 const styles = StyleSheet.create({
@@ -15,15 +14,15 @@ const styles = StyleSheet.create({
     }
 });
 
-const renderField = (label: string, value: string, theme: PdfThemeType, placeholder: string = "Data not provided") => {
+const renderField = (label: string, value: string, placeholder: string = "Data not provided") => {
     return (
         <View style={styles.section} wrap={false}>
-            <Text style={theme.globalStyles.label}>{label}</Text>
-            <View style={theme.globalStyles.inputBox}>
+            <Text style={globalPDFStyles.label}>{label}</Text>
+            <View style={globalPDFStyles.inputBox}>
                 {value ? (
-                    <Text style={theme.globalStyles.text}>{value}</Text>
+                    <Text style={globalPDFStyles.text}>{value}</Text>
                 ) : (
-                    <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
+                    <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
                         {placeholder}
                     </Text>
                 )}
@@ -32,12 +31,12 @@ const renderField = (label: string, value: string, theme: PdfThemeType, placehol
     );
 };
 
-export const PdfProjectVision = ({ data, theme }: PdfProjectVisionProps) => {
+export const PdfProjectVision = ({ data }: PdfProjectVisionProps) => {
     // Safety Check
     if (!data || Object.keys(data).length === 0) {
         return (
-            <View style={theme.globalStyles.inputBox}>
-                <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
+            <View style={globalPDFStyles.inputBox}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
                     Loading production data...
                 </Text>
             </View>
@@ -46,13 +45,13 @@ export const PdfProjectVision = ({ data, theme }: PdfProjectVisionProps) => {
 
     return (
         <View>
-            <Text style={[theme.globalStyles.h2, { marginBottom: 12, borderBottomWidth: 1, borderBottomColor: theme.COLORS.slate, paddingBottom: 6 }]}>
+            <Text style={[globalPDFStyles.h2, { marginBottom: 12, borderBottomWidth: 0.5, borderBottomColor: COLORS.slate, paddingBottom: 6 }]}>
                 VISION SUMMARY
             </Text>
-            {renderField("LOGLINE", data.logline, theme, "Short summary...")}
-            {renderField("THEME", data.theme, theme, "Core theme...")}
-            {renderField("VISUAL STYLE", data.visualStyle, theme, "Visual approach...")}
-            {renderField("NOTES", data.notes, theme, "Additional notes...")}
+            {renderField("LOGLINE", data.logline, "Short summary...")}
+            {renderField("THEME", data.theme, "Core theme...")}
+            {renderField("VISUAL STYLE", data.visualStyle, "Visual approach...")}
+            {renderField("NOTES", data.notes, "Additional notes...")}
         </View>
     );
 };

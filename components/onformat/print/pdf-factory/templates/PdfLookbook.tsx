@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, jsx-a11y/alt-text */
 import React from 'react';
 import { View, Text, StyleSheet } from '@react-pdf/renderer';
-import { PdfThemeType } from '../PdfComponents';
+import { globalPDFStyles, COLORS } from '../globalPDFStyles';
 
 interface Slide {
     id: string;
@@ -13,14 +13,13 @@ interface Slide {
 interface PdfLookbookProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
-    theme: PdfThemeType;
 }
 
-const getStyles = (theme: PdfThemeType) => StyleSheet.create({
+const styles = StyleSheet.create({
     slideContainer: {
         marginBottom: 24,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.COLORS.slate,
+        borderBottomWidth: 0.5,
+        borderBottomColor: COLORS.slate,
         paddingBottom: 16
     },
     slideHeader: {
@@ -31,31 +30,30 @@ const getStyles = (theme: PdfThemeType) => StyleSheet.create({
     slideTitle: {
         fontSize: 12,
         fontWeight: 900,
-        color: theme.COLORS.charcoal,
+        color: COLORS.charcoal,
         textTransform: 'uppercase'
     },
     slideCategory: {
         fontSize: 8,
-        color: theme.COLORS.mutedText,
+        color: COLORS.mutedText,
         textTransform: 'uppercase',
         fontWeight: 700
     },
     contentBox: {
-        backgroundColor: theme.COLORS.lightGrey,
+        backgroundColor: COLORS.lightGrey,
         padding: 12,
         borderLeftWidth: 2,
-        borderLeftColor: theme.COLORS.charcoal
+        borderLeftColor: COLORS.charcoal
     }
 });
 
-export const PdfLookbook = ({ data, theme }: PdfLookbookProps) => {
-    const styles = getStyles(theme);
+export const PdfLookbook = ({ data }: PdfLookbookProps) => {
 
     // Safety Check: Loading State
     if (!data || Object.keys(data).length === 0) {
         return (
-            <View style={theme.globalStyles.inputBox}>
-                <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
+            <View style={globalPDFStyles.inputBox}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
                     Loading production data...
                 </Text>
             </View>
@@ -66,8 +64,8 @@ export const PdfLookbook = ({ data, theme }: PdfLookbookProps) => {
 
     if (!slides || slides.length === 0) {
         return (
-            <View style={theme.globalStyles.inputBox}>
-                <Text style={[theme.globalStyles.text, { color: theme.COLORS.mutedText, fontStyle: 'italic' }]}>
+            <View style={globalPDFStyles.inputBox}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
                     No lookbook slides found.
                 </Text>
             </View>
@@ -83,9 +81,9 @@ export const PdfLookbook = ({ data, theme }: PdfLookbookProps) => {
                         <Text style={styles.slideCategory}>{slide.category || 'General'}</Text>
                     </View>
                     <View style={styles.contentBox}>
-                        <Text style={theme.globalStyles.text}>
+                        <Text style={globalPDFStyles.text}>
                             {slide.content || (
-                                <Text style={{ color: theme.COLORS.mutedText, fontStyle: 'italic' }}>No content...</Text>
+                                <Text style={{ color: COLORS.mutedText, fontStyle: 'italic' }}>No content...</Text>
                             )}
                         </Text>
                     </View>
