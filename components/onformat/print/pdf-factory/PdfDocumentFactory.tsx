@@ -139,7 +139,7 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     // 3. Fallback / Empty Data
     return (
         <View style={globalPDFStyles.inputBox}>
-            <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+            <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>
                 Content placeholder (No data found, or template not implemented for {toolId})
             </Text>
         </View>

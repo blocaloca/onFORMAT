@@ -22,7 +22,7 @@ const renderField = (label: string, value: string, placeholder: string = "Data n
                 {value ? (
                     <Text style={globalPDFStyles.text}>{value}</Text>
                 ) : (
-                    <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                    <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>
                         {placeholder}
                     </Text>
                 )}
@@ -40,7 +40,7 @@ export const PdfCreativeBrief = ({ data }: PdfCreativeBriefProps) => {
     if (!briefData || Object.keys(briefData).length === 0) {
         return (
             <View style={globalPDFStyles.inputBox}>
-                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>
                     No Creative Brief data found.
                 </Text>
             </View>

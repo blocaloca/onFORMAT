@@ -53,7 +53,7 @@ export const PdfLookbook = ({ data }: PdfLookbookProps) => {
     if (!data || Object.keys(data).length === 0) {
         return (
             <View style={globalPDFStyles.inputBox}>
-                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>
                     Loading production data...
                 </Text>
             </View>
@@ -65,7 +65,7 @@ export const PdfLookbook = ({ data }: PdfLookbookProps) => {
     if (!slides || slides.length === 0) {
         return (
             <View style={globalPDFStyles.inputBox}>
-                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>
                     No lookbook slides found.
                 </Text>
             </View>
@@ -83,7 +83,7 @@ export const PdfLookbook = ({ data }: PdfLookbookProps) => {
                     <View style={styles.contentBox}>
                         <Text style={globalPDFStyles.text}>
                             {slide.content || (
-                                <Text style={{ color: COLORS.mutedText, fontStyle: 'italic' }}>No content...</Text>
+                                <Text style={{ color: COLORS.mutedText }}>No content...</Text>
                             )}
                         </Text>
                     </View>

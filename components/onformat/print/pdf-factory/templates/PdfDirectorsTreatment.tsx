@@ -102,7 +102,7 @@ export const PdfDirectorsTreatment = ({ data }: PdfDirectorsTreatmentProps) => {
     if (!slides || slides.length === 0) {
         return (
             <View style={globalPDFStyles.inputBox}>
-                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>
+                <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>
                     No treatment slides found.
                 </Text>
             </View>

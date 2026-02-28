@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const renderPlaceholder = (value: any, placeholder: string) => {
     if (value) return <Text style={globalPDFStyles.text}>{value}</Text>;
-    return <Text style={[globalPDFStyles.text, { color: COLORS.mutedText, fontStyle: 'italic' }]}>{placeholder}</Text>;
+    return <Text style={[globalPDFStyles.text, { color: COLORS.mutedText }]}>{placeholder}</Text>;
 };
 
 export const PdfCallSheet = ({ data }: PdfCallSheetProps) => {
