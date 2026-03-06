@@ -32,7 +32,8 @@ import {
     MobileCastingView,
     MobilePropsView,
     MobileClientSelectsView,
-    MobileControlView
+    MobileControlView,
+    MobileVisionView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -89,6 +90,7 @@ export default function OnSetMobilePage() {
     const [isOffline, setIsOffline] = useState(false);
     const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
     const [myProjects, setMyProjects] = useState<any[]>([]);
+    const [liveUsers, setLiveUsers] = useState<string[]>([]);
 
     const activeTabRef = useRef(activeTab);
     useEffect(() => {
@@ -204,7 +206,15 @@ export default function OnSetMobilePage() {
         presenceChannel
             .on('presence', { event: 'sync' }, () => {
                 const state = presenceChannel.presenceState();
-                console.log('Presence Sync:', state);
+
+                // Extract all currently connected emails
+                const onlineEmails = Object.values(state)
+                    .flat()
+                    .map((p: any) => p.user_email)
+                    .filter(Boolean);
+
+                setLiveUsers(onlineEmails);
+                console.log('Presence Sync: Active Users:', onlineEmails);
             })
             .subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') {
@@ -312,8 +322,11 @@ export default function OnSetMobilePage() {
             if (allDrafts['locations-sets'] && !allDrafts['locations']) allDrafts['locations'] = allDrafts['locations-sets'];
             if (allDrafts['casting-talent'] && !allDrafts['casting']) allDrafts['casting'] = allDrafts['casting-talent'];
             if (allDrafts['wardrobe-styling'] && !allDrafts['wardrobe']) allDrafts['wardrobe'] = allDrafts['wardrobe-styling'];
-            if (allDrafts['project-vision'] && !allDrafts['storyboard']) allDrafts['storyboard'] = allDrafts['project-vision'];
+            // Removed destructive project-vision alias
             if (allDrafts['budget-actual'] && !allDrafts['budget']) allDrafts['budget'] = allDrafts['budget-actual'];
+            if (allDrafts['brief'] && !allDrafts['creative-brief']) allDrafts['creative-brief'] = allDrafts['brief'];
+            if (allDrafts['directors-treatment'] && !allDrafts['treatment']) allDrafts['treatment'] = allDrafts['directors-treatment'];
+            if (allDrafts['creative-direction'] && !allDrafts['lookbook']) allDrafts['lookbook'] = allDrafts['creative-direction'];
             if (allDrafts['brief'] && !allDrafts['creative-brief']) allDrafts['creative-brief'] = allDrafts['brief'];
             if (allDrafts['deliverables-licensing'] && !allDrafts['deliverables']) allDrafts['deliverables'] = allDrafts['deliverables-licensing'];
             if (allDrafts['archive-log'] && !allDrafts['archive']) allDrafts['archive'] = allDrafts['archive-log'];
@@ -350,7 +363,7 @@ export default function OnSetMobilePage() {
                 'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
                 'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
                 'script-notes', 'sound-report',
-                'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard',
+                'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'project-vision',
                 'creative-brief', 'treatment', 'client-selects', 'deliverables', 'lookbook', 'archive'
             ];
 
@@ -361,9 +374,11 @@ export default function OnSetMobilePage() {
                     'locations-sets': 'locations',
                     'casting-talent': 'casting',
                     'wardrobe-styling': 'wardrobe',
-                    'project-vision': 'storyboard',
+                    // 'project-vision': 'storyboard', // Removed
                     'budget-actual': 'budget',
                     'brief': 'creative-brief',
+                    'directors-treatment': 'treatment',
+                    'creative-direction': 'lookbook',
                     'deliverables-licensing': 'deliverables',
                     'archive-log': 'archive'
                 };
@@ -1417,6 +1432,7 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'crew-list' && (
                                     <CrewListView
                                         data={data.docs['crew-list']}
+                                        liveUsers={liveUsers}
                                         onAdd={(m) => handleUpdateCrewList('add', m)}
                                         onUpdate={(m) => handleUpdateCrewList('update', m)}
                                         onDelete={(id) => handleUpdateCrewList('delete', id)}
@@ -1462,6 +1478,12 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} onAdd={(m) => handleUpdateList('archive', 'add', m)} onUpdate={(m) => handleUpdateList('archive', 'update', m)} onDelete={(id) => handleUpdateList('archive', 'delete', id)} />}
 
                                 {/* Phase 3: Missing Document Views & Visual Cards */}
+                                {activeTab === 'project-vision' && (
+                                    <MobileVisionView
+                                        data={data.docs['project-vision']}
+                                        onUpdate={(newData: any) => handleUpdateDraft('project-vision', newData)}
+                                    />
+                                )}
                                 {activeTab === 'creative-brief' && (
                                     <MobileBriefView
                                         data={data.docs['creative-brief']}
@@ -1475,7 +1497,7 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} onAdd={(m) => handleUpdateList('props-list', 'add', m)} onUpdate={(m) => handleUpdateList('props-list', 'update', m)} onDelete={(id) => handleUpdateList('props-list', 'delete', id)} />}
 
                                 {/* Fallback for other docs */}
-                                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
+                                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'project-vision', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
                                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                                 )}
                             </>
@@ -1495,14 +1517,17 @@ export default function OnSetMobilePage() {
                                 if (k === 'locations-sets') return 'locations';
                                 if (k === 'casting-talent') return 'casting';
                                 if (k === 'wardrobe-styling') return 'wardrobe';
-                                if (k === 'project-vision') return 'storyboard';
+                                // if (k === 'project-vision') return 'storyboard';
                                 if (k === 'budget-actual') return 'budget';
+                                if (k === 'brief') return 'creative-brief';
+                                if (k === 'directors-treatment') return 'treatment';
+                                if (k === 'creative-direction') return 'lookbook';
                                 return k;
                             })));
 
                             // DOCUMENT ORDER ALIGNMENT: Sort to match Desktop Site order
                             const NAV_ORDER = [
-                                'storyboard', 'creative-brief', 'av-script', 'treatment', 'lookbook',
+                                'project-vision', 'storyboard', 'creative-brief', 'av-script', 'treatment', 'lookbook',
                                 'shot-scene-book', 'budget', 'crew-list', 'releases', 'casting',
                                 'locations', 'equipment-list', 'wardrobe', 'props-list',
                                 'schedule', 'call-sheet', 'on-set-notes', 'camera-report',

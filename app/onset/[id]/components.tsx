@@ -63,7 +63,7 @@ export const DOC_LABELS: Record<string, string> = {
 
 import { Phone, Mail, Search } from 'lucide-react';
 
-export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }: { data: any, liveUsers?: string[], onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
     const { isOwner } = useProjectData();
     const [search, setSearch] = useState('');
     const [isAdding, setIsAdding] = useState(false);
@@ -271,6 +271,9 @@ export const CrewListView = ({ data, onAdd, onUpdate, onDelete }: { data: any, o
                             <div key={m.id} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex items-center justify-between group">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
+                                        {m.email && liveUsers.includes(m.email) && (
+                                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" title="Online now" />
+                                        )}
                                         <p className="text-sm font-bold text-zinc-950 leading-none">{m.name || 'Unnamed'}</p>
                                         {isOwner && (
                                             <button onClick={() => handleStartEdit(m)} className="p-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -3433,6 +3436,25 @@ export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (to
                     );
                 })}
             </div>
+        </div>
+    );
+};
+
+export const MobileVisionView = ({ data, onUpdate }: { data: any, onUpdate: (newData: any) => void }) => {
+    if (!data || !data.pages || data.pages.length === 0) return <EmptyState label="Project Vision" />;
+
+    return (
+        <div className="space-y-6 pb-20">
+            {data.pages.map((p: any, idx: number) => (
+                <div key={p.id || idx} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-6">
+                    <h3 className="text-[10px] font-black uppercase text-amber-500 tracking-widest pl-1 mb-4">
+                        Page {idx + 1}
+                    </h3>
+                    <div className="text-sm text-zinc-800 whitespace-pre-wrap font-serif leading-relaxed">
+                        {p.content || <span className="text-zinc-400 italic">No content</span>}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };
