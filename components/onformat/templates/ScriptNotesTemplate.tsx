@@ -47,47 +47,45 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
     };
 
     useEffect(() => {
-        // Initialize if either items are missing OR date is missing (and we have a schedule date)
-        if (!data.items || !data.date) {
+        let updates: Partial<ScriptNotesData> = {};
+        let needsUpdate = false;
 
-            // Priority: Imported Schedule > Current Date
-            let initialDate = '';
-
-            // Use existing date if available (in case items missing but date set)
-            if (data.date) {
-                initialDate = data.date;
-            } else if ((metadata as any)?.importedSchedule?.date) {
-                initialDate = (metadata as any).importedSchedule.date;
+        // 1. Date Initialization
+        if (!data.date) {
+            if ((metadata as any)?.importedSchedule?.date) {
+                updates.date = (metadata as any).importedSchedule.date;
             } else {
                 const now = new Date();
                 const day = String(now.getDate()).padStart(2, '0');
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const year = now.getFullYear();
-                initialDate = `${month}/${day}/${year}`;
+                updates.date = `${month}/${day}/${year}`;
             }
-
-            // Auto-populate from AV Script if available and items are empty
-            let initialItems = data.items || [];
-
-            if (initialItems.length === 0 && metadata?.importedAVScript?.rows) {
-                const scriptRows = metadata.importedAVScript.rows || [];
-                initialItems = scriptRows.map((row: any, idx: number) => ({
-                    id: `imported-${Date.now()}-${idx}`,
-                    scene: row.scene || '',
-                    visual: row.visual || '',
-                    audio: row.audio || '',
-                    bestTake: '',
-                    notes: '',
-                    showNoteInput: false
-                }));
-            }
-
-            onUpdate({
-                items: initialItems,
-                date: initialDate
-            });
+            needsUpdate = true;
         }
-    }, [metadata?.importedSchedule?.date, metadata?.importedAVScript]);
+
+        // 2. AV Script Auto-population
+        const currentItems = data.items || [];
+        if (currentItems.length === 0 && metadata?.importedAVScript?.rows && metadata.importedAVScript.rows.length > 0) {
+            updates.items = metadata.importedAVScript.rows.map((row: any, idx: number) => ({
+                id: `imported-${Date.now()}-${idx}`,
+                scene: row.scene || '',
+                visual: row.visual || '',
+                audio: row.audio || '',
+                bestTake: '',
+                notes: '',
+                showNoteInput: false
+            }));
+            needsUpdate = true;
+        } else if (!data.items) {
+            updates.items = [];
+            needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+            onUpdate(updates);
+        }
+    }, [!data.date, !data.items || data.items.length === 0, metadata?.importedSchedule?.date, metadata?.importedAVScript !== undefined]);
 
     const items = data.items || [];
 
