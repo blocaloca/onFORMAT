@@ -3480,22 +3480,22 @@ export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data
                 <button
                     onClick={() => {
                         const nextNum = (items.length + 1).toString().padStart(2, '0');
-                        onAdd({ id: `sb-${Date.now()}`, url: '', caption: '', notes: '', title: '', imageNumber: nextNum, sceneLink: '', aspectRatio: '9:16', size: 'small' })
+                        onAdd({ id: `sb-${Date.now()}`, url: '', caption: '', notes: '', title: '', imageNumber: nextNum, sceneLink: '', aspectRatio: '3:2', size: 'large' })
                     }}
                     className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
                 >
                     <Plus size={18} /> Add Frame
                 </button>
             )}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-6">
                 {items.map((item: any, i: number) => (
                     <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col group relative">
                         {isOwner && onDelete && (
-                            <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
                                 <X size={14} />
                             </button>
                         )}
-                        <div className="w-full aspect-[9/16] bg-zinc-800 relative shrink-0">
+                        <div className="w-full aspect-[3/2] bg-zinc-800 relative shrink-0">
                             {isOwner ? (
                                 <ImageUploader
                                     currentUrl={item.url || ''}

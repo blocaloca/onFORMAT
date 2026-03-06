@@ -1100,7 +1100,6 @@ export default function OnSetMobilePage() {
             const phases = latest.data.phases;
             const reverseMap: Record<string, string> = {
                 'creative-brief': 'brief',
-                'storyboard': 'project-vision',
                 'budget': 'budget-actual',
                 'deliverables': 'deliverables-licensing',
                 'archive': 'archive-log',
