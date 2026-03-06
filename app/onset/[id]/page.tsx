@@ -893,7 +893,7 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error(e) }
     }
 
-    const handleUpdateScriptNotes = async (action: 'add' | 'update' | 'delete', payload: any) => {
+    const handleUpdateScriptNotes = async (action: 'add' | 'update' | 'delete' | 'set-items', payload: any) => {
         if (!data.project) return;
         try {
             const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
@@ -922,6 +922,8 @@ export default function OnSetMobilePage() {
                 if (idx >= 0) list[idx] = payload;
             } else if (action === 'delete') {
                 list = list.filter((i: any) => i.id !== payload);
+            } else if (action === 'set-items') {
+                list = payload;
             }
 
             doc.items = list;
@@ -1419,9 +1421,11 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} />}
                                 {activeTab === 'script-notes' && <MobileScriptNotesView
                                     data={data.docs['script-notes']}
+                                    avScript={data.docs['av-script']}
                                     onAdd={(item: any) => handleUpdateScriptNotes('add', item)}
                                     onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
                                     onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
+                                    onSetItems={(items: any[]) => handleUpdateScriptNotes('set-items', items)}
                                 />}
                                 {activeTab === 'sound-report' && <MobileSoundReportView
                                     data={data.docs['sound-report']}

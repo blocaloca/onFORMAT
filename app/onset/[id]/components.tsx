@@ -2289,11 +2289,38 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
  * SCRIPT NOTES VIEW
  * -------------------------------------------------------------------------------- */
 
-export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) => {
+export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelete, onSetItems }: any) => {
     const items = data?.items || [];
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
+    // Auto-populate from AV Script if available and items are empty
+    useEffect(() => {
+        let scriptRows: any[] = [];
+        try {
+            if (typeof avScript === 'string') {
+                const parsed = JSON.parse(avScript);
+                const arr = Array.isArray(parsed) ? parsed : [parsed];
+                if (arr.length > 0 && arr[0].rows) scriptRows = arr[0].rows;
+            } else if (avScript?.rows) {
+                scriptRows = avScript.rows;
+            }
+        } catch { }
+
+        if (items.length === 0 && scriptRows.length > 0 && onSetItems) {
+            const initialItems = scriptRows.map((row: any, idx: number) => ({
+                id: `imported-${Date.now()}-${idx}`,
+                scene: row.scene || '',
+                visual: row.visual || '',
+                audio: row.audio || '',
+                bestTake: '',
+                notes: '',
+                showNoteInput: false
+            }));
+            onSetItems(initialItems);
+        }
+    }, [items.length, avScript]); // Intentionally not fully exhaustive to avoid looping
 
     const [form, setForm] = useState({
         scene: '',
@@ -2491,9 +2518,18 @@ export const MobileScriptNotesView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                                 <p className="text-xs text-zinc-600 whitespace-pre-wrap">{item.audio}</p>
                                             </div>
                                         )}
-                                        {item.notes && (
-                                            <div className="bg-black/20 p-2 rounded">
+                                        {item.notes ? (
+                                            <div className="bg-black/20 p-2 rounded mt-1">
                                                 <p className="text-xs text-zinc-500 italic whitespace-pre-wrap">{item.notes}</p>
+                                            </div>
+                                        ) : (
+                                            <div className="mt-1">
+                                                <button
+                                                    onClick={() => handleStartEdit(item)}
+                                                    className="text-[10px] uppercase font-bold text-zinc-400 hover:text-zinc-600 transition-colors"
+                                                >
+                                                    + Add Note
+                                                </button>
                                             </div>
                                         )}
                                     </div>
