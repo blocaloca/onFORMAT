@@ -33,7 +33,8 @@ import {
     MobilePropsView,
     MobileClientSelectsView,
     MobileControlView,
-    MobileVisionView
+    MobileVisionView,
+    MobileStoryboardView
 } from './components';
 import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
@@ -1470,7 +1471,7 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" onAdd={(m) => handleUpdateList('dashboard', 'add', m)} onUpdate={(m) => handleUpdateList('dashboard', 'update', m)} onDelete={(id) => handleUpdateList('dashboard', 'delete', id)} />}
                                 {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} onAdd={(m) => handleUpdateList('budget', 'add', m)} onUpdate={(m) => handleUpdateList('budget', 'update', m)} onDelete={(id) => handleUpdateList('budget', 'delete', id)} />}
                                 {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} onAdd={(m) => handleUpdateList('equipment-list', 'add', m)} onUpdate={(m) => handleUpdateList('equipment-list', 'update', m)} onDelete={(id) => handleUpdateList('equipment-list', 'delete', id)} />}
-                                {activeTab === 'storyboard' && <MobileReadOnlyListView data={data.docs['storyboard']} titleKey="title" subtitleKey="caption" imageKey="url" onAdd={(m) => handleUpdateList('storyboard', 'add', m)} onUpdate={(m) => handleUpdateList('storyboard', 'update', m)} onDelete={(id) => handleUpdateList('storyboard', 'delete', id)} />}
+                                {activeTab === 'storyboard' && <MobileStoryboardView data={data.docs['storyboard']} onAdd={(m) => handleUpdateList('storyboard', 'add', m)} onUpdate={(m) => handleUpdateList('storyboard', 'update', m)} onDelete={(id) => handleUpdateList('storyboard', 'delete', id)} />}
 
                                 {/* Phase 2: Missing Documents leveraging lists */}
                                 {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} />}

@@ -3467,3 +3467,81 @@ export const MobileVisionView = ({ data, onUpdate }: { data: any, onUpdate: (new
         </div>
     );
 };
+
+export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+    const { isOwner } = useProjectData();
+    const items = data?.items || [];
+
+    if (items.length === 0 && !isOwner) return <EmptyState label="Storyboard" />;
+
+    return (
+        <div className="space-y-6 pb-20">
+            {isOwner && onAdd && (
+                <button
+                    onClick={() => {
+                        const nextNum = (items.length + 1).toString().padStart(2, '0');
+                        onAdd({ id: `sb-${Date.now()}`, url: '', caption: '', notes: '', title: '', imageNumber: nextNum, sceneLink: '', aspectRatio: '9:16', size: 'small' })
+                    }}
+                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                >
+                    <Plus size={18} /> Add Frame
+                </button>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+                {items.map((item: any, i: number) => (
+                    <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col group relative">
+                        {isOwner && onDelete && (
+                            <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                                <X size={14} />
+                            </button>
+                        )}
+                        <div className="w-full aspect-[9/16] bg-zinc-800 relative shrink-0">
+                            {isOwner ? (
+                                <ImageUploader
+                                    currentUrl={item.url || ''}
+                                    onUpload={(url) => onUpdate?.({ ...item, url })}
+                                    isLocked={!isOwner}
+                                    className="w-full h-full !border-none"
+                                />
+                            ) : (
+                                item.url ? <img src={item.url} className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600"><span className="text-[10px] font-bold uppercase tracking-widest">No Image</span></div>
+                            )}
+                        </div>
+                        <div className="p-3 flex-1 flex flex-col bg-zinc-100 border-t border-slate-500">
+                            <div className="flex justify-between items-start gap-2 mb-1">
+                                <EditableInput
+                                    value={item.imageNumber || ''}
+                                    onSave={(val) => onUpdate?.({ ...item, imageNumber: val })}
+                                    isEditable={isOwner}
+                                    className="text-[10px] font-black uppercase tracking-widest text-emerald-600 p-0 bg-transparent border-none text-left w-6 shrink-0"
+                                    placeholder="00"
+                                />
+                                <EditableInput
+                                    value={item.sceneLink || ''}
+                                    onSave={(val) => onUpdate?.({ ...item, sceneLink: val })}
+                                    isEditable={isOwner}
+                                    className="text-[10px] font-mono text-zinc-500 p-0 bg-transparent border-none text-right flex-1 truncate"
+                                    placeholder="SC: #"
+                                />
+                            </div>
+                            <EditableInput
+                                value={item.title || ''}
+                                onSave={(val) => onUpdate?.({ ...item, title: val })}
+                                isEditable={isOwner}
+                                className="text-xs font-bold text-zinc-900 leading-tight mb-1 p-0 bg-transparent border-none text-left"
+                                placeholder="SHOT TITLE"
+                            />
+                            <EditableInput
+                                value={item.caption || ''}
+                                onSave={(val) => onUpdate?.({ ...item, caption: val })}
+                                isEditable={isOwner}
+                                className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 p-0 bg-transparent border-none text-left mt-auto"
+                                placeholder="SHOT TYPE"
+                            />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
