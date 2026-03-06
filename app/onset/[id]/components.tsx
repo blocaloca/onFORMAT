@@ -2476,7 +2476,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                                     <div className="flex items-center gap-3">
                                         <div className="bg-zinc-800 px-2 py-1 rounded border border-zinc-700">
                                             <span className="text-[9px] uppercase font-bold text-zinc-500 block text-center leading-none mb-0.5">Scene</span>
-                                            <span className="text-sm font-black text-zinc-950 block text-center leading-none">{item.scene || '-'}</span>
+                                            <span className="text-sm font-black text-white block text-center leading-none">{item.scene || '-'}</span>
                                         </div>
                                         {item.bestTake && (
                                             <div className="bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/30">
