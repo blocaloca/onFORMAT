@@ -160,7 +160,7 @@ interface WorkspaceEditorProps {
     userRole?: string;
 }
 
-export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, userRole }: WorkspaceEditorProps) => {
+export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, userRole, userEmail }: WorkspaceEditorProps) => {
 
     // Merge props into initial state if provided, with robust fallbacks
     const mergedInitialState = useMemo(() => {
@@ -1730,6 +1730,7 @@ Context:\n"${fullContext}"`;
                 {/* Standby Banner Removed */}
 
                 <ExperimentalWorkspaceNav
+                    userEmail={userEmail}
                     activeTool={state.activeTool}
                     activePhase={state.activePhase}
                     onToolSelect={(toolKey, phase) => {

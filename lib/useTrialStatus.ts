@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getClient } from '@/lib/supabase';
+import { isFounder } from '@/lib/permissions';
 
 interface TrialStatus {
     isLocked: boolean;
@@ -26,11 +27,21 @@ export function useTrialStatus() {
 
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('plan_tier, trial_ends_at')
+                    .select('plan_tier, trial_ends_at, manual_pro_override')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
+                    // 1. Founder / Admin bypass
+                    if (isFounder(user.email) || profile.manual_pro_override) {
+                        setStatus({
+                            isLocked: false,
+                            daysLeft: 999, // Infinite
+                            isLoading: false,
+                        });
+                        return;
+                    }
+
                     const now = new Date();
                     const trialEndsAt = new Date(profile.trial_ends_at || now);
 
