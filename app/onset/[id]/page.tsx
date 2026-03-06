@@ -91,10 +91,22 @@ export default function OnSetMobilePage() {
     const [myProjects, setMyProjects] = useState<any[]>([]);
 
     const activeTabRef = useRef(activeTab);
-    useEffect(() => { activeTabRef.current = activeTab; }, [activeTab]);
+    useEffect(() => {
+        activeTabRef.current = activeTab;
+        if (activeTab && id) {
+            localStorage.setItem(`onset_active_tab_${id}`, activeTab);
+        }
+    }, [activeTab, id]);
 
     useEffect(() => {
         if (!id) return;
+
+        const savedTab = localStorage.getItem(`onset_active_tab_${id}`);
+        if (savedTab) {
+            setActiveTab(savedTab as Tab);
+            activeTabRef.current = savedTab as Tab;
+        }
+
         fetchData();
 
         // Realtime Subscription
@@ -1380,6 +1392,11 @@ export default function OnSetMobilePage() {
                             />
                         ) : (
                             <>
+                                <div className="w-full flex justify-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+                                    <h2 className="text-[10px] uppercase font-black tracking-[0.2em] text-amber-500 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)] leading-none">
+                                        {DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' ')}
+                                    </h2>
+                                </div>
                                 {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                                 {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} />}
                                 {activeTab === 'call-sheet' && (
