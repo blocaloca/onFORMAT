@@ -10,6 +10,7 @@ interface ScriptNoteItem {
     audio: string;
     bestTake: string;
     notes: string;
+    showNoteInput?: boolean;
 }
 
 interface ScriptNotesData {
@@ -65,12 +66,28 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                 initialDate = `${month}/${day}/${year}`;
             }
 
+            // Auto-populate from AV Script if available and items are empty
+            let initialItems = data.items || [];
+
+            if (initialItems.length === 0 && metadata?.importedAVScript?.rows) {
+                const scriptRows = metadata.importedAVScript.rows || [];
+                initialItems = scriptRows.map((row: any, idx: number) => ({
+                    id: `imported-${Date.now()}-${idx}`,
+                    scene: row.scene || '',
+                    visual: row.visual || '',
+                    audio: row.audio || '',
+                    bestTake: '',
+                    notes: '',
+                    showNoteInput: false
+                }));
+            }
+
             onUpdate({
-                items: data.items || [],
+                items: initialItems,
                 date: initialDate
             });
         }
-    }, [metadata?.importedSchedule?.date]);
+    }, [metadata?.importedSchedule?.date, metadata?.importedAVScript]);
 
     const items = data.items || [];
 
@@ -81,7 +98,8 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
             visual: '',
             audio: '',
             bestTake: '',
-            notes: ''
+            notes: '',
+            showNoteInput: false
         };
         onUpdate({ items: [...items, newItem] });
     };
@@ -115,7 +133,8 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
             visual: row.visual || '',
             audio: row.audio || '',
             bestTake: '',
-            notes: ''
+            notes: '',
+            showNoteInput: false
         }));
 
         onUpdate({ items: newItems });
@@ -238,18 +257,32 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             )}
                                         </div>
 
-                                        {/* Notes - break-all added */}
-                                        {isPrinting ? (
-                                            <div className="text-[10px] w-full whitespace-pre-wrap break-all leading-relaxed italic text-zinc-600 min-h-[80px] py-1 min-w-0">{item.notes || ''}</div>
-                                        ) : (
-                                            <textarea
-                                                value={item.notes}
-                                                onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed italic text-zinc-600 min-w-0"
-                                                placeholder="Supervisor notes..."
-                                                disabled={isLocked}
-                                            />
-                                        )}
+                                        {/* Notes - Toggleable */}
+                                        <div className="flex flex-col min-w-0">
+                                            {isPrinting ? (
+                                                <div className="text-[10px] w-full whitespace-pre-wrap break-all leading-relaxed italic text-zinc-600 min-h-[80px] py-1 min-w-0">{item.notes || ''}</div>
+                                            ) : (
+                                                <>
+                                                    {item.showNoteInput || item.notes ? (
+                                                        <textarea
+                                                            value={item.notes}
+                                                            onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
+                                                            className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed italic text-zinc-600 min-w-0"
+                                                            placeholder="Supervisor notes..."
+                                                            disabled={isLocked}
+                                                        />
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => handleUpdateItem(globalIdx, { showNoteInput: true })}
+                                                            className="text-[9px] text-zinc-400 hover:text-zinc-600 uppercase font-bold tracking-widest text-left py-1"
+                                                            disabled={isLocked}
+                                                        >
+                                                            + Add Note
+                                                        </button>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
 
                                         {/* Delete Button */}
                                         <div className="relative flex justify-center w-full pt-2 min-w-0">
