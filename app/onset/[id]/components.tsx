@@ -2914,9 +2914,18 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
 
             {items.map((item: any, i: number) => (
                 <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-4 flex gap-4 overflow-hidden items-center group relative">
-                    {imageKey && item[imageKey] && (
-                        <div className="w-16 h-16 shrink-0 bg-zinc-200 rounded-lg overflow-hidden border border-slate-500">
-                            <img src={item[imageKey]} className="w-full h-full object-cover" />
+                    {imageKey && (item[imageKey] || isOwner) && (
+                        <div className="w-16 h-16 shrink-0 bg-zinc-200 rounded-lg overflow-hidden border border-slate-500 relative">
+                            {isOwner ? (
+                                <ImageUploader
+                                    currentUrl={item[imageKey] || ''}
+                                    onUpload={(url) => onUpdate?.({ ...item, [imageKey]: url })}
+                                    isLocked={false}
+                                    className="w-full h-full !border-none"
+                                />
+                            ) : (
+                                item[imageKey] ? <img src={item[imageKey]} className="w-full h-full object-cover" /> : null
+                            )}
                         </div>
                     )}
                     <div className="flex-1 min-w-0">
