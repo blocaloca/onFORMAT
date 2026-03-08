@@ -188,12 +188,8 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             />
                                         )}
 
-                                        {/* Status */}
                                         {isPrinting ? (
-                                            <div className={`text-[9px] font-bold uppercase flex justify-center items-center border rounded px-1 py-0.5 ${item.status === 'acquired' ? 'border-green-200 text-green-700 bg-green-50' :
-                                                item.status === 'wrapped' ? 'border-zinc-200 text-zinc-500 bg-zinc-100 line-through' :
-                                                    'border-red-200 text-red-400 bg-red-50'
-                                                }`}>
+                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black">
                                                 {item.status === 'pending' ? 'Needed' : item.status.toUpperCase()}
                                             </div>
                                         ) : (
@@ -249,7 +245,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 )
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
-                                <div className="pt-2">
+                                <div className="pt-2 print-hidden">
                                     <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Prop
                                     </button>
