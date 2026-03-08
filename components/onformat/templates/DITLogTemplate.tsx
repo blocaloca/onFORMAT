@@ -471,10 +471,10 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             {item.status === 'failed' && <span className="px-2 py-0.5 bg-red-100 text-red-700 border border-red-200 rounded text-[9px] font-bold uppercase tracking-wider">FAIL</span>}
                                             {item.status === 'pending' && <span className="px-2 py-0.5 bg-zinc-100 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider">...</span>}
                                         </button>
-                                        <div className={`flex justify-center ${isPrinting ? 'block' : 'hidden'} print:block`}>
-                                            {item.status === 'complete' && <span className="px-2 py-0.5 bg-green-100 text-green-700 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider">DONE</span>}
-                                            {item.status === 'failed' && <span className="px-2 py-0.5 bg-red-100 text-red-700 border border-red-200 rounded text-[9px] font-bold uppercase tracking-wider">FAIL</span>}
-                                            {item.status === 'pending' && <span className="px-2 py-0.5 bg-zinc-100 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider">...</span>}
+                                        <div className={`text-center py-1 text-[10px] font-bold uppercase text-black ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            {item.status === 'complete' && 'DONE'}
+                                            {item.status === 'failed' && 'FAIL'}
+                                            {item.status === 'pending' && '...'}
                                         </div>
 
                                         {/* Delete Button with Confirmation Popover */}

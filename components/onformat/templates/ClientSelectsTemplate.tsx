@@ -151,7 +151,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             >
                                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-black uppercase text-[10px] tracking-wider text-center pt-0.5 ${STATUS_OPTIONS.find(o => o.value === item.status)?.className || 'text-zinc-200'} ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-black uppercase text-[10px] tracking-wider text-center pt-0.5 ${isPrinting ? 'text-black block' : `${STATUS_OPTIONS.find(o => o.value === item.status)?.className || 'text-zinc-200'} hidden`} print:block`}>
                                                 {STATUS_OPTIONS.find(o => o.value === item.status)?.label || '-'}
                                             </div>
                                         </div>

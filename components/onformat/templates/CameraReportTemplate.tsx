@@ -311,7 +311,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 >
                                                     {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                                 </select>
-                                                <div className={`text-center font-bold text-xs pt-0.5 ${item.status === 'circle' ? 'text-yellow-500' : item.status === 'good' ? 'text-green-600' : item.status === 'bad' ? 'text-red-500' : 'text-zinc-300'} ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                                <div className={`text-center font-bold text-xs pt-0.5 ${isPrinting ? 'text-black block' : `${item.status === 'circle' ? 'text-yellow-500' : item.status === 'good' ? 'text-green-600' : item.status === 'bad' ? 'text-red-500' : 'text-zinc-300'} hidden`} print:block`}>
                                                     {STATUS_OPTIONS.find(o => o.value === item.status)?.label || '-'}
                                                 </div>
                                             </div>

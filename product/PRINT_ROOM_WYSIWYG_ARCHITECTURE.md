@@ -70,3 +70,12 @@ pdfOut.save(`Project - Package.pdf`);
 1. **Zero Double-Coding**: You never have to build a component for React and then separately re-build it for the PDF engine. If you style it in standard Tailwind for the Print Room Preview, it is automatically flawless in the PDF.
 2. **Guaranteed Consistency**: Colors, spacing, borders, transparent PNG overlays, and complex layered CSS grids render accurately every time.
 3. **Cross-Phase Reliability**: This pattern instantly supports any newly added document template without needing custom PDF factory logic to mirror it.
+
+## Best Practices for `html2canvas` Print Reliability
+While the image-based pipeline solves major macro-layout discrepancies, `html2canvas` implements its own isolated JS rendering engine that calculates text boundaries distinctly from Safari/Chrome.
+
+**1. Typography Over Complex Flex Bounding Boxes**
+When `html2canvas` computes native web fonts inside of explicitly sized `flex` containers utilizing `items-center` or heavy vertical padding (e.g. colored badge pills or status rectangle markers), it frequently miscalculates the invisible font ascender/descender padding, displacing the text vertically slightly off-center.
+
+* **The Rule**: When prepping interactive UI elements for print (e.g. Wardrobe Status markers, Crew List group toggle buttons, Props List table statuses), conditionally override the element using `isPrinting` to strip away the colored background, border, and flex centering constraints. 
+* **The Solution**: Fallback to pure, block inline text utilizing clean typography classes (`text-black font-bold uppercase`). Plain, contrasting typography looks considerably more premium on printed output, and bypasses the `html2canvas` alignment bug engine completely, guaranteeing pixel-perfect layouts.

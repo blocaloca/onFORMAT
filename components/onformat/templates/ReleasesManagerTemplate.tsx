@@ -26,6 +26,7 @@ interface ReleasesManagerTemplateProps {
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
     metadata?: any;
+    isPrinting?: boolean;
 }
 
 export const ReleasesManagerTemplate = ({
@@ -34,7 +35,8 @@ export const ReleasesManagerTemplate = ({
     isLocked = false,
     plain,
     orientation,
-    metadata
+    metadata,
+    isPrinting = false
 }: ReleasesManagerTemplateProps) => {
 
     const [view, setView] = useState<'list' | 'detail'>('list');
@@ -197,9 +199,15 @@ export const ReleasesManagerTemplate = ({
                                 className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
                             >
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-zinc-100 text-zinc-400'}`}>
-                                        {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
-                                    </div>
+                                    {isPrinting ? (
+                                        <div className="w-8 h-8 flex items-center justify-center text-black">
+                                            {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
+                                        </div>
+                                    ) : (
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-zinc-100 text-zinc-400'}`}>
+                                            {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
+                                        </div>
+                                    )}
                                     <div>
                                         <h4 className="text-sm font-bold text-zinc-800 leading-none mb-1">
                                             {item.name || '(Untitled)'}
@@ -212,9 +220,15 @@ export const ReleasesManagerTemplate = ({
 
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
-                                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${item.status === 'signed' ? 'bg-green-100 text-green-700' : 'bg-yellow-50 text-yellow-600'}`}>
-                                            {item.status}
-                                        </span>
+                                        {isPrinting ? (
+                                            <span className="text-[10px] font-bold uppercase py-0.5 text-black">
+                                                {item.status}
+                                            </span>
+                                        ) : (
+                                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${item.status === 'signed' ? 'bg-green-100 text-green-700' : 'bg-yellow-50 text-yellow-600'}`}>
+                                                {item.status}
+                                            </span>
+                                        )}
                                         <div className="text-[9px] text-zinc-400 mt-0.5 flex items-center justify-end gap-1">
                                             <Clock size={8} /> {new Date(item.dateCreated).toLocaleDateString()}
                                         </div>

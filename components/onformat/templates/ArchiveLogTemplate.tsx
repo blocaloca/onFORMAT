@@ -216,15 +216,23 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         </div>
 
                                         <div className="col-start-6 flex justify-center items-center w-full">
-                                            <button
-                                                onClick={() => cycleStatus(globalIdx)}
-                                                disabled={isLocked}
-                                                className={`w-full flex items-center justify-center transition-opacity ${isLocked ? '' : 'hover:opacity-80'}`}
-                                            >
-                                                {item.status === 'complete' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-green-100 text-green-700 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DONE</span>}
-                                                {item.status === 'in-progress' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DOING</span>}
-                                                {item.status === 'pending' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-zinc-100 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">TODO</span>}
-                                            </button>
+                                            {isPrinting ? (
+                                                <div className="text-center py-1 text-[10px] font-bold uppercase text-black w-full">
+                                                    {item.status === 'complete' && 'DONE'}
+                                                    {item.status === 'in-progress' && 'DOING'}
+                                                    {item.status === 'pending' && 'TODO'}
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => cycleStatus(globalIdx)}
+                                                    disabled={isLocked}
+                                                    className={`w-full flex items-center justify-center transition-opacity ${isLocked ? '' : 'hover:opacity-80'}`}
+                                                >
+                                                    {item.status === 'complete' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-green-100 text-green-700 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DONE</span>}
+                                                    {item.status === 'in-progress' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DOING</span>}
+                                                    {item.status === 'pending' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-zinc-100 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">TODO</span>}
+                                                </button>
+                                            )}
                                         </div>
 
                                         {/* Row 1, Col 7: Delete */}
