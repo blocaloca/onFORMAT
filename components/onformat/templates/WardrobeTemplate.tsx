@@ -187,7 +187,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                         {isPrinting ? (
                                             <div className="flex justify-center items-start pt-1">
-                                                <div className={`text-[9px] font-bold uppercase inline-block text-center border rounded
+                                                <div className={`print-flex-fix text-[9px] font-bold uppercase inline-block text-center border rounded
                                                     ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
                                                         item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
                                                             'border-zinc-200 text-zinc-400 bg-zinc-50'}`}
