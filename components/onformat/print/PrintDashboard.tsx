@@ -254,16 +254,7 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                     useCORS: true,
                     logging: false,
                     allowTaint: true,
-                    backgroundColor: '#FFFFFF',
-                    onclone: (doc) => {
-                        // Fix for html2canvas vertical text misalignment in flex/buttons
-                        const buttons = doc.querySelectorAll('.print-flex-fix');
-                        buttons.forEach((btn) => {
-                            (btn as HTMLElement).style.display = 'block';
-                            (btn as HTMLElement).style.paddingTop = '1px';
-                            (btn as HTMLElement).style.lineHeight = '0.9';
-                        });
-                    }
+                    backgroundColor: '#FFFFFF'
                 });
 
                 const imgData = canvas.toDataURL('image/jpeg', 0.95);
