@@ -403,7 +403,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         <div className={`grid grid-cols-[1fr_auto] ${isPrinting ? 'items-center' : 'border border-zinc-200 rounded-sm overflow-hidden bg-white h-32'}`}>
                                             <div className={isPrinting ? 'py-4' : 'p-6 flex items-center'}>
                                                 {isPrinting ? (
-                                                    <div className="w-full font-sans text-5xl font-black text-black tracking-normal -translate-y-[15%]">
+                                                    <div className="w-full font-sans text-5xl font-black text-black tracking-normal -translate-y-[35%]">
                                                         {generalCall || '00:00'}
                                                     </div>
                                                 ) : (
