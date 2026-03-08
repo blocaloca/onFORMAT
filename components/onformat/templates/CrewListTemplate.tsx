@@ -373,7 +373,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                                 if (isPrinting) {
                                                     return isActive ? (
-                                                        <span key={g} className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-black border ${activeClass} print:flex`}>{g}</span>
+                                                        <span key={g} className={`w-5 h-5 rounded flex items-center justify-center text-[9px] leading-none font-black border ${activeClass} print:flex`}><span className="mt-[1px]">{g}</span></span>
                                                     ) : null;
                                                 }
 
@@ -382,10 +382,10 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         key={g}
                                                         onClick={() => toggleGroup(globalIdx, g)}
                                                         disabled={isLocked}
-                                                        className={`w-6 h-6 rounded flex items-center justify-center text-[9px] font-black border transition-all ${isActive ? activeClass : 'bg-transparent border-zinc-200 text-zinc-300 hover:border-zinc-400 hover:text-zinc-500'
+                                                        className={`w-6 h-6 rounded flex items-center justify-center text-[9px] font-black leading-none border transition-all ${isActive ? activeClass : 'bg-transparent border-zinc-200 text-zinc-300 hover:border-zinc-400 hover:text-zinc-500'
                                                             }`}
                                                     >
-                                                        {g}
+                                                        <span className="mt-[1px]">{g}</span>
                                                     </button>
                                                 )
                                             })}

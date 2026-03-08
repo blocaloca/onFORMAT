@@ -185,9 +185,8 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             />
                                         )}
 
-                                        {/* Status */}
                                         {isPrinting ? (
-                                            <div className={`text-[9px] font-bold uppercase flex justify-center items-center border rounded px-1 py-0.5
+                                            <div className={`text-[9px] leading-none font-bold uppercase flex justify-center items-center h-[22px] border rounded px-1
                                                 ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
                                                     item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
                                                         'border-zinc-200 text-zinc-400 bg-zinc-50'}`}>
@@ -197,7 +196,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-bold text-[9px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5
+                                                className={`appearance-none bg-transparent h-[22px] leading-none font-bold text-[9px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1
                                             ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
                                                         item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
                                                             'border-zinc-200 text-zinc-400 bg-zinc-50'}`}
