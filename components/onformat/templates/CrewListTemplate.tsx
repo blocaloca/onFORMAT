@@ -373,7 +373,11 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                                 if (isPrinting) {
                                                     return isActive ? (
-                                                        <span key={g} className={`w-5 h-5 rounded flex items-center justify-center text-[9px] leading-none font-black border ${activeClass} print:flex`}><span className="mt-[1px]">{g}</span></span>
+                                                        <div key={g} className="flex justify-center items-center h-full">
+                                                            <div className={`w-[18px] h-[18px] rounded inline-block text-center font-black border ${activeClass}`} style={{ fontSize: '9px', lineHeight: '16px', paddingTop: '0px' }}>
+                                                                {g}
+                                                            </div>
+                                                        </div>
                                                     ) : null;
                                                 }
 

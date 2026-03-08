@@ -186,11 +186,14 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         )}
 
                                         {isPrinting ? (
-                                            <div className={`text-[9px] leading-none font-bold uppercase flex justify-center items-center h-[22px] border rounded px-1
-                                                ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
-                                                    item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
-                                                        'border-zinc-200 text-zinc-400 bg-zinc-50'}`}>
-                                                {item.status.toUpperCase()}
+                                            <div className="flex justify-center items-start pt-1">
+                                                <div className={`text-[9px] font-bold uppercase inline-block text-center border rounded
+                                                    ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
+                                                        item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
+                                                            'border-zinc-200 text-zinc-400 bg-zinc-50'}`}
+                                                    style={{ padding: '3px 6px' }}>
+                                                    {item.status.toUpperCase()}
+                                                </div>
                                             </div>
                                         ) : (
                                             <select
