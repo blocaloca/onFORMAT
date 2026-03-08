@@ -256,6 +256,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                             onUpload={(url) => updateLocation(index, 'mainImage', url)}
                                             className="w-full h-full object-cover"
                                             isLocked={isLocked}
+                                            isPrinting={isPrinting}
                                             placeholder={<div className="text-zinc-300 flex flex-col items-center gap-2"><Plus size={24} /><span className="text-xs font-bold uppercase tracking-widest">Main View</span></div>}
                                         />
                                     </div>
@@ -266,6 +267,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 onUpload={(url) => updateLocation(index, 'smallImage1', url)}
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
+                                                isPrinting={isPrinting}
                                                 placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                             />
                                         </div>
@@ -275,6 +277,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 onUpload={(url) => updateLocation(index, 'smallImage2', url)}
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
+                                                isPrinting={isPrinting}
                                                 placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                             />
                                         </div>
@@ -292,6 +295,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 onUpload={(url) => updateLocation(index, 'mainImage', url)}
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
+                                                isPrinting={isPrinting}
                                                 placeholder={<div className="text-zinc-300 flex flex-col items-center gap-2"><Plus size={24} /><span className="text-xs font-bold uppercase tracking-widest">Main View</span></div>}
                                             />
                                         </div>
@@ -309,6 +313,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 onUpload={(url) => updateLocation(index, 'smallImage1', url)}
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
+                                                isPrinting={isPrinting}
                                                 placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                             />
                                         </div>
@@ -318,6 +323,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 onUpload={(url) => updateLocation(index, 'smallImage2', url)}
                                                 className="w-full h-full object-cover"
                                                 isLocked={isLocked}
+                                                isPrinting={isPrinting}
                                                 placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                             />
                                         </div>
@@ -330,7 +336,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
             })}
 
             {/* Add Location Button (Appears after last page) */}
-            {!isLocked && (
+            {!isLocked && !isPrinting && (
                 <div className="max-w-md mx-auto py-8 text-center print-hidden">
                     <button
                         onClick={handleAddLocation}

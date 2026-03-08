@@ -9,9 +9,10 @@ interface ImageUploaderProps {
     placeholderText?: string;
     placeholder?: React.ReactNode;
     isLocked?: boolean;
+    isPrinting?: boolean;
 }
 
-export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholderText = 'Upload Image', placeholder, isLocked = false }: ImageUploaderProps) => {
+export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholderText = 'Upload Image', placeholder, isLocked = false, isPrinting = false }: ImageUploaderProps) => {
     const [isUploading, setIsUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -93,7 +94,7 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`relative group ${isLocked ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'} overflow-hidden flex items-center justify-center bg-gray-100 border-2 border-dashed ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-200'} ${isLocked ? '' : 'hover:border-black'} transition-colors ${className}`}
+            className={`relative group ${isLocked || isPrinting ? 'cursor-not-allowed opacity-80' : 'cursor-pointer'} overflow-hidden flex items-center justify-center ${isPrinting ? 'bg-transparent border-transparent' : 'bg-gray-100 border-2 border-dashed'} ${isDragging ? 'border-blue-500 bg-blue-50' : (isPrinting ? '' : 'border-gray-200')} ${isLocked || isPrinting ? '' : 'hover:border-black'} transition-colors ${className}`}
         >
             <input
                 type="file"
@@ -119,20 +120,22 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
                     />
 
                     {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <span className="text-white text-xs font-bold uppercase tracking-wider border border-white px-3 py-1 hover:bg-white hover:text-black transition-colors">
-                            {isUploading ? '...' : 'Replace'}
-                        </span>
-                        <button
-                            onClick={handleDelete}
-                            className="text-red-500 text-xs font-bold uppercase tracking-wider border border-red-500 px-3 py-1 hover:bg-red-500 hover:text-white transition-colors"
-                        >
-                            Delete
-                        </button>
-                    </div>
+                    {!isPrinting && (
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <span className="text-white text-xs font-bold uppercase tracking-wider border border-white px-3 py-1 hover:bg-white hover:text-black transition-colors">
+                                {isUploading ? '...' : 'Replace'}
+                            </span>
+                            <button
+                                onClick={handleDelete}
+                                className="text-red-500 text-xs font-bold uppercase tracking-wider border border-red-500 px-3 py-1 hover:bg-red-500 hover:text-white transition-colors"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    )}
                 </>
             ) : (
-                <div className="text-center p-4">
+                <div className={`text-center p-4 ${isPrinting ? 'hidden' : ''}`}>
                     {isUploading ? (
                         <div className="flex flex-col items-center gap-2">
                             <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
