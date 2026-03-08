@@ -375,15 +375,21 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 {/* Header Grid: Date/Day + Vitals */}
                                 <div className="grid grid-cols-[1fr_2fr] gap-6">
                                     <div className="space-y-2">
-                                        <div className="border-b border-zinc-200">
-                                            <input
-                                                type="text"
-                                                value={shootDate}
-                                                onChange={(e) => updateField('date', formatDate(e.target.value))}
-                                                placeholder="MM/DD/YYYY"
-                                                className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
-                                                disabled={isLocked || !canEditVitals}
-                                            />
+                                        <div className={isPrinting ? '' : 'border-b border-zinc-200'}>
+                                            {isPrinting ? (
+                                                <div className="block w-full text-2xl font-black uppercase text-black tracking-normal pb-1">
+                                                    {shootDate || 'MM/DD/YYYY'}
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={shootDate}
+                                                    onChange={(e) => updateField('date', formatDate(e.target.value))}
+                                                    placeholder="MM/DD/YYYY"
+                                                    className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
+                                                    disabled={isLocked || !canEditVitals}
+                                                />
+                                            )}
                                         </div>
 
                                     </div>
@@ -394,18 +400,24 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest">General Call</span>
                                             <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-widest w-32 text-center">GET onSET MOBILE</span>
                                         </div>
-                                        <div className="grid grid-cols-[1fr_auto] border border-zinc-200 rounded-sm overflow-hidden bg-white h-32">
-                                            <div className="p-6 flex items-center">
-                                                <input
-                                                    type="text"
-                                                    value={generalCall}
-                                                    onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                    className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
-                                                    placeholder="00:00"
-                                                    disabled={isLocked || !canEditVitals}
-                                                />
+                                        <div className={`grid grid-cols-[1fr_auto] ${isPrinting ? 'items-center' : 'border border-zinc-200 rounded-sm overflow-hidden bg-white h-32'}`}>
+                                            <div className={isPrinting ? 'py-4' : 'p-6 flex items-center'}>
+                                                {isPrinting ? (
+                                                    <div className="w-full font-sans text-5xl font-black text-black tracking-normal">
+                                                        {generalCall || '00:00'}
+                                                    </div>
+                                                ) : (
+                                                    <input
+                                                        type="text"
+                                                        value={generalCall}
+                                                        onChange={e => updateField('crewCall', formatTime(e.target.value))}
+                                                        className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
+                                                        placeholder="00:00"
+                                                        disabled={isLocked || !canEditVitals}
+                                                    />
+                                                )}
                                             </div>
-                                            <div className="w-32 bg-zinc-50 border-l border-zinc-100 p-3 flex items-center justify-center">
+                                            <div className={`w-32 ${isPrinting ? '' : 'bg-zinc-50 border-l border-zinc-100'} p-3 flex items-center justify-center`}>
                                                 <img
                                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
                                                     alt="Set QR"
@@ -417,14 +429,14 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 </div>
 
                                 {/* Logistics Row */}
-                                <div className="grid grid-cols-4 gap-4 bg-zinc-50 p-3 rounded-sm border border-zinc-100">
+                                <div className={`grid grid-cols-4 gap-4 ${isPrinting ? 'border-t border-b border-black py-4' : 'bg-zinc-50 p-3 rounded-sm border border-zinc-100'}`}>
                                     <div className="col-span-1">
                                         <div className="flex justify-between items-center mb-1">
                                             <label className="block text-[9px] font-bold uppercase text-zinc-400">Weather</label>
                                             <button
                                                 onClick={handleAutoWeather}
                                                 disabled={loadingWeather}
-                                                className="text-[8px] uppercase font-bold text-indigo-500 hover:text-indigo-700 disabled:opacity-50"
+                                                className={`text-[8px] uppercase font-bold text-indigo-500 hover:text-indigo-700 disabled:opacity-50 ${isPrinting ? 'hidden' : ''}`}
                                                 title="Auto-fill from Basecamp & Date"
                                             >
                                                 {loadingWeather ? '...' : 'Auto-fill'}
@@ -458,13 +470,13 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             />
                                         )}
                                     </div>
-                                    <div className="col-span-2 border-l border-zinc-200 pl-4">
+                                    <div className={`col-span-2 ${isPrinting ? '' : 'border-l border-zinc-200 pl-4'}`}>
                                         <div className="flex justify-between items-center mb-1">
                                             <label className="block text-[9px] font-bold uppercase text-zinc-400">Nearest Hospital</label>
                                             <button
                                                 onClick={handleAutoHospital}
                                                 disabled={loadingHospital}
-                                                className="text-[8px] uppercase font-bold text-red-500 hover:text-red-700 disabled:opacity-50"
+                                                className={`text-[8px] uppercase font-bold text-red-500 hover:text-red-700 disabled:opacity-50 ${isPrinting ? 'hidden' : ''}`}
                                                 title="Find Nearest Urgent Care/Hospital"
                                             >
                                                 {loadingHospital ? '...' : 'Find Nearest'}
@@ -491,7 +503,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Notes</h3>
                                         {isPrinting ? (
-                                            <div className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
+                                            <div className="w-full text-xs whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
                                         ) : (
                                             <textarea
                                                 value={data.notes || ''}
@@ -508,7 +520,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Basecamp</h3>
                                         {isPrinting ? (
-                                            <div className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
+                                            <div className="w-full text-xs whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
                                         ) : (
                                             <textarea
                                                 value={data.basecamp || ''}
