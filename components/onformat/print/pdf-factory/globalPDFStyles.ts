@@ -1,15 +1,5 @@
-import { StyleSheet, Font } from '@react-pdf/renderer';
+import { StyleSheet } from '@react-pdf/renderer';
 
-// --- 1. Font Registration ---
-Font.register({
-    family: 'Inter',
-    fonts: [
-        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff' },
-        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hjp-Ek-_EeA.woff', fontWeight: 600 },
-        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuDyDAZ9hjp-Ek-_EeA.woff', fontWeight: 700 },
-        { src: 'https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYAZ9hjp-Ek-_EeA.woff', fontWeight: 900 }
-    ]
-});
 
 // --- 2. Color Logic ---
 export const COLORS = {
@@ -37,7 +27,7 @@ export const globalPDFStyles = StyleSheet.create({
         paddingBottom: LAYOUT.padding,
         paddingLeft: LAYOUT.padding,
         paddingRight: LAYOUT.padding,
-        fontFamily: 'Inter',
+        fontFamily: 'Helvetica',
         fontSize: 9,
         color: COLORS.obsidian,
         backgroundColor: COLORS.white,

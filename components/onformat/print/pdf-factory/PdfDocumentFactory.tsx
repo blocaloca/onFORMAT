@@ -77,7 +77,7 @@ const CoverPage = ({ settings, logo }: { settings: any, logo?: string }) => (
         </View>
 
         <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
-            <Text style={{ fontSize: 10, fontFamily: 'Inter', color: '#9CA3AF', letterSpacing: 2 }}>
+            <Text style={{ fontSize: 10, fontFamily: 'Helvetica', color: '#9CA3AF', letterSpacing: 2 }}>
                 {settings.date}
             </Text>
         </View>
