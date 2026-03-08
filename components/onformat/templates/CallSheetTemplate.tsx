@@ -634,7 +634,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         })}
 
                                         {/* Actions */}
-                                        {!isLocked && canEditVitals && (pageIndex === totalPages - 1) && (
+                                        {!isLocked && !isPrinting && canEditVitals && (pageIndex === totalPages - 1) && (
                                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                                 <button
                                                     onClick={handleAddEvent}
@@ -758,7 +758,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )
                                     })}
 
-                                    {!isLocked && canEditVitals && (pageIndex === totalPages - 1) && (
+                                    {!isLocked && !isPrinting && canEditVitals && (pageIndex === totalPages - 1) && (
                                         <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                             <button
                                                 onClick={handleAddEvent}

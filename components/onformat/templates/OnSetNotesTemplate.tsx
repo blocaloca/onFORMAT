@@ -219,7 +219,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                     </div>
                                 )
                             })}
-                            {!isLocked && pageIndex === totalPages - 1 && (
+                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAdd}

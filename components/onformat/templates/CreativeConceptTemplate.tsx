@@ -154,7 +154,7 @@ export const CreativeConceptTemplate = ({
 
                         {/* Add Page Button - Rendered OUTSIDE content flow if possible, or at bottom */}
                         {/* We put it inside but separate from text area */}
-                        {index === pages.length - 1 && !isLocked && (
+                        {index === pages.length - 1 && !isLocked && !isPrinting && (
                             <div className="mt-4 flex justify-center print:hidden">
                                 <button
                                     onClick={handleAddPage}

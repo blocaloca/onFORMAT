@@ -193,7 +193,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
                                     )
                                 })}
-                                {!isLocked && pageIndex === totalPages - 1 && (
+                                {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                     <div className="pt-2">
                                         <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
                                             <Plus size={10} className="mr-1" /> Add Scene

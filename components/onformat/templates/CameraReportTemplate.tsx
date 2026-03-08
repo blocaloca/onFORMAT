@@ -354,7 +354,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
 
                             {/* Add Button - Only on Last Page */}
                             {/* Add Button - Only on Last Page */}
-                            {!isLocked && pageIndex === totalPages - 1 && (
+                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAddItem}
