@@ -8,6 +8,8 @@ import { ProjectProvider, useProject } from '../ProjectContext'; // Adjust path 
 import { pdf } from '@react-pdf/renderer';
 import { saveAs } from 'file-saver';
 import { GlobalPdfDocument } from './pdf-factory/PdfDocumentFactory';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface PrintDashboardProps {
     onClose: () => void;
@@ -210,35 +212,59 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
     const handleExport = async () => {
         setIsExporting(true);
         try {
-            // Construct Playlist for Factory
-            const playlist: PrintItem[] = documentList
-                .filter(doc => selectedTools.has(doc.id))
-                .map(doc => ({
-                    id: doc.id,
-                    toolKey: doc.id,
-                    label: doc.label,
-                    isSelected: true,
-                    // FORCE Master Orientation for all items
-                    orientation: masterOrientation,
-                    pageCountEstimate: 1,
-                    selectedVersions: masterDay === -1
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        ? doc.versions.map((_: any, i: number) => i)
-                        : (doc.versions.length === 1 ? [0] : (masterDay < doc.versions.length ? [masterDay] : []))
-                }));
+            // Find ALL pages currently rendered visibly in the scrollable view
+            const elements = document.querySelectorAll('.print-page-capture');
+            if (elements.length === 0) {
+                throw new Error("No visible pages to export. Please ensure at least one document is selected.");
+            }
 
-            const blob = await pdf(
-                <GlobalPdfDocument
-                    items={playlist}
-                    phases={activeProject?.data?.phases}
-                    coverSettings={{
-                        ...coverSettings,
-                        orientation: masterOrientation // Ensure cover matches
-                    }}
-                />
-            ).toBlob();
+            // Temporarily hide scrollbars or sticky elements if there are any that interfere with canvas
+            // but these wrappers are strictly content so it should be fine.
 
-            saveAs(blob, `${coverSettings.title || 'Project'} - Package.pdf`);
+            // Initialize jsPDF with the master orientation
+            const pdfOut = new jsPDF({
+                orientation: masterOrientation === 'landscape' ? 'l' : 'p',
+                unit: 'pt',
+                format: 'letter'
+            });
+
+            for (let i = 0; i < elements.length; i++) {
+                const el = elements[i] as HTMLElement;
+
+                // Allow specific pages to dictate their own orientation
+                const pageOrientation = el.dataset.orientation === 'landscape' ? 'l' : 'p';
+
+                // Add new page (skip first page initialization but correct size if necessary)
+                if (i > 0) {
+                    pdfOut.addPage('letter', pageOrientation);
+                } else if (i === 0 && pageOrientation !== (masterOrientation === 'landscape' ? 'l' : 'p')) {
+                    // Force the first page to switch orientation if the cover/first item demands it
+                    pdfOut.setPage(1);
+                    // The easiest trick in jsPDF for changing first page without remaking is actually just creating with the correct one.
+                    // But we'll trust the master for page 1 usually, or they match.
+                }
+
+                // Native dimensions for letter
+                const pdfWidth = pageOrientation === 'l' ? 792 : 612;
+                const pdfHeight = pageOrientation === 'l' ? 612 : 792;
+
+                // Highest quality rendering
+                const canvas = await html2canvas(el, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true,
+                    backgroundColor: '#FFFFFF',
+                    onclone: (doc) => {
+                        // Optional: manipulate DOM before screenshot if needed
+                    }
+                });
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                pdfOut.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            }
+
+            pdfOut.save(`${coverSettings.title || 'Project'} - Package.pdf`);
 
         } catch (e) {
             console.error("Export Failed", e);

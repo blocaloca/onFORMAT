@@ -24,7 +24,8 @@ export const PDFPreviewWrapper = ({ orientation, scale = 0.75, children }: PDFPr
                 style={{ width: scaledW, height: scaledH }}
             >
                 <div
-                    className="bg-white origin-top-left"
+                    className="bg-white origin-top-left print-page-capture"
+                    data-orientation={orientation}
                     style={{
                         width: w,
                         height: h,
