@@ -82,19 +82,6 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
     // Master Orientation State (Default to Landscape)
     const [masterOrientation, setMasterOrientation] = useState<'portrait' | 'landscape'>('landscape');
 
-    // Persistence: Load preference on mount
-    useEffect(() => {
-        const saved = localStorage.getItem('printroom_orientation');
-        if (saved === 'portrait' || saved === 'landscape') {
-            setMasterOrientation(saved);
-        }
-    }, []);
-
-    // Persistence: Save preference on change
-    useEffect(() => {
-        localStorage.setItem('printroom_orientation', masterOrientation);
-    }, [masterOrientation]);
-
     // UI State
     const [isExporting, setIsExporting] = useState(false);
     const [coverSettings, setCoverSettings] = useState({
@@ -105,6 +92,32 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
         orientation: 'landscape' as 'portrait' | 'landscape', // Will be overridden by masterOrientation in preview
         studioLogo: null as string | null
     });
+
+    // Persistence: Load preference on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('printroom_orientation');
+        if (saved === 'portrait' || saved === 'landscape') {
+            setMasterOrientation(saved);
+        }
+
+        const savedLogo = localStorage.getItem('printroom_studiologo');
+        if (savedLogo) {
+            setCoverSettings(s => ({ ...s, studioLogo: savedLogo }));
+        }
+    }, []);
+
+    // Persistence: Save preference on change
+    useEffect(() => {
+        localStorage.setItem('printroom_orientation', masterOrientation);
+    }, [masterOrientation]);
+
+    useEffect(() => {
+        if (coverSettings.studioLogo) {
+            localStorage.setItem('printroom_studiologo', coverSettings.studioLogo);
+        } else {
+            localStorage.removeItem('printroom_studiologo');
+        }
+    }, [coverSettings.studioLogo]);
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

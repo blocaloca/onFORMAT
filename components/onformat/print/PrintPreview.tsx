@@ -48,7 +48,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                             <div className="text-center space-y-8 p-12 w-full h-full flex flex-col items-center justify-center relative">
                                 {coverSettings.studioLogo && (
                                     <div className="absolute top-16 left-0 right-0 flex justify-center">
-                                        <img src={coverSettings.studioLogo} alt="Studio Logo" style={{ maxHeight: '48px', objectFit: 'contain', marginBottom: '24px' }} />
+                                        <img src={coverSettings.studioLogo} alt="Studio Logo" style={{ width: '200px', objectFit: 'contain', marginBottom: '24px' }} />
                                     </div>
                                 )}
                                 <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight mt-12">{coverSettings.title}</h1>

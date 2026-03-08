@@ -63,7 +63,7 @@ const CoverPage = ({ settings, logo }: { settings: any, logo?: string }) => (
                 // eslint-disable-next-line jsx-a11y/alt-text
                 <Image
                     src={logo}
-                    style={{ width: 64, height: 64, marginBottom: 24, objectFit: 'contain' }}
+                    style={{ width: 200, objectFit: 'contain', marginBottom: 24 }}
                 />
             )}
 
@@ -152,7 +152,7 @@ export const GlobalPdfDocument = ({ items, phases, coverSettings, brandSettings 
     return (
         <Document>
             {/* Cover Page */}
-            {coverSettings.showCover && <CoverPage settings={coverSettings} logo={brandSettings?.logo_url} />}
+            {coverSettings.showCover && <CoverPage settings={coverSettings} logo={coverSettings.studioLogo || brandSettings?.logo_url} />}
 
             {/* Document Playlist */}
             {items.map(item => {
