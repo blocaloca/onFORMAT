@@ -289,24 +289,6 @@ export default function DashboardPage() {
 
         const isFounderUser = hasAccess({ email: user.email }, 'enterprise');
 
-        if (!isFounderUser) {
-            const currentCount = projects.length;
-            const tier = profile?.subscription_tier;
-            const status = profile?.subscription_status;
-
-            if ((!status || status !== 'active') && currentCount >= 1) {
-                setIsUpgradeOpen(true);
-                setIsDialogOpen(false);
-                return;
-            }
-
-            if (status === 'active' && tier === 'pro' && currentCount >= 5) {
-                setIsUpgradeOpen(true);
-                setIsDialogOpen(false);
-                return;
-            }
-        }
-
         let payloadData = {
             clientName: client,
             producer: producer,
@@ -343,6 +325,11 @@ export default function DashboardPage() {
 
             if (!res.ok) {
                 console.error('API Error:', result);
+                if (result.code === 'PROJECT_LIMIT_REACHED' || result.code === 'TRIAL_EXPIRED') {
+                    setIsUpgradeOpen(true);
+                    setIsDialogOpen(false);
+                    return;
+                }
                 throw new Error(result.error || 'Failed to create/duplicate project');
             }
 
