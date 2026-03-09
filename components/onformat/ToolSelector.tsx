@@ -31,13 +31,17 @@ export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onP
         <aside className="w-64 flex-shrink-0 border-r border-industrial bg-industrial-surface h-full overflow-hidden flex flex-col z-20">
             {/* Top Section */}
             <div className="p-6 pb-2">
-                <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="h-10 w-auto object-contain mb-2" />
-                <Link
-                    href="/dashboard"
-                    className="text-[10px] bg-black text-white px-2 py-0.5 font-bold uppercase inline-block hover:bg-zinc-800 transition-colors mb-6"
-                >
-                    Back to Dashboard
-                </Link>
+                <div className="flex justify-center w-full mb-4">
+                    <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="h-20 w-auto object-contain" />
+                </div>
+                <div className="flex justify-center w-full mb-6">
+                    <Link
+                        href="/dashboard"
+                        className="text-[10px] bg-black text-white px-2 py-0.5 font-bold uppercase inline-block hover:bg-zinc-800 transition-colors"
+                    >
+                        Back to Dashboard
+                    </Link>
+                </div>
 
                 {/* AI Liaison Dock (Top) */}
                 {isAiDocked && toggleAiDock && (
