@@ -19,8 +19,8 @@ export const isFounder = (email?: string | null): boolean => {
 export const hasAccess = (user: { email?: string | null, subscription_status?: string }, featureRequiredTier: 'basic' | 'pro' | 'enterprise' = 'basic') => {
     if (isFounder(user.email)) return true;
 
-    // Normal Subscription Logic (Placeholder)
-    if (user.subscription_status === 'active') return true;
+    // Normal Subscription Logic
+    if (user.subscription_status === 'active' || user.subscription_status === 'trial') return true;
 
     return false;
 };

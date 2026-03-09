@@ -163,19 +163,43 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to verify project limits.' }, { status: 500 });
     }
 
-    // 2. Get user's subscription tier
+    // 2. Get user's subscription tier, status, and creation date for trial enforcement
     const { data: userProfile, error: tierError } = await supabase
       .from('profiles')
-      .select('subscription_tier')
+      .select('subscription_tier, subscription_status, created_at')
       .eq('id', finalUserId)
       .single();
 
-    // Default to 'free' (Scout) if no profile or error
+    // Default to 'free' (Solo) if no profile or error
     const tierKey = (userProfile?.subscription_tier || 'free') as keyof typeof STRIPE_PLANS;
     const plan = STRIPE_PLANS[tierKey] || STRIPE_PLANS.free;
+    const status = userProfile?.subscription_status || 'trial';
 
-    // 3. Enforce Limit
-    // Note: We check if count is >= max. (e.g. if max is 1, and they have 1, they cannot create another).
+    // Trial Enforcement Logic (14 days)
+    let isTrialExpired = false;
+    if (status === 'trial' && userProfile?.created_at) {
+      const createdAt = new Date(userProfile.created_at);
+      const now = new Date();
+      const daysSinceCreation = (now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24);
+      if (daysSinceCreation > 14) {
+        isTrialExpired = true;
+      }
+    }
+
+    if (!isFounder && isTrialExpired) {
+      console.warn(`⛔️ User ${finalUserId} trial expired.`);
+      return NextResponse.json(
+        {
+          error: 'Your 14-day free trial has expired. Please upgrade your membership to create new projects.',
+          code: 'TRIAL_EXPIRED',
+          tier: tierKey
+        },
+        { status: 403 }
+      );
+    }
+
+    // 3. Enforce General Project Limit
+    // Note: We check if count is >= max. (e.g. if max is 3, and they have 3, they cannot create another).
     if (!isFounder && (projectCount || 0) >= plan.maxProjects) {
       console.warn(`⛔️ User ${finalUserId} reached project limit for tier ${tierKey}. Count: ${projectCount}, Max: ${plan.maxProjects}`);
       return NextResponse.json(
@@ -188,7 +212,7 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
-    console.log(`✅ Limit Check Passed: ${isFounder ? 'Founder Override' : `${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects}`} (Tier: ${tierKey})`);
+    console.log(`✅ Limit Check Passed: ${isFounder ? 'Founder Override' : `${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects}`} (Tier: ${tierKey}, Trial: ${isTrialExpired ? 'Expired' : 'Active'})`);
     // ----------------------------
 
     // Construct proper initial state to prevent WorkspaceEditor crash

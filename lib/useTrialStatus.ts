@@ -27,13 +27,13 @@ export function useTrialStatus() {
 
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('plan_tier, trial_ends_at, manual_pro_override')
+                    .select('subscription_tier, subscription_status, created_at')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
                     // 1. Founder / Admin bypass
-                    if (isFounder(user.email) || profile.manual_pro_override) {
+                    if (isFounder(user.email)) {
                         setStatus({
                             isLocked: false,
                             daysLeft: 999, // Infinite
@@ -42,13 +42,15 @@ export function useTrialStatus() {
                         return;
                     }
 
+                    const statusVal = profile.subscription_status || 'trial';
+                    const createdAt = new Date(profile.created_at || new Date());
+                    const trialEndsAt = new Date(createdAt.getTime() + 14 * 24 * 60 * 60 * 1000);
                     const now = new Date();
-                    const trialEndsAt = new Date(profile.trial_ends_at || now);
 
                     const timeDiff = trialEndsAt.getTime() - now.getTime();
                     const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-                    const isLocked = now > trialEndsAt && profile.plan_tier === 'FREE_TRIAL';
+                    const isLocked = now > trialEndsAt && statusVal === 'trial';
 
                     setStatus({
                         isLocked,
