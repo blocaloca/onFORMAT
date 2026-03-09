@@ -4,6 +4,7 @@ import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Loader2, ArrowRight, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { GlassButton } from '@/components/ui/GlassButton'; // Using our new premium button
+import { getURL } from '@/lib/utils';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -159,7 +160,7 @@ export default function LoginPage() {
                   setLoading(true);
                   const { error } = await supabase.auth.signInWithOtp({
                     email,
-                    options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
+                    options: { emailRedirectTo: `${getURL()}auth/callback` }
                   });
                   setLoading(false);
                   if (error) setMessage(error.message);
