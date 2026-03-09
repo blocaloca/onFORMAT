@@ -74,7 +74,7 @@ export const getPhaseLabel = (key: Phase): string => {
 const NavHeader = () => (
     <div className={`p-8 pb-4 text-foreground`}>
         <Link href="/" className="block mb-10 hover:opacity-80 transition-opacity">
-            <span className="font-sans font-black tracking-tighter text-3xl">onFORMAT</span>
+            <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="h-10 w-auto object-contain" />
         </Link>
 
         <div className="h-px w-full bg-border opacity-50 mb-0" />
