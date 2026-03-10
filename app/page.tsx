@@ -174,12 +174,8 @@ export default function LandingPage() {
 
       {/* FOOTER */}
       <footer className="py-12 px-8 border-t border-zinc-200/80 bg-white text-center">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6">
           <p className="text-[10px] md:text-xs font-semibold text-zinc-400 uppercase tracking-widest">&copy; 2026 onFORMAT. All rights reserved.</p>
-          <div className="flex gap-8">
-            <Link href="/login" className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-zinc-800 transition-colors">Start Producing</Link>
-            <Link href="/pricing" className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-zinc-800 transition-colors">Pricing</Link>
-          </div>
         </div>
       </footer>
     </div>
