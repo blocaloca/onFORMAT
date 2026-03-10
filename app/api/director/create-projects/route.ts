@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         .insert({
           user_id: userId,
           name: projectData.name,
-          product_type: 'LuxPixPro',
+          product_type: 'Director',
           current_version: 1,
           data: {
             template_id: projectData.type,

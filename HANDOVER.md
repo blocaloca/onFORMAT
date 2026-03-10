@@ -29,7 +29,7 @@ git push origin main
 
 1.  Go to **[vercel.com](https://vercel.com)** and Log In.
 2.  Click **"Add New..."** -> **"Project"**.
-3.  You should see your GitHub repository listed (e.g., `creative-os`). Click **Import**.
+3.  You should see your GitHub repository listed (e.g., `onFORMAT`). Click **Import**.
 4.  **Important:** Do NOT click "Deploy" yet. Look for the **"Environment Variables"** section.
 
 ---
@@ -53,7 +53,7 @@ In the "Environment Variables" section on Vercel, add these exactly as shown.
 | `NEXT_PUBLIC_STRIPE_PRICE_ID_PRO` | The Price ID for your Pro Plan (`price_...`) |
 | | |
 | **APP Config** | |
-| `NEXT_PUBLIC_APP_URL` | Your Vercel URL (e.g., `https://creative-os.vercel.app`) - *You can update this after deployment* |
+| `NEXT_PUBLIC_APP_URL` | Your Vercel URL (e.g., `https://onformat.vercel.app`) - *You can update this after deployment* |
 
 ---
 

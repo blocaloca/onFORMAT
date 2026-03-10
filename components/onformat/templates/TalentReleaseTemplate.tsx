@@ -58,7 +58,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
     React.useEffect(() => {
         if (!data.productionCompany) {
             onUpdate({
-                productionCompany: 'CREATIVE OS PRODUCTIONS',
+                productionCompany: 'ONFORMAT PRODUCTIONS',
                 shootDate: new Date().toISOString().split('T')[0],
                 termsAccepted: false,
                 isCustom: false,

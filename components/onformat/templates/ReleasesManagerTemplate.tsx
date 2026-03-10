@@ -57,7 +57,7 @@ export const ReleasesManagerTemplate = ({
             dateCreated: new Date().toISOString(),
             data: {
                 // Initial empty data for the specific template
-                productionCompany: metadata?.producer || 'CREATIVE OS PRODUCTIONS',
+                productionCompany: metadata?.producer || 'ONFORMAT PRODUCTIONS',
                 shootDate: new Date().toISOString().split('T')[0]
             }
         };

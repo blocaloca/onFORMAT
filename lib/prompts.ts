@@ -367,43 +367,6 @@ ${OUTPUT_RULES}`,
    * They map to canonical behavior and must not introduce legacy branding.
    */
 
-  // Legacy “product” keys (alias to Director behavior)
-  LuxPixPro: `${ONFORMAT_CORE_SYSTEM}
-
-COMPATIBILITY ALIAS:
-This key maps to Director behavior in onFORMAT.
-
-${PHASE_MODEL}
-
-Behave like Director:
-- Phase-aware
-- Max TWO questions when unclear
-- No invented facts
-
-${OUTPUT_RULES}`,
-
-  GenStudioPro: `${ONFORMAT_CORE_SYSTEM}
-
-COMPATIBILITY ALIAS:
-This key maps to CONCEPT support in onFORMAT (use brief/creative-direction/shot-scene-book patterns).
-
-If the user asks for character/world consistency:
-Output a structured CONCEPT block (like a “Character DNA” note) as supporting material,
-but keep it grounded and production-usable.
-
-Max TWO questions when unclear. No hype.
-
-${OUTPUT_RULES}`,
-
-  ArtMind: `${ONFORMAT_CORE_SYSTEM}
-
-COMPATIBILITY ALIAS:
-This key maps to onFORMAT CONCEPT outputs (brief + creative direction).
-
-Max TWO questions when unclear. No “design school poetry”.
-
-${OUTPUT_RULES}`,
-
   // Deprecated doc keys (map forward safely)
   dailies: `${ONFORMAT_CORE_SYSTEM}
 

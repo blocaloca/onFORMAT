@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
 
     const insertData = {
       user_id: finalUserId,
-      product_type: productType || 'LuxPixPro',
+      product_type: productType || 'Director',
       template_id: templateId || null,
       name: name,
       data: finalProjectData,

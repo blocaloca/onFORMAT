@@ -1987,7 +1987,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
             status: 'draft',
             dateCreated: new Date().toISOString(),
             data: {
-                productionCompany: 'CREATIVE OS PRODUCTIONS',
+                productionCompany: 'ONFORMAT PRODUCTIONS',
                 shootDate: new Date().toISOString().split('T')[0],
                 // Pre-populate specific fields
                 ...(newReleaseType === 'talent' ? { talentName: newReleaseName } : { ownerName: newReleaseName })

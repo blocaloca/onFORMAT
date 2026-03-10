@@ -58,7 +58,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
     useEffect(() => {
         if (!data.productionCompany) {
             onUpdate({
-                productionCompany: 'CREATIVE OS PRODUCTIONS',
+                productionCompany: 'ONFORMAT PRODUCTIONS',
                 shootDates: new Date().toISOString().split('T')[0],
                 termsAccepted: false,
                 isCustom: false,

@@ -1,4 +1,4 @@
--- Creative OS Database Schema
+-- ONFORMAT Database Schema
 -- Run this in your Supabase SQL editor
 
 -- Enable UUID extension
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 CREATE TABLE IF NOT EXISTS projects (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  product_type TEXT CHECK (product_type IN ('LuxPixPro', 'GenStudioPro', 'ArtMind')) NOT NULL,
+  product_type TEXT NOT NULL,
   name TEXT NOT NULL,
   data JSONB DEFAULT '{}',
   current_version INTEGER DEFAULT 1,

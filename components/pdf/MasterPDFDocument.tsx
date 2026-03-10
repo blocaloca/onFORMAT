@@ -115,7 +115,7 @@ export const MasterPDFDocument: React.FC<MasterPDFProps> = ({ document, project,
         <DocumentWrapper
             metadata={{
                 title: document.title,
-                author: userName || 'Creative OS',
+                author: userName || 'ONFORMAT',
                 subject: `${project.name} - ${document.type}`
             }}
         >
