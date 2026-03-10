@@ -67,11 +67,15 @@ export default function LandingPage() {
         {/* IMAGE SLIDER */}
         <div className="relative w-full max-w-5xl mx-auto rounded-[2rem] border border-zinc-200/80 bg-white shadow-2xl overflow-hidden p-[6px] backdrop-blur-sm group">
           <div className="relative rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-100 aspect-[16/10]">
-            <img
-              src={SCREENSHOTS[currentSlide]}
-              alt={`onFORMAT Interface ${currentSlide + 1}`}
-              className="w-full h-full object-cover transition-opacity duration-500 ease-in-out"
-            />
+            {SCREENSHOTS.map((src, idx) => (
+              <img
+                key={idx}
+                src={src}
+                alt={`onFORMAT Interface ${idx + 1}`}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${idx === currentSlide ? 'opacity-100' : 'opacity-0'
+                  }`}
+              />
+            ))}
             {/* Slider Controls */}
             <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100 md:w-10 md:h-10">
               <ChevronLeft size={20} />
