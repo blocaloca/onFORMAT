@@ -87,7 +87,7 @@ ${tone}
   }
 
   // 🔑 CRITICAL: tool guidance is ALWAYS included
-  prompt += `\n${SYSTEM_PROMPTS[toolType] || SYSTEM_PROMPTS.LuxPixPro}\n`
+  prompt += `\n${SYSTEM_PROMPTS[toolType] || SYSTEM_PROMPTS.Director}\n`
 
   return prompt
 }
