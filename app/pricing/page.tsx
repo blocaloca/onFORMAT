@@ -83,6 +83,9 @@ export default function PricingPage() {
                     <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter text-zinc-900 uppercase">
                         Production-grade pricing.
                     </h1>
+                    <p className="text-zinc-500 font-medium text-lg leading-relaxed">
+                        Every account automatically starts with a <span className="text-zinc-900 font-bold">14-Day Free Trial</span>. <br className="hidden md:block" /> No credit card, commitment, or tier selection required until you're ready.
+                    </p>
                 </div>
 
                 {/* PRICING MATRIX */}

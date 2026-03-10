@@ -69,9 +69,15 @@ export default function LoginPage() {
 
         {/* LOGO & HEADER */}
         <div className="text-center mb-10 flex flex-col items-center">
-          <div className="w-64 max-w-[80vw] mx-auto flex justify-center">
+          <div className="w-64 max-w-[80vw] mx-auto flex justify-center mb-4">
             <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="w-full h-auto object-contain" />
           </div>
+          {!isLogin && (
+            <div className="text-zinc-600 font-medium text-sm">
+              Start your <span className="font-bold text-zinc-900">14-Day Free Trial</span>. <br />
+              <span className="text-xs text-zinc-400">No credit card or tier selection needed.</span>
+            </div>
+          )}
         </div>
 
         {/* GLASS CARD CONTAINER */}

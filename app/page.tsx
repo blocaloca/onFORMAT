@@ -37,7 +37,7 @@ export default function LandingPage() {
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
           <a href="#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</a>
           <Link href="/login" className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-            Start Producing <ArrowRight size={14} />
+            Start Free Trial <ArrowRight size={14} />
           </Link>
         </div>
       </nav>
@@ -51,9 +51,18 @@ export default function LandingPage() {
           CREATIVE PRODUCTION <br className="hidden md:block" />
           <span className="text-zinc-400 font-light">SYSTEM</span>
         </h1>
-        <p className="text-base md:text-xl text-zinc-500 font-medium max-w-3xl leading-relaxed mb-16">
+        <p className="text-base md:text-xl text-zinc-500 font-medium max-w-3xl leading-relaxed mb-8">
           A production-ready workflow for the modern creative producer. We've deconstructed the production workflow and rebuilt it around document building and team communication. A schedule change instantly updates the Call Sheet. A DIT entry made onset updates the producer’s laptop, instantly worldwide.
         </p>
+
+        <div className="flex flex-col items-center gap-4 mb-16">
+          <Link href="/login" className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
+            Start 14-Day Free Trial <ArrowRight size={18} />
+          </Link>
+          <p className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest">
+            No credit card • No tier selection required
+          </p>
+        </div>
 
         {/* IMAGE SLIDER */}
         <div className="relative w-full max-w-5xl mx-auto rounded-[2rem] border border-zinc-200/80 bg-white shadow-2xl overflow-hidden p-[6px] backdrop-blur-sm group">
