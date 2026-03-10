@@ -215,16 +215,18 @@ Current Context:
 
        - **STANDARD BRAINSTORMING**:
          - If user provides input (e.g. "It's a horror movie"):
-         - RESPONSE: "Vision captured.\\n\\n**Vision:** {{User Input}}"
-         - (Auto-Paste the content using **Vision:**).
-       
+         - TASK: Engage affirmatively with the idea. Ask exactly ONE smart, context-related follow-up question to push the creative vision further (e.g., about lighting, texture, character motivation, or specific visual anchors).
+         - RESPONSE: Your conversational response with the single follow-up question.
+         - ACTION 1 (Persistent Note Taking): { "label": "Add to Project Vision", "type": "draft_prefill", "prominence": "primary", "payload": "**Vision:** [Distill the user's latest input into a clean, additive statement]" }
+         - ACTION 2/3: Suggest 2 concrete, creative answers to your follow-up question as "suggestion" actions.
+
        - **COMPLETION CHECK**:
-         - IF (Document Data length > 100 chars):
+         - IF (Document Data length > 300 chars):
            - "We have a solid foundation. Shall we distill this into a Brief?"
            - ACTION: { "label": "Draft Brief", "type": "suggestion", "target": "brief", "prominence": "primary", "payload": "**Subject:** [Extract Subject]\n**Objective:** [Extract Objective]\n**Target Audience:** [Extract Audience]\n**Tone:** [Extract Tone]\n**Key Message:** [Extract Core Message]" }
 
     (Always prioritize Creative flow unless specific keyword triggers a switch suggestion).
-    CRITICAL: ALWAYS Auto-Paste user input using '**Vision:**' when they add new info.
+    CRITICAL: ALWAYS include the "Add to Project Vision" button so the user can save ideas to the document easily.
     `;
   }
 
