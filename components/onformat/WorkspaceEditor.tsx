@@ -764,26 +764,29 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         // --- AI Parsing Logic applied to Head ---
         // SPECIAL HANDLING: Parsing AI Markdown for Brief
         if (state.activeTool === 'brief') {
+            const visionMatch = incoming.match(/\*\*(?:Vision|Subject\/Product|Subject|Product|Client\/Brand|Project):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const objectiveMatch = incoming.match(/\*\*Objective:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const audienceMatch = incoming.match(/\*\*(?:Target )?Audience:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const toneMatch = incoming.match(/\*\*Tone(?: [&/\\,]+ Style)?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const messageMatch = incoming.match(/\*\*(?:Key )?Message:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const narrativeMatch = incoming.match(/\*\*(?:Narrative(?: \/ Creative Approach)?|Creative Approach|Concept):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const talentMatch = incoming.match(/\*\*(?:Talent(?: \/ Casting)?|Casting):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
+            const locationMatch = incoming.match(/\*\*(?:Location|Setting):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const deliverablesMatch = incoming.match(/\*\*Deliverables:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
-            if (objectiveMatch || audienceMatch || toneMatch || messageMatch) {
+            if (visionMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch || narrativeMatch || talentMatch || locationMatch || deliverablesMatch) {
                 const parsedUpdate: Record<string, any> = {};
+                if (visionMatch) parsedUpdate.product = visionMatch[1].trim();
                 if (objectiveMatch) parsedUpdate.objective = objectiveMatch[1].trim();
-                // Map "Audience" to "targetAudience"
                 if (audienceMatch) parsedUpdate.targetAudience = audienceMatch[1].trim();
                 if (toneMatch) parsedUpdate.tone = toneMatch[1].trim();
-                // Map "Message" to "keyMessage"
                 if (messageMatch) parsedUpdate.keyMessage = messageMatch[1].trim();
+                if (narrativeMatch) parsedUpdate.narrative = narrativeMatch[1].trim();
+                if (talentMatch) parsedUpdate.talent = talentMatch[1].trim();
+                if (locationMatch) parsedUpdate.location = locationMatch[1].trim();
                 if (deliverablesMatch) {
-                    // split by comma or newline
-                    parsedUpdate.deliverables = deliverablesMatch[1]
-                        .split(/[,;\n]/)
-                        .map(s => s.trim())
-                        .filter(s => s.length > 0);
+                    // Keep deliverables as a string block
+                    parsedUpdate.deliverables = deliverablesMatch[1].trim();
                 }
 
                 try {

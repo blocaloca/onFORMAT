@@ -117,17 +117,15 @@ Goal: lock the project intent, objective, audience, message, and high-level deli
 This serves as the foundation for the Script and Shot List.
 
 FORMAT:
-CLIENT/BRAND:
-PROJECT:
-PHASE: CONCEPT
-INTENT: (personal / commercial / editorial)
-FORMAT: (photo / video / hybrid)
-OBJECTIVE:
-AUDIENCE/PLATFORM:
-KEY MESSAGE:
-TONE & STYLE:
-DELIVERABLES: (high-level list)
-NOTES / RISKS: (only if obvious)
+**Vision:** (High-level summary of the product/project)
+**Objective:** (What is the primary goal?)
+**Target Audience:** (Who are we talking to?)
+**Tone & Style:** (Adjectives and visual feel)
+**Key Message:** (The one thing they should remember)
+**Narrative / Creative Approach:** (Story or execution details)
+**Talent / Casting:** (Demographics, roles, look)
+**Location / Setting:** (Studio, exact outdoor spots, etc)
+**Deliverables:** (List formats and aspect ratios)
 
 ${OUTPUT_RULES}`,
 
