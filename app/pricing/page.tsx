@@ -65,7 +65,7 @@ export default function PricingPage() {
         <div className="min-h-screen bg-zinc-50 text-zinc-950 font-sans selection:bg-blue-500 selection:text-white pb-24">
 
             {/* Nav */}
-            <nav className="fixed top-0 left-0 w-full z-50 px-6 md:px-12 py-5 flex items-center justify-between bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200">
+            <nav className="fixed top-0 w-full z-50 px-8 py-5 flex items-center justify-between bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200">
                 <Link href="/" className="flex items-center group">
                     <img src="/octo%20logo%202-%20long.png" alt="onFORMAT Logo" className="h-[50px] md:h-[60px] w-auto object-contain" />
                 </Link>
@@ -149,14 +149,16 @@ export default function PricingPage() {
                     </div>
 
                     {/* STUDIO */}
-                    <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden opacity-60">
+                    <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
                         {/* Overlay */}
-                        <div className="absolute inset-0 z-10 bg-zinc-50/40 backdrop-blur-[1px]"></div>
+                        <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px]"></div>
+
+                        {/* Top Badge */}
+                        <div className="absolute top-0 right-0 bg-zinc-900 text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-xl z-20 shadow-sm">
+                            COMING SOON
+                        </div>
 
                         <div className="relative z-0">
-                            <div className="absolute top-0 right-0 bg-zinc-200 text-zinc-500 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-                                COMING SOON
-                            </div>
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Studio Tier</h3>
                             <div className="flex items-baseline gap-1 mb-8">
                                 <span className="text-4xl font-black text-zinc-400">$129</span>
@@ -171,19 +173,14 @@ export default function PricingPage() {
                             </ul>
                         </div>
 
-                        <button disabled className="relative z-0 w-full bg-zinc-200 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                        <button disabled className="relative z-20 w-full bg-zinc-200 text-zinc-500 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed border border-zinc-300">
                             COMING SOON
                         </button>
                     </div>
 
                 </div>
 
-                {/* FAQ Link */}
-                <div className="mt-20 text-center">
-                    <a href="mailto:hello@onformat.io" className="inline-flex items-center gap-2 text-zinc-500 font-bold uppercase tracking-widest text-xs hover:text-zinc-900 transition-colors">
-                        Contact Sales <ArrowRight size={14} />
-                    </a>
-                </div>
+                {/* FAQ Link Removed */}
 
             </div>
         </div>

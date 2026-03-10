@@ -390,14 +390,16 @@ export default function AccountPage() {
                             </div>
 
                             {/* STUDIO */}
-                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden opacity-60">
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
                                 {/* Overlay */}
-                                <div className="absolute inset-0 z-10 bg-zinc-50/40 backdrop-blur-[1px]"></div>
+                                <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px]"></div>
+
+                                {/* Top Badge */}
+                                <div className="absolute top-0 right-0 bg-zinc-900 text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-bl-xl z-20 shadow-sm">
+                                    COMING SOON
+                                </div>
 
                                 <div className="relative z-0">
-                                    <div className="absolute top-0 right-0 bg-zinc-200 text-zinc-500 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-                                        COMING SOON
-                                    </div>
                                     <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Studio Tier</h3>
                                     <div className="flex items-baseline gap-1 mb-8">
                                         <span className="text-4xl font-black text-zinc-400">$129</span>
@@ -412,7 +414,7 @@ export default function AccountPage() {
                                     </ul>
                                 </div>
 
-                                <button disabled className="relative z-0 w-full bg-zinc-200 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                <button disabled className="relative z-20 w-full bg-zinc-200 text-zinc-500 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed border border-zinc-300">
                                     COMING SOON
                                 </button>
                             </div>
