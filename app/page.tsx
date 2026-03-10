@@ -127,7 +127,7 @@ export default function LandingPage() {
               <div className="absolute top-0 inset-x-0 h-6 bg-zinc-100 flex justify-center z-20">
                 <div className="w-20 h-4 bg-zinc-200 rounded-b-xl" />
               </div>
-              <img src="/assets/IMG_6708.PNG" alt="Onset Mobile Interface" className="w-full h-auto mt-2" onError={(e) => (e.currentTarget.src = '/assets/IMG_6707.PNG')} />
+              <img src="/assets/mobile-preview.png" alt="Onset Mobile Interface" className="w-full h-auto mt-2" />
             </div>
           </div>
           <div className="order-1 md:order-2">
