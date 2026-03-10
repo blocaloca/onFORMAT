@@ -68,13 +68,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8 relative z-10">
 
         {/* LOGO & HEADER */}
-        <div className="text-center mb-10">
-          <div className="w-48 mx-auto mb-6 flex justify-center">
-            <span className="font-sans font-black tracking-tighter text-4xl">onFORMAT</span>
+        <div className="text-center mb-10 flex flex-col items-center">
+          <div className="w-64 max-w-[80vw] mx-auto flex justify-center">
+            <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="w-full h-auto object-contain" />
           </div>
-          <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-[0.2em]">
-            Production Operating System
-          </p>
         </div>
 
         {/* GLASS CARD CONTAINER */}

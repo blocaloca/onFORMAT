@@ -2,192 +2,192 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Check, X, Loader2, ArrowRight } from 'lucide-react';
+import { Check, Loader2, ArrowRight } from 'lucide-react';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
 import { getClient } from '@/lib/supabase';
 
 export default function PricingPage() {
     const [user, setUser] = useState<any>(null);
+    const [profile, setProfile] = useState<any>(null);
     const supabase = getClient()
-    const [loading, setLoading] = useState(false);
-    const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
+    const [loading, setLoading] = useState<string | null>(null);
 
     useEffect(() => {
         const getUser = async () => {
             const { data: { user } } = await supabase.auth.getUser();
-            setUser(user);
+            if (user) {
+                setUser(user);
+                const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+                setProfile(data);
+            }
         };
         getUser();
     }, []);
 
-    const handleCheckout = async (priceId: string) => {
+    const handleCheckout = async (priceId: string, buttonId: string) => {
         if (!user) {
             window.location.href = '/login?redirect=/pricing';
             return;
         }
 
-        setLoading(true);
+        setLoading(buttonId);
         try {
             const res = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ priceId })
             });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || 'Network response was not ok');
+            }
+
             const data = await res.json();
             if (data.url) {
                 window.location.href = data.url;
             } else {
                 alert('Checkout failed. Please try again.');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert('An error occurred.');
+            alert(`Error launching checkout: ${error.message}`);
         } finally {
-            setLoading(false);
+            setLoading(null);
         }
     };
 
+    const isScout = user && (!profile || !profile.subscription_status || profile.subscription_tier === 'scout');
+    const isPro = user && profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro';
+    const isStudio = user && profile?.subscription_status === 'active' && profile?.subscription_tier === 'studio';
+
     return (
-        <div className="min-h-screen bg-black text-white font-sans selection:bg-emerald-500 selection:text-black">
+        <div className="min-h-screen bg-zinc-50 text-zinc-950 font-sans selection:bg-blue-500 selection:text-white pb-24">
 
             {/* Nav */}
-            <nav className="fixed top-0 left-0 w-full z-50 px-8 py-4 flex items-center justify-between bg-black/80 backdrop-blur-md border-b border-white/5">
-                <Link href="/" className="flex items-center gap-2 group">
-                    <span className="font-sans font-black tracking-tighter text-xl">onFORMAT</span>
-                    <span className="text-sm font-bold tracking-widest uppercase ml-2 text-zinc-500">Pricing</span>
+            <nav className="fixed top-0 left-0 w-full z-50 px-6 md:px-12 py-5 flex items-center justify-between bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200">
+                <Link href="/" className="flex items-center gap-3 group">
+                    <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="h-8 w-auto object-contain" />
+                    <span className="font-bold tracking-widest text-[10px] md:text-xs uppercase text-zinc-800">onFORMAT</span>
                 </Link>
-                <Link href={user ? "/dashboard" : "/login"} className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
-                    {user ? "Back to Dashboard" : "Log In"}
-                </Link>
+                <div className="flex items-center gap-8">
+                    <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                        {user ? "Back to Dashboard" : "Log In"} <ArrowRight size={14} />
+                    </Link>
+                </div>
             </nav>
 
-            <div className="max-w-7xl mx-auto px-8 pt-32 pb-20">
+            <div className="max-w-6xl mx-auto px-6 md:px-12 pt-40">
 
                 {/* Header */}
-                <div className="text-center mb-20 max-w-3xl mx-auto">
-                    <h1 className="text-4xl md:text-6xl font-light mb-6 tracking-wide">
+                <div className="text-center mb-16 max-w-2xl mx-auto">
+                    <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter text-zinc-900 uppercase">
                         Production-grade pricing.
                     </h1>
-                    <p className="text-zinc-400 text-lg md:text-xl font-light leading-relaxed">
-                        Start for free, upgrade when you need the power. No hidden fees, cancel anytime.
-                    </p>
                 </div>
 
-                {/* Tiers Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                {/* PRICING MATRIX */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    {/* SCOUT (Free) */}
-                    <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-8 relative overflow-hidden group hover:border-zinc-700 transition-colors">
-                        <div className="mb-8">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-2">Scout</h3>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-4xl font-light text-white">$0</span>
-                                <span className="text-sm text-zinc-500 font-mono">/mo</span>
+                    {/* SOLO */}
+                    <div className="bg-white border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between hover:border-zinc-300 transition-colors">
+                        <div>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Solo Tier</h3>
+                            <div className="flex items-baseline gap-1 mb-8">
+                                <span className="text-4xl font-black text-zinc-950">$19</span>
+                                <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
-                            <p className="text-zinc-500 text-sm mt-4 leading-relaxed">
-                                Perfect for independent producers just getting started with the system.
-                            </p>
-                        </div>
-
-                        <div className="space-y-4 mb-8">
-                            <ul className="space-y-3">
-                                {STRIPE_PLANS.free.features.map((feature, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-sm text-zinc-300">
-                                        <Check size={16} className="mt-0.5 text-zinc-500 shrink-0" />
-                                        <span>{feature}</span>
+                            <ul className="space-y-4 mb-10">
+                                {['3 Active Projects'].map(f => (
+                                    <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
+                                        <Check size={14} className="text-zinc-400" /> {f}
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        <Link
-                            href={user ? "/dashboard" : "/signup"}
-                            className="block w-full text-center py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold uppercase tracking-widest text-xs rounded-lg transition-colors"
-                        >
-                            {user ? "Plan Active" : "Start For Free"}
-                        </Link>
+                        {isScout ? (
+                            <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                CURRENT PLAN
+                            </button>
+                        ) : (
+                            <Link href="/login" className="block text-center w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-colors">
+                                {user ? "DOWNGRADE" : "GET STARTED"}
+                            </Link>
+                        )}
                     </div>
 
-                    {/* PRO (Paid) */}
-                    <div className="bg-black border border-emerald-900/50 rounded-2xl p-8 relative overflow-hidden ring-1 ring-emerald-500/20 shadow-2xl shadow-emerald-900/10 scale-105 z-10">
-                        <div className="absolute top-0 right-0 bg-emerald-500 text-black text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-bl-lg">
-                            Most Popular
-                        </div>
-
-                        <div className="mb-8">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-emerald-500 mb-2">Pro</h3>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-5xl font-light text-white">$15</span>
-                                <span className="text-sm text-zinc-500 font-mono">/mo</span>
+                    {/* PRO */}
+                    <div className="bg-white border border-zinc-300 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:border-zinc-400 transition-colors">
+                        <div>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-900 mb-2">Pro Tier</h3>
+                            <div className="flex items-baseline gap-1 mb-8">
+                                <span className="text-4xl font-black text-zinc-950">$49</span>
+                                <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
-                            <p className="text-zinc-400 text-sm mt-4 leading-relaxed">
-                                For working producers managing multiple active projects.
-                            </p>
-                        </div>
-
-                        <div className="space-y-4 mb-8">
-                            <ul className="space-y-3">
-                                {STRIPE_PLANS.pro.features.map((feature, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-sm text-white">
-                                        <Check size={16} className="mt-0.5 text-emerald-500 shrink-0" />
-                                        <span>{feature}</span>
+                            <ul className="space-y-4 mb-10">
+                                {['Unlimited Active Projects', 'Custom Studio Branding'].map(f => (
+                                    <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
+                                        <Check size={14} className="text-zinc-600" /> {f}
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        <button
-                            onClick={() => handleCheckout(STRIPE_PLANS.pro.id)}
-                            disabled={loading}
-                            className="w-full py-4 bg-white text-black hover:bg-emerald-400 font-bold uppercase tracking-widest text-xs rounded-lg transition-colors flex items-center justify-center gap-2"
-                        >
-                            {loading ? <Loader2 size={16} className="animate-spin" /> : "Upgrade to Pro"}
-                        </button>
+                        {isPro ? (
+                            <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                CURRENT PLAN
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => handleCheckout(STRIPE_PLANS.pro.id, 'pro')}
+                                disabled={loading === 'pro'}
+                                className="w-full bg-blue-600 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                            >
+                                {loading === 'pro' ? <Loader2 size={16} className="animate-spin" /> : "UPGRADE"}
+                            </button>
+                        )}
                     </div>
 
-                    {/* STUDIO (Top) */}
-                    <div className="bg-zinc-900/30 border border-zinc-800 rounded-2xl p-8 relative overflow-hidden group hover:border-zinc-700 transition-colors">
-                        <div className="mb-8">
-                            <h3 className="text-sm font-bold uppercase tracking-widest text-purple-400 mb-2">Studio</h3>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-4xl font-light text-white">$29</span>
-                                <span className="text-sm text-zinc-500 font-mono">/mo</span>
+                    {/* STUDIO */}
+                    <div className="bg-white border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between hover:border-zinc-300 transition-colors">
+                        <div>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Studio Tier</h3>
+                            <div className="flex items-baseline gap-1 mb-8">
+                                <span className="text-4xl font-black text-zinc-950">$129</span>
+                                <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
-                            <p className="text-zinc-500 text-sm mt-4 leading-relaxed">
-                                Unlimited power for production companies and heavy users.
-                            </p>
-                        </div>
-
-                        <div className="space-y-4 mb-8">
-                            <ul className="space-y-3">
-                                {STRIPE_PLANS.studio.features.map((feature, i) => (
-                                    <li key={i} className="flex items-start gap-3 text-sm text-zinc-300">
-                                        <Check size={16} className="mt-0.5 text-purple-500 shrink-0" />
-                                        <span>{feature}</span>
+                            <ul className="space-y-4 mb-10">
+                                {['Unlimited Active Projects', '3 Producer Seats', 'Priority Support'].map(f => (
+                                    <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
+                                        <Check size={14} className="text-zinc-400" /> {f}
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        <button
-                            onClick={() => handleCheckout(STRIPE_PLANS.studio.id)}
-                            disabled={loading}
-                            className="w-full py-4 bg-zinc-800 hover:bg-zinc-700 text-white font-bold uppercase tracking-widest text-xs rounded-lg transition-colors"
-                        >
-                            {loading ? <Loader2 size={16} className="animate-spin" /> : "Upgrade to Studio"}
-                        </button>
+                        {isStudio ? (
+                            <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                CURRENT PLAN
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => handleCheckout(STRIPE_PLANS.studio.id, 'studio')}
+                                disabled={loading === 'studio'}
+                                className="w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-colors flex justify-center items-center gap-2"
+                            >
+                                {loading === 'studio' ? <Loader2 size={16} className="animate-spin" /> : "UPGRADE"}
+                            </button>
+                        )}
                     </div>
 
                 </div>
 
                 {/* FAQ Link */}
-                <div className="mt-20 text-center border-t border-zinc-800 pt-12">
-                    <p className="text-zinc-500 text-sm mb-4">
-                        Have questions about the plans?
-                    </p>
-                    <Link href="/support" className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs border-b border-white/20 pb-1 hover:border-white transition-colors">
-                        Visit Support Center <ArrowRight size={14} />
-                    </Link>
+                <div className="mt-20 text-center">
+                    <a href="mailto:hello@onformat.io" className="inline-flex items-center gap-2 text-zinc-500 font-bold uppercase tracking-widest text-xs hover:text-zinc-900 transition-colors">
+                        Contact Sales <ArrowRight size={14} />
+                    </a>
                 </div>
 
             </div>
