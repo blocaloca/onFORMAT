@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight, Compass, Layers, Printer, CheckCircle } from 'lucide-react';
 
 const SCREENSHOTS = [
-  '/assets/Screenshot%202026-03-09%20at%202.07.23%20PM.png',
-  '/assets/Screenshot%202026-03-09%20at%202.08.20%20PM.png',
-  '/assets/Screenshot%202026-03-09%20at%202.10.09%20PM.png',
-  '/assets/Screenshot%202026-03-09%20at%202.17.27%20PM.png',
-  '/assets/Screenshot%202026-03-09%20at%202.18.35%20PM.png'
+  '/assets/slider-1.png',
+  '/assets/slider-2.png',
+  '/assets/slider-3.png',
+  '/assets/slider-4.png',
+  '/assets/slider-5.png'
 ];
 
 export default function LandingPage() {
