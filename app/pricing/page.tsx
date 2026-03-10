@@ -150,35 +150,31 @@ export default function PricingPage() {
                     </div>
 
                     {/* STUDIO */}
-                    <div className="bg-white border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between hover:border-zinc-300 transition-colors">
-                        <div>
+                    <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden opacity-60">
+                        {/* Overlay */}
+                        <div className="absolute inset-0 z-10 bg-zinc-50/40 backdrop-blur-[1px]"></div>
+
+                        <div className="relative z-0">
+                            <div className="absolute top-0 right-0 bg-zinc-200 text-zinc-500 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg">
+                                COMING SOON
+                            </div>
                             <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Studio Tier</h3>
                             <div className="flex items-baseline gap-1 mb-8">
-                                <span className="text-4xl font-black text-zinc-950">$129</span>
+                                <span className="text-4xl font-black text-zinc-400">$129</span>
                                 <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
                             <ul className="space-y-4 mb-10">
                                 {['Unlimited Active Projects', '3 Producer Seats', 'Priority Support'].map(f => (
-                                    <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
-                                        <Check size={14} className="text-zinc-400" /> {f}
+                                    <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-400 uppercase tracking-tight">
+                                        <Check size={14} className="text-zinc-300" /> {f}
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        {isStudio ? (
-                            <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
-                                CURRENT PLAN
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => handleCheckout(STRIPE_PLANS.studio.id, 'studio')}
-                                disabled={loading === 'studio'}
-                                className="w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-colors flex justify-center items-center gap-2"
-                            >
-                                {loading === 'studio' ? <Loader2 size={16} className="animate-spin" /> : "UPGRADE"}
-                            </button>
-                        )}
+                        <button disabled className="relative z-0 w-full bg-zinc-200 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                            COMING SOON
+                        </button>
                     </div>
 
                 </div>
