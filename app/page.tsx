@@ -1,242 +1,188 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import { getClient } from '@/lib/supabase';
+import { ArrowRight, ChevronLeft, ChevronRight, Compass, Layers, Printer, CheckCircle } from 'lucide-react';
+
+const SCREENSHOTS = [
+  '/assets/Screenshot%202026-03-09%20at%202.07.23%20PM.png',
+  '/assets/Screenshot%202026-03-09%20at%202.08.20%20PM.png',
+  '/assets/Screenshot%202026-03-09%20at%202.10.09%20PM.png',
+  '/assets/Screenshot%202026-03-09%20at%202.17.27%20PM.png',
+  '/assets/Screenshot%202026-03-09%20at%202.18.35%20PM.png'
+];
 
 export default function LandingPage() {
-  const supabase = getClient();
-  const [isHovering, setIsHovering] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
-    const fetchAvatar = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase.from('profiles').select('avatar_url').eq('id', user.id).single();
-        if (data?.avatar_url) setAvatarUrl(data.avatar_url);
-      }
-    };
-    fetchAvatar();
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
+    }, 5000);
+    return () => clearInterval(timer);
   }, []);
 
-  // Handle hover interactions for Hero Video
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => { });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
-  };
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + SCREENSHOTS.length) % SCREENSHOTS.length);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans overflow-x-hidden selection:bg-green-500 selection:text-black relative">
+    <div className="min-h-screen bg-[#F9F9FB] text-zinc-900 font-sans tracking-tight selection:bg-zinc-200">
 
-      {/* 1. Header (Fixed) */}
-      <nav className="fixed top-0 w-full z-50 px-8 py-4 flex items-center justify-between mix-blend-difference pointer-events-none">
-
-        {/* Left: Logo & Pricing */}
-        <div className="flex items-center gap-8 pointer-events-auto">
-          <div className="flex items-center h-20">
-            <span className="font-sans font-black tracking-tighter text-4xl">onFORMAT</span>
-          </div>
-          <Link href="/pricing" className="hidden md:block text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition-colors">
-            Pricing
+      {/* HEADER */}
+      <nav className="fixed top-0 w-full z-50 px-8 py-5 flex items-center justify-between bg-white/70 backdrop-blur-2xl border-b border-zinc-200 shadow-sm">
+        <Link href="/" className="flex items-center gap-3">
+          <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="h-8 w-auto object-contain" />
+          <span className="font-bold tracking-widest text-[10px] md:text-xs uppercase text-zinc-800">onFORMAT</span>
+        </Link>
+        <div className="flex items-center gap-8">
+          <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
+          <a href="#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</a>
+          <Link href="/login" className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+            Start Producing <ArrowRight size={14} />
           </Link>
         </div>
-
-        <Link href="/dashboard" className="absolute top-6 right-8 flex items-center gap-3 group pointer-events-auto">
-          {avatarUrl ? (
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-zinc-700 group-hover:border-white transition-colors">
-              <img src={avatarUrl} alt="Account" className="w-full h-full object-cover" />
-            </div>
-          ) : (
-            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-orange-500 to-green-500 group-hover:scale-110 transition-transform" />
-          )}
-          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">
-            Account
-          </span>
-        </Link>
       </nav>
 
-      {/* 2. Hero Section (Full Screen) */}
-      <section className="relative h-screen flex flex-col justify-center px-8 md:px-20 pt-20">
-
-        {/* HERO CONTENT */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-12 items-center pointer-events-none">
-          <div className="hidden md:block md:col-span-5 pointer-events-auto">
-            <div className="bg-zinc-100 border border-zinc-300 shadow-2xl rounded-xl aspect-video flex items-center justify-center text-zinc-400 font-mono text-sm">LIGHT MODE UI RENDER HERE</div>
-          </div>
-          <div className="md:col-span-7 flex flex-col items-start pointer-events-auto">
-
-            <h1 className="text-5xl md:text-7xl font-light mb-8 tracking-widest leading-none uppercase">
-              CREATIVE<br />
-              PRODUCTION<br />
-              SYSTEM
-            </h1>
-
-            <p className="text-lg md:text-xl text-white font-normal leading-relaxed max-w-4xl mb-12">
-              A production-first ai-enabled workflow for the modern creative content producer.
-            </p>
-
-            <Link href="/dashboard" className="bg-blue-500 text-white rounded-md px-8 py-3 font-bold tracking-wide hover:bg-blue-600 active:scale-[0.98] transition-all pointer-events-auto">
-              START PRODUCING
-            </Link>
-
-          </div>
+      {/* HERO SECTION */}
+      <section className="pt-40 pb-20 px-4 md:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
+        <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-200 bg-white shadow-sm text-[10px] md:text-xs font-bold text-zinc-500 uppercase tracking-widest">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Production-Ready
         </div>
+        <h1 className="text-5xl md:text-8xl font-extrabold tracking-tighter text-zinc-900 mb-8 leading-[0.95] uppercase">
+          CREATIVE PRODUCTION <br className="hidden md:block" />
+          <span className="text-zinc-400 font-light">SYSTEM</span>
+        </h1>
+        <p className="text-base md:text-xl text-zinc-500 font-medium max-w-3xl leading-relaxed mb-16">
+          A production-ready workflow for the modern creative producer. We've deconstructed the production workflow and rebuilt it around document building and team communication. A schedule change instantly updates the Call Sheet. A DIT entry made onset updates the producer’s laptop, instantly worldwide.
+        </p>
 
-        {/* Feature Columns (Bottom of Hero) - Now Light Grey Text */}
-        <div className="absolute bottom-12 left-0 w-full px-8 md:px-20 z-10 pointer-events-none">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-white/10 pt-8 max-w-7xl mx-auto pointer-events-auto">
-            <FeatureColumn
-              title="AI Liaison"
-              text="Brainstorm logic, draft notes, and refine treatments with an assistant that understands production."
+        {/* IMAGE SLIDER */}
+        <div className="relative w-full max-w-5xl mx-auto rounded-[2rem] border border-zinc-200/80 bg-white shadow-2xl overflow-hidden p-[6px] backdrop-blur-sm group">
+          <div className="relative rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-100 aspect-[16/10]">
+            <img
+              src={SCREENSHOTS[currentSlide]}
+              alt={`onFORMAT Interface ${currentSlide + 1}`}
+              className="w-full h-full object-cover transition-opacity duration-500 ease-in-out"
             />
-            <FeatureColumn
-              title="Dynamic Documents"
-              text="Briefs, Treatments, Scripts, and Budgets that live together. Data flows between phases."
-            />
-            <FeatureColumn
-              title="Production Ready"
-              text="Built for the set. Dark mode native, offline capable, and rigorous workflows."
-            />
+            {/* Slider Controls */}
+            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100 md:w-10 md:h-10">
+              <ChevronLeft size={20} />
+            </button>
+            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
+              <ChevronRight size={20} />
+            </button>
+            {/* Dots */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {SCREENSHOTS.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${i === currentSlide ? 'bg-zinc-800 scale-125' : 'bg-black/20 hover:bg-black/40'}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-
-      {/* 3. SCROLL SECTION: IRL MOBILE MOBILE */}
-      <section className="relative w-full bg-zinc-900 overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 min-h-[80vh]">
-          {/* Image Side */}
-          <div className="relative h-[60vh] md:h-auto w-full p-12 flex items-center justify-center bg-zinc-900 border-r border-white/5">
-            <div className="bg-zinc-100 border border-zinc-300 shadow-2xl rounded-xl aspect-video w-full max-w-sm flex items-center justify-center text-zinc-400 font-mono text-sm">LIGHT MODE UI RENDER HERE</div>
+      {/* THREE PILLARS (Silver UI style) */}
+      <section className="py-24 md:py-32 px-4 md:px-8 max-w-7xl mx-auto border-t border-zinc-200/60">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 md:p-10 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+              <Compass className="text-zinc-700" size={24} />
+            </div>
+            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">AI LIAISON</h3>
+            <p className="text-zinc-500 leading-relaxed font-medium">
+              Brainstorm creative with an AI trained in modern content creation.
+            </p>
           </div>
 
-          {/* Content Side */}
-          <div className="flex flex-col justify-center p-12 md:p-24 bg-zinc-950 text-white">
-            <h2 className="text-4xl md:text-6xl font-light mb-8 tracking-wide">
-              on<span className="font-bold text-green-500">SET</span><br />
-              IN HAND.
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 md:p-10 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+              <Layers className="text-zinc-700" size={24} />
+            </div>
+            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">POWER-UP PRODUCER!</h3>
+            <p className="text-zinc-500 leading-relaxed font-medium">
+              Maintain multiple projects simultaneously. 18 Creative and Production Documents from Development to Post. You set crew permissions, they see what’s important for their role.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 md:p-10 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+              <Printer className="text-zinc-700" size={24} />
+            </div>
+            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">PRINTROOM</h3>
+            <p className="text-zinc-500 leading-relaxed font-medium">
+              All your filled documents, rendered beautifully in PDF, client ready with custom cover sheet.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ONSET MOBILE */}
+      <section className="py-24 md:py-32 px-4 md:px-8 bg-white border-y border-zinc-200/60 overflow-hidden relative">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-center">
+          <div className="order-2 md:order-1 flex justify-center perspective-[1000px]">
+            <div className="relative w-[280px] md:w-[320px] rounded-[3rem] border-[10px] border-zinc-100 bg-zinc-50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden ring-1 ring-zinc-200 transform rotate-y-[-5deg] rotate-x-[5deg]">
+              <div className="absolute top-0 inset-x-0 h-6 bg-zinc-100 flex justify-center z-20">
+                <div className="w-20 h-4 bg-zinc-200 rounded-b-xl" />
+              </div>
+              <img src="/assets/IMG_6708.PNG" alt="Onset Mobile Interface" className="w-full h-auto mt-2" onError={(e) => (e.currentTarget.src = '/assets/IMG_6707.PNG')} />
+            </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-zinc-900 mb-6 uppercase leading-none">
+              ONSET MOBILE.
             </h2>
-            <p className="text-xl text-zinc-400 font-light leading-relaxed max-w-md mb-8">
-              The first mobile interface designed for the actual chaos of production.
-              View call sheets, approve shots, and sync with your team in real-time.
+            <p className="text-xl text-zinc-500 font-medium leading-relaxed mb-8">
+              The first mobile interface designed for the actual chaos of production. Once logged-in, the crew is unified in a digital environment.
             </p>
-            <div className="w-16 h-1 bg-green-500 rounded-full" />
+            <ul className="space-y-5">
+              <li className="flex items-center gap-4 text-zinc-700 font-medium text-lg">
+                <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle size={16} className="text-zinc-500" />
+                </div>
+                View call sheets instantly
+              </li>
+              <li className="flex items-center gap-4 text-zinc-700 font-medium text-lg">
+                <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle size={16} className="text-zinc-500" />
+                </div>
+                Approve shots on the fly
+              </li>
+              <li className="flex items-center gap-4 text-zinc-700 font-medium text-lg">
+                <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle size={16} className="text-zinc-500" />
+                </div>
+                Sync with your team in real-time
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* 4. PRICING SECTION SKELETON */}
-      <section className="py-24 px-8 md:px-20 bg-zinc-950 border-t border-white/5">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-light tracking-wide uppercase mb-4">Pricing</h2>
-          <p className="text-zinc-400">Simple plans for serious productions.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Tier 1 */}
-          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col">
-            <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-2">Basic</h3>
-            <p className="text-zinc-400 flex-1 mb-8">For independent producers and small teams.</p>
-            <div className="text-3xl font-light mb-8">$0<span className="text-sm text-zinc-500">/mo</span></div>
-            <button className="w-full bg-white/10 text-white rounded-md px-6 py-3 font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">Select</button>
-          </div>
-          {/* Tier 2 */}
-          <div className="bg-white/10 border border-white/20 p-8 rounded-2xl flex flex-col relative scale-[1.02] shadow-2xl">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full text-white">Recommended</div>
-            <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-2">Pro</h3>
-            <p className="text-zinc-400 flex-1 mb-8">For commercial production companies.</p>
-            <div className="text-3xl font-light mb-8">$49<span className="text-sm text-zinc-500">/mo</span></div>
-            <button className="w-full bg-blue-500 text-white rounded-md px-6 py-3 font-bold uppercase tracking-widest hover:bg-blue-600 transition-colors">Select</button>
-          </div>
-          {/* Tier 3 */}
-          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col">
-            <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-2">Enterprise</h3>
-            <p className="text-zinc-400 flex-1 mb-8">For studio-level workflows and custom integrations.</p>
-            <div className="text-3xl font-light mb-8">Custom</div>
-            <button className="w-full bg-white/10 text-white rounded-md px-6 py-3 font-bold uppercase tracking-widest hover:bg-white/20 transition-colors">Contact Us</button>
-          </div>
-        </div>
+      {/* CONTACT CTA */}
+      <section id="contact" className="py-24 md:py-32 px-4 md:px-8 max-w-4xl mx-auto text-center">
+        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-zinc-900 mb-6 uppercase">Let's build together.</h2>
+        <p className="text-lg md:text-xl text-zinc-500 font-medium mb-12 max-w-2xl mx-auto">
+          Need custom enterprise workflows or a unified system for your entire production house? We’re ready to help.
+        </p>
+        <a href="mailto:hello@onformat.io" className="inline-flex items-center gap-3 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1">
+          Contact Us <ArrowRight size={16} />
+        </a>
       </section>
 
-      {/* 5. SCROLL SECTION: EXPLAINERS / FOUNDER */}
-      <section className="py-24 px-8 md:px-20 bg-zinc-950 max-w-7xl mx-auto border-t border-white/5">
-
-        {/* Explainers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 mb-32">
-          <div>
-            <h3 className="text-2xl font-bold uppercase tracking-widest text-white mb-6">The System</h3>
-            <p className="text-zinc-400 leading-relaxed text-lg">
-              onFORMAT isn't just a set of tools; it's an operating system. We've deconstructed the production workflow and rebuilt it around data permanence. A script change instantly updates the schedule. A budget tweak reflects in the treatment. No more version control nightmares.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-2xl font-bold uppercase tracking-widest text-white mb-6">The Intelligence</h3>
-            <p className="text-zinc-400 leading-relaxed text-lg">
-              Our AI isn't a chatbot wrapper. It's a context-aware production coordinator. It knows your locations, your cast, and your constraints. It suggests generated shot lists based on your script and warns you if you're going into overtime before you even book the day.
-            </p>
-          </div>
-        </div>
-
-        {/* Founder Statement */}
-        <div className="border-t border-white/10 pt-20">
-          <blockquote className="max-w-4xl mx-auto relative">
-            <span className="absolute -top-10 -left-10 text-9xl text-green-500/10 font-serif">"</span>
-            <p className="text-3xl md:text-5xl font-light leading-snug tracking-wide text-zinc-300 mb-8 italic">
-              We built onFORMAT because we were tired of running million-dollar productions on spreadsheets and hope. It's time for software that works as hard as the crew.
-            </p>
-            <footer className="text-zinc-500 font-mono text-sm tracking-widest uppercase flex items-center gap-4">
-              <div className="w-8 h-8 rounded-full bg-zinc-800" /> {/* Placeholder for avatar if needed */}
-              <span>Founder Statement</span>
-            </footer>
-          </blockquote>
-        </div>
-
-      </section>
-
-      {/* Footer */}
-      <footer className="py-12 text-center text-zinc-800 text-xs font-mono uppercase bg-zinc-950 border-t border-white/5">
-        <div className="flex flex-col gap-4">
-          <p className="text-zinc-600">&copy; 2026 onFORMAT. All rights reserved.</p>
-          <div className="flex justify-center gap-6">
-            <Link href="/support" className="text-zinc-500 hover:text-zinc-300 text-xs tracking-widest uppercase transition-colors">Support</Link>
-            <span className="text-zinc-800">•</span>
-            <Link href="/support" className="text-zinc-500 hover:text-zinc-300 text-xs tracking-widest uppercase transition-colors">Terms of Service</Link>
-            <span className="text-zinc-800">•</span>
-            <Link href="/support" className="text-zinc-500 hover:text-zinc-300 text-xs tracking-widest uppercase transition-colors">Privacy Policy</Link>
+      {/* FOOTER */}
+      <footer className="py-12 px-8 border-t border-zinc-200/80 bg-white text-center">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-[10px] md:text-xs font-semibold text-zinc-400 uppercase tracking-widest">&copy; 2026 onFORMAT. All rights reserved.</p>
+          <div className="flex gap-8">
+            <Link href="/login" className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-zinc-800 transition-colors">Start Producing</Link>
+            <Link href="/pricing" className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest hover:text-zinc-800 transition-colors">Pricing</Link>
           </div>
         </div>
       </footer>
-
     </div>
   );
 }
-
-// Sub components
-const PlusIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6 0V12M0 6H12" stroke="white" strokeWidth="3" />
-  </svg>
-);
-
-// Updated FeatureColumn with lighter text color class passed or default updated?
-// I'll update the component definition below to use lighter text defaults.
-const FeatureColumn = ({ title, text }: { title: string, text: string }) => (
-  <div>
-    <h3 className="text-xs font-bold uppercase tracking-widest text-white mb-2">{title}</h3>
-    <p className="text-[10px] text-zinc-300 leading-relaxed font-mono uppercase"> {/* Updated to text-zinc-300 */}
-      {text}
-    </p>
-  </div>
-);
