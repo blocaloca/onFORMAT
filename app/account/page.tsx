@@ -11,6 +11,7 @@ export default function AccountPage() {
     const router = useRouter();
     const supabase = getClient();
     const [loading, setLoading] = useState(true);
+    const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
     const [fullName, setFullName] = useState('');
@@ -134,21 +135,28 @@ export default function AccountPage() {
         setSaving(false);
     };
 
-    const handleCheckout = async (priceId: string) => {
-        setLoading(true);
+    const handleCheckout = async (priceId: string, buttonId: string) => {
+        setCheckoutLoading(buttonId);
         try {
             const res = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ priceId })
             });
+
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(text || 'Network response was not ok');
+            }
+
             const data = await res.json();
             if (data.url) window.location.href = data.url;
             else alert('Checkout failed');
-        } catch (e) {
-            alert('Error starting checkout');
+        } catch (e: any) {
+            console.error(e);
+            alert(`Error starting checkout: ${e.message}`);
         } finally {
-            setLoading(false);
+            setCheckoutLoading(null);
         }
     };
 
@@ -208,7 +216,9 @@ export default function AccountPage() {
     if (loading && !profile) return <div className="h-screen bg-zinc-50 flex items-center justify-center text-zinc-900"><Loader2 className="animate-spin" /></div>;
 
     // Corrected Display Logic
-    const needsUpgrade = !profile?.subscription_status || profile?.subscription_status !== 'active' || profile?.subscription_tier === 'scout';
+    const isScout = (!profile || !profile.subscription_status || profile.subscription_tier === 'scout');
+    const isPro = profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro';
+    const isStudio = profile?.subscription_status === 'active' && profile?.subscription_tier === 'studio';
 
     return (
         <div className="min-h-screen bg-zinc-50 text-zinc-950 font-sans p-6 md:p-12">
@@ -313,73 +323,101 @@ export default function AccountPage() {
                     </section>
 
                     {/* PRICING MATRIX */}
-                    {needsUpgrade && (
-                        <section className="mt-16">
-                            <div className="flex items-center gap-2 mb-8">
-                                <CreditCard size={18} className="text-zinc-900" />
-                                <h2 className="text-xs font-black uppercase tracking-widest">Membership Upgrades</h2>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                {/* SOLO */}
-                                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col hover:border-zinc-300 transition-colors">
+                    <section className="mt-16">
+                        <div className="flex items-center gap-2 mb-8">
+                            <CreditCard size={18} className="text-zinc-900" />
+                            <h2 className="text-xs font-black uppercase tracking-widest">Membership Plans</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* SOLO */}
+                            <div className="bg-white border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between hover:border-zinc-300 transition-colors">
+                                <div>
                                     <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Solo Tier</h3>
                                     <div className="flex items-baseline gap-1 mb-8">
                                         <span className="text-4xl font-black text-zinc-950">$19</span>
                                         <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                                     </div>
-                                    <ul className="space-y-4 mb-10 flex-1">
-                                        {['3 Active Projects', 'Unlimited Archives', 'Standard Print Room', 'onSET Mobile Access'].map(f => (
+                                    <ul className="space-y-4 mb-10">
+                                        {['3 Active Projects'].map(f => (
                                             <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
                                                 <Check size={14} className="text-zinc-400" /> {f}
                                             </li>
                                         ))}
                                     </ul>
-                                    <button disabled className="w-full bg-zinc-200 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                </div>
+
+                                {isScout ? (
+                                    <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
                                         CURRENT PLAN
                                     </button>
-                                </div>
+                                ) : (
+                                    <button disabled className="w-full bg-zinc-50 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                        DOWNGRADE PRO ONLY
+                                    </button>
+                                )}
+                            </div>
 
-                                {/* PRO */}
-                                <div className="bg-white border-2 border-blue-500 rounded-2xl p-8 shadow-xl flex flex-col relative transform scale-[1.03] z-10 ring-4 ring-blue-500/5">
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full">RECOMMENDED</div>
-                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-2">Pro Tier</h3>
+                            {/* PRO */}
+                            <div className="bg-white border border-zinc-300 rounded-2xl p-8 flex flex-col justify-between shadow-sm hover:border-zinc-400 transition-colors">
+                                <div>
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-900 mb-2">Pro Tier</h3>
                                     <div className="flex items-baseline gap-1 mb-8">
-                                        <span className="text-4xl font-black text-blue-600">$49</span>
+                                        <span className="text-4xl font-black text-zinc-950">$49</span>
                                         <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                                     </div>
-                                    <ul className="space-y-4 mb-10 flex-1">
-                                        {['Unlimited Active Projects', 'Custom Studio Branding', 'Multi-Unit Logic', 'Offline Mobile Mode', 'AI Liaison'].map(f => (
-                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-900 uppercase tracking-tight">
-                                                <Check size={14} className="text-blue-500" /> {f}
+                                    <ul className="space-y-4 mb-10">
+                                        {['Unlimited Active Projects', 'Custom Studio Branding'].map(f => (
+                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
+                                                <Check size={14} className="text-zinc-600" /> {f}
                                             </li>
                                         ))}
                                     </ul>
-                                    <button onClick={() => handleCheckout(STRIPE_PLANS.pro.id)} className="w-full bg-blue-600 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-[0.98]">
-                                        UPGRADE TO PRO
-                                    </button>
                                 </div>
 
-                                {/* STUDIO */}
-                                <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col hover:border-zinc-300 transition-colors">
+                                {isPro ? (
+                                    <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                        CURRENT PLAN
+                                    </button>
+                                ) : (
+                                    <button
+                                        onClick={() => handleCheckout(STRIPE_PLANS.pro.id, 'pro')}
+                                        disabled={checkoutLoading === 'pro'}
+                                        className="w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-colors flex items-center justify-center gap-2"
+                                    >
+                                        {checkoutLoading === 'pro' ? <Loader2 size={16} className="animate-spin" /> : "UPGRADE"}
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* STUDIO */}
+                            <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden opacity-60">
+                                {/* Overlay */}
+                                <div className="absolute inset-0 z-10 bg-zinc-50/40 backdrop-blur-[1px]"></div>
+
+                                <div className="relative z-0">
+                                    <div className="absolute top-0 right-0 bg-zinc-200 text-zinc-500 text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-lg">
+                                        COMING SOON
+                                    </div>
                                     <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2">Studio Tier</h3>
                                     <div className="flex items-baseline gap-1 mb-8">
-                                        <span className="text-4xl font-black text-zinc-950">$129</span>
+                                        <span className="text-4xl font-black text-zinc-400">$129</span>
                                         <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                                     </div>
-                                    <ul className="space-y-4 mb-10 flex-1">
-                                        {['Everything in PRO', '3 Producer Seats', 'Multi-Seat Collab', 'Global Templates', 'Priority Support'].map(f => (
-                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
-                                                <Check size={14} className="text-zinc-400" /> {f}
+                                    <ul className="space-y-4 mb-10">
+                                        {['Unlimited Active Projects', '3 Producer Seats', 'Priority Support'].map(f => (
+                                            <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-400 uppercase tracking-tight">
+                                                <Check size={14} className="text-zinc-300" /> {f}
                                             </li>
                                         ))}
                                     </ul>
-                                    <button onClick={() => handleCheckout(STRIPE_PLANS.studio.id)} className="w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-all active:scale-[0.98]">
-                                        UPGRADE TO STUDIO
-                                    </button>
                                 </div>
+
+                                <button disabled className="relative z-0 w-full bg-zinc-200 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
+                                    COMING SOON
+                                </button>
                             </div>
-                        </section>
-                    )}
+                        </div>
+                    </section>
                 </div>
 
                 {/* SIDEBAR: ANNOUNCEMENTS */}
