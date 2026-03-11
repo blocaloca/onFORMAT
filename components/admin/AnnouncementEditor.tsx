@@ -96,54 +96,41 @@ export default function AnnouncementEditor({ user }: { user: any }) {
     const renderMedia = (url: string) => {
         if (!url) return null;
 
-        const lowUrl = url.toLowerCase();
-
-        // 1. YouTube Handling (Normal, Shorts, youtu.be)
-        if (lowUrl.includes('youtube.com') || lowUrl.includes('youtu.be')) {
-            let videoId = '';
-            if (lowUrl.includes('watch?v=')) {
-                videoId = url.split('v=')[1]?.split('&')[0];
-            } else if (lowUrl.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1]?.split('?')[0];
-            } else if (lowUrl.includes('shorts/')) {
-                videoId = url.split('shorts/')[1]?.split('?')[0];
-            } else if (lowUrl.includes('embed/')) {
-                videoId = url.split('embed/')[1]?.split('?')[0];
-            }
-
-            if (videoId) {
-                return (
-                    <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
-                        <iframe
-                            src={`https://www.youtube.com/embed/${videoId}`}
-                            className="absolute top-0 left-0 w-full h-full border-0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                        />
-                    </div>
-                );
-            }
+        // 1. YouTube Handling (Robust Regex)
+        // Matches watch?v=, shorts/, embed/, youtu.be/, etc.
+        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const ytMatch = url.match(ytRegex);
+        if (ytMatch && ytMatch[1]) {
+            return (
+                <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                        src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+                        className="absolute top-0 left-0 w-full h-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    />
+                </div>
+            );
         }
 
         // 2. Vimeo Handling
-        if (lowUrl.includes('vimeo.com')) {
-            const vimeoId = url.split('vimeo.com/')[1]?.split('?')[0];
-            if (vimeoId) {
-                return (
-                    <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
-                        <iframe
-                            src={`https://player.vimeo.com/video/${vimeoId}`}
-                            className="absolute top-0 left-0 w-full h-full border-0"
-                            allow="autoplay; fullscreen; picture-in-picture"
-                            allowFullScreen
-                        />
-                    </div>
-                );
-            }
+        const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
+        const vimeoMatch = url.match(vimeoRegex);
+        if (vimeoMatch && vimeoMatch[1]) {
+            return (
+                <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
+                    <iframe
+                        src={`https://player.vimeo.com/video/${vimeoMatch[1]}`}
+                        className="absolute top-0 left-0 w-full h-full border-0"
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen
+                    />
+                </div>
+            );
         }
 
-        // 3. Raw Video Handling (Supabase Storage, S3, etc.)
-        const urlWithoutQuery = url.split('?')[0];
+        // 3. Raw Video Handling
+        const urlWithoutQuery = url.split('?')[0].toLowerCase();
         if (urlWithoutQuery.match(/\.(mp4|webm|ogg|mov)$/i)) {
             return (
                 <video
