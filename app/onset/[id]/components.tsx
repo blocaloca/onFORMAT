@@ -1673,19 +1673,19 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
             {(onAdd || onUpdate) && !isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={16} />
+                    <Plus size={18} strokeWidth={3} />
                     <span>Add Note</span>
                 </button>
             )}
 
             {/* Add/Edit Form */}
             {isAdding && (
-                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
-                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Note' : 'New Note'}</span>
-                        <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
+                <div className="bg-white rounded-[30px] p-8 shadow-2xl border border-black/[0.02] mb-8 animate-in fade-in slide-in-from-top-4 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-8 border-b border-zinc-100 pb-4">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{editingId ? 'Edit Insight' : 'Note Publication'}</span>
+                        <button onClick={handleCancel} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={16} /></button>
                     </div>
 
                     <div className="mb-3">
@@ -2608,31 +2608,33 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
             {!isAdding && (
                 <div className="space-y-4">
                     {/* Mini Header Stats */}
-                    <div className="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-zinc-500 mb-2">
-                        <div className="bg-white shadow-sm border border-black/[0.03] p-3 rounded-xl text-center">
-                            Roll: <span className="text-zinc-900 ml-1">{data?.roll || '1'}</span>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div className="bg-white shadow-sm border border-black/[0.03] p-4 rounded-2xl text-center">
+                            <span className="text-[9px] font-black uppercase text-zinc-400 block mb-1 tracking-widest">Active Roll</span>
+                            <span className="text-zinc-900 font-black font-mono">{data?.roll || '1'}</span>
                         </div>
-                        <div className="bg-white shadow-sm border border-black/[0.03] p-3 rounded-xl text-center">
-                            SR: <span className="text-zinc-900 ml-1">{data?.sampleRate || '48k'}</span>
+                        <div className="bg-white shadow-sm border border-black/[0.03] p-4 rounded-2xl text-center">
+                            <span className="text-[9px] font-black uppercase text-zinc-400 block mb-1 tracking-widest">Sample Rate</span>
+                            <span className="text-zinc-900 font-black font-mono">{data?.sampleRate || '48k'}</span>
                         </div>
                     </div>
 
                     <button
                         onClick={handleStartAdd}
-                        className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                     >
-                        <Plus size={16} />
-                        <span>Log Take</span>
+                        <Plus size={18} strokeWidth={3} />
+                        <span>Log New Take</span>
                     </button>
                 </div>
             )}
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
-                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Take' : 'Log Take'}</span>
-                        <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
+                <div className="bg-white rounded-[30px] p-8 shadow-2xl border border-black/[0.02] mb-8 animate-in fade-in slide-in-from-top-4 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-8 border-b border-zinc-100 pb-4">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{editingId ? 'Edit Performance' : 'Take Registration'}</span>
+                        <button onClick={handleCancel} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={16} /></button>
                     </div>
 
                     <div className="flex gap-4 mb-3">
@@ -2663,12 +2665,15 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-3 bg-zinc-100 p-2 rounded border border-zinc-300 cursor-pointer" onClick={() => setForm({ ...form, circled: !form.circled })}>
-                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${form.circled ? 'bg-emerald-500 border-emerald-500 text-black' : 'border-zinc-400'}`}>
-                            {form.circled && <Check size={10} />}
+                    <button
+                        onClick={() => setForm({ ...form, circled: !form.circled })}
+                        className={`flex items-center gap-3 w-full mb-6 p-4 rounded-xl border transition-all ${form.circled ? 'bg-emerald-500 border-emerald-600' : 'bg-zinc-50/50 border-black/[0.05]'}`}
+                    >
+                        <div className={`w-6 h-6 rounded-full border flex items-center justify-center ${form.circled ? 'bg-white border-white text-emerald-600' : 'border-zinc-300'}`}>
+                            {form.circled && <Check size={14} strokeWidth={4} />}
                         </div>
-                        <span className="text-[10px] uppercase font-bold text-zinc-600 select-none">Circle Take (Best)</span>
-                    </div>
+                        <span className={`text-[10px] uppercase font-black tracking-widest select-none ${form.circled ? 'text-white' : 'text-zinc-500'}`}>Circle Take (BEST)</span>
+                    </button>
 
                     <div className="mb-3">
                         <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Description</label>
@@ -2875,23 +2880,24 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
     const { isOwner } = useProjectData();
     const items = data?.items || data?.roles || data?.looks || [];
 
-    if (!items || items.length === 0) return <EmptyState label="Document" />;
+    if (items.length === 0 && !isOwner) return <EmptyState label="Document" />;
 
     return (
-        <div className="space-y-3 pb-8">
+        <div className="space-y-4 pb-12">
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `item-${Date.now()}`, [titleKey]: 'New Item' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] mb-6 flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={14} /> Add New Entry
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add New Entry</span>
                 </button>
             )}
 
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex gap-4 overflow-hidden items-center group relative">
+                <div key={item.id || i} className="bg-white rounded-[20px] p-6 shadow-sm border border-black/[0.03] hover:shadow-md transition-all flex gap-5 overflow-hidden items-center group relative">
                     {imageKey && (item[imageKey] || isOwner) && (
-                        <div className="w-16 h-16 shrink-0 bg-zinc-50/50 rounded-lg overflow-hidden border border-zinc-100 relative">
+                        <div className="w-20 h-20 shrink-0 bg-zinc-50/50 rounded-2xl overflow-hidden border border-black/[0.03] relative shadow-inner">
                             {isOwner ? (
                                 <ImageUploader
                                     currentUrl={item[imageKey] || ''}
@@ -2906,12 +2912,12 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
                     )}
                     <div className="flex-1 min-w-0">
                         {subtitleKey && (
-                            <div className="mb-0.5">
+                            <div className="mb-1.5 flex items-center">
                                 <EditableInput
                                     value={item[subtitleKey] || ''}
                                     onSave={(val) => onUpdate?.({ ...item, [subtitleKey]: val })}
                                     isEditable={isOwner}
-                                    className="text-[10px] font-black uppercase text-emerald-600 tracking-wide truncate p-0 bg-transparent border-none text-left"
+                                    className="text-[10px] font-black uppercase text-emerald-600 tracking-[0.15em] truncate p-0 bg-transparent border-none text-left"
                                 />
                             </div>
                         )}
@@ -2919,19 +2925,19 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
                             value={item[titleKey] || 'Unnamed Item'}
                             onSave={(val) => onUpdate?.({ ...item, [titleKey]: val })}
                             isEditable={isOwner}
-                            className="text-base font-bold text-zinc-900 leading-tight p-0 bg-transparent border-none text-left"
+                            className="text-[17px] font-black text-zinc-900 leading-tight tracking-tight p-0 bg-transparent border-none text-left uppercase"
                         />
 
                         {detailKeys && detailKeys.length > 0 && (
-                            <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-500 mt-2">
+                            <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-400 mt-3 pt-3 border-t border-zinc-100">
                                 {detailKeys.map((k: string) => (
-                                    <div key={k} className="bg-white px-2 py-0.5 rounded border border-zinc-100 flex items-center gap-1">
-                                        <span className="opacity-50">{k.toUpperCase()}:</span>
+                                    <div key={k} className="bg-zinc-50/50 px-2.5 py-1 rounded-lg border border-black/[0.02] flex items-center gap-2">
+                                        <span className="opacity-40 font-black uppercase text-[8px] tracking-widest">{k}</span>
                                         <EditableInput
                                             value={item[k] || ''}
                                             onSave={(val) => onUpdate?.({ ...item, [k]: val })}
                                             isEditable={isOwner}
-                                            className="p-0 bg-transparent border-none text-[10px] font-mono font-bold text-zinc-900"
+                                            className="p-0 bg-transparent border-none text-[10px] font-mono font-black text-zinc-900"
                                         />
                                     </div>
                                 ))}
@@ -2941,9 +2947,9 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
                     {isOwner && onDelete && (
                         <button
                             onClick={() => onDelete(item.id)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity p-2 text-red-500 hover:bg-red-500/10 rounded-full"
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-300 hover:text-red-500 hover:bg-red-50/50 transition-all opacity-0 group-hover:opacity-100"
                         >
-                            <X size={14} />
+                            <Trash2 size={16} />
                         </button>
                     )}
                 </div>
@@ -2962,9 +2968,10 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `look-${Date.now()}`, title: 'New Image', caption: '' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Image
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Image</span>
                 </button>
             )}
             {items.map((item: any, i: number) => (
@@ -3013,9 +3020,10 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `ward-${Date.now()}`, character: 'New Character', description: 'TBD' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Character
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Character</span>
                 </button>
             )}
             {items.map((item: any, i: number) => (
@@ -3081,9 +3089,10 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `cast-${Date.now()}`, role: 'New Role', name: 'TBD' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Role
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Role</span>
                 </button>
             )}
             {items.map((item: any, i: number) => (
@@ -3144,9 +3153,10 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `prop-${Date.now()}`, name: 'New Prop', category: 'Props' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Prop
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Prop</span>
                 </button>
             )}
             {items.map((item: any, i: number) => (
