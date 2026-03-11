@@ -95,17 +95,67 @@ export default function AnnouncementEditor({ user }: { user: any }) {
 
     const renderMedia = (url: string) => {
         if (!url) return null;
-        if (url.includes('youtube.com') || url.includes('youtu.be')) {
-            // Simple check, real app might want robust parsing
+
+        const lowUrl = url.toLowerCase();
+
+        // 1. YouTube Handling (Normal, Shorts, youtu.be)
+        if (lowUrl.includes('youtube.com') || lowUrl.includes('youtu.be')) {
+            let videoId = '';
+            if (lowUrl.includes('watch?v=')) {
+                videoId = url.split('v=')[1]?.split('&')[0];
+            } else if (lowUrl.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1]?.split('?')[0];
+            } else if (lowUrl.includes('shorts/')) {
+                videoId = url.split('shorts/')[1]?.split('?')[0];
+            } else if (lowUrl.includes('embed/')) {
+                videoId = url.split('embed/')[1]?.split('?')[0];
+            }
+
+            if (videoId) {
+                return (
+                    <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
+                        <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            className="absolute top-0 left-0 w-full h-full border-0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        />
+                    </div>
+                );
+            }
+        }
+
+        // 2. Vimeo Handling
+        if (lowUrl.includes('vimeo.com')) {
+            const vimeoId = url.split('vimeo.com/')[1]?.split('?')[0];
+            if (vimeoId) {
+                return (
+                    <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
+                        <iframe
+                            src={`https://player.vimeo.com/video/${vimeoId}`}
+                            className="absolute top-0 left-0 w-full h-full border-0"
+                            allow="autoplay; fullscreen; picture-in-picture"
+                            allowFullScreen
+                        />
+                    </div>
+                );
+            }
+        }
+
+        // 3. Raw Video Handling (Supabase Storage, S3, etc.)
+        const urlWithoutQuery = url.split('?')[0];
+        if (urlWithoutQuery.match(/\.(mp4|webm|ogg|mov)$/i)) {
             return (
-                <div className="aspect-video bg-black">
-                    <iframe src={url} className="w-full h-full" />
-                </div>
-            )
+                <video
+                    src={url}
+                    controls
+                    playsInline
+                    className="w-full h-full object-cover bg-black"
+                />
+            );
         }
-        if (url.match(/\.(mp4|webm)$/i)) {
-            return <video src={url} controls className="w-full h-full object-cover" />;
-        }
+
+        // 4. Default to Image
         return <img src={url} alt="Preview" className="w-full h-full object-cover" />;
     };
 
