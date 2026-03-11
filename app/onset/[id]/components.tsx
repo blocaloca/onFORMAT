@@ -1587,14 +1587,13 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
                 ))}
 
                 {isEditable && (
-                    <div className="pl-[70px] pt-2">
-                        <button
-                            onClick={handleAddItem}
-                            className="w-full py-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 text-emerald-600 text-[10px] font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-2 transition-all active:scale-95 shadow-sm"
-                        >
-                            <Plus size={14} /> Add Entry
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleAddItem}
+                        className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mt-4"
+                    >
+                        <Plus size={18} strokeWidth={3} />
+                        <span>Add Entry</span>
+                    </button>
                 )}
             </div>
 
@@ -2362,9 +2361,9 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
             {!isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={16} />
+                    <Plus size={18} strokeWidth={3} />
                     <span>Add Scene Note</span>
                 </button>
             )}
@@ -2830,9 +2829,10 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `slide-${Date.now()}`, title: 'New Treatment Note', category: 'Treatment Note', content: '', layout: 'Image', modules: { image1: '' } })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Slide
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Slide</span>
                 </button>
             )}
             {slides.map((slide: any, i: number) => (
@@ -3276,15 +3276,13 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
         <div className="space-y-4 pb-8">
             {/* Header Actions */}
             {canEditMobile && !isAdding && (
-                <div className="mb-6 animate-in slide-in-from-bottom-2 fade-in">
-                    <button
-                        onClick={handleStartAdd}
-                        className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform"
-                    >
-                        <Plus size={16} />
-                        <span>Add Select</span>
-                    </button>
-                </div>
+                <button
+                    onClick={handleStartAdd}
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
+                >
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Select</span>
+                </button>
             )}
 
             {/* Form */}
@@ -3337,10 +3335,17 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         />
                     </div>
 
-                    <button onClick={handleSubmit} className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase tracking-widest text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                        <Save size={14} />
-                        <span>{editingId ? 'Update' : 'Save'}</span>
-                    </button>
+                    <div className="flex gap-3">
+                        {editingId && (
+                            <button onClick={handleCancel} className="flex-1 bg-zinc-100 text-zinc-500 font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl transition-colors hover:bg-zinc-200">
+                                Cancel
+                            </button>
+                        )}
+                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600">
+                            <Save size={18} />
+                            <span>{editingId ? 'Update Select' : 'Save Select'}</span>
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -3468,9 +3473,10 @@ export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data
                         const nextNum = (items.length + 1).toString().padStart(2, '0');
                         onAdd({ id: `sb-${Date.now()}`, url: '', caption: '', notes: '', title: '', imageNumber: nextNum, sceneLink: '', aspectRatio: '3:2', size: 'large' })
                     }}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Frame
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Add Frame</span>
                 </button>
             )}
             <div className="grid grid-cols-1 gap-6">
