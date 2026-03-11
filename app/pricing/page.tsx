@@ -108,7 +108,7 @@ export default function PricingPage() {
                             </ul>
                         </div>
 
-                        {isScout ? (
+                        {isScout && user ? (
                             <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed">
                                 CURRENT PLAN
                             </button>
