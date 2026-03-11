@@ -254,17 +254,20 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                 {isOwner && (
                     <button
                         onClick={handleStartAdd}
-                        className="bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 p-3 rounded-lg shadow-lg active:scale-95 transition-transform"
+                        className="bg-white text-zinc-900 border border-black/[0.03] w-12 h-12 rounded-[16px] flex items-center justify-center shadow-sm hover:shadow-md active:scale-95 transition-all"
                     >
-                        <Plus size={20} />
+                        <Plus size={22} strokeWidth={3} />
                     </button>
                 )}
             </div>
 
             {Object.entries(grouped).map(([dept, members]) => (
-                <div key={dept} className="space-y-2">
-                    <div className="sticky top-14 z-0 bg-white/80 backdrop-blur-md backdrop-blur py-1 border-b border-zinc-300">
-                        <h3 className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">{dept}</h3>
+                <div key={dept} className="space-y-3">
+                    <div className="sticky top-14 z-0 bg-zinc-50/80 backdrop-blur-md py-2 px-1">
+                        <h3 className="text-[10px] font-black uppercase text-emerald-600 tracking-[0.2em] flex items-center gap-2">
+                            <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
+                            {dept}
+                        </h3>
                     </div>
                     <div className="grid gap-2">
                         {members.map((m: any) => (
