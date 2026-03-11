@@ -97,8 +97,8 @@ export default function AnnouncementEditor({ user }: { user: any }) {
         if (!url) return null;
 
         // 1. YouTube Handling (Robust Regex)
-        // Matches watch?v=, shorts/, embed/, youtu.be/, etc.
-        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        // Matches watch?v=, shorts/, embed/, live/, youtu.be/, etc.
+        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
         const ytMatch = url.match(ytRegex);
         if (ytMatch && ytMatch[1]) {
             return (
@@ -117,10 +117,15 @@ export default function AnnouncementEditor({ user }: { user: any }) {
         const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
         const vimeoMatch = url.match(vimeoRegex);
         if (vimeoMatch && vimeoMatch[1]) {
+            const vimeoId = vimeoMatch[1];
+            // Check for privacy hash (e.g. vimeo.com/123/abc)
+            const parts = url.split('vimeo.com/')[1]?.split('?')[0].split('/');
+            const hash = (parts && parts.length > 1) ? `?h=${parts[1]}` : '';
+
             return (
                 <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
                     <iframe
-                        src={`https://player.vimeo.com/video/${vimeoMatch[1]}`}
+                        src={`https://player.vimeo.com/video/${vimeoId}${hash}`}
                         className="absolute top-0 left-0 w-full h-full border-0"
                         allow="autoplay; fullscreen; picture-in-picture"
                         allowFullScreen
@@ -196,10 +201,10 @@ export default function AnnouncementEditor({ user }: { user: any }) {
                                 {/* File Upload */}
                                 <label className="flex items-center justify-center gap-2 w-full p-4 border-2 border-dashed border-zinc-200 rounded-lg hover:border-zinc-400 hover:bg-zinc-50 transition-all cursor-pointer group">
                                     <Upload size={16} className="text-zinc-400 group-hover:text-black transition-colors" />
-                                    <span className="text-xs text-zinc-500 font-medium group-hover:text-black">Upload Image</span>
+                                    <span className="text-xs text-zinc-500 font-medium group-hover:text-black">Upload Media</span>
                                     <input
                                         type="file"
-                                        accept="image/*"
+                                        accept="image/*,video/*"
                                         className="hidden"
                                         onChange={(e) => {
                                             if (e.target.files?.[0]) handlePublish(e.target.files[0]);

@@ -175,9 +175,15 @@ export default function AccountPage() {
                 const { data: { publicUrl } } = supabase.storage.from('announcements').getPublicUrl(filePath);
                 mediaUrl = publicUrl;
             }
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("No active session");
+
             const res = await fetch('/api/announcements', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.access_token}`
+                },
                 body: JSON.stringify({ userId: user.id, media_url: mediaUrl, message: newMessage })
             });
             if (res.ok) {
@@ -185,6 +191,10 @@ export default function AccountPage() {
                 fetchAnnouncement();
                 setNewMessage('');
                 setVideoUrl('');
+            } else {
+                const errData = await res.json();
+                console.error("Publish failed:", errData);
+                alert(`Failed to update: ${errData.error || 'Unknown Error'}`);
             }
         } catch (error: any) {
             console.error(error);
@@ -198,8 +208,8 @@ export default function AccountPage() {
         if (!url) return null;
 
         // 1. YouTube Handling (Robust Regex)
-        // Matches watch?v=, shorts/, embed/, youtu.be/, etc.
-        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        // Matches watch?v=, shorts/, embed/, live/, youtu.be/, etc.
+        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
         const ytMatch = url.match(ytRegex);
         if (ytMatch && ytMatch[1]) {
             return (
@@ -218,10 +228,15 @@ export default function AccountPage() {
         const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
         const vimeoMatch = url.match(vimeoRegex);
         if (vimeoMatch && vimeoMatch[1]) {
+            const vimeoId = vimeoMatch[1];
+            // Check for privacy hash (e.g. vimeo.com/123/abc)
+            const parts = url.split('vimeo.com/')[1]?.split('?')[0].split('/');
+            const hash = (parts && parts.length > 1) ? `?h=${parts[1]}` : '';
+
             return (
                 <div className="w-full h-full relative" style={{ paddingBottom: '56.25%' }}>
                     <iframe
-                        src={`https://player.vimeo.com/video/${vimeoMatch[1]}`}
+                        src={`https://player.vimeo.com/video/${vimeoId}${hash}`}
                         className="absolute top-0 left-0 w-full h-full border-0"
                         allow="autoplay; fullscreen; picture-in-picture"
                         allowFullScreen
@@ -410,8 +425,8 @@ export default function AccountPage() {
                                         PUBLISH
                                     </button>
                                     <label className="bg-blue-50 text-blue-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-100 text-center cursor-pointer">
-                                        {uploadingAnnouncement ? '...' : 'UPLOAD'}
-                                        <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && handleAnnouncementUpdate(e.target.files[0])} />
+                                        {uploadingAnnouncement ? '...' : 'UPLOAD MEDIA'}
+                                        <input type="file" accept="image/*,video/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleAnnouncementUpdate(e.target.files[0])} />
                                     </label>
                                 </div>
                             </div>
