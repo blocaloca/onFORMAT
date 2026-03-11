@@ -289,9 +289,9 @@ export default function OnSetMobilePage() {
                 if (phase?.drafts) {
                     Object.entries(phase.drafts).forEach(([key, val]) => {
                         const parsed = safeParse(val as string);
-                        // Array Unwrapping: Take the LATEST index (Day 3 > Day 1)
+                        // Array Unwrapping: Take the LATEST version (Index 0 in OnSet standard)
                         if (Array.isArray(parsed) && parsed.length > 0) {
-                            allDrafts[key] = parsed[parsed.length - 1];
+                            allDrafts[key] = parsed[0];
                         } else if (parsed) {
                             allDrafts[key] = parsed;
                         }
