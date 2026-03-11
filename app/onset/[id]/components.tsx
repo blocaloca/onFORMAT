@@ -948,7 +948,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Total Offloads</div>
                     <div className="text-2xl font-black text-zinc-900">{items.filter((i: any) => i.eventType === 'offload').length}</div>
                 </div>
-                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow p-3">
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Issues</div>
                     <div className="text-2xl font-black text-red-500">{items.filter((i: any) => i.eventType === 'issue').length}</div>
                 </div>
@@ -1510,7 +1510,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
     return (
         <div className="space-y-6">
             {/* Header Info */}
-            <div className="flex justify-between items-end border-b border-zinc-300 pb-4">
+            <div className="flex justify-between items-end border-b border-zinc-100 pb-4">
                 <div>
                     <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Shoot Date</p>
                     <EditableInput
@@ -1526,7 +1526,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
                         value={data.callTime || 'TBD'}
                         onSave={(val) => updateField('callTime', val)}
                         isEditable={!!isEditable}
-                        className="text-xl font-mono text-emerald-600 font-bold block"
+                        className="text-xl font-mono text-emerald-500 font-bold block"
                     />
                 </div>
             </div>
@@ -1551,7 +1551,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
                         <div className="absolute left-[50px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-300 border-2 border-zinc-200 z-10 group-hover:bg-emerald-500 transition-colors"></div>
 
                         {/* Content Card */}
-                        <div className="flex-1 bg-zinc-100/80 rounded-lg p-3 border border-zinc-300 hover:border-zinc-400 transition-colors relative">
+                        <div className="flex-1 bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative">
                             {isEditable && (
                                 <button
                                     onClick={() => handleDeleteItem(item.id)}
@@ -1706,7 +1706,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
 
             {/* Add/Edit Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Note' : 'New Note'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -1855,7 +1855,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
                 </button>
             )}
             {items.map((loc: any, i: number) => (
-                <div key={loc.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
+                <div key={loc.id || i} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(loc.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -1910,7 +1910,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
                         {loc.notes && (
                             <div>
                                 <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-1">Logistics & Notes</span>
-                                <p className="text-xs text-zinc-500 whitespace-pre-wrap leading-relaxed bg-black/30 p-3 rounded-lg border border-white/5">
+                                <p className="text-xs text-zinc-500 whitespace-pre-wrap leading-relaxed bg-zinc-50 p-4 rounded-xl border border-black/5">
                                     {loc.notes}
                                 </p>
                             </div>
@@ -2395,7 +2395,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Note' : 'New Note'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -2633,10 +2633,10 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                 <div className="space-y-4">
                     {/* Mini Header Stats */}
                     <div className="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-zinc-500 mb-2">
-                        <div className="bg-zinc-100 shadow-inner border border-zinc-100 p-2 rounded text-center">
+                        <div className="bg-white shadow-sm border border-black/[0.03] p-3 rounded-xl text-center">
                             Roll: <span className="text-zinc-900 ml-1">{data?.roll || '1'}</span>
                         </div>
-                        <div className="bg-zinc-100 shadow-inner border border-zinc-100 p-2 rounded text-center">
+                        <div className="bg-white shadow-sm border border-black/[0.03] p-3 rounded-xl text-center">
                             SR: <span className="text-zinc-900 ml-1">{data?.sampleRate || '48k'}</span>
                         </div>
                     </div>
@@ -2653,7 +2653,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Take' : 'Log Take'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -2741,7 +2741,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     takes.slice().reverse().map((take: any, i: number) => {
                         const isConfirming = deleteConfirmId === take.id;
                         return (
-                            <div key={take.id || i} className={`bg-zinc-50 p-3 rounded-lg border relative flex items-center gap-3 ${take.circled ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.1)]' : 'border-zinc-100'}`}>
+                            <div key={take.id || i} className={`bg-white rounded-[20px] p-5 shadow-sm border hover:shadow-md transition-shadow relative flex items-center gap-3 ${take.circled ? 'border-emerald-500 shadow-emerald-500/10' : 'border-black/[0.03]'}`}>
 
                                 {/* Scene/Take Badge */}
                                 <div className="flex flex-col items-center justify-center min-w-[50px] bg-zinc-100 rounded border border-zinc-100 p-1">
@@ -2822,7 +2822,7 @@ export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable }
             {fields.map((field) => {
                 const value = data[field.key];
                 return (
-                    <div key={field.key} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-5">
+                    <div key={field.key} className="bg-white rounded-[20px] p-8 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
                         <span className="text-[10px] font-bold uppercase text-emerald-600 tracking-widest block mb-2">{field.label}</span>
                         <EditableInput
                             value={(typeof value === 'string' ? value : '') || ""}
@@ -2855,7 +2855,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
                 </button>
             )}
             {slides.map((slide: any, i: number) => (
-                <div key={slide.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
+                <div key={slide.id || i} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -2913,7 +2913,7 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
             )}
 
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-4 flex gap-4 overflow-hidden items-center group relative">
+                <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex gap-4 overflow-hidden items-center group relative">
                     {imageKey && (item[imageKey] || isOwner) && (
                         <div className="w-16 h-16 shrink-0 bg-zinc-50/50 rounded-lg overflow-hidden border border-zinc-100 relative">
                             {isOwner ? (
@@ -2992,7 +2992,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
+                <div key={item.id || i} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -3043,7 +3043,7 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
+                <div key={item.id || i} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -3111,7 +3111,7 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm flex flex-col group relative">
+                <div key={item.id || i} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex flex-col group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -3174,7 +3174,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm flex gap-4 p-4 items-center group relative">
+                <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex gap-4 items-center group relative overflow-hidden">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -3303,7 +3303,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-4 mb-6">
+                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-300 pb-2">
                         <span className="text-xs font-bold uppercase text-zinc-900 tracking-widest">{editingId ? 'Edit Select' : 'New Select'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
@@ -3315,7 +3315,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                             <input
                                 value={form.fileNumber}
                                 onChange={e => setForm({ ...form, fileNumber: e.target.value })}
-                                className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded text-center font-bold outline-none focus:bg-white"
+                                className="w-full bg-zinc-50 border border-zinc-100 text-zinc-900 py-3 rounded-xl text-center font-bold outline-none focus:bg-white"
                                 placeholder="..."
                             />
                         </div>
@@ -3324,7 +3324,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                             <select
                                 value={form.status}
                                 onChange={e => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded text-center font-bold text-xs uppercase outline-none focus:bg-white h-[38px] appearance-none"
+                                className="w-full bg-zinc-50 border border-zinc-100 text-zinc-900 py-3 rounded-xl text-center font-bold text-xs uppercase outline-none focus:bg-white h-[46px] appearance-none"
                             >
                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                             </select>
@@ -3336,7 +3336,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         <textarea
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded h-20 outline-none focus:bg-white resize-none"
+                            className="w-full bg-zinc-50 border border-zinc-100 text-zinc-900 p-4 rounded-xl h-24 outline-none focus:bg-white resize-none"
                             placeholder="Describe what happens..."
                         />
                     </div>
@@ -3346,7 +3346,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded h-16 outline-none focus:bg-white resize-none text-xs italic"
+                            className="w-full bg-zinc-50 border border-zinc-100 text-zinc-900 p-4 rounded-xl h-20 outline-none focus:bg-white resize-none text-xs italic"
                             placeholder="Additional context or editor notes..."
                         />
                     </div>
@@ -3368,7 +3368,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         const statusObj = STATUS_OPTIONS.find(o => o.value === item.status) || STATUS_OPTIONS[0];
 
                         return (
-                            <div key={item.id} className="bg-zinc-100 shadow-sm border border-zinc-100 rounded-xl p-4 relative flex gap-4 overflow-hidden group">
+                            <div key={item.id} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative flex gap-4 overflow-hidden group">
                                 {/* Left Col: Status & File Number */}
                                 <div className="flex flex-col gap-2 min-w-[70px] w-[70px] flex-shrink-0">
                                     <div className={`text-[9px] font-black uppercase text-center py-1 px-1 rounded border ${statusObj.className} tracking-wider`}>
@@ -3427,7 +3427,7 @@ export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (to
                     const isDelegated = groups.includes('D');
 
                     return (
-                        <div key={key} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-4 flex items-center justify-between">
+                        <div key={key} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex items-center justify-between">
                             <div>
                                 <p className="text-[17px] font-black tracking-tight text-zinc-900 uppercase">{DOC_LABELS[key] || key}</p>
                                 <p className="text-[10px] text-zinc-500 font-mono">ID: {key}</p>
@@ -3455,7 +3455,7 @@ export const MobileVisionView = ({ data, onUpdate }: { data: any, onUpdate: (new
     return (
         <div className="space-y-6 pb-20">
             {data.pages.map((p: any, idx: number) => (
-                <div key={p.id || idx} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-6">
+                <div key={p.id || idx} className="bg-white rounded-[20px] p-8 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
                     <h3 className="text-[10px] font-black uppercase text-amber-500 tracking-widest pl-1 mb-4">
                         Page {idx + 1}
                     </h3>
@@ -3489,7 +3489,7 @@ export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data
             )}
             <div className="grid grid-cols-1 gap-6">
                 {items.map((item: any, i: number) => (
-                    <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm flex flex-col group relative">
+                    <div key={item.id || i} className="bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex flex-col group relative">
                         {isOwner && onDelete && (
                             <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
                                 <X size={14} />
