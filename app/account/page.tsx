@@ -293,8 +293,9 @@ export default function AccountPage() {
                     </div>
                 </section>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* SECURITY SECTION */}
-                <section className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm max-w-xl">
+                <section className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm h-full flex flex-col">
                     <div className="flex items-center gap-3 mb-8">
                         <Lock size={18} className="text-zinc-900" />
                         <h2 className="text-xs font-black uppercase tracking-widest">Security Configuration</h2>
@@ -320,6 +321,71 @@ export default function AccountPage() {
                         </button>
                     </div>
                 </section>
+            {/* BULLETINS SECTION */}
+            <div className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm h-full flex flex-col hidden lg:flex">
+                <div className="space-y-8">
+                    <div>
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-2 text-zinc-900">
+                                <Megaphone size={16} />
+                                <h3 className="text-xs font-black uppercase tracking-widest">BULLETINS</h3>
+                            </div>
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                        </div>
+
+                        <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
+                            {announcement ? (
+                                <>
+                                    {announcement.media_url && (
+                                        <div className="aspect-video bg-black">
+                                            {renderMedia(announcement.media_url)}
+                                        </div>
+                                    )}
+                                    {announcement.message && (
+                                        <div className="p-5 font-mono text-[11px] leading-relaxed text-zinc-600 whitespace-pre-wrap">
+                                            {announcement.message}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="p-8 text-center text-[10px] font-bold text-zinc-300 uppercase tracking-widest">No Bulletins</div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* FOUNDER EDITOR */}
+                    {isFounder && (
+                        <div className="pt-8 border-t border-zinc-100">
+                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Founder Controls</p>
+                            <div className="space-y-4">
+                                <textarea
+                                    placeholder="Broadcast message..."
+                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-[11px] font-mono outline-none focus:ring-2 focus:ring-blue-500/10 min-h-[100px]"
+                                    value={newMessage}
+                                    onChange={(e) => setNewMessage(e.target.value)}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Video Link..."
+                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-[11px] font-mono outline-none"
+                                    value={videoUrl}
+                                    onChange={(e) => setVideoUrl(e.target.value)}
+                                />
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button onClick={() => handleAnnouncementUpdate()} disabled={uploadingAnnouncement} className="bg-zinc-100 text-zinc-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-200">
+                                        PUBLISH
+                                    </button>
+                                    <label className="bg-blue-50 text-blue-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-100 text-center cursor-pointer">
+                                        {uploadingAnnouncement ? '...' : 'UPLOAD'}
+                                        <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && handleAnnouncementUpdate(e.target.files[0])} />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+                </div>
 
                 {/* PRICING MATRIX */}
                 <section className="mt-16">
@@ -421,70 +487,7 @@ export default function AccountPage() {
                 </section>
             </div>
 
-            {/* ANNOUNCEMENTS - FLOATING TOP RIGHT */}
-            <div className="absolute top-12 right-12 w-80 z-20 hidden lg:block">
-                <div className="space-y-8">
-                    <div>
-                        <div className="flex items-center justify-between mb-6">
-                            <div className="flex items-center gap-2 text-zinc-900">
-                                <Megaphone size={16} />
-                                <h3 className="text-xs font-black uppercase tracking-widest">BULLETINS</h3>
-                            </div>
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                        </div>
 
-                        <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm">
-                            {announcement ? (
-                                <>
-                                    {announcement.media_url && (
-                                        <div className="aspect-video bg-black">
-                                            {renderMedia(announcement.media_url)}
-                                        </div>
-                                    )}
-                                    {announcement.message && (
-                                        <div className="p-5 font-mono text-[11px] leading-relaxed text-zinc-600 whitespace-pre-wrap">
-                                            {announcement.message}
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div className="p-8 text-center text-[10px] font-bold text-zinc-300 uppercase tracking-widest">No Bulletins</div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* FOUNDER EDITOR */}
-                    {isFounder && (
-                        <div className="pt-8 border-t border-zinc-100">
-                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Founder Controls</p>
-                            <div className="space-y-4">
-                                <textarea
-                                    placeholder="Broadcast message..."
-                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl p-4 text-[11px] font-mono outline-none focus:ring-2 focus:ring-blue-500/10 min-h-[100px]"
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                />
-                                <input
-                                    type="text"
-                                    placeholder="Video Link..."
-                                    className="w-full bg-zinc-50 border border-zinc-200 rounded-xl px-4 py-3 text-[11px] font-mono outline-none"
-                                    value={videoUrl}
-                                    onChange={(e) => setVideoUrl(e.target.value)}
-                                />
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button onClick={() => handleAnnouncementUpdate()} disabled={uploadingAnnouncement} className="bg-zinc-100 text-zinc-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-zinc-200">
-                                        PUBLISH
-                                    </button>
-                                    <label className="bg-blue-50 text-blue-600 py-3 text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-100 text-center cursor-pointer">
-                                        {uploadingAnnouncement ? '...' : 'UPLOAD'}
-                                        <input type="file" className="hidden" onChange={(e) => e.target.files?.[0] && handleAnnouncementUpdate(e.target.files[0])} />
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
         </div>
     );
 }
