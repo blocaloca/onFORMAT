@@ -564,7 +564,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
     return (
         <div className="space-y-6">
             {/* Vitals */}
-            <div className="bg-zinc-50 border border-zinc-100/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
+            <div className="bg-white rounded-[20px] p-8 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-center">
                 <div className="flex flex-col gap-1 mb-4">
                     <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Shoot Date</p>
                     <div className="text-xl font-black text-zinc-900 uppercase tracking-tighter">
@@ -579,8 +579,8 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
 
                 <div className="h-px bg-slate-500/20 w-12 mx-auto mb-4" />
 
-                <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">General Call Time</p>
-                <div className="text-5xl font-black text-zinc-400 tracking-tighter mb-4 flex justify-center">
+                <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-1">General Call Time</p>
+                <div className="text-5xl font-black text-zinc-900 tracking-tighter mb-4 flex justify-center">
                     <EditableInput
                         value={scheduleData?.callTime || data.crewCall || "TBD"}
                         onSave={(val) => updateField('crewCall', val)}
@@ -614,14 +614,14 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
             </div>
 
             {/* Notes */}
-            <div className="bg-emerald-900/10 border border-emerald-900/30 p-4 rounded-sm">
-                <p className="text-[10px] font-bold uppercase text-emerald-600 mb-1">Producer Notes</p>
+            <div className="bg-emerald-500/[0.03] rounded-[20px] p-6 shadow-sm border border-emerald-500/10 hover:shadow-md transition-shadow">
+                <p className="text-[10px] font-black uppercase text-emerald-600 mb-2 tracking-widest">Producer Notes</p>
                 <EditableInput
                     value={data.notes || ""}
                     onSave={(val) => updateField('notes', val)}
                     isEditable={!!isEditable}
                     type="textarea"
-                    className="text-xs text-emerald-100/80 italic whitespace-pre-wrap block"
+                    className="text-sm font-medium text-zinc-900 italic whitespace-pre-wrap block"
                     placeholder="Enter notes..."
                 />
             </div>
@@ -632,7 +632,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                 <div className="space-y-0.5">
                     {(scheduleData?.items && scheduleData.items.length > 0) ? (
                         scheduleData.items.map((item: any, i: number) => (
-                            <div key={i} className="bg-white rounded-[16px] p-4 shadow-sm border border-black/[0.03] border-l-2 border-emerald-500 flex gap-3">
+                            <div key={i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] border-l-4 border-emerald-500 flex gap-4 hover:shadow-md transition-shadow">
                                 <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{item.time || '00:00'}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-baseline mb-1">
@@ -656,7 +656,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                         ))
                     ) : (data.events && data.events.length > 0 ? (
                         data.events.map((evt: any, i: number) => (
-                            <div key={evt.id || i} className="bg-white rounded-[16px] p-4 shadow-sm border border-black/[0.03] border-l-2 border-emerald-500 flex gap-3 p-2">
+                            <div key={evt.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] border-l-4 border-emerald-500 flex gap-4 hover:shadow-md transition-shadow">
                                 <div className="w-12 shrink-0">
                                     <EditableInput
                                         value={evt.time || '00:00'}
@@ -701,13 +701,13 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
             {/* Emergency */}
             <div className="pt-8 text-center space-y-1">
                 <p className="text-[9px] text-zinc-600 uppercase font-bold">Emergency? Call 911</p>
-                <div className="inline-block bg-red-900/20 border border-red-900/40 px-3 py-2 rounded">
-                    <p className="text-[9px] text-red-500 uppercase font-bold mb-0.5">Nearest Hospital</p>
+                <div className="inline-block bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] border-l-4 border-red-500">
+                    <p className="text-[9px] text-red-500 uppercase font-black mb-1">Nearest Hospital</p>
                     <EditableInput
                         value={data.hospital || "Lookup required"}
                         onSave={(val) => updateField('hospital', val)}
                         isEditable={!!isEditable}
-                        className="text-[10px] text-red-400 font-mono block"
+                        className="text-xs text-zinc-900 font-bold block"
                         placeholder="Lookup required"
                     />
                 </div>
