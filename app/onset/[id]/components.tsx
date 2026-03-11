@@ -140,14 +140,14 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
             <div className="space-y-6 pb-20 animate-in slide-in-from-bottom-4 duration-300">
                 <div className="flex items-center justify-between mb-4 mt-2">
                     <h3 className="text-xl font-black uppercase tracking-tight text-zinc-900">{editingMember ? 'Edit Member' : 'Add Crew Member'}</h3>
-                    <button onClick={() => setIsAdding(false)} className="bg-zinc-200 p-2 rounded-full text-zinc-600"><X size={18} /></button>
+                    <button onClick={() => setIsAdding(false)} className="bg-zinc-50/50 p-2 rounded-full text-zinc-600"><X size={18} /></button>
                 </div>
 
                 <div className="space-y-4">
                     <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 ml-1">Full Name</label>
                         <input
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 font-bold placeholder:text-zinc-400 outline-none focus:border-emerald-500"
+                            className="w-full bg-white border border-zinc-100 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 font-bold placeholder:text-zinc-400 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                             placeholder="NAME"
                             value={form.name}
                             onChange={e => setForm({ ...form, name: e.target.value })}
@@ -158,7 +158,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                         <div className="space-y-1">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Role / Position</label>
                             <input
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold uppercase outline-none focus:border-zinc-500"
+                                className="w-full bg-white border border-zinc-100 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 text-[17px] font-black tracking-tight uppercase outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                                 placeholder="ROLE"
                                 value={form.role}
                                 onChange={e => setForm({ ...form, role: e.target.value })}
@@ -167,7 +167,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                         <div className="space-y-1">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Department</label>
                             <input
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold uppercase outline-none focus:border-zinc-500"
+                                className="w-full bg-white border border-zinc-100 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 text-[17px] font-black tracking-tight uppercase outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                                 placeholder="DEPT"
                                 value={form.department}
                                 onChange={e => setForm({ ...form, department: e.target.value })}
@@ -178,7 +178,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                     <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Email Address</label>
                         <input
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold outline-none focus:border-zinc-500"
+                            className="w-full bg-white border border-zinc-100 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 text-[17px] font-black tracking-tight outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                             placeholder="EMAIL"
                             value={form.email}
                             onChange={e => setForm({ ...form, email: e.target.value })}
@@ -188,7 +188,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                     <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-1">Phone Number</label>
                         <input
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-xl py-3 px-4 text-zinc-950 text-sm font-bold outline-none focus:border-zinc-500"
+                            className="w-full bg-white border border-zinc-100 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 text-[17px] font-black tracking-tight outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                             placeholder="PHONE"
                             value={form.phone}
                             onChange={e => setForm({ ...form, phone: e.target.value })}
@@ -202,10 +202,10 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                                 <button
                                     key={g}
                                     onClick={() => toggleGroup(g)}
-                                    className={`w-12 h-12 rounded-xl border flex items-center justify-center font-black text-xl shadow-sm transition-all tactile
+                                    className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg transition-all shadow-sm
                                         ${form.onSetGroups.includes(g)
-                                            ? (g === 'A' ? 'bg-[#22C55E] border-[#22C55E] text-white scale-110' : g === 'B' ? 'bg-[#3B82F6] border-[#3B82F6] text-white scale-110' : g === 'C' ? 'bg-[#EAB308] border-[#EAB308] text-white scale-110' : 'bg-[#EF4444] border-[#EF4444] text-white scale-110')
-                                            : 'bg-zinc-100 border-slate-500 text-zinc-400 opacity-60'}`}
+                                            ? (g === 'A' ? 'bg-[#22C55E] text-white scale-110 shadow-emerald-500/20 shadow-lg border-none' : g === 'B' ? 'bg-[#3B82F6] text-white scale-110 shadow-blue-500/20 shadow-lg border-none' : g === 'C' ? 'bg-[#EAB308] text-white scale-110 shadow-yellow-500/20 shadow-lg border-none' : 'bg-[#EF4444] text-white scale-110 shadow-red-500/20 shadow-lg border-none')
+                                            : 'bg-zinc-50 border border-zinc-100 text-zinc-400 hover:bg-zinc-100 opacity-100'}`}
                                 >
                                     {g}
                                 </button>
@@ -216,7 +216,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                     <div className="pt-6 flex flex-col gap-3">
                         <button
                             onClick={handleSubmit}
-                            className="w-full bg-emerald-500 text-zinc-950 font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                            className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
                         >
                             <Save size={18} />
                             <span>{editingMember ? 'Update Member' : 'Save to Crew List'}</span>
@@ -241,11 +241,11 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
     return (
         <div className="space-y-4">
             {/* Search & Add */}
-            <div className="sticky top-0 z-10 bg-zinc-200 pb-2 pt-2 flex gap-2">
+            <div className="sticky top-0 z-10 bg-zinc-50/50 pb-2 pt-2 flex gap-2">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={14} />
                     <input
-                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-lg py-3 pl-10 pr-4 text-base text-zinc-950 placeholder:text-zinc-400 outline-none focus:border-emerald-500 uppercase font-bold tracking-wide"
+                        className="w-full bg-white border border-zinc-100 rounded-[16px] shadow-sm py-3 pl-10 pr-4 text-base text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 uppercase font-bold tracking-wide"
                         placeholder="SEARCH CREW..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
@@ -254,7 +254,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                 {isOwner && (
                     <button
                         onClick={handleStartAdd}
-                        className="bg-emerald-500 text-zinc-950 p-3 rounded-lg shadow-lg active:scale-95 transition-transform"
+                        className="bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 p-3 rounded-lg shadow-lg active:scale-95 transition-transform"
                     >
                         <Plus size={20} />
                     </button>
@@ -263,18 +263,18 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
 
             {Object.entries(grouped).map(([dept, members]) => (
                 <div key={dept} className="space-y-2">
-                    <div className="sticky top-14 z-0 bg-zinc-200/90 backdrop-blur py-1 border-b border-zinc-300">
+                    <div className="sticky top-14 z-0 bg-white/80 backdrop-blur-md backdrop-blur py-1 border-b border-zinc-300">
                         <h3 className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">{dept}</h3>
                     </div>
                     <div className="grid gap-2">
                         {members.map((m: any) => (
-                            <div key={m.id} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex items-center justify-between group">
+                            <div key={m.id} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex items-center justify-between group">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
                                         {m.email && liveUsers.includes(m.email) && (
                                             <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" title="Online now" />
                                         )}
-                                        <p className="text-sm font-bold text-zinc-950 leading-none">{m.name || 'Unnamed'}</p>
+                                        <p className="text-[17px] font-black tracking-tight text-zinc-900 leading-none">{m.name || 'Unnamed'}</p>
                                         {isOwner && (
                                             <button onClick={() => handleStartEdit(m)} className="p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <Edit2 size={10} className="text-emerald-600" />
@@ -286,7 +286,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                                     {m.onSetGroups && m.onSetGroups.length > 0 && (
                                         <div className="flex gap-1 mt-1">
                                             {m.onSetGroups.map((g: string) => (
-                                                <span key={g} className={`text-[8px] font-black uppercase px-2 py-0.5 rounded shadow-sm 
+                                                <span key={g} className={`text-[10px] font-black uppercase w-6 h-6 flex items-center justify-center rounded-full shadow-sm 
                                                     ${g === 'A' ? 'bg-[#22C55E] text-white' : g === 'B' ? 'bg-[#3B82F6] text-white' : g === 'C' ? 'bg-[#EAB308] text-white' : 'bg-[#EF4444] text-white'}`}>{g}</span>
                                             ))}
                                         </div>
@@ -294,12 +294,12 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                                 </div>
                                 <div className="flex gap-2">
                                     {m.phone && (
-                                        <a href={`tel:${m.phone}`} className="w-8 h-8 rounded-full bg-zinc-300 flex items-center justify-center text-zinc-600 hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors">
+                                        <a href={`tel:${m.phone}`} className="w-10 h-10 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-600 hover:text-emerald-600 hover:bg-emerald-500/10 transition-colors">
                                             <Phone size={14} />
                                         </a>
                                     )}
                                     {m.email && (
-                                        <a href={`mailto:${m.email}`} className="w-8 h-8 rounded-full bg-zinc-300 flex items-center justify-center text-zinc-600 hover:text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                        <a href={`mailto:${m.email}`} className="w-10 h-10 rounded-full bg-zinc-50 flex items-center justify-center text-zinc-600 hover:text-blue-500 hover:bg-blue-500/10 transition-colors">
                                             <Mail size={14} />
                                         </a>
                                     )}
@@ -319,14 +319,14 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
 
 export const EmptyState = ({ label }: { label: string }) => (
     <div className="flex flex-col items-center justify-center p-12 text-center animate-in fade-in duration-500">
-        <div className="w-16 h-16 bg-zinc-100 rounded-2xl flex items-center justify-center mb-6 border border-slate-500 shadow-inner relative">
+        <div className="w-16 h-16 bg-white rounded-[24px] flex items-center justify-center mb-6 border border-black/[0.03] shadow-sm relative">
             <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl animate-pulse"></div>
             <AlertCircle size={24} className="text-zinc-300" />
         </div>
         <p className="text-xs uppercase font-black tracking-widest text-zinc-400 mb-1">Document Registry</p>
         <h3 className="text-sm font-black text-zinc-900 mb-6 uppercase tracking-tight">{label}</h3>
 
-        <div className="bg-white border border-slate-500 rounded-xl p-4 shadow-sm max-w-[220px]">
+        <div className="bg-white border border-zinc-100 rounded-xl p-4 shadow-sm max-w-[220px]">
             <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
                 No active data found. <br />
                 <span className="text-emerald-600">Draft in Desktop Editor</span><br />
@@ -344,12 +344,12 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
         return (
             <div className="fixed inset-0 z-50 bg-black flex flex-col p-6 animate-in slide-in-from-bottom-10">
                 <div className="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
-                    <h2 className="text-lg font-black uppercase tracking-wider text-zinc-950">
+                    <h2 className="text-lg font-black uppercase tracking-wider text-zinc-900">
                         {viewDoc === 'nda' ? 'Non-Disclosure Agreement' : 'Privacy Policy'}
                     </h2>
                     <button
                         onClick={() => setViewDoc(null)}
-                        className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 hover:text-zinc-950">
+                        className="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-500 hover:text-zinc-900">
                         <X size={16} />
                     </button>
                 </div>
@@ -357,20 +357,20 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                     <div className="prose prose-invert prose-sm max-w-none text-zinc-500">
                         {viewDoc === 'nda' ? (
                             <>
-                                <h3 className="text-zinc-950 font-bold uppercase mb-4">Confidentiality & Non-Disclosure Agreement</h3>
+                                <h3 className="text-zinc-900 font-bold uppercase mb-4">Confidentiality & Non-Disclosure Agreement</h3>
 
-                                <p><strong className="text-zinc-950">Confidentiality:</strong> All project materials, including scripts, call sheets, and schedules, are strictly confidential.</p>
+                                <p><strong className="text-zinc-900">Confidentiality:</strong> All project materials, including scripts, call sheets, and schedules, are strictly confidential.</p>
 
-                                <p><strong className="text-zinc-950">No Photography/Social Media:</strong> You are prohibited from taking or sharing photos, videos, or "behind-the-scenes" content without explicit written permission.</p>
+                                <p><strong className="text-zinc-900">No Photography/Social Media:</strong> You are prohibited from taking or sharing photos, videos, or "behind-the-scenes" content without explicit written permission.</p>
 
-                                <p><strong className="text-zinc-950">Proprietary Info:</strong> All technical data, such as DIT logs and lighting plots, remains the property of the Production.</p>
+                                <p><strong className="text-zinc-900">Proprietary Info:</strong> All technical data, such as DIT logs and lighting plots, remains the property of the Production.</p>
 
-                                <p><strong className="text-zinc-950">Revocable Access:</strong> Access to this dashboard is a privilege for active crew members and can be revoked by the Administrator at any time.</p>
+                                <p><strong className="text-zinc-900">Revocable Access:</strong> Access to this dashboard is a privilege for active crew members and can be revoked by the Administrator at any time.</p>
 
                                 <div className="mt-8 pt-8 border-t border-zinc-800">
                                     <button
                                         onClick={() => setViewDoc(null)}
-                                        className="w-full bg-emerald-500 text-black font-bold uppercase py-4 rounded tracking-widest hover:bg-emerald-400"
+                                        className="w-full bg-zinc-900 text-white font-black uppercase py-4 rounded tracking-widest hover:bg-emerald-400"
                                     >
                                         I have read and agree to protect the privacy of this production.
                                     </button>
@@ -389,7 +389,7 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
     }
 
     return (
-        <div className="h-screen bg-zinc-200 text-zinc-950 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-screen bg-zinc-50/50 text-zinc-900 flex flex-col items-center justify-center p-6 text-center">
             <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Welcome to Set</h1>
             <p className="text-xs text-zinc-500 mb-8 uppercase font-bold tracking-widest">Please identify yourself</p>
 
@@ -398,13 +398,13 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                 placeholder="Enter your email..."
                 value={val}
                 onChange={e => setVal(e.target.value)}
-                className="w-[90%] max-w-[340px] bg-zinc-100 border border-zinc-300 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 outline-none placeholder:text-zinc-400 font-mono"
+                className="w-[90%] max-w-[340px] bg-zinc-100 border border-zinc-300 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none placeholder:text-zinc-400 font-mono"
             />
 
             <button
                 onClick={() => onJoin(val)}
                 disabled={!val}
-                className="w-[90%] max-w-[340px] bg-emerald-500 text-zinc-950 font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
+                className="w-[90%] max-w-[340px] bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
             >
                 Enter
             </button>
@@ -429,7 +429,7 @@ export const ScriptView = ({ data }: { data: any }) => {
             {data.rows.map((row: any, i: number) => (
                 <div key={row.id || i} className="flex gap-4 group">
                     <div className="w-8 shrink-0 pt-1">
-                        <div className="w-6 h-6 rounded-full bg-zinc-100 shadow-inner border border-slate-500 flex items-center justify-center text-[10px] font-bold text-zinc-500 font-mono">
+                        <div className="w-6 h-6 rounded-full bg-zinc-100 shadow-inner border border-zinc-100 flex items-center justify-center text-[10px] font-bold text-zinc-500 font-mono">
                             {row.scene || i + 1}
                         </div>
                     </div>
@@ -440,7 +440,7 @@ export const ScriptView = ({ data }: { data: any }) => {
                             </span>
                         </div>
 
-                        <div className="font-mono text-base leading-relaxed text-zinc-950">
+                        <div className="font-mono text-base leading-relaxed text-zinc-900">
                             <span className="text-zinc-500 uppercase text-[10px] font-bold block mb-1">Visual</span>
                             {row.visual}
                         </div>
@@ -470,15 +470,15 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 
                 if (isConfirming) {
                     return (
-                        <div key={shot.id || i} className="p-4 bg-zinc-50 border border-slate-500 rounded-md shadow-sm border-l-4 border-l-emerald-500 animate-in fade-in">
-                            <p className="text-sm font-bold text-zinc-950 mb-4">Mark Shot {shot.scene}-{shot.shot} Complete?</p>
+                        <div key={shot.id || i} className="p-4 bg-zinc-50 border border-zinc-100 rounded-md shadow-sm border-l-4 border-l-emerald-500 animate-in fade-in">
+                            <p className="text-[17px] font-black tracking-tight text-zinc-900 mb-4">Mark Shot {shot.scene}-{shot.shot} Complete?</p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => {
                                         onCheckShot && onCheckShot(shot.id, 'COMPLETE', true);
                                         setConfirmingId(null);
                                     }}
-                                    className="flex-1 bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded active:scale-95 transition-transform"
+                                    className="flex-1 bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded active:scale-95 transition-transform"
                                 >
                                     Log & Complete
                                 </button>
@@ -487,7 +487,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                         onCheckShot && onCheckShot(shot.id, 'COMPLETE', false);
                                         setConfirmingId(null);
                                     }}
-                                    className="flex-1 bg-zinc-200 text-zinc-950 font-bold uppercase text-xs py-3 rounded"
+                                    className="flex-1 bg-zinc-50/50 text-zinc-900 font-bold uppercase text-xs py-3 rounded"
                                 >
                                     Just Complete
                                 </button>
@@ -498,17 +498,17 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                 }
 
                 return (
-                    <div key={shot.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 group relative flex items-start gap-4">
+                    <div key={shot.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative flex items-start gap-4">
                         <div className="shrink-0 flex flex-col items-center gap-1 w-10 mt-1">
                             <span className="text-[8px] text-zinc-500 uppercase font-bold">SCENE</span>
-                            <span className="text-lg font-black text-zinc-950 leading-none">{shot.scene || '-'}</span>
+                            <span className="text-lg font-black text-zinc-900 leading-none">{shot.scene || '-'}</span>
                         </div>
 
                         <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap gap-2 mb-2">
-                                <span className="bg-zinc-200 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
-                                <span className="bg-zinc-200 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
-                                <span className="bg-zinc-200 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
+                                <span className="bg-zinc-50/50 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
+                                <span className="bg-zinc-50/50 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
+                                <span className="bg-zinc-50/50 text-zinc-700 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
                             </div>
                             <p className="text-xs text-zinc-600 font-medium leading-normal mb-1">{shot.description}</p>
                             <p className="text-[10px] text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
@@ -526,7 +526,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                 }}
                                 className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${isComplete
                                     ? 'bg-emerald-500 border-emerald-500 text-white'
-                                    : 'bg-zinc-200 border-zinc-400 text-transparent hover:border-zinc-500 hover:text-zinc-400'
+                                    : 'bg-zinc-50/50 border-zinc-400 text-transparent hover:border-zinc-500 hover:text-zinc-400'
                                     }`}
                             >
                                 <Check size={16} />
@@ -564,10 +564,10 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
     return (
         <div className="space-y-6">
             {/* Vitals */}
-            <div className="bg-zinc-50 border border-slate-500/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
+            <div className="bg-zinc-50 border border-zinc-100/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 text-center">
                 <div className="flex flex-col gap-1 mb-4">
                     <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Shoot Date</p>
-                    <div className="text-xl font-black text-zinc-950 uppercase tracking-tighter">
+                    <div className="text-xl font-black text-zinc-900 uppercase tracking-tighter">
                         <EditableInput
                             value={scheduleData?.date || data.date || "TBD"}
                             onSave={(val) => updateField('date', val)}
@@ -589,7 +589,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-slate-500 pt-4 text-left">
+                <div className="grid grid-cols-2 gap-4 border-t border-zinc-100 pt-4 text-left">
                     <div>
                         <p className="text-[9px] text-zinc-500 uppercase font-bold">Basecamp / Location</p>
                         <EditableInput
@@ -632,7 +632,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                 <div className="space-y-0.5">
                     {(scheduleData?.items && scheduleData.items.length > 0) ? (
                         scheduleData.items.map((item: any, i: number) => (
-                            <div key={i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-emerald-500 flex gap-3">
+                            <div key={i} className="bg-white rounded-[16px] p-4 shadow-sm border border-black/[0.03] border-l-2 border-emerald-500 flex gap-3">
                                 <span className="text-xs font-mono font-bold text-emerald-400 w-10 shrink-0">{item.time || '00:00'}</span>
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-baseline mb-1">
@@ -656,7 +656,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                         ))
                     ) : (data.events && data.events.length > 0 ? (
                         data.events.map((evt: any, i: number) => (
-                            <div key={evt.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-emerald-500 flex gap-3 p-2">
+                            <div key={evt.id || i} className="bg-white rounded-[16px] p-4 shadow-sm border border-black/[0.03] border-l-2 border-emerald-500 flex gap-3 p-2">
                                 <div className="w-12 shrink-0">
                                     <EditableInput
                                         value={evt.time || '00:00'}
@@ -691,7 +691,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                             </div>
                         ))
                     ) : (
-                        <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-sm border-l-2 border-zinc-500">
+                        <div className="bg-white rounded-[16px] p-4 shadow-sm border border-black/[0.03] border-l-2 border-zinc-500">
                             <span className="text-xs text-zinc-500">No events scheduled.</span>
                         </div>
                     ))}
@@ -803,7 +803,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                         <div className="flex-1">
                             <h4 className="text-xs font-black uppercase text-emerald-400 mb-1">New Roll Pulled</h4>
                             <p className="text-[10px] text-zinc-600">
-                                <strong className="text-zinc-950">Roll {alert.roll}</strong> • Cam {alert.camera} • {alert.mediaType}
+                                <strong className="text-zinc-900">Roll {alert.roll}</strong> • Cam {alert.camera} • {alert.mediaType}
                             </p>
                             <p className="text-[10px] text-zinc-500 mt-1 font-mono">
                                 {alert.fps}fps • {alert.iso} ISO • {alert.shutter} • {alert.wb}
@@ -814,7 +814,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                     {onAdd && (
                         <button
                             onClick={() => handleStartIngest(alert)}
-                            className="bg-emerald-500 text-black font-bold uppercase text-[10px] py-3 rounded w-full hover:bg-emerald-400"
+                            className="bg-zinc-900 text-white font-black uppercase text-[10px] py-3 rounded w-full hover:bg-emerald-400"
                         >
                             Start Ingest
                         </button>
@@ -835,9 +835,9 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-950">New Entry</span>
+                        <span className="text-xs font-bold uppercase text-zinc-900">New Entry</span>
                         <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
                     </div>
 
@@ -848,7 +848,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 type="time"
                                 value={form.time}
                                 onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                             />
                         </div>
                         <div>
@@ -856,7 +856,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                             <select
                                 value={form.status}
                                 onChange={e => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 appearance-none"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 appearance-none"
                             >
                                 <option value="complete">Complete</option>
                                 <option value="pending">Pending</option>
@@ -872,7 +872,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 <button
                                     key={t}
                                     onClick={() => setForm({ ...form, eventType: t as any })}
-                                    className={`text-[9px] uppercase font-bold py-2 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-zinc-950' : 'text-zinc-500'}`}
+                                    className={`text-[9px] uppercase font-bold py-2 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-zinc-900' : 'text-zinc-500'}`}
                                 >
                                     {t === 'transfer' ? 'Send' : t}
                                 </button>
@@ -887,7 +887,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="Roll A001"
                                 value={form.source}
                                 onChange={e => setForm({ ...form, source: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400"
                             />
                         </div>
                         <div>
@@ -896,7 +896,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="Backup 1"
                                 value={form.destination}
                                 onChange={e => setForm({ ...form, destination: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400"
                             />
                         </div>
                     </div>
@@ -908,7 +908,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="128"
                                 value={(form as any).dataSize || ''}
                                 onChange={e => setForm({ ...form, dataSize: e.target.value } as any)}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400"
                             />
                         </div>
                         <div>
@@ -917,7 +917,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="xxhash"
                                 value={(form as any).checksum || ''}
                                 onChange={e => setForm({ ...form, checksum: e.target.value } as any)}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-sm p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-mono"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-sm p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400 font-mono"
                             />
                         </div>
                     </div>
@@ -928,13 +928,13 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                             placeholder="Add detailed notes here..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[80px] placeholder:text-zinc-400 resize-none"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 min-h-[80px] placeholder:text-zinc-400 resize-none"
                         />
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Save size={16} />
                         <span>Save Entry</span>
@@ -944,11 +944,11 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
             {/* Header Stats */}
             <div className="grid grid-cols-2 gap-2 text-center mb-4">
-                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-3">
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow p-3">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Total Offloads</div>
-                    <div className="text-2xl font-black text-zinc-950">{items.filter((i: any) => i.eventType === 'offload').length}</div>
+                    <div className="text-2xl font-black text-zinc-900">{items.filter((i: any) => i.eventType === 'offload').length}</div>
                 </div>
-                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-3">
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow p-3">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Issues</div>
                     <div className="text-2xl font-black text-red-500">{items.filter((i: any) => i.eventType === 'issue').length}</div>
                 </div>
@@ -959,7 +959,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                     <EmptyState label="DIT Log" />
                 ) : (
                     items.map((item: any, i: number) => (
-                        <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4">
+                        <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
                             <div className="flex justify-between items-center mb-3">
                                 <span className="font-mono text-emerald-400 text-xs font-bold">{item.time}</span>
                                 <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-sm ${item.status === 'complete' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-500'}`}>
@@ -969,7 +969,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
                             <div className="flex items-center gap-2 mb-3">
                                 <div className={`w-2 h-2 rounded-full ${item.eventType === 'issue' ? 'bg-red-500' : 'bg-zinc-500'}`}></div>
-                                <div className="font-black text-sm text-zinc-950 uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
+                                <div className="font-black text-sm text-zinc-900 uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4 text-xs text-zinc-500 mb-3 bg-black/40 p-3 rounded-lg">
@@ -1150,7 +1150,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                     </button>
                     <button
                         onClick={openNewRollModal}
-                        className="w-1/3 bg-zinc-200 text-zinc-500 font-bold uppercase tracking-widest text-[10px] py-4 rounded-xl border border-zinc-300 active:scale-95 transition-transform"
+                        className="w-1/3 bg-zinc-50/50 text-zinc-500 font-bold uppercase tracking-widest text-[10px] py-4 rounded-xl border border-zinc-300 active:scale-95 transition-transform"
                     >
                         New Roll
                     </button>
@@ -1160,8 +1160,8 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
             {/* NEW ROLL VERIFICATION MODAL */}
             {isNewRollModal && (
                 <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
-                    <div className="bg-zinc-50 border border-slate-500/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-                        <h3 className="text-lg font-black uppercase text-zinc-950 mb-1">Start New Roll</h3>
+                    <div className="bg-zinc-50 border border-zinc-100/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+                        <h3 className="text-lg font-black uppercase text-zinc-900 mb-1">Start New Roll</h3>
                         <p className="text-xs text-zinc-500 mb-6">Verify technical specs for the new card.</p>
 
                         <div className="space-y-4 mb-6">
@@ -1174,7 +1174,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                             onClick={() => setRollForm({ ...rollForm, camera: cam })}
                                             className={`flex-1 py-3 text-sm font-black rounded border transition-all ${rollForm.camera === cam
                                                 ? (cam === 'A' ? 'bg-[#22C55E] text-white border-[#22C55E]' : cam === 'B' ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-[#FBBF24] text-white border-[#FBBF24]')
-                                                : 'bg-zinc-200 text-zinc-600 border-zinc-300'
+                                                : 'bg-zinc-50/50 text-zinc-600 border-zinc-300'
                                                 }`}
                                         >
                                             {cam}
@@ -1187,7 +1187,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={rollForm.roll}
                                     onChange={e => setRollForm({ ...rollForm, roll: e.target.value })}
-                                    className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-lg font-mono p-3 rounded"
+                                    className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-lg font-mono p-3 rounded"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -1196,7 +1196,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.iso}
                                         onChange={e => setRollForm({ ...rollForm, iso: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -1204,7 +1204,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.fps}
                                         onChange={e => setRollForm({ ...rollForm, fps: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -1212,7 +1212,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.shutter}
                                         onChange={e => setRollForm({ ...rollForm, shutter: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -1220,7 +1220,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <input
                                         value={rollForm.wb}
                                         onChange={e => setRollForm({ ...rollForm, wb: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
                                     />
                                 </div>
                                 <div>
@@ -1228,7 +1228,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                     <select
                                         value={rollForm.mediaType}
                                         onChange={e => setRollForm({ ...rollForm, mediaType: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-slate-500 text-zinc-950 text-base p-2 rounded appearance-none"
+                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded appearance-none"
                                     >
                                         <option>CFexpress</option>
                                         <option>SD Card</option>
@@ -1244,7 +1244,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             <input
                                 value={rollForm.soundRoll}
                                 onChange={e => setRollForm({ ...rollForm, soundRoll: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded"
                                 placeholder="SR001"
                             />
                         </div>
@@ -1252,13 +1252,13 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsNewRollModal(false)}
-                                className="flex-1 bg-zinc-200 text-zinc-600 font-bold uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-50/50 text-zinc-600 font-bold uppercase text-xs py-3 rounded"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmNewRoll}
-                                className="flex-1 bg-emerald-500 text-black font-bold uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-900 text-white font-black uppercase text-xs py-3 rounded"
                             >
                                 Confirm & Start
                             </button>
@@ -1269,10 +1269,10 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
                         <div>
-                            <span className="text-xs font-bold uppercase text-zinc-950 block">Log Shot Actual</span>
+                            <span className="text-xs font-bold uppercase text-zinc-900 block">Log Shot Actual</span>
                             <span className="text-[10px] font-mono font-bold text-emerald-600 block">ROLL {form.roll}</span>
                         </div>
                         <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
@@ -1284,7 +1284,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             type="time"
                             value={form.time}
                             onChange={e => setForm({ ...form, time: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                         />
                     </div>
                     <div className="grid grid-cols-3 gap-3 mb-3">
@@ -1294,7 +1294,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 placeholder="1"
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 text-center uppercase"
                             />
                         </div>
                         <div className="col-span-1">
@@ -1303,7 +1303,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 placeholder="A"
                                 value={form.shotId}
                                 onChange={e => setForm({ ...form, shotId: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center uppercase"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 text-center uppercase"
                             />
                         </div>
                         <div className="col-span-1">
@@ -1312,7 +1312,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 type="number"
                                 value={form.take}
                                 onChange={e => setForm({ ...form, take: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 text-center"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 text-center"
                             />
                         </div>
                     </div>
@@ -1324,7 +1324,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             <input
                                 value={form.roll}
                                 onChange={e => setForm({ ...form, roll: e.target.value })}
-                                className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-left font-mono focus:border-emerald-500"
+                                className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-left font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                                 placeholder="A001"
                             />
                         </div>
@@ -1334,7 +1334,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.lens}
                                     onChange={e => setForm({ ...form, lens: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                                     placeholder="mm"
                                 />
                             </div>
@@ -1343,7 +1343,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.fps}
                                     onChange={e => setForm({ ...form, fps: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                                     placeholder="24"
                                 />
                             </div>
@@ -1352,7 +1352,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.iso}
                                     onChange={e => setForm({ ...form, iso: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                                     placeholder="800"
                                 />
                             </div>
@@ -1361,7 +1361,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 <input
                                     value={form.timecode || ''}
                                     onChange={e => handleTCChange(e.target.value)}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-950 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500"
+                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                                     placeholder="00:00:00:00"
                                 />
                             </div>
@@ -1401,9 +1401,9 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 onClick={() => setForm({ ...form, status: s.id })}
                                 className={`flex-1 py-3 text-xs font-black uppercase rounded border transition-all ${form.status === s.id
                                     ? (s.id === 'circle' ? 'bg-yellow-500 text-black border-yellow-500' :
-                                        s.id === 'bad' ? 'bg-red-500 text-zinc-950 border-red-500' :
+                                        s.id === 'bad' ? 'bg-red-500 text-zinc-900 border-red-500' :
                                             'bg-emerald-500 text-black border-emerald-500')
-                                    : 'bg-zinc-200 text-zinc-600 border-zinc-300 hover:border-zinc-400'
+                                    : 'bg-zinc-50/50 text-zinc-600 border-zinc-300 hover:border-zinc-400'
                                     }`}
                             >
                                 {s.label}
@@ -1417,13 +1417,13 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             placeholder="Lens, Filters, Action notes..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[60px] resize-none"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 min-h-[60px] resize-none"
                         />
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
                     >
                         <Save size={16} />
                         <span>Save Shot</span>
@@ -1437,10 +1437,10 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                     <EmptyState label="Camera Report" />
                 ) : (
                     items.map((item: any, i: number) => (
-                        <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 flex gap-4 items-center">
+                        <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex gap-4 items-center">
                             <div className="text-center w-12 shrink-0">
                                 <span className="block text-[10px] font-mono text-zinc-500">{item.time}</span>
-                                <span className="block text-xl font-black text-zinc-950">{item.shot || item.shotId || '?'}</span>
+                                <span className="block text-xl font-black text-zinc-900">{item.shot || item.shotId || '?'}</span>
                                 {item.scene && <span className="block text-[9px] font-bold text-zinc-500">Sc {item.scene}</span>}
                                 {item.roll && <span className="block text-[8px] font-mono text-zinc-600 mt-1">{item.roll}</span>}
                             </div>
@@ -1517,7 +1517,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
                         value={data.date || 'TBD'}
                         onSave={(val) => updateField('date', val)}
                         isEditable={!!isEditable}
-                        className="text-xl font-black text-zinc-950 block"
+                        className="text-xl font-black text-zinc-900 block"
                     />
                 </div>
                 <div className="text-right">
@@ -1562,7 +1562,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
                             )}
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
-                                    <div className="bg-zinc-200 text-zinc-950 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                                    <div className="bg-zinc-50/50 text-zinc-900 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
                                         <span>SCENE</span>
                                         <EditableInput
                                             value={item.scene || '-'}
@@ -1581,7 +1581,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
                                 </div>
                                 <div className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' :
                                     item.dayNight === 'NIGHT' ? 'bg-blue-900/30 text-blue-400' :
-                                        'bg-zinc-200 text-zinc-500'
+                                        'bg-zinc-50/50 text-zinc-500'
                                     }`}>
                                     <EditableInput
                                         value={item.dayNight || 'DAY'}
@@ -1595,7 +1595,7 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
                                 value={item.set || ''}
                                 onSave={(val) => updateItem(i, { set: val })}
                                 isEditable={!!isEditable}
-                                className="text-xs font-black text-zinc-950 uppercase mb-1 leading-tight block"
+                                className="text-xs font-black text-zinc-900 uppercase mb-1 leading-tight block"
                                 placeholder="Set name..."
                             />
                             <EditableInput
@@ -1706,9 +1706,9 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
 
             {/* Add/Edit Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-950">{editingId ? 'Edit Note' : 'New Note'}</span>
+                        <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Note' : 'New Note'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
                     </div>
 
@@ -1718,7 +1718,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             type="time"
                             value={form.time}
                             onChange={e => setForm({ ...form, time: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
                         />
                     </div>
 
@@ -1728,7 +1728,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             placeholder="Topic (e.g. Safety Meeting)"
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 placeholder:text-zinc-400 font-bold"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400 font-bold"
                         />
                     </div>
 
@@ -1738,7 +1738,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             placeholder="Enter details..."
                             value={form.body}
                             onChange={e => setForm({ ...form, body: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 text-base p-2 rounded focus:outline-none focus:border-emerald-500 min-h-[120px] placeholder:text-zinc-400 resize-none leading-relaxed"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 min-h-[120px] placeholder:text-zinc-400 resize-none leading-relaxed"
                         />
                     </div>
 
@@ -1746,14 +1746,14 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                         {editingId && (
                             <button
                                 onClick={handleCancel}
-                                className="flex-1 bg-zinc-800 text-zinc-950 font-bold uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-800 text-zinc-900 font-bold uppercase text-xs py-3 rounded"
                             >
                                 Cancel
                             </button>
                         )}
                         <button
                             onClick={handleSubmit}
-                            className="flex-1 bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                            className="flex-1 bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
                         >
                             <Save size={16} />
                             <span>{editingId ? 'Update Note' : 'Save Note'}</span>
@@ -1770,7 +1770,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                     items.slice().reverse().map((item: any, i: number) => {
                         const isConfirming = deleteConfirmId === item.id;
                         return (
-                            <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 group relative">
+                            <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                                 <div className="flex justify-between items-center mb-2 border-b border-zinc-800 pb-2">
                                     <div className="flex items-center gap-2">
                                         <span className="font-mono text-emerald-600 text-xs font-bold">{item.time}</span>
@@ -1781,7 +1781,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                                         {onUpdate && !isConfirming && (
                                             <button
                                                 onClick={() => handleStartEdit(item)}
-                                                className="text-zinc-500 hover:text-zinc-950"
+                                                className="text-zinc-500 hover:text-zinc-900"
                                             >
                                                 <Edit2 size={14} />
                                             </button>
@@ -1822,7 +1822,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                                 ) : (
                                     <>
                                         {item.description && (
-                                            <h4 className="text-sm font-black text-zinc-950 uppercase mb-2 leading-tight">{item.description}</h4>
+                                            <h4 className="text-sm font-black text-zinc-900 uppercase mb-2 leading-tight">{item.description}</h4>
                                         )}
                                         <p className="text-xs text-zinc-600 leading-relaxed whitespace-pre-wrap">{item.body}</p>
                                     </>
@@ -1855,7 +1855,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
                 </button>
             )}
             {items.map((loc: any, i: number) => (
-                <div key={loc.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                <div key={loc.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(loc.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -2107,26 +2107,26 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                 <button
                     onClick={() => setView('list')}
-                    className="flex items-center gap-2 text-zinc-500 font-bold uppercase text-[10px] tracking-widest hover:text-zinc-950"
+                    className="flex items-center gap-2 text-zinc-500 font-bold uppercase text-[10px] tracking-widest hover:text-zinc-900"
                 >
                     <X size={14} /> Back to List
                 </button>
 
-                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-6">
-                    <h2 className="text-lg font-black uppercase text-zinc-950 mb-6">New Release</h2>
+                <div className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-6">
+                    <h2 className="text-lg font-black uppercase text-zinc-900 mb-6">New Release</h2>
 
                     <div className="mb-4">
                         <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-2">Type</label>
-                        <div className="flex bg-zinc-200 p-1 rounded-lg border border-zinc-300">
+                        <div className="flex bg-zinc-50/50 p-1 rounded-lg border border-zinc-300">
                             <button
                                 onClick={() => setNewReleaseType('talent')}
-                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'talent' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-500'}`}
+                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'talent' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'}`}
                             >
                                 Talent
                             </button>
                             <button
                                 onClick={() => setNewReleaseType('property')}
-                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'property' ? 'bg-white text-zinc-950 shadow-sm' : 'text-zinc-500'}`}
+                                className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'property' ? 'bg-white text-zinc-900 shadow-sm' : 'text-zinc-500'}`}
                             >
                                 Property
                             </button>
@@ -2141,7 +2141,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                             value={newReleaseName}
                             onChange={(e) => setNewReleaseName(e.target.value)}
                             placeholder={newReleaseType === 'talent' ? "Enter full name..." : "Enter owner name..."}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md rounded-lg p-4 text-zinc-950 font-bold outline-none focus:border-emerald-500 transition-colors placeholder:text-zinc-700"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow rounded-lg p-4 text-zinc-900 font-bold outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-colors placeholder:text-zinc-700"
                         />
                     </div>
 
@@ -2165,17 +2165,17 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
             <div className="space-y-6">
                 <button
                     onClick={() => { setView('list'); setActiveId(null); }}
-                    className="flex items-center gap-2 text-zinc-500 font-bold uppercase text-[10px] tracking-widest hover:text-zinc-950"
+                    className="flex items-center gap-2 text-zinc-500 font-bold uppercase text-[10px] tracking-widest hover:text-zinc-900"
                 >
                     <X size={14} /> Back to List
                 </button>
 
-                <div className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden p-6 space-y-6">
+                <div className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden p-6 space-y-6">
                     <div>
                         <span className="bg-zinc-800 text-zinc-500 text-[9px] font-black uppercase px-2 py-1 rounded inline-block mb-2">
                             {activeRelease.type} Release
                         </span>
-                        <h2 className="text-2xl font-black uppercase text-zinc-950 leading-none mb-1">
+                        <h2 className="text-2xl font-black uppercase text-zinc-900 leading-none mb-1">
                             {activeRelease.name || 'Untitled'}
                         </h2>
                         <p className="text-sm text-zinc-500">{activeRelease.description}</p>
@@ -2185,11 +2185,11 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     <div className="grid grid-cols-2 gap-4 text-xs">
                         <div>
                             <label className="text-[9px] font-bold uppercase text-zinc-600 block">Producer</label>
-                            <span className="text-zinc-950">{d.productionCompany}</span>
+                            <span className="text-zinc-900">{d.productionCompany}</span>
                         </div>
                         <div>
                             <label className="text-[9px] font-bold uppercase text-zinc-600 block">Date</label>
-                            <span className="text-zinc-950">{d.shootDate || d.shootDates}</span>
+                            <span className="text-zinc-900">{d.shootDate || d.shootDates}</span>
                         </div>
                     </div>
 
@@ -2222,7 +2222,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                                 <input
                                     value={typedName}
                                     onChange={(e) => setTypedName(e.target.value)}
-                                    className="w-full bg-zinc-50 border border-zinc-300 p-3 rounded text-zinc-950 font-mono text-center outline-none focus:border-emerald-500 transition-colors"
+                                    className="w-full bg-zinc-50 border border-zinc-300 p-3 rounded text-zinc-900 font-mono text-center outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 transition-colors"
                                     placeholder="John Doe"
                                 />
                                 <p className="text-[9px] text-zinc-600 mt-2 text-center">
@@ -2267,14 +2267,14 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                     <div
                         key={r.id}
                         onClick={() => { setActiveId(r.id); setView('detail'); }}
-                        className="bg-zinc-100 shadow-inner border border-slate-500 rounded-lg p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
+                        className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
                     >
                         <div className="flex items-center gap-3">
                             <div className={`w-11 h-11 rounded-full flex items-center justify-center ${r.status === 'signed' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-zinc-800 text-zinc-500'}`}>
                                 {r.status === 'signed' ? <Check size={16} /> : <Edit2 size={16} />}
                             </div>
                             <div>
-                                <h3 className="text-sm font-bold text-zinc-950 leading-none mb-1">{r.name || 'Untitled'}</h3>
+                                <h3 className="text-[17px] font-black tracking-tight text-zinc-900 leading-none mb-1">{r.name || 'Untitled'}</h3>
                                 <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wide">{r.description || r.type}</p>
                             </div>
                         </div>
@@ -2395,9 +2395,9 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-950">{editingId ? 'Edit Note' : 'New Note'}</span>
+                        <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Note' : 'New Note'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
                     </div>
 
@@ -2407,7 +2407,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                             <input
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded text-center font-bold"
                                 placeholder="#"
                             />
                         </div>
@@ -2416,7 +2416,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                             <input
                                 value={form.bestTake}
                                 onChange={e => setForm({ ...form, bestTake: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded text-center font-bold"
                                 placeholder="1"
                             />
                         </div>
@@ -2427,7 +2427,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         <textarea
                             value={form.visual}
                             onChange={e => setForm({ ...form, visual: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-20 text-sm"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded h-20 text-sm"
                             placeholder="Description..."
                         />
                     </div>
@@ -2437,7 +2437,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         <textarea
                             value={form.audio}
                             onChange={e => setForm({ ...form, audio: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-20 text-sm"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded h-20 text-sm"
                             placeholder="Dialogue/Sound..."
                         />
                     </div>
@@ -2447,18 +2447,18 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-20 text-sm italic text-zinc-500"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded h-20 text-sm italic text-zinc-500"
                             placeholder="Notes..."
                         />
                     </div>
 
                     <div className="flex gap-2">
                         {editingId && (
-                            <button onClick={handleCancel} className="flex-1 bg-zinc-800 text-zinc-950 font-bold uppercase text-xs py-3 rounded">
+                            <button onClick={handleCancel} className="flex-1 bg-zinc-800 text-zinc-900 font-bold uppercase text-xs py-3 rounded">
                                 Cancel
                             </button>
                         )}
-                        <button onClick={handleSubmit} className="flex-1 bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                             <Save size={14} />
                             <span>{editingId ? 'Update' : 'Save'}</span>
                         </button>
@@ -2474,7 +2474,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                     items.slice().reverse().map((item: any, i: number) => {
                         const isConfirming = deleteConfirmId === item.id;
                         return (
-                            <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-md p-4 relative group">
+                            <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative group">
                                 <div className="flex justify-between items-start mb-3 border-b border-zinc-800 pb-2">
                                     <div className="flex items-center gap-3">
                                         <div className="bg-zinc-800 px-2 py-1 rounded border border-zinc-700">
@@ -2484,14 +2484,14 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                                         {item.bestTake && (
                                             <div className="bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/30">
                                                 <span className="text-[9px] uppercase font-bold text-emerald-600 block text-center leading-none mb-0.5">Best Take</span>
-                                                <span className="text-sm font-black text-zinc-950 block text-center leading-none">{item.bestTake}</span>
+                                                <span className="text-sm font-black text-zinc-900 block text-center leading-none">{item.bestTake}</span>
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                                         {onUpdate && !isConfirming && (
-                                            <button onClick={() => handleStartEdit(item)} className="text-zinc-500 hover:text-zinc-950"><Edit2 size={14} /></button>
+                                            <button onClick={() => handleStartEdit(item)} className="text-zinc-500 hover:text-zinc-900"><Edit2 size={14} /></button>
                                         )}
                                         {onDelete && !isConfirming && (
                                             <button onClick={() => setDeleteConfirmId(item.id)} className="text-zinc-500 hover:text-red-500"><Trash2 size={14} /></button>
@@ -2633,11 +2633,11 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                 <div className="space-y-4">
                     {/* Mini Header Stats */}
                     <div className="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-zinc-500 mb-2">
-                        <div className="bg-zinc-100 shadow-inner border border-slate-500 p-2 rounded text-center">
-                            Roll: <span className="text-zinc-950 ml-1">{data?.roll || '1'}</span>
+                        <div className="bg-zinc-100 shadow-inner border border-zinc-100 p-2 rounded text-center">
+                            Roll: <span className="text-zinc-900 ml-1">{data?.roll || '1'}</span>
                         </div>
-                        <div className="bg-zinc-100 shadow-inner border border-slate-500 p-2 rounded text-center">
-                            SR: <span className="text-zinc-950 ml-1">{data?.sampleRate || '48k'}</span>
+                        <div className="bg-zinc-100 shadow-inner border border-zinc-100 p-2 rounded text-center">
+                            SR: <span className="text-zinc-900 ml-1">{data?.sampleRate || '48k'}</span>
                         </div>
                     </div>
 
@@ -2653,9 +2653,9 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
+                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-950">{editingId ? 'Edit Take' : 'Log Take'}</span>
+                        <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Take' : 'Log Take'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
                     </div>
 
@@ -2665,7 +2665,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded text-center font-bold"
                             />
                         </div>
                         <div className="flex-1">
@@ -2673,7 +2673,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.take}
                                 onChange={e => setForm({ ...form, take: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-bold"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded text-center font-bold"
                             />
                         </div>
                         <div className="flex-[2]">
@@ -2681,7 +2681,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                             <input
                                 value={form.timecode}
                                 onChange={e => setForm({ ...form, timecode: e.target.value })}
-                                className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-center font-mono"
+                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded text-center font-mono"
                                 placeholder="00:00:00:00"
                             />
                         </div>
@@ -2699,7 +2699,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <input
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded"
                             placeholder="Action description..."
                         />
                     </div>
@@ -2709,7 +2709,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <input
                             value={form.tracks}
                             onChange={e => setForm({ ...form, tracks: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded text-xs font-mono"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded text-xs font-mono"
                             placeholder="Boom, Lav 1, etc"
                         />
                     </div>
@@ -2719,13 +2719,13 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-zinc-100 shadow-inner border border-slate-500 rounded-md text-zinc-950 p-2 rounded h-16 text-xs italic"
+                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 p-2 rounded h-16 text-xs italic"
                             placeholder="Sound issues, planes, etc"
                         />
                     </div>
 
                     <div className="flex gap-2">
-                        <button onClick={handleSubmit} className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                        <button onClick={handleSubmit} className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                             <Save size={14} />
                             <span>{editingId ? 'Update Take' : 'Save Take'}</span>
                         </button>
@@ -2741,15 +2741,15 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     takes.slice().reverse().map((take: any, i: number) => {
                         const isConfirming = deleteConfirmId === take.id;
                         return (
-                            <div key={take.id || i} className={`bg-zinc-50 p-3 rounded-lg border relative flex items-center gap-3 ${take.circled ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.1)]' : 'border-slate-500'}`}>
+                            <div key={take.id || i} className={`bg-zinc-50 p-3 rounded-lg border relative flex items-center gap-3 ${take.circled ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.1)]' : 'border-zinc-100'}`}>
 
                                 {/* Scene/Take Badge */}
-                                <div className="flex flex-col items-center justify-center min-w-[50px] bg-zinc-100 rounded border border-slate-500 p-1">
+                                <div className="flex flex-col items-center justify-center min-w-[50px] bg-zinc-100 rounded border border-zinc-100 p-1">
                                     <span className="text-[10px] font-bold text-zinc-500 leading-none">SCN</span>
-                                    <span className="text-base font-black text-zinc-950 leading-tight">{take.scene}</span>
+                                    <span className="text-base font-black text-zinc-900 leading-tight">{take.scene}</span>
                                     <div className="w-full h-px bg-zinc-300 my-0.5" />
                                     <span className="text-[10px] font-bold text-zinc-500 leading-none">TK</span>
-                                    <span className={`text-base font-black leading-tight ${take.circled ? 'text-emerald-600' : 'text-zinc-950'}`}>{take.take}</span>
+                                    <span className={`text-base font-black leading-tight ${take.circled ? 'text-emerald-600' : 'text-zinc-900'}`}>{take.take}</span>
                                 </div>
 
                                 {/* Details */}
@@ -2758,9 +2758,9 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                         <span className="font-mono text-emerald-600 text-xs font-bold">{take.timecode}</span>
                                         {take.circled && <span className="text-[9px] bg-emerald-500 text-black font-bold px-1 rounded-sm">CIRCLED</span>}
                                     </div>
-                                    <p className="text-xs font-bold text-zinc-950 truncate mb-0.5">{take.description || 'No Description'}</p>
+                                    <p className="text-xs font-bold text-zinc-900 truncate mb-0.5">{take.description || 'No Description'}</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {take.tracks && <span className="text-[9px] bg-zinc-200 px-1 rounded text-zinc-600 font-mono border border-zinc-300">{take.tracks}</span>}
+                                        {take.tracks && <span className="text-[9px] bg-zinc-50/50 px-1 rounded text-zinc-600 font-mono border border-zinc-300">{take.tracks}</span>}
                                         {take.notes && <span className="text-[9px] text-zinc-500 italic truncate">{take.notes}</span>}
                                     </div>
                                 </div>
@@ -2768,7 +2768,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                 {/* Actions */}
                                 <div className="flex flex-col gap-2">
                                     {onUpdate && !isConfirming && (
-                                        <button onClick={() => handleStartEdit(take)} className="text-zinc-600 hover:text-zinc-950"><Edit2 size={16} /></button>
+                                        <button onClick={() => handleStartEdit(take)} className="text-zinc-600 hover:text-zinc-900"><Edit2 size={16} /></button>
                                     )}
                                     {onDelete && !isConfirming && (
                                         <button onClick={() => setDeleteConfirmId(take.id)} className="text-zinc-600 hover:text-red-500"><Trash2 size={16} /></button>
@@ -2779,8 +2779,8 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                     <div className="absolute inset-0 bg-zinc-50 flex items-center justify-between px-4 rounded-lg z-10 border border-red-500">
                                         <span className="text-xs font-bold text-red-500 uppercase">Delete?</span>
                                         <div className="flex gap-2">
-                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-950 bg-zinc-200 px-3 py-1 rounded shadow-sm border border-zinc-300">No</button>
-                                            <button onClick={() => { onDelete && onDelete(take.id); setDeleteConfirmId(null); }} className="text-xs text-zinc-950 bg-red-600 px-3 py-1 rounded">Yes</button>
+                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-900 bg-zinc-50/50 px-3 py-1 rounded shadow-sm border border-zinc-300">No</button>
+                                            <button onClick={() => { onDelete && onDelete(take.id); setDeleteConfirmId(null); }} className="text-xs text-zinc-900 bg-red-600 px-3 py-1 rounded">Yes</button>
                                         </div>
                                     </div>
                                 )}
@@ -2822,7 +2822,7 @@ export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable }
             {fields.map((field) => {
                 const value = data[field.key];
                 return (
-                    <div key={field.key} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-5">
+                    <div key={field.key} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-5">
                         <span className="text-[10px] font-bold uppercase text-emerald-600 tracking-widest block mb-2">{field.label}</span>
                         <EditableInput
                             value={(typeof value === 'string' ? value : '') || ""}
@@ -2855,7 +2855,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
                 </button>
             )}
             {slides.map((slide: any, i: number) => (
-                <div key={slide.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                <div key={slide.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -2879,7 +2879,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
                             value={slide.title || 'Slide Title'}
                             onSave={(val) => onUpdate?.({ ...slide, title: val })}
                             isEditable={isOwner}
-                            className="text-xl font-black uppercase text-zinc-950 tracking-tight leading-none mb-3 p-0 bg-transparent border-none text-left"
+                            className="text-xl font-black uppercase text-zinc-900 tracking-tight leading-none mb-3 p-0 bg-transparent border-none text-left"
                         />
                         <EditableInput
                             value={slide.content || ''}
@@ -2913,9 +2913,9 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
             )}
 
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-4 flex gap-4 overflow-hidden items-center group relative">
+                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-4 flex gap-4 overflow-hidden items-center group relative">
                     {imageKey && (item[imageKey] || isOwner) && (
-                        <div className="w-16 h-16 shrink-0 bg-zinc-200 rounded-lg overflow-hidden border border-slate-500 relative">
+                        <div className="w-16 h-16 shrink-0 bg-zinc-50/50 rounded-lg overflow-hidden border border-zinc-100 relative">
                             {isOwner ? (
                                 <ImageUploader
                                     currentUrl={item[imageKey] || ''}
@@ -2943,13 +2943,13 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
                             value={item[titleKey] || 'Unnamed Item'}
                             onSave={(val) => onUpdate?.({ ...item, [titleKey]: val })}
                             isEditable={isOwner}
-                            className="text-base font-bold text-zinc-950 leading-tight p-0 bg-transparent border-none text-left"
+                            className="text-base font-bold text-zinc-900 leading-tight p-0 bg-transparent border-none text-left"
                         />
 
                         {detailKeys && detailKeys.length > 0 && (
                             <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-500 mt-2">
                                 {detailKeys.map((k: string) => (
-                                    <div key={k} className="bg-white px-2 py-0.5 rounded border border-slate-500 flex items-center gap-1">
+                                    <div key={k} className="bg-white px-2 py-0.5 rounded border border-zinc-100 flex items-center gap-1">
                                         <span className="opacity-50">{k.toUpperCase()}:</span>
                                         <EditableInput
                                             value={item[k] || ''}
@@ -2992,7 +2992,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -3017,7 +3017,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                         </div>
                     </div>
                     {item.showCaption && item.caption && (
-                        <div className="p-4 bg-zinc-100 border-t border-slate-500">
+                        <div className="p-4 bg-zinc-100 border-t border-zinc-100">
                             <p className="text-sm font-medium text-zinc-900 leading-relaxed whitespace-pre-wrap">{item.caption}</p>
                         </div>
                     )}
@@ -3043,7 +3043,7 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm group relative">
+                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
@@ -3111,14 +3111,14 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col group relative">
+                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm flex flex-col group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
                     <div className="flex p-4 gap-4 items-center">
-                        <div className="w-20 h-20 rounded-full bg-zinc-300 border border-slate-500 overflow-hidden flex-shrink-0">
+                        <div className="w-20 h-20 rounded-full bg-zinc-300 border border-zinc-100 overflow-hidden flex-shrink-0">
                             {item.imageUrl ? (
                                 <img src={item.imageUrl} className="w-full h-full object-cover" />
                             ) : (
@@ -3131,18 +3131,18 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
                                 value={item.role || 'TBD'}
                                 onSave={(val) => onUpdate?.({ ...item, role: val })}
                                 isEditable={isOwner}
-                                className="text-lg font-black uppercase text-zinc-950 tracking-tight leading-none p-0 bg-transparent border-none text-left"
+                                className="text-lg font-black uppercase text-zinc-900 tracking-tight leading-none p-0 bg-transparent border-none text-left"
                             />
                             <EditableInput
                                 value={item.name || 'Actor Name TBD'}
                                 onSave={(val) => onUpdate?.({ ...item, name: val })}
                                 isEditable={isOwner}
-                                className="text-sm font-bold text-zinc-600 leading-snug p-0 bg-transparent border-none text-left"
+                                className="text-[17px] font-black tracking-tight text-zinc-600 leading-snug p-0 bg-transparent border-none text-left"
                             />
                         </div>
                     </div>
                     {(item.notes || isOwner) && (
-                        <div className="p-4 bg-zinc-50 border-t border-slate-500">
+                        <div className="p-4 bg-zinc-50 border-t border-zinc-100">
                             <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Casting Notes</span>
                             <EditableInput
                                 value={item.notes || ''}
@@ -3174,14 +3174,14 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
                 </button>
             )}
             {items.map((item: any, i: number) => (
-                <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex gap-4 p-4 items-center group relative">
+                <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm flex gap-4 p-4 items-center group relative">
                     {isOwner && onDelete && (
                         <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
                     {item.imageUrl && (
-                        <div className="w-20 h-20 bg-zinc-800 rounded-md border border-slate-500 overflow-hidden flex-shrink-0">
+                        <div className="w-20 h-20 bg-zinc-800 rounded-md border border-zinc-100 overflow-hidden flex-shrink-0">
                             <img src={item.imageUrl} className="w-full h-full object-cover" />
                         </div>
                     )}
@@ -3196,7 +3196,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
                                 />
                             </div>
                             {(item.quantity || isOwner) && (
-                                <div className="flex items-center gap-1 bg-zinc-200 px-1.5 py-0.5 rounded border border-zinc-300">
+                                <div className="flex items-center gap-1 bg-zinc-50/50 px-1.5 py-0.5 rounded border border-zinc-300">
                                     <span className="text-[10px] font-mono text-zinc-500">QTY:</span>
                                     <EditableInput
                                         value={item.quantity || '1'}
@@ -3211,7 +3211,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
                             value={item.name || 'Unnamed Prop'}
                             onSave={(val) => onUpdate?.({ ...item, name: val })}
                             isEditable={isOwner}
-                            className="text-base font-black uppercase text-zinc-950 leading-tight p-0 bg-transparent border-none text-left"
+                            className="text-base font-black uppercase text-zinc-900 leading-tight p-0 bg-transparent border-none text-left"
                         />
                         {(item.description || isOwner) && (
                             <EditableInput
@@ -3279,7 +3279,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
     };
 
     const STATUS_OPTIONS = [
-        { value: '', label: '-', className: 'text-zinc-500 bg-zinc-200' },
+        { value: '', label: '-', className: 'text-zinc-500 bg-zinc-50/50' },
         { value: 'approved', label: 'APPROVED', className: 'text-green-700 bg-green-100 border-green-200' },
         { value: 'edit', label: 'EDIT', className: 'text-blue-700 bg-blue-100 border-blue-200' },
         { value: 'reshoot', label: 'RESHOOT', className: 'text-orange-700 bg-orange-100 border-orange-200' },
@@ -3303,9 +3303,9 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-slate-500/80 rounded-xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-4 mb-6">
+                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-2xl animate-in fade-in slide-in-from-top-4 mb-6">
                     <div className="flex justify-between items-center mb-4 border-b border-zinc-300 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-950 tracking-widest">{editingId ? 'Edit Select' : 'New Select'}</span>
+                        <span className="text-xs font-bold uppercase text-zinc-900 tracking-widest">{editingId ? 'Edit Select' : 'New Select'}</span>
                         <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
                     </div>
 
@@ -3315,7 +3315,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                             <input
                                 value={form.fileNumber}
                                 onChange={e => setForm({ ...form, fileNumber: e.target.value })}
-                                className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded text-center font-bold outline-none focus:bg-white"
+                                className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded text-center font-bold outline-none focus:bg-white"
                                 placeholder="..."
                             />
                         </div>
@@ -3324,7 +3324,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                             <select
                                 value={form.status}
                                 onChange={e => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded text-center font-bold text-xs uppercase outline-none focus:bg-white h-[38px] appearance-none"
+                                className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded text-center font-bold text-xs uppercase outline-none focus:bg-white h-[38px] appearance-none"
                             >
                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                             </select>
@@ -3336,7 +3336,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         <textarea
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded h-20 outline-none focus:bg-white resize-none"
+                            className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded h-20 outline-none focus:bg-white resize-none"
                             placeholder="Describe what happens..."
                         />
                     </div>
@@ -3346,12 +3346,12 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-zinc-100 border border-slate-500 text-zinc-950 p-2 rounded h-16 outline-none focus:bg-white resize-none text-xs italic"
+                            className="w-full bg-zinc-100 border border-zinc-100 text-zinc-900 p-2 rounded h-16 outline-none focus:bg-white resize-none text-xs italic"
                             placeholder="Additional context or editor notes..."
                         />
                     </div>
 
-                    <button onClick={handleSubmit} className="w-full bg-emerald-500 text-zinc-950 font-bold uppercase tracking-widest text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                    <button onClick={handleSubmit} className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase tracking-widest text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                         <Save size={14} />
                         <span>{editingId ? 'Update' : 'Save'}</span>
                     </button>
@@ -3368,7 +3368,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                         const statusObj = STATUS_OPTIONS.find(o => o.value === item.status) || STATUS_OPTIONS[0];
 
                         return (
-                            <div key={item.id} className="bg-zinc-100 shadow-sm border border-slate-500 rounded-xl p-4 relative flex gap-4 overflow-hidden group">
+                            <div key={item.id} className="bg-zinc-100 shadow-sm border border-zinc-100 rounded-xl p-4 relative flex gap-4 overflow-hidden group">
                                 {/* Left Col: Status & File Number */}
                                 <div className="flex flex-col gap-2 min-w-[70px] w-[70px] flex-shrink-0">
                                     <div className={`text-[9px] font-black uppercase text-center py-1 px-1 rounded border ${statusObj.className} tracking-wider`}>
@@ -3382,7 +3382,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
 
                                 {/* Right Col: Content */}
                                 <div className="flex-1 min-w-0 pr-8">
-                                    <p className="text-sm font-bold text-zinc-950 leading-snug whitespace-pre-wrap">{item.description || 'No Description'}</p>
+                                    <p className="text-[17px] font-black tracking-tight text-zinc-900 leading-snug whitespace-pre-wrap">{item.description || 'No Description'}</p>
                                     {item.notes && <p className="text-xs text-zinc-600 italic whitespace-pre-wrap mt-2">{item.notes}</p>}
                                 </div>
 
@@ -3427,9 +3427,9 @@ export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (to
                     const isDelegated = groups.includes('D');
 
                     return (
-                        <div key={key} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-4 flex items-center justify-between">
+                        <div key={key} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-4 flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-bold text-zinc-950 uppercase">{DOC_LABELS[key] || key}</p>
+                                <p className="text-[17px] font-black tracking-tight text-zinc-900 uppercase">{DOC_LABELS[key] || key}</p>
                                 <p className="text-[10px] text-zinc-500 font-mono">ID: {key}</p>
                             </div>
                             <button
@@ -3455,7 +3455,7 @@ export const MobileVisionView = ({ data, onUpdate }: { data: any, onUpdate: (new
     return (
         <div className="space-y-6 pb-20">
             {data.pages.map((p: any, idx: number) => (
-                <div key={p.id || idx} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl p-6">
+                <div key={p.id || idx} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-6">
                     <h3 className="text-[10px] font-black uppercase text-amber-500 tracking-widest pl-1 mb-4">
                         Page {idx + 1}
                     </h3>
@@ -3489,7 +3489,7 @@ export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data
             )}
             <div className="grid grid-cols-1 gap-6">
                 {items.map((item: any, i: number) => (
-                    <div key={item.id || i} className="bg-zinc-100 shadow-inner border border-slate-500 rounded-xl overflow-hidden shadow-sm flex flex-col group relative">
+                    <div key={item.id || i} className="bg-white border border-zinc-100 rounded-[16px] shadow-sm overflow-hidden shadow-sm flex flex-col group relative">
                         {isOwner && onDelete && (
                             <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
                                 <X size={14} />
@@ -3507,7 +3507,7 @@ export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data
                                 item.url ? <img src={item.url} className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-zinc-600"><span className="text-[10px] font-bold uppercase tracking-widest">No Image</span></div>
                             )}
                         </div>
-                        <div className="p-3 flex-1 flex flex-col bg-zinc-100 border-t border-slate-500">
+                        <div className="p-3 flex-1 flex flex-col bg-zinc-100 border-t border-zinc-100">
                             <div className="flex justify-between items-start gap-2 mb-1">
                                 <EditableInput
                                     value={item.imageNumber || ''}

@@ -1154,7 +1154,7 @@ export default function OnSetMobilePage() {
 
     if (loading) {
         return (
-            <div className="h-screen bg-zinc-200 text-zinc-900 flex flex-col items-center justify-center gap-4">
+            <div className="h-screen bg-zinc-50/50 text-zinc-900 flex flex-col items-center justify-center gap-4">
                 <img src="/onset_logo.png" className="w-16 animate-pulse opacity-50 contrast-0" />
                 <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Connecting/...</p>
             </div>
@@ -1163,20 +1163,20 @@ export default function OnSetMobilePage() {
 
     if (!data.project) {
         return (
-            <div className="h-screen bg-zinc-200 text-black flex flex-col items-center justify-center gap-4">
-                <p className="text-sm font-bold uppercase text-red-500">Project Not Found</p>
+            <div className="h-screen bg-zinc-50/50 text-black flex flex-col items-center justify-center gap-4">
+                <p className="text-[17px] font-black tracking-tight uppercase text-red-500">Project Not Found</p>
             </div>
         );
     }
 
     return (
         <ProjectDataProvider data={data} userEmail={userEmail}>
-            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-200 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 relative z-10">
+            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50/50 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 relative z-10">
 
                 {/* TOP ROW: Header & Alerts */}
                 <div className="flex flex-col z-50 shrink-0">
                     {/* HEADER */}
-                    <header className="bg-zinc-100/90 backdrop-blur-md border-b border-slate-500/80 pt-safe transition-all w-full relative">
+                    <header className="bg-zinc-100/90 backdrop-blur-md border-b border-zinc-100/80 pt-safe transition-all w-full relative">
                         <div className="h-16 md:h-18 flex items-center justify-between px-6">
                             <div className="flex flex-col items-start mt-2 shrink-0">
                                 <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
@@ -1243,17 +1243,17 @@ export default function OnSetMobilePage() {
                             />
 
                             {/* Drawer */}
-                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-slate-500 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
+                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-zinc-100 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                                 <div className="flex justify-between items-center mb-8">
                                     <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
-                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-200/50 hover:bg-zinc-200 p-2 rounded-full text-zinc-600 transition-colors">
+                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 hover:bg-zinc-50/50 p-2 rounded-full text-zinc-600 transition-colors">
                                         <Menu size={14} />
                                     </button>
                                 </div>
 
                                 <div className="space-y-6 flex-1">
                                     {/* Identity Card */}
-                                    <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-slate-500">
+                                    <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-zinc-100">
                                         <div className="flex items-center gap-3 mb-2">
                                             <UserCircle size={20} className="text-emerald-500" />
                                             <div>
@@ -1277,10 +1277,10 @@ export default function OnSetMobilePage() {
 
                                                 return (
                                                     <div className="flex items-center gap-1">
-                                                        {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-[2px]">A</span>}
-                                                        {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-[2px]">B</span>}
-                                                        {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-[2px]">C</span>}
-                                                        {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white rounded-[2px]">D</span>}
+                                                        {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-full shadow-sm shadow-[#22C55E]/20 w-4 h-4 flex items-center justify-center">A</span>}
+                                                        {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-full shadow-sm shadow-[#3B82F6]/20 w-4 h-4 flex items-center justify-center">B</span>}
+                                                        {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-full shadow-sm shadow-[#EAB308]/20 w-4 h-4 flex items-center justify-center">C</span>}
+                                                        {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white rounded-full shadow-sm shadow-[#EF4444]/20 w-4 h-4 flex items-center justify-center">D</span>}
                                                     </div>
                                                 );
                                             })()}
@@ -1295,12 +1295,12 @@ export default function OnSetMobilePage() {
                                 </div>
 
                                 {myProjects.length > 0 && (
-                                    <div className="space-y-2 mt-2 pt-6 border-t border-slate-500">
+                                    <div className="space-y-2 mt-2 pt-6 border-t border-zinc-100">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Other Active Sets</h3>
                                         <div className="space-y-2">
                                             {myProjects.map(p => (
                                                 <Link key={p.id} href={`/onset/${p.id}`} className="block">
-                                                    <div className="bg-zinc-100 hover:bg-zinc-200 transition-colors p-3 rounded-lg border border-zinc-300 flex items-center justify-between group">
+                                                    <div className="bg-zinc-100 hover:bg-zinc-50/50 transition-colors p-3 rounded-lg border border-zinc-300 flex items-center justify-between group">
                                                         <span className="text-xs font-bold text-zinc-900 truncate flex-1 pr-4">{p.name}</span>
                                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-pulse"></div>
                                                     </div>
@@ -1310,7 +1310,7 @@ export default function OnSetMobilePage() {
                                     </div>
                                 )}
 
-                                <div className="border-t border-slate-500 mt-6 pt-6 space-y-3">
+                                <div className="border-t border-zinc-100 mt-6 pt-6 space-y-3">
                                     <button
                                         onClick={async () => {
                                             // Explicit Presence Cleanup for Mobile
@@ -1332,7 +1332,7 @@ export default function OnSetMobilePage() {
                                             localStorage.removeItem('onset_user_email');
                                             window.location.reload();
                                         }}
-                                        className="w-full bg-zinc-200/50 text-zinc-600 border border-zinc-300 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors">
+                                        className="w-full bg-zinc-50/50 text-zinc-600 border border-zinc-300 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 transition-colors">
                                         <LogOut size={14} /> Disconnect from Set
                                     </button>
 
@@ -1366,7 +1366,7 @@ export default function OnSetMobilePage() {
                     }
 
                     {/* CONFIDENTIAL BANNER */}
-                    <div className="bg-stripes-zinc text-center py-1 border-b border-slate-500 shadow-sm relative z-40 bg-zinc-100/50">
+                    <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-100 shadow-sm relative z-40 bg-zinc-100/50">
                         <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
                     </div>
                 </div>
@@ -1555,10 +1555,10 @@ export default function OnSetMobilePage() {
                                         key={key}
                                         onClick={() => setActiveTab(key)}
                                         className={`
-                                    flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-200 relative
+                                    flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-50/50 relative
                                     ${activeTab === key
-                                                ? 'bg-zinc-200 text-zinc-900 shadow-sm border border-zinc-300' // Active State
-                                                : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-200/50' // Inactive
+                                                ? 'bg-zinc-50/50 text-zinc-900 shadow-sm border border-zinc-300' // Active State
+                                                : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-50/50' // Inactive
                                             }
                                 `}
                                     >
