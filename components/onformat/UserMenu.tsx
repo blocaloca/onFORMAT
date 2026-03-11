@@ -73,6 +73,16 @@ export const UserMenu = ({ email }: { email?: string }) => {
                                 <User size={14} /> Account & Billing
                             </button>
                         </div>
+                        {isFounder(email) && (
+                            <div className="border-t border-zinc-800 py-1">
+                                <button
+                                    onClick={() => router.push('/admin')}
+                                    className="w-full text-left px-4 py-2 text-xs text-purple-400 hover:bg-zinc-800 hover:text-purple-300 flex items-center gap-2 transition-colors"
+                                >
+                                    Admin Console
+                                </button>
+                            </div>
+                        )}
                         <div className="border-t border-zinc-800 py-1">
                             <button
                                 onClick={() => {
