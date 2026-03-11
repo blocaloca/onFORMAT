@@ -565,8 +565,8 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
         <div className="space-y-6">
             {/* Vitals */}
             <div className="bg-white rounded-[20px] p-8 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-center">
-                <div className="flex flex-col gap-1 mb-4">
-                    <p className="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Shoot Date</p>
+                <div className="flex flex-col gap-1">
+                    <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest">Shoot Date</p>
                     <div className="text-xl font-black text-zinc-900 uppercase tracking-tighter">
                         <EditableInput
                             value={scheduleData?.date || data.date || "TBD"}
@@ -577,39 +577,63 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                     </div>
                 </div>
 
-                <div className="h-px bg-slate-500/20 w-12 mx-auto mb-4" />
+                <div className="h-px bg-slate-500/20 w-12 mx-auto my-6" />
 
                 <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-1">General Call Time</p>
-                <div className="text-5xl font-black text-zinc-900 tracking-tighter mb-4 flex justify-center">
+                <div className="text-5xl font-black text-zinc-900 tracking-tighter flex justify-center">
                     <EditableInput
                         value={scheduleData?.callTime || data.crewCall || "TBD"}
                         onSave={(val) => updateField('crewCall', val)}
                         isEditable={!!isEditable && !scheduleData?.callTime}
-                        placeholder="TBD"
+                        placeholder="00:00"
                     />
                 </div>
+            </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-zinc-100 pt-4 text-left">
-                    <div>
-                        <p className="text-[9px] text-zinc-500 uppercase font-bold">Basecamp / Location</p>
-                        <EditableInput
-                            value={data.basecamp || "TBD"}
-                            onSave={(val) => updateField('basecamp', val)}
-                            isEditable={!!isEditable}
-                            className="text-xs font-bold text-zinc-600 whitespace-pre-wrap block"
-                            placeholder="TBD"
-                        />
-                    </div>
-                    <div>
-                        <p className="text-[9px] text-zinc-500 uppercase font-bold">Weather</p>
-                        <EditableInput
-                            value={data.weather || "Unknown"}
-                            onSave={(val) => updateField('weather', val)}
-                            isEditable={!!isEditable}
-                            className="text-xs font-bold text-zinc-600 block"
-                            placeholder="Unknown"
-                        />
-                    </div>
+            {/* Critical Logistics Grid */}
+            <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
+                    <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-1">Basecamp</p>
+                    <EditableInput
+                        value={data.basecamp || "TBD"}
+                        onSave={(val) => updateField('basecamp', val)}
+                        isEditable={!!isEditable}
+                        className="text-sm font-bold text-zinc-900 whitespace-pre-wrap block"
+                        placeholder="Enter location..."
+                    />
+                </div>
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
+                    <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-1">Weather</p>
+                    <EditableInput
+                        value={data.weather || "TBD"}
+                        onSave={(val) => updateField('weather', val)}
+                        isEditable={!!isEditable}
+                        className="text-sm font-bold text-zinc-900 block"
+                        placeholder="75° Sunny"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
+                    <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest mb-1">Sunrise / Sunset</p>
+                    <EditableInput
+                        value={data.sunriseSunset || "TBD"}
+                        onSave={(val) => updateField('sunriseSunset', val)}
+                        isEditable={!!isEditable}
+                        className="text-sm font-bold text-zinc-900 block"
+                        placeholder="06:00 / 20:00"
+                    />
+                </div>
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-red-500/10 border-l-4 border-l-red-500 hover:shadow-md transition-shadow">
+                    <p className="text-[10px] text-red-500 uppercase font-black mb-1">Hospital</p>
+                    <EditableInput
+                        value={data.hospital || "Lookup required"}
+                        onSave={(val) => updateField('hospital', val)}
+                        isEditable={!!isEditable}
+                        className="text-sm font-bold text-zinc-900 block"
+                        placeholder="Enter address..."
+                    />
                 </div>
             </div>
 
@@ -698,31 +722,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
                 </div>
             </div>
 
-            {/* Emergency */}
-            <div className="pt-8 text-center space-y-1">
-                <p className="text-[9px] text-zinc-600 uppercase font-bold">Emergency? Call 911</p>
-                <div className="inline-block bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] border-l-4 border-red-500">
-                    <p className="text-[9px] text-red-500 uppercase font-black mb-1">Nearest Hospital</p>
-                    <EditableInput
-                        value={data.hospital || "Lookup required"}
-                        onSave={(val) => updateField('hospital', val)}
-                        isEditable={!!isEditable}
-                        className="text-xs text-zinc-900 font-bold block"
-                        placeholder="Lookup required"
-                    />
-                </div>
-                {/* Debug: Sunrise check */}
-                {data.sunriseSunset && (
-                    <div className="flex justify-center">
-                        <EditableInput
-                            value={data.sunriseSunset}
-                            onSave={(val) => updateField('sunriseSunset', val)}
-                            isEditable={!!isEditable}
-                            className="text-[9px] text-zinc-700 block"
-                        />
-                    </div>
-                )}
-            </div>
+
         </div>
     )
 }
@@ -1465,7 +1465,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
     );
 }
 
-export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manualIsEditable }: { data: any, callSheetData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
     const { isOwner } = useProjectData();
     const isEditable = manualIsEditable ?? isOwner;
 
@@ -1510,24 +1510,38 @@ export const ScheduleView = ({ data, onUpdate, isEditable: manualIsEditable }: {
     return (
         <div className="space-y-6">
             {/* Header Info */}
-            <div className="flex justify-between items-end border-b border-zinc-100 pb-4">
-                <div>
-                    <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Shoot Date</p>
-                    <EditableInput
-                        value={data.date || 'TBD'}
-                        onSave={(val) => updateField('date', val)}
-                        isEditable={!!isEditable}
-                        className="text-xl font-black text-zinc-900 block"
-                    />
+            <div className="bg-white rounded-[20px] p-6 shadow-sm border border-black/[0.03] space-y-6">
+                <div className="flex justify-between items-end border-b border-zinc-100 pb-4">
+                    <div>
+                        <p className="text-[10px] uppercase font-black text-zinc-500 mb-1 tracking-widest">Shoot Date</p>
+                        <EditableInput
+                            value={data.date || 'TBD'}
+                            onSave={(val) => updateField('date', val)}
+                            isEditable={!!isEditable}
+                            className="text-xl font-black text-zinc-900 block uppercase"
+                        />
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[10px] uppercase font-black text-zinc-500 mb-1 tracking-widest">Call Time</p>
+                        <EditableInput
+                            value={data.callTime || 'TBD'}
+                            onSave={(val) => updateField('callTime', val)}
+                            isEditable={!!isEditable}
+                            className="text-xl font-mono text-emerald-500 font-bold block"
+                        />
+                    </div>
                 </div>
-                <div className="text-right">
-                    <p className="text-[10px] uppercase font-bold text-zinc-500 mb-1">Call Time</p>
-                    <EditableInput
-                        value={data.callTime || 'TBD'}
-                        onSave={(val) => updateField('callTime', val)}
-                        isEditable={!!isEditable}
-                        className="text-xl font-mono text-emerald-500 font-bold block"
-                    />
+
+                {/* Logistics Bar in Schedule */}
+                <div className="grid grid-cols-2 gap-4 pt-2">
+                    <div>
+                        <p className="text-[9px] uppercase font-black text-zinc-500 mb-1 tracking-widest">Basecamp</p>
+                        <p className="text-xs font-bold text-zinc-900 truncate">{callSheetData?.basecamp || 'Not set'}</p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-[9px] uppercase font-black text-zinc-500 mb-1 tracking-widest">Weather</p>
+                        <p className="text-xs font-bold text-zinc-900 truncate">{callSheetData?.weather || 'TBD'}</p>
+                    </div>
                 </div>
             </div>
 

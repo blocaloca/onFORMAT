@@ -1426,6 +1426,7 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'schedule' && (
                                     <ScheduleView
                                         data={data.docs['schedule']}
+                                        callSheetData={data.docs['call-sheet']}
                                         onUpdate={(newData) => handleUpdateDraft('schedule', newData)}
                                     />
                                 )}
