@@ -64,7 +64,7 @@ export default function AccountPage() {
 
     const fetchAnnouncement = async () => {
         try {
-            const res = await fetch('/api/announcements');
+            const res = await fetch(`/api/announcements?t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             if (data && !data.error) {
                 setAnnouncement(data);
@@ -178,13 +178,16 @@ export default function AccountPage() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error("No active session");
 
+            const cleanMessage = newMessage.trim();
+            const cleanMediaUrl = mediaUrl.trim();
+
             const res = await fetch('/api/announcements', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${session.access_token}`
                 },
-                body: JSON.stringify({ userId: user.id, media_url: mediaUrl, message: newMessage })
+                body: JSON.stringify({ userId: user.id, media_url: cleanMediaUrl, message: cleanMessage })
             });
             if (res.ok) {
                 alert("Announcement Updated!");
@@ -209,7 +212,7 @@ export default function AccountPage() {
 
         // 1. YouTube Handling (Robust Regex)
         // Matches watch?v=, shorts/, embed/, live/, youtu.be/, etc.
-        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
         const ytMatch = url.match(ytRegex);
         if (ytMatch && ytMatch[1]) {
             return (
@@ -225,7 +228,7 @@ export default function AccountPage() {
         }
 
         // 2. Vimeo Handling
-        const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
+        const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/i;
         const vimeoMatch = url.match(vimeoRegex);
         if (vimeoMatch && vimeoMatch[1]) {
             const vimeoId = vimeoMatch[1];

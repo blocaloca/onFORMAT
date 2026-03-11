@@ -18,13 +18,11 @@ export default function AnnouncementEditor({ user }: { user: any }) {
 
     const fetchAnnouncement = async () => {
         try {
-            const res = await fetch('/api/announcements');
+            const res = await fetch(`/api/announcements?t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             if (data && !data.error) {
                 setAnnouncement(data);
                 // Pre-fill form if needed, or keep blank for new updates? 
-                // Usually better to keep blank so they know they are posting NEW content, 
-                // but showing current content is helpful context.
             }
         } catch (e) {
             console.error("Failed to fetch announcements", e);
@@ -61,6 +59,9 @@ export default function AnnouncementEditor({ user }: { user: any }) {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error("No active session");
 
+            const cleanMessage = message.trim();
+            const cleanMediaUrl = finalMediaUrl.trim();
+
             const res = await fetch('/api/announcements', {
                 method: 'POST',
                 headers: {
@@ -69,8 +70,8 @@ export default function AnnouncementEditor({ user }: { user: any }) {
                 },
                 body: JSON.stringify({
                     userId: user.id,
-                    media_url: finalMediaUrl,
-                    message: message
+                    media_url: cleanMediaUrl,
+                    message: cleanMessage
                 })
             });
 
@@ -98,7 +99,7 @@ export default function AnnouncementEditor({ user }: { user: any }) {
 
         // 1. YouTube Handling (Robust Regex)
         // Matches watch?v=, shorts/, embed/, live/, youtu.be/, etc.
-        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
         const ytMatch = url.match(ytRegex);
         if (ytMatch && ytMatch[1]) {
             return (
@@ -114,7 +115,7 @@ export default function AnnouncementEditor({ user }: { user: any }) {
         }
 
         // 2. Vimeo Handling
-        const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/;
+        const vimeoRegex = /(?:vimeo\.com\/|player\.vimeo\.com\/video\/)([0-9]+)/i;
         const vimeoMatch = url.match(vimeoRegex);
         if (vimeoMatch && vimeoMatch[1]) {
             const vimeoId = vimeoMatch[1];
