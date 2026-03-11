@@ -515,7 +515,8 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                         </div>
 
                         {/* Editable Checkbox */}
-                        <div className="shrink-0 flex items-center pt-1">
+                        <div className="shrink-0 flex flex-col items-center gap-1 pt-1">
+                            <span className="text-[8px] text-zinc-500 uppercase font-bold">DONE</span>
                             <button
                                 onClick={() => {
                                     if (isComplete) {
@@ -525,11 +526,11 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                     }
                                 }}
                                 className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${isComplete
-                                    ? 'bg-emerald-500 border-emerald-500 text-white'
-                                    : 'bg-zinc-50/50 border-zinc-400 text-transparent hover:border-zinc-500 hover:text-zinc-400'
+                                    ? 'bg-emerald-500 border-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.3)]'
+                                    : 'bg-zinc-50/50 border-zinc-200 text-transparent hover:border-zinc-400 hover:text-zinc-400'
                                     }`}
                             >
-                                <Check size={16} />
+                                <Check size={16} strokeWidth={4} />
                             </button>
                         </div>
                     </div>
