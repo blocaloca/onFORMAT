@@ -796,8 +796,9 @@ export default function OnSetMobilePage() {
 
             const phases = latest.data.phases;
             const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
+            const searchOrder = [...phaseOrder].reverse();
             let phaseKey = 'PRODUCTION';
-            for (const p of phaseOrder) {
+            for (const p of searchOrder) {
                 if (phases[p]?.drafts?.['call-sheet']) {
                     phaseKey = p;
                     break;
@@ -844,8 +845,9 @@ export default function OnSetMobilePage() {
             const originalKey = reverseMap[toolId] || toolId;
 
             const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
+            const searchOrder = [...phaseOrder].reverse();
             let phaseKey = 'PRODUCTION';
-            for (const p of phaseOrder) {
+            for (const p of searchOrder) {
                 if (phases[p]?.drafts?.[originalKey]) {
                     phaseKey = p;
                     break;

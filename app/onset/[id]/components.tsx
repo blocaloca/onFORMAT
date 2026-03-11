@@ -542,7 +542,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 import { EditableInput } from '@/components/ui/EditableInput';
 
 export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manualIsEditable }: { data: any, scheduleData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
-    const { canEditMobile } = useProjectData();
+    const { canEditMobile, isOwner } = useProjectData();
     const isEditable = manualIsEditable ?? canEditMobile;
 
     if (!data) return <EmptyState label="Call Sheet" />;
@@ -614,15 +614,15 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
             </div>
 
             {/* Notes */}
-            <div className="bg-emerald-500/[0.03] rounded-[20px] p-6 shadow-sm border border-emerald-500/10 hover:shadow-md transition-shadow">
-                <p className="text-[10px] font-black uppercase text-emerald-600 mb-2 tracking-widest">Producer Notes</p>
+            <div className={`${isOwner ? 'bg-emerald-500/[0.03] border-emerald-500/10' : 'bg-white border-black/[0.03]'} rounded-[20px] p-6 shadow-sm border hover:shadow-md transition-shadow`}>
+                <p className={`text-[10px] font-black uppercase ${isOwner ? 'text-emerald-600' : 'text-zinc-500'} mb-2 tracking-widest`}>Producer Notes</p>
                 <EditableInput
                     value={data.notes || ""}
                     onSave={(val) => updateField('notes', val)}
-                    isEditable={!!isEditable}
+                    isEditable={isOwner}
                     type="textarea"
-                    className="text-sm font-medium text-zinc-900 italic whitespace-pre-wrap block"
-                    placeholder="Enter notes..."
+                    className={`text-sm font-medium ${isOwner ? 'text-zinc-900' : 'text-zinc-600'} italic whitespace-pre-wrap block`}
+                    placeholder={isOwner ? "Enter notes..." : ""}
                 />
             </div>
 
