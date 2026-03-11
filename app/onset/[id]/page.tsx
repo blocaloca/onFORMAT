@@ -130,40 +130,22 @@ export default function OnSetMobilePage() {
             .subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
                     setIsConnected(true);
+                    setIsOffline(false);
                 } else {
                     setIsConnected(false);
                 }
             });
 
         // Offline Network Listeners (Enhanced Polling)
-        const checkConnectivity = async () => {
-            if (!navigator.onLine) {
-                setIsOffline(true);
-                return;
-            }
-            // Safari cache busting ping to a static asset (avoids 405 error on API route)
-            try {
-                const res = await fetch('/onset_logo.png?ping=' + new Date().getTime(), { method: 'HEAD', cache: 'no-store' });
-                setIsOffline(!res.ok);
-            } catch (err) {
-                setIsOffline(true);
-            }
-        };
-
-        const handleOnline = () => { setIsOffline(false); checkConnectivity(); };
+        const handleOnline = () => setIsOffline(false);
         const handleOffline = () => setIsOffline(true);
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
-
-        // Setup a 5-second polling interval to forcefully override the green LED if data drops
-        const offlineInterval = setInterval(checkConnectivity, 5000);
-        checkConnectivity();
 
         return () => {
             supabase.removeChannel(channel);
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
-            clearInterval(offlineInterval);
         };
     }, [id]);
 
@@ -452,6 +434,7 @@ export default function OnSetMobilePage() {
             const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             setLastSyncTime(nowTime);
             localStorage.setItem(`onset_cache_time_${id}`, nowTime);
+            setIsOffline(false);
 
             setLoading(false);
         } catch (err) {
@@ -1155,7 +1138,7 @@ export default function OnSetMobilePage() {
     if (loading) {
         return (
             <div className="h-screen bg-zinc-50/50 text-zinc-900 flex flex-col items-center justify-center gap-4">
-                <img src="/onset_logo.png" className="w-16 animate-pulse opacity-50 contrast-0" />
+                <img src="/octo%20logo%202.png" className="w-16 animate-pulse opacity-50 contrast-0 grayscale" />
                 <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Connecting/...</p>
             </div>
         );
@@ -1188,11 +1171,11 @@ export default function OnSetMobilePage() {
                                 <div className="flex items-center gap-2 mt-0.5">
                                     <div className="flex items-center gap-1.5">
                                         <span
-                                            className={`w-[10px] h-[10px] rounded-full shadow-sm ${isConnected && data.docs['onset-mobile-control']?.isLive && !isOffline ? 'animate-pulse' : ''}`}
-                                            style={{ backgroundColor: isOffline ? '#F59E0B' : (!data.docs['onset-mobile-control']?.isLive ? '#EF4444' : (isConnected ? '#22C55E' : '#71717a')) }}
+                                            className={`w-[10px] h-[10px] rounded-full shadow-sm ${!isOffline && data.docs['onset-mobile-control']?.isLive !== false ? 'animate-pulse' : ''}`}
+                                            style={{ backgroundColor: isOffline ? '#F59E0B' : (data.docs['onset-mobile-control']?.isLive === false ? '#EF4444' : '#22C55E') }}
                                         ></span>
-                                        <span className={`text-[9px] font-mono uppercase leading-none font-bold ${isOffline ? 'text-[#F59E0B]' : 'text-zinc-600'}`}>
-                                            {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive ? 'LIVE' : 'STANDBY')}
+                                        <span className={`text-[9px] font-mono uppercase leading-none font-bold ${isOffline ? 'text-[#F59E0B]' : (data.docs['onset-mobile-control']?.isLive === false ? 'text-[#EF4444]' : 'text-emerald-500')}`}>
+                                            {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive !== false ? 'LIVE' : 'STANDBY')}
                                         </span>
                                         {isOffline && lastSyncTime && (
                                             <span className="text-[9px] font-mono text-zinc-400 ml-1 leading-none">{lastSyncTime}</span>
@@ -1287,8 +1270,8 @@ export default function OnSetMobilePage() {
                                         </div>
                                         <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider mt-4">
                                             <span>Sync Status</span>
-                                            <span className={data.docs['onset-mobile-control']?.isLive ? "text-emerald-600" : "text-amber-600"}>
-                                                {data.docs['onset-mobile-control']?.isLive ? 'Live' : 'Offline'}
+                                            <span className={data.docs['onset-mobile-control']?.isLive !== false ? "text-emerald-600" : "text-amber-600"}>
+                                                {data.docs['onset-mobile-control']?.isLive !== false ? 'Live' : 'Standby'}
                                             </span>
                                         </div>
                                     </div>
@@ -1408,7 +1391,7 @@ export default function OnSetMobilePage() {
                         ) : (
                             <>
                                 <div className="w-full flex justify-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
-                                    <h2 className="text-[10px] uppercase font-black tracking-[0.2em] text-amber-500 bg-amber-500/10 px-4 py-2 rounded-full border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.1)] leading-none">
+                                    <h2 className={`text-[10px] uppercase font-black tracking-[0.2em] leading-none px-4 py-2 rounded-full border shadow-sm ${data.docs['onset-mobile-control']?.isLive !== false ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/10' : 'text-amber-500 bg-amber-500/10 border-amber-500/20 shadow-amber-500/10'}`}>
                                         {DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' ')}
                                     </h2>
                                 </div>
