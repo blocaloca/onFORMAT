@@ -57,9 +57,9 @@ export default function PricingPage() {
         }
     };
 
-    const isScout = user && (!profile || !profile.subscription_status || profile.subscription_tier === 'scout');
     const isPro = user && profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro';
     const isStudio = user && profile?.subscription_status === 'active' && profile?.subscription_tier === 'studio';
+    const isScout = user && !isPro && !isStudio;
 
     return (
         <div className="min-h-screen bg-zinc-50 text-zinc-950 font-sans selection:bg-blue-500 selection:text-white pb-24">
