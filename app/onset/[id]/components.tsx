@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin } from 'lucide-react';
+import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin, FileText, Clock, Smartphone, Phone, Mail, Search } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
 import SignatureCanvas from 'react-signature-canvas';
 import { useProjectData } from '@/lib/useProjectData';
@@ -61,7 +61,7 @@ export const DOC_LABELS: Record<string, string> = {
  * VIEW COMPONENTS
  * -------------------------------------------------------------------------------- */
 
-import { Phone, Mail, Search } from 'lucide-react';
+
 
 export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }: { data: any, liveUsers?: string[], onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
     const { isOwner } = useProjectData();
@@ -814,7 +814,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                     {onAdd && (
                         <button
                             onClick={() => handleStartIngest(alert)}
-                            className="bg-zinc-900 text-white font-black uppercase text-[10px] py-3 rounded w-full hover:bg-emerald-400"
+                            className="bg-zinc-900 text-white font-black uppercase text-[10px] tracking-widest py-3 rounded-xl w-full hover:bg-emerald-500 transition-colors shadow-lg shadow-zinc-900/10"
                         >
                             Start Ingest
                         </button>
@@ -826,53 +826,59 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
             {onAdd && !isAdding && (
                 <button
                     onClick={() => setIsAdding(true)}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-6"
                 >
-                    <Plus size={16} />
-                    <span>Log Activity</span>
+                    <Plus size={18} strokeWidth={3} />
+                    <span>Log New Activity</span>
                 </button>
             )}
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
-                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-900">New Entry</span>
-                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
+                <div className="bg-white rounded-[30px] p-8 shadow-2xl border border-black/[0.02] mb-8 animate-in fade-in slide-in-from-top-4 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-8 border-b border-zinc-100 pb-4">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Activity Report</span>
+                        <button onClick={() => setIsAdding(false)} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={16} /></button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Time</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Timestamp</label>
                             <input
                                 type="time"
                                 value={form.time}
                                 onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-bold transition-all text-sm"
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Status</label>
-                            <select
-                                value={form.status}
-                                onChange={e => setForm({ ...form, status: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 appearance-none"
-                            >
-                                <option value="complete">Complete</option>
-                                <option value="pending">Pending</option>
-                                <option value="failed">Failed</option>
-                            </select>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Entry Status</label>
+                            <div className="relative">
+                                <select
+                                    value={form.status}
+                                    onChange={e => setForm({ ...form, status: e.target.value })}
+                                    className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-bold transition-all text-sm appearance-none"
+                                >
+                                    <option value="complete">Complete</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400">
+                                    <Check size={14} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="mb-3">
-                        <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Event Type</label>
-                        <div className="grid grid-cols-3 gap-1 bg-zinc-950 p-1 rounded border border-zinc-800">
+                    <div className="mb-6">
+                        <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Task Category</label>
+                        <div className="grid grid-cols-3 gap-2 bg-zinc-100/80 p-1.5 rounded-2xl border border-black/[0.02]">
                             {['offload', 'backup', 'transcode', 'qc', 'transfer', 'issue'].map(t => (
                                 <button
                                     key={t}
+                                    type="button"
                                     onClick={() => setForm({ ...form, eventType: t as any })}
-                                    className={`text-[9px] uppercase font-bold py-2 rounded transition-colors ${form.eventType === t ? 'bg-zinc-700 text-zinc-900' : 'text-zinc-500'}`}
+                                    className={`text-[9px] uppercase font-black tracking-widest py-2.5 rounded-xl transition-all duration-200 ${form.eventType === t ? 'bg-white text-emerald-600 shadow-sm' : 'text-zinc-500 hover:text-zinc-700'}`}
                                 >
                                     {t === 'transfer' ? 'Send' : t}
                                 </button>
@@ -880,71 +886,71 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Source</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Source Media</label>
                             <input
                                 placeholder="Roll A001"
                                 value={form.source}
                                 onChange={e => setForm({ ...form, source: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400"
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-bold transition-all text-sm placeholder:text-zinc-300"
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Dest</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Destination</label>
                             <input
-                                placeholder="Backup 1"
+                                placeholder="Backup Drive"
                                 value={form.destination}
                                 onChange={e => setForm({ ...form, destination: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400"
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-bold transition-all text-sm placeholder:text-zinc-300"
                             />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Data Size (GB)</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Data Volume (GB)</label>
                             <input
                                 placeholder="128"
                                 value={(form as any).dataSize || ''}
                                 onChange={e => setForm({ ...form, dataSize: e.target.value } as any)}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400"
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-bold transition-all text-sm placeholder:text-zinc-300"
                             />
                         </div>
                         <div>
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Checksum</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Verification</label>
                             <input
                                 placeholder="xxhash"
                                 value={(form as any).checksum || ''}
                                 onChange={e => setForm({ ...form, checksum: e.target.value } as any)}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-sm p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400 font-mono"
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-mono font-bold transition-all text-xs placeholder:text-zinc-300"
                             />
                         </div>
                     </div>
 
-                    <div className="mb-4">
-                        <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Description</label>
+                    <div className="mb-8">
+                        <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Detailed Logs</label>
                         <textarea
-                            placeholder="Add detailed notes here..."
+                            placeholder="Add specifics about ingest or verification..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 min-h-[80px] placeholder:text-zinc-400 resize-none"
+                            className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-medium transition-all text-sm h-32 placeholder:text-zinc-300 resize-none"
                         />
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="w-full bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20"
                     >
-                        <Save size={16} />
-                        <span>Save Entry</span>
+                        <Save size={18} />
+                        <span>Commit to Log</span>
                     </button>
                 </div>
             )}
 
             {/* Header Stats */}
             <div className="grid grid-cols-2 gap-2 text-center mb-4">
-                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow p-3">
+                <div className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow">
                     <div className="text-[9px] text-zinc-500 uppercase font-black tracking-widest mb-1">Total Offloads</div>
                     <div className="text-2xl font-black text-zinc-900">{items.filter((i: any) => i.eventType === 'offload').length}</div>
                 </div>
@@ -972,19 +978,19 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 <div className="font-black text-sm text-zinc-900 uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 text-xs text-zinc-500 mb-3 bg-black/40 p-3 rounded-lg">
+                            <div className="grid grid-cols-2 gap-4 text-xs text-zinc-600 mb-3 bg-zinc-50/50 p-3 rounded-xl border border-black/[0.03]">
                                 <div>
-                                    <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Source</span>
-                                    <span className="font-mono text-zinc-200">{item.source || '-'}</span>
+                                    <span className="text-[8px] font-black uppercase text-zinc-400 block mb-0.5 tracking-widest">Source</span>
+                                    <span className="font-mono text-zinc-900 font-bold">{item.source || '-'}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[8px] font-bold uppercase text-zinc-600 block mb-0.5">Destination</span>
-                                    <span className="font-mono text-zinc-200">{item.destination || '-'}</span>
+                                    <span className="text-[8px] font-black uppercase text-zinc-400 block mb-0.5 tracking-widest">Destination</span>
+                                    <span className="font-mono text-zinc-900 font-bold">{item.destination || '-'}</span>
                                 </div>
                             </div>
 
                             {item.description && (
-                                <p className="text-xs text-zinc-600 leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                                <p className="text-xs text-zinc-500 leading-relaxed border-t border-zinc-100 pt-3 mt-1 italic">
                                     {item.description}
                                 </p>
                             )}
@@ -1140,17 +1146,17 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
         <div className="space-y-4">
             {/* HEADER ACTIONS: New Roll / Add Shot */}
             {onAdd && !isAdding && (
-                <div className="flex gap-2 mb-6">
+                <div className="flex gap-3 mb-8">
                     <button
                         onClick={() => setIsAdding(true)}
-                        className="flex-1 bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="flex-1 bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3"
                     >
-                        <Plus size={16} />
+                        <Plus size={18} strokeWidth={3} />
                         <span>Log Shot</span>
                     </button>
                     <button
                         onClick={openNewRollModal}
-                        className="w-1/3 bg-zinc-50/50 text-zinc-500 font-bold uppercase tracking-widest text-[10px] py-4 rounded-xl border border-zinc-300 active:scale-95 transition-transform"
+                        className="w-1/3 bg-zinc-100 text-zinc-500 font-black uppercase tracking-widest text-[10px] py-5 rounded-[20px] transition-all hover:bg-zinc-200 active:scale-[0.98]"
                     >
                         New Roll
                     </button>
@@ -1159,108 +1165,90 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
             {/* NEW ROLL VERIFICATION MODAL */}
             {isNewRollModal && (
-                <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in">
-                    <div className="bg-zinc-50 border border-zinc-100/80 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] rounded-xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-                        <h3 className="text-lg font-black uppercase text-zinc-900 mb-1">Start New Roll</h3>
-                        <p className="text-xs text-zinc-500 mb-6">Verify technical specs for the new card.</p>
-
-                        <div className="space-y-4 mb-6">
+                <div className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-md flex items-end sm:items-center justify-center p-4 animate-in fade-in">
+                    <div className="bg-white rounded-[30px] p-8 shadow-2xl w-full max-w-md animate-in slide-in-from-bottom-8">
+                        <div className="flex justify-between items-start mb-6">
                             <div>
-                                <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Camera ID</label>
-                                <div className="flex gap-2">
+                                <h3 className="text-xl font-black uppercase text-zinc-900 tracking-tight">Initiate Roll</h3>
+                                <p className="text-[10px] text-zinc-400 font-black uppercase tracking-widest mt-1">Technical Spec Confirmation</p>
+                            </div>
+                            <button onClick={() => setIsNewRollModal(false)} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={16} /></button>
+                        </div>
+
+                        <div className="space-y-5 mb-8">
+                            <div>
+                                <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Camera Unit</label>
+                                <div className="flex gap-2 p-1 bg-zinc-100 rounded-2xl">
                                     {['A', 'B', 'C'].map(cam => (
                                         <button
                                             key={cam}
                                             onClick={() => setRollForm({ ...rollForm, camera: cam })}
-                                            className={`flex-1 py-3 text-sm font-black rounded border transition-all ${rollForm.camera === cam
-                                                ? (cam === 'A' ? 'bg-[#22C55E] text-white border-[#22C55E]' : cam === 'B' ? 'bg-[#3B82F6] text-white border-[#3B82F6]' : 'bg-[#FBBF24] text-white border-[#FBBF24]')
-                                                : 'bg-zinc-50/50 text-zinc-600 border-zinc-300'
+                                            className={`flex-1 py-3 text-xs font-black rounded-xl transition-all shadow-sm ${rollForm.camera === cam
+                                                ? (cam === 'A' ? 'bg-emerald-500 text-white' : cam === 'B' ? 'bg-blue-500 text-white' : 'bg-amber-400 text-black')
+                                                : 'text-zinc-400 hover:text-zinc-600'
                                                 }`}
                                         >
-                                            {cam}
+                                            Unit {cam}
                                         </button>
                                     ))}
                                 </div>
                             </div>
                             <div>
-                                <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Roll Number</label>
+                                <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1 text-emerald-600">Active Roll ID</label>
                                 <input
                                     value={rollForm.roll}
                                     onChange={e => setRollForm({ ...rollForm, roll: e.target.value })}
-                                    className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-lg font-mono p-3 rounded"
+                                    className="w-full bg-zinc-50 border border-black/[0.05] rounded-xl px-4 py-4 text-zinc-900 text-xl font-mono font-black focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all uppercase placeholder:text-zinc-200"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Base ISO</label>
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">ISO</label>
                                     <input
                                         value={rollForm.iso}
                                         onChange={e => setRollForm({ ...rollForm, iso: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
+                                        className="w-full bg-zinc-50 border border-black/[0.05] rounded-xl px-4 py-3 text-zinc-900 font-bold focus:outline-none focus:border-emerald-500 transition-all text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">PROJ FPS</label>
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Project FPS</label>
                                     <input
                                         value={rollForm.fps}
                                         onChange={e => setRollForm({ ...rollForm, fps: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
+                                        className="w-full bg-zinc-50 border border-black/[0.05] rounded-xl px-4 py-3 text-zinc-900 font-bold focus:outline-none focus:border-emerald-500 transition-all text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Shutter (Deg)</label>
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Shutter</label>
                                     <input
                                         value={rollForm.shutter}
                                         onChange={e => setRollForm({ ...rollForm, shutter: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
+                                        className="w-full bg-zinc-50 border border-black/[0.05] rounded-xl px-4 py-3 text-zinc-900 font-bold focus:outline-none focus:border-emerald-500 transition-all text-sm"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">WB (K)</label>
+                                    <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">WB (K)</label>
                                     <input
                                         value={rollForm.wb}
                                         onChange={e => setRollForm({ ...rollForm, wb: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded"
+                                        className="w-full bg-zinc-50 border border-black/[0.05] rounded-xl px-4 py-3 text-zinc-900 font-bold focus:outline-none focus:border-emerald-500 transition-all text-sm"
                                     />
                                 </div>
-                                <div>
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Media Type</label>
-                                    <select
-                                        value={rollForm.mediaType}
-                                        onChange={e => setRollForm({ ...rollForm, mediaType: e.target.value })}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-100 text-zinc-900 text-base p-2 rounded appearance-none"
-                                    >
-                                        <option>CFexpress</option>
-                                        <option>SD Card</option>
-                                        <option>SSD</option>
-                                        <option>RED Mag</option>
-                                        <option>Arri Codex</option>
-                                    </select>
-                                </div>
                             </div>
-                        </div>
-                        <div className="mt-4">
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Sound Roll</label>
-                            <input
-                                value={rollForm.soundRoll}
-                                onChange={e => setRollForm({ ...rollForm, soundRoll: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded"
-                                placeholder="SR001"
-                            />
                         </div>
 
                         <div className="flex gap-3">
                             <button
                                 onClick={() => setIsNewRollModal(false)}
-                                className="flex-1 bg-zinc-50/50 text-zinc-600 font-bold uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-100 text-zinc-500 font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl transition-colors hover:bg-zinc-200"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={confirmNewRoll}
-                                className="flex-1 bg-zinc-900 text-white font-black uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-900 text-white font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl shadow-xl shadow-zinc-900/20 hover:bg-emerald-600 transition-colors"
                             >
-                                Confirm & Start
+                                Confirm
                             </button>
                         </div>
                     </div>
@@ -1269,128 +1257,102 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
 
             {/* ADD FORM */}
             {isAdding && (
-                <div className="bg-zinc-50 border border-zinc-100/80 rounded-xl p-4 shadow-sm shadow-[inset_0_1px_0_rgba(255,255,255,1)] mb-6 shadow-2xl animate-in fade-in slide-in-from-top-4">
-                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
+                <div className="bg-white rounded-[30px] p-8 shadow-2xl border border-black/[0.02] mb-8 animate-in fade-in slide-in-from-top-4 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-8 border-b border-zinc-100 pb-4">
                         <div>
-                            <span className="text-xs font-bold uppercase text-zinc-900 block">Log Shot Actual</span>
-                            <span className="text-[10px] font-mono font-bold text-emerald-600 block">ROLL {form.roll}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 block">Shot Entry</span>
+                            <span className="text-sm font-black text-emerald-600 block uppercase tracking-tighter">Roll {form.roll}</span>
                         </div>
-                        <button onClick={() => setIsAdding(false)}><X size={16} className="text-zinc-500" /></button>
+                        <button onClick={() => setIsAdding(false)} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={16} /></button>
                     </div>
 
-                    <div className="mb-3">
-                        <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Time</label>
-                        <input
-                            type="time"
-                            value={form.time}
-                            onChange={e => setForm({ ...form, time: e.target.value })}
-                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 gap-3 mb-3">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
                         <div className="col-span-1">
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Scene</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Timestamp</label>
                             <input
-                                placeholder="1"
-                                value={form.scene}
-                                onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 text-center uppercase"
+                                type="time"
+                                value={form.time}
+                                onChange={e => setForm({ ...form, time: e.target.value })}
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-bold transition-all text-sm"
                             />
                         </div>
                         <div className="col-span-1">
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Shot #</label>
-                            <input
-                                placeholder="A"
-                                value={form.shotId}
-                                onChange={e => setForm({ ...form, shotId: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 text-center uppercase"
-                            />
-                        </div>
-                        <div className="col-span-1">
-                            <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Take</label>
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Take Number</label>
                             <input
                                 type="number"
                                 value={form.take}
                                 onChange={e => setForm({ ...form, take: e.target.value })}
-                                className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 text-center"
+                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-emerald-600 font-black text-center text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mb-3">
+                        <div className="col-span-1">
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Scene</label>
+                            <input
+                                placeholder="1"
+                                value={form.scene}
+                                onChange={e => setForm({ ...form, scene: e.target.value })}
+                                className="w-full bg-zinc-100/30 rounded-xl px-4 py-4 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-black text-center uppercase tracking-tighter text-lg"
+                            />
+                        </div>
+                        <div className="col-span-1">
+                            <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Shot ID</label>
+                            <input
+                                placeholder="A"
+                                value={form.shotId}
+                                onChange={e => setForm({ ...form, shotId: e.target.value })}
+                                className="w-full bg-zinc-100/30 rounded-xl px-4 py-4 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-black text-center uppercase tracking-tighter text-lg"
                             />
                         </div>
                     </div>
 
                     {/* Tech Specs Grid */}
-                    <div className="bg-zinc-100 p-2 rounded-lg border border-zinc-300 mb-3">
-                        <div className="mb-2 border-b border-zinc-300 pb-2">
-                            <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Current Roll</label>
-                            <input
-                                value={form.roll}
-                                onChange={e => setForm({ ...form, roll: e.target.value })}
-                                className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-left font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
-                                placeholder="A001"
-                            />
+                    <div className="bg-zinc-100/50 p-4 rounded-2xl border border-black/[0.02] mb-6">
+                        <div className="mb-4 flex justify-between items-center border-b border-black/[0.03] pb-3">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Card Data</span>
+                            <span className="font-mono text-[10px] font-black text-emerald-600">{form.roll}</span>
                         </div>
-                        <div className="grid grid-cols-4 gap-2">
+                        <div className="grid grid-cols-4 gap-3">
                             <div className="col-span-1">
-                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">Lens</label>
+                                <label className="text-[8px] uppercase font-black text-zinc-400 block mb-1">Lens</label>
                                 <input
                                     value={form.lens}
                                     onChange={e => setForm({ ...form, lens: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
+                                    className="w-full bg-white rounded-lg border border-black/[0.05] text-zinc-900 text-[10px] p-2 text-center font-bold focus:outline-none"
                                     placeholder="mm"
                                 />
                             </div>
                             <div className="col-span-1">
-                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">FPS</label>
+                                <label className="text-[8px] uppercase font-black text-zinc-400 block mb-1">FPS</label>
                                 <input
                                     value={form.fps}
                                     onChange={e => setForm({ ...form, fps: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
-                                    placeholder="24"
+                                    className="w-full bg-white rounded-lg border border-black/[0.05] text-zinc-900 text-[10px] p-2 text-center font-bold focus:outline-none"
                                 />
                             </div>
                             <div className="col-span-1">
-                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">ISO</label>
+                                <label className="text-[8px] uppercase font-black text-zinc-400 block mb-1">ISO</label>
                                 <input
                                     value={form.iso}
                                     onChange={e => setForm({ ...form, iso: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
-                                    placeholder="800"
+                                    className="w-full bg-white rounded-lg border border-black/[0.05] text-zinc-900 text-[10px] p-2 text-center font-bold focus:outline-none"
                                 />
                             </div>
                             <div className="col-span-1">
-                                <label className="text-[9px] uppercase font-bold text-zinc-500 block mb-1">TC</label>
+                                <label className="text-[8px] uppercase font-black text-zinc-400 block mb-1">TC</label>
                                 <input
                                     value={form.timecode || ''}
                                     onChange={e => handleTCChange(e.target.value)}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-900 text-xs p-1.5 rounded text-center font-mono focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
-                                    placeholder="00:00:00:00"
-                                />
-                            </div>
-                        </div>
-                        {/* Shutter / WB Row */}
-                        <div className="grid grid-cols-2 gap-4 mt-2 pt-2 border-t border-zinc-300">
-                            <div>
-                                <label className="text-[8px] uppercase font-bold text-zinc-500 block mb-1">Shutter</label>
-                                <input
-                                    value={form.shutter}
-                                    onChange={e => setForm({ ...form, shutter: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-600 text-[10px] p-1 rounded"
-                                    placeholder="180"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[8px] uppercase font-bold text-zinc-500 block mb-1">White Balance</label>
-                                <input
-                                    value={form.wb}
-                                    onChange={e => setForm({ ...form, wb: e.target.value })}
-                                    className="w-full bg-white border border-zinc-300 text-zinc-600 text-[10px] p-1 rounded"
-                                    placeholder="5600K"
+                                    className="w-full bg-white rounded-lg border border-black/[0.05] text-zinc-900 text-[10px] p-2 text-center font-mono font-bold focus:outline-none"
                                 />
                             </div>
                         </div>
                     </div>
 
                     {/* Status Toggles */}
-                    <div className="flex gap-2 mb-4">
+                    <div className="flex gap-2 mb-6">
                         {[
                             { id: 'good', label: 'Good' },
                             { id: 'bad', label: 'NG' },
@@ -1399,11 +1361,11 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             <button
                                 key={s.id}
                                 onClick={() => setForm({ ...form, status: s.id })}
-                                className={`flex-1 py-3 text-xs font-black uppercase rounded border transition-all ${form.status === s.id
-                                    ? (s.id === 'circle' ? 'bg-yellow-500 text-black border-yellow-500' :
-                                        s.id === 'bad' ? 'bg-red-500 text-zinc-900 border-red-500' :
-                                            'bg-emerald-500 text-black border-emerald-500')
-                                    : 'bg-zinc-50/50 text-zinc-600 border-zinc-300 hover:border-zinc-400'
+                                className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm ${form.status === s.id
+                                    ? (s.id === 'circle' ? 'bg-amber-400 text-black shadow-amber-500/20' :
+                                        s.id === 'bad' ? 'bg-red-500 text-white shadow-red-500/20' :
+                                            'bg-emerald-500 text-white shadow-emerald-500/20')
+                                    : 'bg-zinc-100 text-zinc-400'
                                     }`}
                             >
                                 {s.label}
@@ -1411,22 +1373,22 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                         ))}
                     </div>
 
-                    <div className="mb-4">
-                        <label className="text-[10px] uppercase font-bold text-zinc-500 block mb-1">Notes</label>
+                    <div className="mb-8">
+                        <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 block mb-2 px-1">Shot Notes</label>
                         <textarea
-                            placeholder="Lens, Filters, Action notes..."
+                            placeholder="Performance or technical notes..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 min-h-[60px] resize-none"
+                            className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 font-medium transition-all text-sm h-28 placeholder:text-zinc-300 resize-none"
                         />
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                        className="w-full bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600"
                     >
-                        <Save size={16} />
-                        <span>Save Shot</span>
+                        <Save size={18} />
+                        <span>Commit Shot</span>
                     </button>
                 </div>
             )
@@ -1756,20 +1718,20 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                         />
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                         {editingId && (
                             <button
                                 onClick={handleCancel}
-                                className="flex-1 bg-zinc-800 text-zinc-900 font-bold uppercase text-xs py-3 rounded"
+                                className="flex-1 bg-zinc-100 text-zinc-500 font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl transition-colors hover:bg-zinc-200"
                             >
                                 Cancel
                             </button>
                         )}
                         <button
                             onClick={handleSubmit}
-                            className="flex-1 bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                            className="flex-1 bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600"
                         >
-                            <Save size={16} />
+                            <Save size={18} />
                             <span>{editingId ? 'Update Note' : 'Save Note'}</span>
                         </button>
                     </div>
@@ -1785,10 +1747,10 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                         const isConfirming = deleteConfirmId === item.id;
                         return (
                             <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
-                                <div className="flex justify-between items-center mb-2 border-b border-zinc-800 pb-2">
+                                <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-3">
                                     <div className="flex items-center gap-2">
-                                        <span className="font-mono text-emerald-600 text-xs font-bold">{item.time}</span>
-                                        <span className="text-[10px] text-zinc-500 font-mono">{item.date}</span>
+                                        <span className="font-mono text-emerald-600 text-[10px] font-black">{item.time}</span>
+                                        <span className="text-[9px] text-zinc-400 font-black uppercase tracking-widest">{item.date}</span>
                                     </div>
                                     <div className="flex gap-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                                         {/* Edit Button */}
@@ -1863,9 +1825,9 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {isOwner && onAdd && (
                 <button
                     onClick={() => onAdd({ id: `loc-${Date.now()}`, name: 'New Location', address: '' })}
-                    className="w-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 py-4 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] flex items-center justify-center gap-2 mb-6 active:scale-95 transition-transform"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={18} /> Add Location
+                    <Plus size={18} strokeWidth={3} /> Add Location
                 </button>
             )}
             {items.map((loc: any, i: number) => (
@@ -1909,14 +1871,14 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
                     {/* Details Body */}
                     <div className="p-4 space-y-4">
                         {/* Meta Grid */}
-                        <div className="grid grid-cols-2 gap-4 border-b border-zinc-800 pb-4">
+                        <div className="grid grid-cols-2 gap-4 border-b border-zinc-100 pb-5">
                             <div>
-                                <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Address</span>
-                                <p className="text-xs text-zinc-600 leading-snug">{loc.address || 'TBD'}</p>
+                                <span className="text-[9px] font-black uppercase text-zinc-400 block mb-1 tracking-widest">Address</span>
+                                <p className="text-xs text-zinc-900 font-bold leading-snug">{loc.address || 'TBD'}</p>
                             </div>
                             <div>
-                                <span className="text-[9px] font-bold uppercase text-zinc-500 block mb-0.5">Contact</span>
-                                <p className="text-xs text-zinc-600 leading-snug">{loc.contact || '-'}</p>
+                                <span className="text-[9px] font-black uppercase text-zinc-400 block mb-1 tracking-widest">Contact</span>
+                                <p className="text-xs text-zinc-900 font-bold leading-snug">{loc.contact || '-'}</p>
                             </div>
                         </div>
 
@@ -2267,9 +2229,9 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
             {onUpdate && (
                 <button
                     onClick={handleCreateWrapper}
-                    className="w-full bg-emerald-500 text-black font-black uppercase text-xs py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg mb-4"
+                    className="w-full bg-white text-zinc-900 border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
                 >
-                    <Plus size={16} />
+                    <Plus size={18} strokeWidth={3} />
                     <span>New Release</span>
                 </button>
             )}
@@ -2284,12 +2246,12 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
                         className="bg-white border border-zinc-100 rounded-[16px] shadow-sm p-4 flex items-center justify-between hover:bg-zinc-800/50 transition-colors"
                     >
                         <div className="flex items-center gap-3">
-                            <div className={`w-11 h-11 rounded-full flex items-center justify-center ${r.status === 'signed' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-zinc-800 text-zinc-500'}`}>
-                                {r.status === 'signed' ? <Check size={16} /> : <Edit2 size={16} />}
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${r.status === 'signed' ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-zinc-100 text-zinc-400'}`}>
+                                {r.status === 'signed' ? <Check size={20} strokeWidth={3} /> : <FileText size={20} />}
                             </div>
                             <div>
-                                <h3 className="text-[17px] font-black tracking-tight text-zinc-900 leading-none mb-1">{r.name || 'Untitled'}</h3>
-                                <p className="text-[10px] uppercase font-bold text-zinc-500 tracking-wide">{r.description || r.type}</p>
+                                <h3 className="text-lg font-black tracking-tight text-zinc-900 leading-none mb-1.5">{r.name || 'Untitled'}</h3>
+                                <p className="text-[10px] uppercase font-black text-zinc-400 tracking-[0.15em]">{r.description || r.type}</p>
                             </div>
                         </div>
                         <div className={`px-2 py-1 rounded text-[9px] font-black uppercase tracking-wider ${r.status === 'signed' ? 'text-emerald-600 bg-emerald-500/10' : 'text-amber-500 bg-amber-500/10'}`}>
@@ -2409,10 +2371,10 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
 
             {/* Form */}
             {isAdding && (
-                <div className="bg-white rounded-[20px] p-6 shadow-2xl border border-black/[0.03] animate-in fade-in slide-in-from-top-4 mb-6">
-                    <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-                        <span className="text-xs font-bold uppercase text-zinc-900">{editingId ? 'Edit Note' : 'New Note'}</span>
-                        <button onClick={handleCancel}><X size={16} className="text-zinc-500" /></button>
+                <div className="bg-white rounded-[30px] p-8 shadow-2xl border border-black/[0.02] mb-8 animate-in fade-in slide-in-from-top-4 relative overflow-hidden">
+                    <div className="flex justify-between items-center mb-8 border-b border-zinc-100 pb-4">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Scene Documentation</span>
+                        <button onClick={handleCancel} className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={16} /></button>
                     </div>
 
                     <div className="flex gap-4 mb-4">
@@ -2466,14 +2428,14 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         />
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                         {editingId && (
-                            <button onClick={handleCancel} className="flex-1 bg-zinc-800 text-zinc-900 font-bold uppercase text-xs py-3 rounded">
+                            <button onClick={handleCancel} className="flex-1 bg-zinc-100 text-zinc-500 font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl transition-colors hover:bg-zinc-200">
                                 Cancel
                             </button>
                         )}
-                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
-                            <Save size={14} />
+                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600">
+                            <Save size={18} />
                             <span>{editingId ? 'Update' : 'Save'}</span>
                         </button>
                     </div>
@@ -2489,16 +2451,16 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         const isConfirming = deleteConfirmId === item.id;
                         return (
                             <div key={item.id || i} className="bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative group">
-                                <div className="flex justify-between items-start mb-3 border-b border-zinc-800 pb-2">
+                                <div className="flex justify-between items-center mb-4 border-b border-zinc-100 pb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="bg-zinc-800 px-2 py-1 rounded border border-zinc-700">
-                                            <span className="text-[9px] uppercase font-bold text-zinc-300 block text-center leading-none mb-0.5">Scene</span>
+                                        <div className="bg-zinc-900 px-3 py-1.5 rounded-xl">
+                                            <span className="text-[8px] uppercase font-black text-zinc-400 block text-center leading-none mb-1 tracking-widest">Scene</span>
                                             <span className="text-sm font-black text-white block text-center leading-none">{item.scene || '-'}</span>
                                         </div>
                                         {item.bestTake && (
-                                            <div className="bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/30">
-                                                <span className="text-[9px] uppercase font-bold text-emerald-600 block text-center leading-none mb-0.5">Best Take</span>
-                                                <span className="text-sm font-black text-zinc-900 block text-center leading-none">{item.bestTake}</span>
+                                            <div className="bg-emerald-500 px-3 py-1.5 rounded-xl shadow-lg shadow-emerald-500/20">
+                                                <span className="text-[8px] uppercase font-black text-emerald-900/50 block text-center leading-none mb-1 tracking-widest">Best Take</span>
+                                                <span className="text-sm font-black text-white block text-center leading-none tracking-tighter">{item.bestTake}</span>
                                             </div>
                                         )}
                                     </div>
