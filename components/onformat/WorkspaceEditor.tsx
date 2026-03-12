@@ -99,6 +99,7 @@ export type WorkspaceState = {
     activePhase: Phase
     activeTool: ToolKey
     lastActiveTool?: ToolKey
+    lastActivePhase?: Phase
     phases: Record<Phase, PhaseState>
     chat: Partial<Record<ToolKey, ChatMsg[]>>
     clientName?: string
@@ -1742,14 +1743,19 @@ Context:\n"${fullContext}"`;
                             setState(s => {
                                 // If already open -> Close (Toggle Back)
                                 if (s.activeTool === 'onset-mobile-control' && s.lastActiveTool) {
-                                    return { ...s, activeTool: s.lastActiveTool };
+                                    return { 
+                                        ...s, 
+                                        activeTool: s.lastActiveTool,
+                                        activePhase: s.lastActivePhase || s.activePhase 
+                                    };
                                 }
                                 // If closed -> Open & Save State
                                 return {
                                     ...s,
                                     activePhase: phase,
                                     activeTool: toolKey as ToolKey,
-                                    lastActiveTool: s.activeTool // Capture underlying doc
+                                    lastActiveTool: s.activeTool, // Capture underlying doc
+                                    lastActivePhase: s.activePhase // Capture underlying phase
                                 };
                             });
                             return;
