@@ -304,7 +304,7 @@ export default function MobilePage() {
             if (!user?.email) return;
 
             // Realtime Audit: supabase instance is now stable
-            const channel = supabase.channel('p_presence', { config: { presence: { key: user.email } } });
+            const channel = supabase.channel(`production_presence:${id}`, { config: { presence: { key: user.email } } });
             channel.subscribe(async (status) => {
                 if (status === 'SUBSCRIBED') await channel.track({ online_at: new Date().toISOString() });
             });
@@ -459,7 +459,7 @@ export default function MobilePage() {
     useEffect(() => {
         if (!id || id === 'local') return;
 
-        const channel = supabase.channel('production_pulse');
+        const channel = supabase.channel(`production_pulse:${id}`);
 
         const trackPresence = async () => {
             const { data: { user } } = await supabase.auth.getUser();
@@ -656,7 +656,7 @@ export default function MobilePage() {
         await supabase.from('projects').update({ data: newProjectData }).eq('id', id);
 
         // 5. Broadcast for Red Dot
-        const channel = supabase.channel('production_pulse');
+        const channel = supabase.channel(`production_pulse:${id}`);
         await channel.send({
             type: 'broadcast',
             event: 'NEW_ROLL_PULLED',

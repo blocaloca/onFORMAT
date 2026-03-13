@@ -582,7 +582,7 @@ export default function OnSetMobilePage() {
                             }
                         });
                         // Also signal pulse for Workspace Nav
-                        const pulse = supabase.channel('production_pulse');
+                        const pulse = supabase.channel(`production_pulse:${id}`);
                         pulse.subscribe(() => {
                             pulse.send({
                                 type: 'broadcast',

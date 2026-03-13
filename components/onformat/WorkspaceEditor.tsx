@@ -360,7 +360,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         };
         fetchMobileControl();
 
-        const channel = supabase.channel(`mobile-control-updates-workspace`)
+        const channel = supabase.channel(`mobile-control-updates-workspace-${projectId}`) // Jackson: Scoped channel name for mobile control
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'documents', filter: `project_id=eq.${projectId}` }, (payload: any) => {
                 if (payload.new.type === 'onset-mobile-control') setMobileControlDoc(payload.new);
                 if (payload.new.type === 'camera-report') {
@@ -390,7 +390,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         console.log("🔌 Subscribing to Realtime Changes for Project:", projectId);
 
         const channel = supabase
-            .channel('project_updates')
+            .channel(`project_updates:${projectId}`) // Jackson: Scoped channel name for project updates
             .on(
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },

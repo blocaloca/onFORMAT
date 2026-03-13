@@ -111,13 +111,14 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const [onlineUsers, setOnlineUsers] = useState<any>({});
 
     useEffect(() => {
-        const channel = supabase.channel('p_presence');
+        if (!metadata?.projectId) return;
+        const channel = supabase.channel(`production_presence:${metadata.projectId}`);
         channel.on('presence', { event: 'sync' }, () => {
             const state = channel.presenceState();
             setOnlineUsers(state);
         }).subscribe();
         return () => { channel.unsubscribe(); };
-    }, []);
+    }, [metadata?.projectId]);
 
     useEffect(() => {
         if (!metadata?.projectId) return;
@@ -180,7 +181,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         if (!metadata?.projectId) return;
 
         const projectChannel = supabase.channel(`production_presence:${metadata.projectId}`);
-        const pulseChannel = supabase.channel('production_pulse');
+        const pulseChannel = supabase.channel(`production_pulse:${metadata.projectId}`);
 
         const handleSync = () => {
             const projectState = projectChannel.presenceState();
@@ -193,9 +194,9 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                 if (u.user_email) onlineSet.add(u.user_email.toLowerCase());
             });
 
-            // 2. From Pulse Channel (Filter by Project ID)
+            // 2. From Pulse Channel (Already Scoped now)
             Object.values(pulseState).flat().forEach((u: any) => {
-                if (u.user_email && u.project_id === metadata.projectId) {
+                if (u.user_email) {
                     onlineSet.add(u.user_email.toLowerCase());
                 }
             });
