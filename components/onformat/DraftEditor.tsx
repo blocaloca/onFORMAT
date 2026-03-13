@@ -48,11 +48,12 @@ export const DraftEditor = ({
     isOwner
 }: DraftEditorProps) => {
 
-    // Schedule Import Logic
+    // Schedule Import Logic - Search all relevant phases (ON_SET is default in OnFormat, PRODUCTION in OnSet Mobile)
     let importedSchedule = null;
-    if (phases?.['PRE_PRODUCTION']?.drafts?.['schedule']) {
+    const scheduleDraft = phases?.['ON_SET']?.drafts?.['schedule'] || phases?.['PRODUCTION']?.drafts?.['schedule'] || phases?.['PRE_PRODUCTION']?.drafts?.['schedule'];
+    if (scheduleDraft) {
         try {
-            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['schedule']);
+            const raw = JSON.parse(scheduleDraft);
             const arr = Array.isArray(raw) ? raw : [raw];
             if (arr.length > 0) importedSchedule = arr[0];
         } catch { }
@@ -80,9 +81,10 @@ export const DraftEditor = ({
 
     // DIT Log Import Logic (for Control Panel Alerts)
     let importedDITLog = null;
-    if (phases?.['ON_SET']?.drafts?.['dit-log']) {
+    const ditLogDraft = phases?.['ON_SET']?.drafts?.['dit-log'] || phases?.['PRODUCTION']?.drafts?.['dit-log'];
+    if (ditLogDraft) {
         try {
-            const raw = JSON.parse(phases['ON_SET'].drafts['dit-log']);
+            const raw = JSON.parse(ditLogDraft);
             const arr = Array.isArray(raw) ? raw : [raw];
             if (arr.length > 0) importedDITLog = arr[0];
         } catch { }
@@ -90,7 +92,7 @@ export const DraftEditor = ({
 
     // Brief Import Logic (for Context)
     let importedBrief = null;
-    const briefDraft = phases?.['STRATEGY']?.drafts?.['brief'] || phases?.['DEVELOPMENT']?.drafts?.['brief'];
+    const briefDraft = phases?.['DEVELOPMENT']?.drafts?.['brief'] || phases?.['STRATEGY']?.drafts?.['brief'] || phases?.['PRE_PRODUCTION']?.drafts?.['brief'];
     if (briefDraft) {
         try {
             const raw = JSON.parse(briefDraft);
@@ -101,7 +103,7 @@ export const DraftEditor = ({
 
     // Project Vision Import Logic (for Context)
     let importedVision = null;
-    const visionDraft = phases?.['STRATEGY']?.drafts?.['project-vision'] || phases?.['DEVELOPMENT']?.drafts?.['project-vision'];
+    const visionDraft = phases?.['DEVELOPMENT']?.drafts?.['project-vision'] || phases?.['STRATEGY']?.drafts?.['project-vision'];
     if (visionDraft) {
         try {
             const raw = JSON.parse(visionDraft);
@@ -125,9 +127,10 @@ export const DraftEditor = ({
 
     // Locations Import Logic (for Call Sheet Sync)
     let importedLocations = null;
-    if (phases?.['PRE_PRODUCTION']?.drafts?.['locations-sets']) {
+    const locationsDraft = phases?.['PRE_PRODUCTION']?.drafts?.['locations-sets'] || phases?.['ON_SET']?.drafts?.['locations-sets'];
+    if (locationsDraft) {
         try {
-            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['locations-sets']);
+            const raw = JSON.parse(locationsDraft);
             const arr = Array.isArray(raw) ? raw : [raw];
             if (arr.length > 0) importedLocations = arr[0];
         } catch { }

@@ -14,7 +14,7 @@ import {
 import { UserMenu } from './UserMenu';
 
 // Types (Mirrored from WorkspaceEditor to ensure compatibility)
-export type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST';
+export type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'PRODUCTION' | 'ON_SET' | 'POST' | 'STRATEGY';
 
 // Ensure these match WorkspaceEditor.tsx exactly
 export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
@@ -52,6 +52,8 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
         { key: 'deliverables-licensing', label: 'Deliverables' },
         { key: 'archive-log', label: 'Archive Log' },
     ],
+    PRODUCTION: [],
+    STRATEGY: [],
 };
 
 export const PHASES: { key: Phase; label: string }[] = [

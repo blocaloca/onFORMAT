@@ -13,7 +13,7 @@ import { getClient } from '@/lib/supabase'
 import { useTrialStatus } from '@/lib/useTrialStatus'
 import { useRouter } from 'next/navigation'
 
-type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'ON_SET' | 'POST'
+type Phase = 'DEVELOPMENT' | 'PRE_PRODUCTION' | 'PRODUCTION' | 'ON_SET' | 'POST' | 'STRATEGY'
 
 type ToolKey =
     | 'project-vision' // Renamed from creative-concept
@@ -50,7 +50,7 @@ type ToolKey =
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
 
-const PHASES: Phase[] = ['DEVELOPMENT', 'PRE_PRODUCTION', 'ON_SET', 'POST']
+const PHASES: Phase[] = ['STRATEGY', 'DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST']
 
 const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
     DEVELOPMENT: [
@@ -87,6 +87,8 @@ const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
         { key: 'deliverables-licensing', label: 'Deliverables' },
         { key: 'archive-log', label: 'Archive Log' },
     ],
+    PRODUCTION: [], // Compatibility with OnSet Mobile
+    STRATEGY: [], // Compatibility with legacy briefs
 }
 
 type PhaseState = {
@@ -116,8 +118,10 @@ export function makeInitialState(): WorkspaceState {
         activePhase: 'DEVELOPMENT',
         activeTool: 'project-vision',
         phases: {
+            STRATEGY: { ...basePhaseState },
             DEVELOPMENT: { ...basePhaseState },
             PRE_PRODUCTION: { ...basePhaseState },
+            PRODUCTION: { ...basePhaseState },
             ON_SET: { ...basePhaseState },
             POST: { ...basePhaseState },
         },
@@ -396,15 +400,16 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     const newData = payload.new?.data;
                     if (!newData) return;
 
-                    // Check for DIT Log Updates
-                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'];
-                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'];
+                    // Check for DIT Log Updates (Check both possible phase keys)
+                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
+                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
 
                     // Check for Camera Report Updates
-                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'];
-                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'];
+                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
+                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
 
-                    const updatedDrafts = { ...stateRef.current.phases?.ON_SET?.drafts };
+                    const currentPhaseKey = stateRef.current.phases?.ON_SET ? 'ON_SET' : 'PRODUCTION';
+                    const updatedDrafts = { ...stateRef.current.phases?.[currentPhaseKey]?.drafts };
                     let hasUpdates = false;
                     let notifMsg = '';
 
@@ -425,8 +430,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     }
 
                     // Check for On-Set Notes Updates
-                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'];
-                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'];
+                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
+                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
 
                     if (newNotes && newNotes !== currentNotes) {
                         console.log("🔔 On-Set Notes Change Detected!");
@@ -595,7 +600,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     const tools = TOOLS_BY_PHASE[state.activePhase] || TOOLS_BY_PHASE['DEVELOPMENT']
 
     const lockedPhases = useMemo(() => {
-        const out: Record<Phase, boolean> = { DEVELOPMENT: false, PRE_PRODUCTION: false, ON_SET: false, POST: false }
+        const out: Record<Phase, boolean> = { STRATEGY: false, DEVELOPMENT: false, PRE_PRODUCTION: false, PRODUCTION: false, ON_SET: false, POST: false }
         for (const p of PHASES) out[p] = state.phases[p].locked
         return out
     }, [state.phases])
@@ -666,8 +671,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     if (s.activeTool === 'schedule' && Array.isArray(parsedIncoming) && parsedIncoming.length > 0) {
                         try {
                             const schedData = parsedIncoming[0];
+                            // Sync to Call Sheet in ANY phase it might exist in (ON_SET or PRODUCTION)
                             for (const p of PHASES) {
-                                if (newState.phases[p].drafts['call-sheet']) {
+                                if (newState.phases[p]?.drafts?.['call-sheet']) {
                                     const csRaw = newState.phases[p].drafts['call-sheet'] || '[]';
                                     let csStack = JSON.parse(csRaw);
                                     if (!Array.isArray(csStack)) csStack = [csStack];
