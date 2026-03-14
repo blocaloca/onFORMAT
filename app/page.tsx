@@ -73,8 +73,7 @@ export default function LandingPage() {
                 key={idx}
                 src={src}
                 alt={`onFORMAT Interface ${idx + 1}`}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${idx === currentSlide ? 'opacity-100' : 'opacity-0'
-                  }`}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${idx === currentSlide ? 'opacity-100' : 'opacity-0'}`}
               />
             ))}
             {/* Slider Controls */}

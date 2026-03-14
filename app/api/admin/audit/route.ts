@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     const envVars = {
       NEXT_PUBLIC_SUPABASE_URL: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      ANTHROPIC_API_KEY: !!process.env.ANTHROPIC_API_KEY
+      OPENROUTER_API_KEY: !!process.env.OPENROUTER_API_KEY
     }
 
     auditResults.checks.environment = {
@@ -86,11 +86,11 @@ export async function GET(request: NextRequest) {
 
     // 5. API Key Test
     try {
-      const apiKey = process.env.ANTHROPIC_API_KEY
+      const apiKey = process.env.OPENROUTER_API_KEY
       if (!apiKey) {
         auditResults.checks.apiKey = {
           status: 'fail',
-          message: 'ANTHROPIC_API_KEY not set'
+          message: 'OPENROUTER_API_KEY not set'
         }
       } else {
         auditResults.checks.apiKey = {
