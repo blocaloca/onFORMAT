@@ -5,11 +5,10 @@ import { FeedbackDialog } from '@/components/dashboard/FeedbackDialog';
 import { isFounder } from '@/lib/permissions';
 import { useTrialStatus } from '@/lib/useTrialStatus';
 
-import { getClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export const UserMenu = ({ email }: { email?: string }) => {
     const router = useRouter();
-    const supabase = getClient();
     const [isOpen, setIsOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);

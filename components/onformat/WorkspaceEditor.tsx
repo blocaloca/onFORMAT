@@ -1,7 +1,7 @@
 /* eslint-disable */
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 
 import { Header } from '@/components/onformat/Header'
 import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
@@ -9,7 +9,7 @@ import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { ProjectOverview } from '@/components/onformat/ProjectOverview'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { PrintDashboard } from '@/components/onformat/print/PrintDashboard'
-import { getClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import { useTrialStatus } from '@/lib/useTrialStatus'
 import { useRouter } from 'next/navigation'
 
@@ -170,7 +170,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     // Merge props into initial state if provided, with robust fallbacks
     const mergedInitialState = useMemo(() => {
         const defaults = makeInitialState();
-        const base = initialState || defaults;
+        const base = initialState ? { ...initialState } : { ...defaults };
 
         // Ensure critical structures exist even if loaded state is partial
         if (!base.chat) base.chat = {};
@@ -181,7 +181,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [initialState, projectName]);
 
     const [state, setState] = useState<WorkspaceState>(mergedInitialState)
-    const supabase = getClient()
+    // Removed duplicate supabase client init
 
     // Sync projectName if it updates and wasn't in state
     useEffect(() => {
@@ -305,7 +305,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             )
             .subscribe();
 
-        return () => { supabase.removeChannel(channel); }
         return () => { supabase.removeChannel(channel); }
     }, [projectId]);
 
@@ -622,56 +621,44 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         return false;
     }, [state.phases, state.activePhase, state.activeTool, userRole]);
 
+    const saveDraftForActiveTool = useCallback((incoming: string) => {
+        setState(s => {
+            let newState = { ...s };
+            const activePhaseState = (newState.phases && newState.phases[newState.activePhase]) ? newState.phases[newState.activePhase] : { locked: false, drafts: {} };
+            const rawCurrent = activePhaseState.drafts[newState.activeTool] || '[]' 
 
+            if (incoming === rawCurrent) return s;
 
-    function saveDraftForActiveTool(incoming: string) {
-        const activePhaseState = state.phases[state.activePhase]
-        const rawCurrent = activePhaseState.drafts[state.activeTool] || '[]' // Default to empty array string
-
-        let currentStack: any[] = [];
-        try {
-            const parsed = JSON.parse(rawCurrent);
-            if (Array.isArray(parsed)) {
-                currentStack = parsed;
-            } else {
-                // Migration: Wrap legacy object in array
-                currentStack = [parsed];
+            let currentStack: any[] = [];
+            try {
+                const parsed = JSON.parse(rawCurrent);
+                currentStack = Array.isArray(parsed) ? parsed : [parsed];
+            } catch {
+                currentStack = [{}];
             }
-        } catch {
-            // Fallback for empty or invalid string
-            currentStack = [{}];
-        }
+            if (currentStack.length === 0) currentStack.push({});
 
-        // Ensure at least one item
-        if (currentStack.length === 0) currentStack.push({});
-
-        // CHECK: Is incoming a Full Stack Update (Array) from DraftEditor?
-        try {
-            const parsedIncoming = JSON.parse(incoming);
-            if (Array.isArray(parsedIncoming)) {
-                // If the editor sends an array, it is the Authority.
-                // It means the user clicked New/Duplicate/Clear or Edited content.
-                // We just save it.
-                setState((s) => {
-                    const newState = {
+            try {
+                const parsedIncoming = JSON.parse(incoming);
+                if (Array.isArray(parsedIncoming)) {
+                    newState = {
                         ...s,
                         phases: {
-                            ...s.phases,
-                            [s.activePhase]: {
-                                ...s.phases[s.activePhase],
+                            ...newState.phases,
+                            [newState.activePhase]: {
+                                ...newState.phases[newState.activePhase],
                                 drafts: {
-                                    ...s.phases[s.activePhase].drafts,
-                                    [s.activeTool]: incoming,
+                                    ...newState.phases[newState.activePhase].drafts,
+                                    [newState.activeTool]: incoming,
                                 },
                             },
                         },
                     };
 
                     // AUTO-SYNC: Schedule -> Call Sheet
-                    if (s.activeTool === 'schedule' && Array.isArray(parsedIncoming) && parsedIncoming.length > 0) {
+                    if (newState.activeTool === 'schedule' && parsedIncoming.length > 0) {
                         try {
                             const schedData = parsedIncoming[0];
-                            // Sync to Call Sheet in ANY phase it might exist in (ON_SET or PRODUCTION)
                             for (const p of PHASES) {
                                 if (newState.phases[p]?.drafts?.['call-sheet']) {
                                     const csRaw = newState.phases[p].drafts['call-sheet'] || '[]';
@@ -694,71 +681,64 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                     newState.phases[p].drafts['call-sheet'] = JSON.stringify(csStack);
                                 }
                             }
-                        } catch (e) {
-                            console.error("Schedule to Call Sheet sync failed", e);
-                        }
+                        } catch (e) { console.error("Schedule to Call Sheet sync failed", e); }
                     }
-
                     return newState;
-                });
-                return;
-            } else if (typeof parsedIncoming === 'object' && parsedIncoming !== null) {
+                }
+            } catch { }
+
+            try {
+                const parsedIncoming = JSON.parse(incoming);
+                if (typeof parsedIncoming === 'object' && parsedIncoming !== null) {
                 // PARTIAL UPDATE (Patch) from AI Action
                 // Merge into the HEAD (Index 0)
                 const currentHead = currentStack[0] || {};
                 const newHead = { ...currentHead, ...parsedIncoming };
                 currentStack[0] = newHead;
-
                 const finalDraftString = JSON.stringify(currentStack);
-                setState((s) => {
-                    const newState = {
-                        ...s,
-                        phases: {
-                            ...s.phases,
-                            [s.activePhase]: {
-                                ...s.phases[s.activePhase],
-                                drafts: {
-                                    ...s.phases[s.activePhase].drafts,
-                                    [s.activeTool]: finalDraftString,
-                                },
+                newState = {
+                    ...newState,
+                    phases: {
+                        ...newState.phases,
+                        [newState.activePhase]: {
+                            ...newState.phases[newState.activePhase],
+                            drafts: {
+                                ...newState.phases[newState.activePhase].drafts,
+                                [newState.activeTool]: finalDraftString,
                             },
                         },
-                    };
+                    },
+                };
 
-                    // AUTO-SYNC: Schedule -> Call Sheet (Partial AI Update)
-                    if (s.activeTool === 'schedule') {
-                        try {
-                            const schedData = newHead;
-                            for (const p of PHASES) {
-                                if (newState.phases[p].drafts['call-sheet']) {
-                                    const csRaw = newState.phases[p].drafts['call-sheet'] || '[]';
-                                    let csStack = JSON.parse(csRaw);
-                                    if (!Array.isArray(csStack)) csStack = [csStack];
-                                    if (csStack.length === 0) csStack = [{}];
+                // AUTO-SYNC: Schedule -> Call Sheet (Partial AI Update)
+                if (newState.activeTool === 'schedule') {
+                    try {
+                        const schedData = newHead;
+                        for (const p of PHASES) {
+                            if (newState.phases[p]?.drafts?.['call-sheet']) {
+                                const csRaw = newState.phases[p].drafts['call-sheet'] || '[]';
+                                let csStack = JSON.parse(csRaw);
+                                if (!Array.isArray(csStack)) csStack = [csStack];
+                                if (csStack.length === 0) csStack = [{}];
 
-                                    csStack[0] = {
-                                        ...csStack[0],
-                                        date: schedData.date || csStack[0].date,
-                                        crewCall: schedData.callTime || csStack[0].crewCall,
-                                        events: (schedData.items && Array.isArray(schedData.items)) ? schedData.items.map((item: any, i: number) => ({
-                                            id: item.id || `evt-sync-${i}-${Date.now()}`,
-                                            time: item.time || '',
-                                            type: item.intExt === 'BREAK' ? 'Break' : 'Shoot',
-                                            description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
-                                            location: item.set || ''
-                                        })) : csStack[0].events
-                                    };
-                                    newState.phases[p].drafts['call-sheet'] = JSON.stringify(csStack);
-                                }
+                                csStack[0] = {
+                                    ...csStack[0],
+                                    date: schedData.date || csStack[0].date,
+                                    crewCall: schedData.callTime || csStack[0].crewCall,
+                                    events: (schedData.items && Array.isArray(schedData.items)) ? schedData.items.map((item: any, i: number) => ({
+                                        id: item.id || `evt-sync-${i}-${Date.now()}`,
+                                        time: item.time || '',
+                                        type: item.intExt === 'BREAK' ? 'Break' : 'Shoot',
+                                        description: item.description || (item.scene ? `Scene ${item.scene}` : ''),
+                                        location: item.set || ''
+                                    })) : csStack[0].events
+                                };
+                                newState.phases[p].drafts['call-sheet'] = JSON.stringify(csStack);
                             }
-                        } catch (e) {
-                            console.error("Schedule to Call Sheet sync (AI Partial) failed", e);
                         }
-                    }
-
-                    return newState;
-                });
-                return;
+                    } catch (e) { console.error("Schedule to Call Sheet sync (AI Partial) failed", e); }
+                }
+                return newState;
             }
         } catch {
             // Not JSON, continue to AI logic
@@ -770,7 +750,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
         // --- AI Parsing Logic applied to Head ---
         // SPECIAL HANDLING: Parsing AI Markdown for Brief
-        if (state.activeTool === 'brief') {
+        if (newState.activeTool === 'brief') {
             const visionMatch = incoming.match(/\*\*(?:Vision|Subject\/Product|Subject|Product|Client\/Brand|Project):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const objectiveMatch = incoming.match(/\*\*Objective:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const audienceMatch = incoming.match(/\*\*(?:Target )?Audience:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -807,25 +787,25 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 currentStack[0] = JSON.parse(newHeadRaw);
                 const finalDraftString = JSON.stringify(currentStack);
 
-                setState((s) => ({
-                    ...s,
+                newState = {
+                    ...newState,
                     phases: {
-                        ...s.phases,
-                        [s.activePhase]: {
-                            ...s.phases[s.activePhase],
+                        ...newState.phases,
+                        [newState.activePhase]: {
+                            ...newState.phases[newState.activePhase],
                             drafts: {
-                                ...s.phases[s.activePhase].drafts,
-                                [s.activeTool]: finalDraftString,
+                                ...newState.phases[newState.activePhase].drafts,
+                                [newState.activeTool]: finalDraftString,
                             },
                         },
                     },
-                }));
-                return;
+                };
+                return newState;
             }
         }
 
         // SPECIAL HANDLING: Directors Treatment
-        if (state.activeTool === 'directors-treatment') {
+        if (newState.activeTool === 'directors-treatment') {
             const titleMatch = incoming.match(/\*\*Title:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const noteMatch = incoming.match(/\*\*Notes?:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const imagePromptMatch = incoming.match(/\*\*Image Prompt:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -901,25 +881,25 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 currentStack[0] = JSON.parse(newHeadRaw);
                 const finalDraftString = JSON.stringify(currentStack);
 
-                setState((s) => ({
-                    ...s,
+                newState = {
+                    ...newState,
                     phases: {
-                        ...s.phases,
-                        [s.activePhase]: {
-                            ...s.phases[s.activePhase],
+                        ...newState.phases,
+                        [newState.activePhase]: {
+                            ...newState.phases[newState.activePhase],
                             drafts: {
-                                ...s.phases[s.activePhase].drafts,
-                                [s.activeTool]: finalDraftString,
+                                ...newState.phases[newState.activePhase].drafts,
+                                [newState.activeTool]: finalDraftString,
                             },
                         },
                     },
-                }));
-                return;
+                };
+                return newState;
             }
         }
 
         // SPECIAL HANDLING: Project Vision Parser
-        else if (state.activeTool === 'project-vision') {
+        else if (newState.activeTool === 'project-vision') {
             const visionMatch = incoming.match(/\*\*Vision:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
             if (visionMatch) {
@@ -949,20 +929,20 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     currentStack[0] = JSON.parse(newHeadRaw);
                     const finalDraftString = JSON.stringify(currentStack);
 
-                    setState((s) => ({
-                        ...s,
+                    newState = {
+                        ...newState,
                         phases: {
-                            ...s.phases,
-                            [s.activePhase]: {
-                                ...s.phases[s.activePhase],
+                            ...newState.phases,
+                            [newState.activePhase]: {
+                                ...newState.phases[newState.activePhase],
                                 drafts: {
-                                    ...s.phases[s.activePhase].drafts,
-                                    [s.activeTool]: finalDraftString,
+                                    ...newState.phases[newState.activePhase].drafts,
+                                    [newState.activeTool]: finalDraftString,
                                 },
                             },
                         },
-                    }));
-                    return;
+                    };
+                    return newState;
 
                 } catch (e) {
                     // If structure fails, fallback to simple string append is tricky with JSON storage.
@@ -972,7 +952,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
 
         // SPECIAL HANDLING: Shot List Parser (shot-scene-book)
-        else if (state.activeTool === 'shot-scene-book') {
+        else if (newState.activeTool === 'shot-scene-book') {
             const sceneMatch = incoming.match(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const sizeMatch = incoming.match(/\*\*Size:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const angleMatch = incoming.match(/\*\*Angle:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -1006,27 +986,27 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     currentStack[0] = JSON.parse(newHeadRaw);
                     const finalDraftString = JSON.stringify(currentStack);
 
-                    setState((s) => ({
-                        ...s,
+                    newState = {
+                        ...newState,
                         phases: {
-                            ...s.phases,
-                            [s.activePhase]: {
-                                ...s.phases[s.activePhase],
+                            ...newState.phases,
+                            [newState.activePhase]: {
+                                ...newState.phases[newState.activePhase],
                                 drafts: {
-                                    ...s.phases[s.activePhase].drafts,
-                                    [s.activeTool]: finalDraftString,
+                                    ...newState.phases[newState.activePhase].drafts,
+                                    [newState.activeTool]: finalDraftString,
                                 },
                             },
                         },
-                    }));
-                    return;
+                    };
+                    return newState;
 
                 } catch (e) { console.error('Shot Parse Error', e); }
             }
         }
 
         // SPECIAL HANDLING: Visual Direction (Mood Board / Storyboard)
-        if (state.activeTool === 'storyboard') {
+        if (newState.activeTool === 'storyboard') {
             const themeMatch = incoming.match(/\*\*Theme:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const overviewMatch = incoming.match(/\*\*Overview:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const keywordsMatch = incoming.match(/\*\*Keywords:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -1054,20 +1034,20 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 currentStack[0] = JSON.parse(newHeadRawWithUpdate);
                 const finalDraftString = JSON.stringify(currentStack);
 
-                setState((s) => ({
-                    ...s,
+                newState = {
+                    ...newState,
                     phases: {
-                        ...s.phases,
-                        [s.activePhase]: {
-                            ...s.phases[s.activePhase],
+                        ...newState.phases,
+                        [newState.activePhase]: {
+                            ...newState.phases[newState.activePhase],
                             drafts: {
-                                ...s.phases[s.activePhase].drafts,
-                                [s.activeTool]: finalDraftString,
+                                ...newState.phases[newState.activePhase].drafts,
+                                [newState.activeTool]: finalDraftString,
                             },
                         },
                     },
-                }));
-                return;
+                };
+                return newState;
             }
         }
 
@@ -1100,7 +1080,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         }
 
         // SPECIAL HANDLING: Project Vision (Creative Concept) v2
-        if (state.activeTool === 'project-vision') {
+        if (newState.activeTool === 'project-vision') {
             try {
                 const parsedCurrent = JSON.parse(currentHeadRaw);
                 const pages = Array.isArray(parsedCurrent.pages) ? parsedCurrent.pages : [];
@@ -1147,7 +1127,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             }
         }
         // SPECIAL HANDLING: Parsing for Brief
-        else if (state.activeTool === 'brief') {
+        else if (newState.activeTool === 'brief') {
             // Heuristics for Brief Fields
             const prodMatch = incoming.match(/\*\*(?:Subject\s*[/\\]\s*)?Product:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const objMatch = incoming.match(/\*\*Objective:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -1193,7 +1173,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             }
         }
         // SPECIAL HANDLING: Director's Treatment Parsing
-        else if (state.activeTool === 'directors-treatment') {
+        else if (newState.activeTool === 'directors-treatment') {
             const narrativeMatch = incoming.match(/\*\*Narrative Arc:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const charMatch = incoming.match(/\*\*Character Philosophy:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const visualMatch = incoming.match(/\*\*Visual Language:\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -1215,7 +1195,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             }
         }
         // SPECIAL HANDLING: Storyboard Parsing
-        else if (state.activeTool === 'storyboard') {
+        else if (newState.activeTool === 'storyboard') {
             const sceneMatches = Array.from(incoming.matchAll(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/g));
             if (sceneMatches.length > 0) {
                 const newItems = sceneMatches.map((m, i) => ({
@@ -1238,7 +1218,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             }
         }
         // SPECIAL HANDLING: Shot List Parsing (shot-scene-book)
-        else if (state.activeTool === 'shot-scene-book') {
+        else if (newState.activeTool === 'shot-scene-book') {
             const sceneMatch = incoming.match(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const sizeMatch = incoming.match(/\*\*Size:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const angleMatch = incoming.match(/\*\*Angle:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -1268,7 +1248,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             }
         }
         // SPECIAL HANDLING: AV Script Parsing (av-script)
-        else if (state.activeTool === 'av-script') {
+        else if (newState.activeTool === 'av-script') {
             const sceneMatch = incoming.match(/\*\*Scene:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const timeMatch = incoming.match(/\*\*Time:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
             const visualMatch = incoming.match(/\*\*Visual:?\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
@@ -1344,23 +1324,25 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             currentStack[0] = newHeadRaw;
         }
 
-        setState((s) => ({
-            ...s,
+        return {
+            ...newState,
             phases: {
-                ...s.phases,
-                [s.activePhase]: {
-                    ...s.phases[s.activePhase],
+                ...newState.phases,
+                [newState.activePhase]: {
+                    ...newState.phases[newState.activePhase],
                     drafts: {
-                        ...s.phases[s.activePhase].drafts,
-                        [s.activeTool]: JSON.stringify(currentStack),
+                        ...newState.phases[newState.activePhase].drafts,
+                        [newState.activeTool]: JSON.stringify(currentStack),
                     },
                 },
             },
-        }))
-    }
+        };
+        });
+    }, []);
 
 
     const handleGenerateFromVision = (targetTool: ToolKey, visionText: string, promptPrefix: string) => {
+        const activePhaseState = state.phases[state.activePhase];
         // 1. Data Extraction
         let startingData: any = {};
         if (targetTool === 'brief') {
@@ -1807,7 +1789,7 @@ Context:\n"${fullContext}"`;
                         activeMode={aiMode}
                         onModeChange={() => { }}
 
-                        onNavigate={(targetTool, payload) => {
+                        onNavigate={(targetTool: string, payload?: string) => {
                             // Find the phase for this tool
                             let foundPhase: Phase | undefined;
                             for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
@@ -1830,7 +1812,7 @@ Context:\n"${fullContext}"`;
                                         const existingChat = newState.chat[targetTool as ToolKey] || [];
                                         newState.chat = {
                                             ...newState.chat,
-                                            [targetTool]: [
+                                            [targetTool as ToolKey]: [
                                                 ...existingChat,
                                                 { role: 'assistant', content: `Transferring context...\n\n${payload}` }
                                             ]
@@ -1850,7 +1832,7 @@ Context:\n"${fullContext}"`;
                                             const deliverablesMatch = payload.match(/\*\*(?:Deliverables|Assets):\*\*\s*([\s\S]*?)(?=\*\*|$)/i);
 
                                             if (subjectMatch || objectiveMatch || audienceMatch || toneMatch || messageMatch || narrativeMatch || talentMatch || locationMatch || deliverablesMatch) {
-                                                const existingDraftJSON = newState.phases[foundPhase!].drafts[targetTool] || '[]';
+                                                const existingDraftJSON = newState.phases[foundPhase!].drafts[targetTool as ToolKey] || '[]';
                                                 let currentStack: any[] = [{}];
 
                                                 try {
@@ -1875,7 +1857,7 @@ Context:\n"${fullContext}"`;
                                                 currentStack[0] = { ...currentStack[0], ...update };
 
                                                 // Commit Update
-                                                newState.phases[foundPhase!].drafts[targetTool] = JSON.stringify(currentStack);
+                                                newState.phases[foundPhase!].drafts[targetTool as ToolKey] = JSON.stringify(currentStack);
                                             }
                                         }
                                     }

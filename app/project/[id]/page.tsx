@@ -1,13 +1,12 @@
 'use client';
 import { WorkspaceEditor, WorkspaceState } from '@/components/onformat/WorkspaceEditor';
-import { getClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 export default function ProjectPage() {
   const params = useParams();
   const id = params.id as string;
-  const supabase = getClient()
   const [initialState, setInitialState] = useState<WorkspaceState | undefined>(undefined);
   const [projectName, setProjectName] = useState<string>('');
   const [loading, setLoading] = useState(true);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { isFounder } from '@/lib/permissions';
 
 interface TrialStatus {
@@ -14,7 +14,6 @@ export function useTrialStatus() {
         daysLeft: 14,
         isLoading: true,
     });
-    const supabase = getClient();
 
     useEffect(() => {
         const fetchStatus = async () => {
