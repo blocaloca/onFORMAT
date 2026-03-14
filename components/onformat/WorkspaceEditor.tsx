@@ -230,7 +230,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
 
                         setState(current => {
-                            const currentDraft = current.phases.PRE_PRODUCTION.drafts['crew-list'];
+                            const currentDraft = current.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
                             if (newCrewDraft !== currentDraft) {
                                 // Smart Merging to prevent 'erratic' behavior while typing.
                                 // We preserve local text modifications (Name, Email, etc.) but accept Remote 'Status' updates.
@@ -272,9 +272,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                             phases: {
                                                 ...current.phases,
                                                 PRE_PRODUCTION: {
-                                                    ...current.phases.PRE_PRODUCTION,
+                                                    ...(current.phases?.[ 'PRE_PRODUCTION' ] || {}),
                                                     drafts: {
-                                                        ...current.phases.PRE_PRODUCTION.drafts,
+                                                        ...(current.phases?.[ 'PRE_PRODUCTION' ]?.drafts || {}),
                                                         'crew-list': mergedDraft
                                                     }
                                                 }
@@ -289,9 +289,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                     phases: {
                                         ...current.phases,
                                         PRE_PRODUCTION: {
-                                            ...current.phases.PRE_PRODUCTION,
+                                            ...(current.phases?.[ 'PRE_PRODUCTION' ] || {}),
                                             drafts: {
-                                                ...current.phases.PRE_PRODUCTION.drafts,
+                                                ...(current.phases?.[ 'PRE_PRODUCTION' ]?.drafts || {}),
                                                 'crew-list': newCrewDraft
                                             }
                                         }
@@ -456,7 +456,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             phases: {
                                 ...prev.phases,
                                 ON_SET: {
-                                    ...prev.phases.ON_SET,
+                                    ...(prev.phases?.[ 'ON_SET' ] || {}),
                                     drafts: updatedDrafts
                                 }
                             },
@@ -600,7 +600,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
     const lockedPhases = useMemo(() => {
         const out: Record<Phase, boolean> = { STRATEGY: false, DEVELOPMENT: false, PRE_PRODUCTION: false, PRODUCTION: false, ON_SET: false, POST: false }
-        for (const p of PHASES) out[p] = state.phases[p].locked
+        for (const p of PHASES) {
+            out[p] = state.phases?.[p]?.locked || false
+        }
         return out
     }, [state.phases])
 
@@ -609,7 +611,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     // Role-based Access Control for Specific Tools
     const isToolLocked = useMemo(() => {
         // 1. Phase Lock (Global override)
-        if (state.phases[state.activePhase]?.locked) return true;
+        if (state.phases?.[state.activePhase]?.locked) return true;
 
         // 2. Tool Specific Locks
         if (state.activeTool === 'dit-log') {
@@ -1342,7 +1344,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
 
     const handleGenerateFromVision = (targetTool: ToolKey, visionText: string, promptPrefix: string) => {
-        const activePhaseState = state.phases[state.activePhase];
         // 1. Data Extraction
         let startingData: any = {};
         if (targetTool === 'brief') {
@@ -1374,8 +1375,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         } catch { }
 
         // Update drafts & Switch Tool
-        const nextDrafts = { ...activePhaseState.drafts, [targetTool]: newDraftJSON };
-        const nextPhaseState = { ...state.phases[state.activePhase], drafts: nextDrafts };
+        const nextDrafts = { ...(state.phases?.[state.activePhase]?.drafts || {}), [targetTool]: newDraftJSON };
+        const nextPhaseState = { ...(state.phases?.[state.activePhase] || {}), drafts: nextDrafts };
 
         setState(s => ({
             ...s,
@@ -1473,8 +1474,8 @@ Context:\n"${fullContext}"`;
         const updatedHead = { ...currentHead, shots: [...existingShots, ...newShots] };
         currentStack[0] = updatedHead;
 
-        const nextDrafts = { ...activePhaseState.drafts, [targetTool]: JSON.stringify(currentStack) };
-        const nextPhaseState = { ...state.phases[state.activePhase], drafts: nextDrafts };
+        const nextDrafts = { ...(state.phases?.[state.activePhase]?.drafts || {}), [targetTool]: JSON.stringify(currentStack) };
+        const nextPhaseState = { ...(state.phases?.[state.activePhase] || {}), drafts: nextDrafts };
 
         setState(s => ({
             ...s,
