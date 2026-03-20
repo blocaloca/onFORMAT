@@ -74,7 +74,6 @@ export default function PricingPage() {
                 <div className="flex items-center gap-8">
                     <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
                     <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Pricing</Link>
-                    <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
                     {!loadingAuth ? (
                         <Link 
                             href={user ? "/dashboard" : "/login"} 

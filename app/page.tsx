@@ -55,7 +55,6 @@ export default function LandingPage() {
         <div className="flex items-center gap-8">
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
-          <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
           {!loading ? (
             <Link 
               href={user ? "/dashboard" : "/login"} 
@@ -207,16 +206,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CONTACT CTA */}
-      <section id="contact" className="py-24 md:py-32 px-4 md:px-8 max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter text-zinc-900 mb-6 uppercase">Let's build together.</h2>
-        <p className="text-lg md:text-xl text-zinc-500 font-medium mb-12 max-w-2xl mx-auto">
-          Need custom enterprise workflows or a unified system for your entire production house? We’re ready to help.
-        </p>
-        <a href="mailto:hello@onformat.io" className="inline-flex items-center gap-3 bg-zinc-900 text-white px-8 py-4 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1">
-          Contact Us <ArrowRight size={16} />
-        </a>
-      </section>
 
       {/* FOOTER */}
       <footer className="py-12 px-8 border-t border-zinc-200/80 bg-white text-center">
