@@ -116,15 +116,19 @@ export default function FeaturesPage() {
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
           <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
-          <Link 
-            href={user ? "/dashboard" : "/login"} 
-            className={user 
-              ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
-              : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-            }
-          >
-            {!loading && (user ? "Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
-          </Link>
+          {!loading ? (
+            <Link 
+              href={user ? "/dashboard" : "/login"} 
+              className={user 
+                ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+                : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+              }
+            >
+              {user ? "Dashboard" : "Start Free Trial"} <ArrowRight size={14} />
+            </Link>
+          ) : (
+            <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
+          )}
         </div>
       </nav>
 
