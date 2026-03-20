@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ChevronLeft, ChevronRight, Compass, Layers, Printer, CheckCircle } from 'lucide-react';
+import { 
+  ArrowRight, 
+  ChevronLeft, 
+  ChevronRight, 
+  Compass, 
+  Layers, 
+  Printer, 
+  CheckCircle 
+} from 'lucide-react';
+import { getClient } from '@/lib/supabase';
 
 const SCREENSHOTS = [
   '/assets/slider-1.png',
@@ -14,8 +23,18 @@ const SCREENSHOTS = [
 
 export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const checkUser = async () => {
+      const supabase = getClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+    checkUser();
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
     }, 5000);
@@ -36,9 +55,9 @@ export default function LandingPage() {
         <div className="flex items-center gap-8">
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
-          <a href="#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</a>
-          <Link href="/login" className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-            Start Free Trial <ArrowRight size={14} />
+          <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
+          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+            {!loading && (user ? "Back to Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
           </Link>
         </div>
       </nav>
@@ -57,11 +76,11 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col items-center gap-4 mb-16">
-          <Link href="/login" className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
-            Start 14-Day Free Trial <ArrowRight size={18} />
+          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
+            {!loading && (user ? "Back to Dashboard" : "Start 14-Day Free Trial")} <ArrowRight size={18} />
           </Link>
           <p className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest">
-            No credit card • No tier selection required
+            {!user && "No credit card • No tier selection required"}
           </p>
         </div>
 

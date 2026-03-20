@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   ArrowRight, 
@@ -18,6 +18,7 @@ import {
   Search,
   MessageSquare
 } from 'lucide-react';
+import { getClient } from '@/lib/supabase';
 
 const FEATURE_SECTIONS = [
   {
@@ -90,6 +91,19 @@ const FAQS = [
 ];
 
 export default function FeaturesPage() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const supabase = getClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      setLoading(false);
+    };
+    checkUser();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F9F9FB] text-zinc-900 font-sans tracking-tight selection:bg-zinc-200">
       
@@ -101,8 +115,9 @@ export default function FeaturesPage() {
         <div className="flex items-center gap-8">
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
-          <Link href="/login" className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-            Start Free Trial <ArrowRight size={14} />
+          <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
+          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+            {!loading && (user ? "Back to Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
           </Link>
         </div>
       </nav>
@@ -131,8 +146,8 @@ export default function FeaturesPage() {
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-zinc-900 uppercase leading-[0.9]">{section.title}</h2>
                 <p className="text-xl text-zinc-500 font-medium leading-relaxed">{section.description}</p>
                 <div className="pt-8">
-                  <Link href="/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group">
-                    Explore This Phase <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  <Link href={user ? "/dashboard" : "/login"} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group">
+                    {user ? "Explore This Phase" : "Start Free Trial"} <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </div>
@@ -200,11 +215,11 @@ export default function FeaturesPage() {
           <span className="text-zinc-400 font-light">PRODUCTION?</span>
         </h2>
         <div className="flex flex-col items-center gap-6">
-          <Link href="/login" className="bg-zinc-900 text-white px-10 py-5 rounded-full text-xs md:text-base font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-2xl hover:-translate-y-1 flex items-center gap-3">
-            Get Started with a 14-Day Free Trial <ArrowRight size={20} />
+          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-10 py-5 rounded-full text-xs md:text-base font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-2xl hover:-translate-y-1 flex items-center gap-3">
+            {!loading && (user ? "Back to Dashboard" : "Get Started with a 14-Day Free Trial")} <ArrowRight size={20} />
           </Link>
           <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
-            Log in to a demo project instantly • no setup required
+            {!user && "Log in to a demo project instantly • no setup required"}
           </p>
         </div>
       </section>

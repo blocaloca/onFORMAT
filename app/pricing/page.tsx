@@ -70,8 +70,11 @@ export default function PricingPage() {
                     <img src="/octo%20logo%202-%20long.png" alt="onFORMAT Logo" className="h-[50px] md:h-[60px] w-auto object-contain" />
                 </Link>
                 <div className="flex items-center gap-8">
+                    <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
+                    <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Pricing</Link>
+                    <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
                     <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-                        {user ? "Back to Dashboard" : "Log In"} <ArrowRight size={14} />
+                        {user ? "Back to Dashboard" : "Start Free Trial"} <ArrowRight size={14} />
                     </Link>
                 </div>
             </nav>
