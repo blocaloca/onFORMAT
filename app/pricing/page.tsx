@@ -142,7 +142,7 @@ export default function PricingPage() {
                                 <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
                             <ul className="space-y-4 mb-10">
-                                {['Unlimited Active Projects', 'Custom Studio Branding'].map(f => (
+                                {['Unlimited Active Projects'].map(f => (
                                     <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
                                         <Check size={14} className="text-zinc-600" /> {f}
                                     </li>
