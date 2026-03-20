@@ -177,8 +177,13 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="text-center text-zinc-300 text-[9px] uppercase font-mono tracking-widest">
-          v1.0.0 • Machined Glass
+        <div className="text-center space-y-2">
+          <p className="text-orange-500/80 text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
+            Beta Notice: Expect a few bugs-n-glitches
+          </p>
+          <div className="text-zinc-300 text-[9px] uppercase font-mono tracking-widest">
+            v1.0.0 • Machined Glass
+          </div>
         </div>
       </div>
     </div>
