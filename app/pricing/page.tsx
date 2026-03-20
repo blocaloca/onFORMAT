@@ -11,6 +11,7 @@ export default function PricingPage() {
     const [profile, setProfile] = useState<any>(null);
     const supabase = getClient()
     const [loading, setLoading] = useState<string | null>(null);
+    const [loadingAuth, setLoadingAuth] = useState(true);
 
     useEffect(() => {
         const getUser = async () => {
@@ -20,6 +21,7 @@ export default function PricingPage() {
                 const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
                 setProfile(data);
             }
+            setLoadingAuth(false);
         };
         getUser();
     }, []);
@@ -73,8 +75,14 @@ export default function PricingPage() {
                     <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
                     <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Pricing</Link>
                     <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
-                    <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-                        {user ? "Back to Dashboard" : "Start Free Trial"} <ArrowRight size={14} />
+                    <Link 
+                        href={user ? "/dashboard" : "/login"} 
+                        className={user 
+                            ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+                            : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                        }
+                    >
+                        {!loadingAuth && (user ? "Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
                     </Link>
                 </div>
             </nav>

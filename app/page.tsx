@@ -56,8 +56,14 @@ export default function LandingPage() {
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
           <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
-          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-            {!loading && (user ? "Back to Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
+          <Link 
+            href={user ? "/dashboard" : "/login"} 
+            className={user 
+              ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+              : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+            }
+          >
+            {!loading && (user ? "Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
           </Link>
         </div>
       </nav>
@@ -76,12 +82,16 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col items-center gap-4 mb-16">
-          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
-            {!loading && (user ? "Back to Dashboard" : "Start 14-Day Free Trial")} <ArrowRight size={18} />
-          </Link>
-          <p className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest">
-            {!user && "No credit card • No tier selection required"}
-          </p>
+          {!user && (
+            <>
+              <Link href="/login" className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
+                Start 14-Day Free Trial <ArrowRight size={18} />
+              </Link>
+              <p className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                No credit card • No tier selection required
+              </p>
+            </>
+          )}
         </div>
 
         {/* IMAGE SLIDER */}

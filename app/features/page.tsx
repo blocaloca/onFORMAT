@@ -116,8 +116,14 @@ export default function FeaturesPage() {
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
           <Link href="/#contact" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Contact Us</Link>
-          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2">
-            {!loading && (user ? "Back to Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
+          <Link 
+            href={user ? "/dashboard" : "/login"} 
+            className={user 
+              ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+              : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+            }
+          >
+            {!loading && (user ? "Dashboard" : "Start Free Trial")} <ArrowRight size={14} />
           </Link>
         </div>
       </nav>
@@ -146,9 +152,11 @@ export default function FeaturesPage() {
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-zinc-900 uppercase leading-[0.9]">{section.title}</h2>
                 <p className="text-xl text-zinc-500 font-medium leading-relaxed">{section.description}</p>
                 <div className="pt-8">
-                  <Link href={user ? "/dashboard" : "/login"} className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group">
-                    {user ? "Explore This Phase" : "Start Free Trial"} <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                  </Link>
+                  {!user && (
+                    <Link href="/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group">
+                      Start Free Trial <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  )}
                 </div>
               </div>
               <div className="flex-1 grid grid-cols-1 gap-4 w-full">
@@ -215,12 +223,16 @@ export default function FeaturesPage() {
           <span className="text-zinc-400 font-light">PRODUCTION?</span>
         </h2>
         <div className="flex flex-col items-center gap-6">
-          <Link href={user ? "/dashboard" : "/login"} className="bg-zinc-900 text-white px-10 py-5 rounded-full text-xs md:text-base font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-2xl hover:-translate-y-1 flex items-center gap-3">
-            {!loading && (user ? "Back to Dashboard" : "Get Started with a 14-Day Free Trial")} <ArrowRight size={20} />
-          </Link>
-          <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
-            {!user && "Log in to a demo project instantly • no setup required"}
-          </p>
+          {!user && (
+            <>
+              <Link href="/login" className="bg-zinc-900 text-white px-10 py-5 rounded-full text-xs md:text-base font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-2xl hover:-translate-y-1 flex items-center gap-3">
+                Get Started with a 14-Day Free Trial <ArrowRight size={20} />
+              </Link>
+              <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                Log in to a demo project instantly • no setup required
+              </p>
+            </>
+          )}
         </div>
       </section>
 
