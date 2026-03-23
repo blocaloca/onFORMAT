@@ -112,7 +112,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <div className="flex justify-end pb-2">
                                 <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-sm font-mono font-bold text-zinc-900">
+                                    <span className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100">
                                         ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -136,7 +136,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Category */}
                                         <div className="relative">
@@ -166,7 +166,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="font-medium text-sm bg-transparent outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full"
+                                                className="font-medium text-sm bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full"
                                                 placeholder="e.g. Sony FX3 Body..."
                                                 disabled={isLocked}
                                             />
@@ -199,7 +199,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.vendor}
                                                 onChange={e => handleUpdateItem(globalIdx, { vendor: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none focus:bg-white rounded px-1 placeholder:text-zinc-200 w-full"
+                                                className="text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 w-full"
                                                 placeholder={item.source === 'rent' ? 'Rental House...' : '—'}
                                                 disabled={isLocked || item.source === 'own'}
                                             />
@@ -215,7 +215,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.dayRate}
                                                 onChange={e => handleUpdateItem(globalIdx, { dayRate: e.target.value })}
-                                                className="text-right font-mono text-[10px] bg-transparent outline-none focus:bg-white rounded px-1 placeholder:text-zinc-200"
+                                                className="text-right font-mono text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700"
                                                 placeholder="$0.00"
                                                 disabled={isLocked}
                                             />
@@ -231,14 +231,14 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.quantity}
                                                 onChange={e => handleUpdateItem(globalIdx, { quantity: e.target.value })}
-                                                className="text-center font-bold text-[10px] bg-transparent outline-none focus:bg-white rounded px-1"
+                                                className="text-center font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1"
                                                 placeholder="1"
                                                 disabled={isLocked}
                                             />
                                         )}
 
                                         {/* Total - Read Only usually */}
-                                        <div className="text-right font-mono font-bold text-[10px] text-zinc-800">
+                                        <div className="text-right font-mono font-bold text-[10px] text-zinc-800 dark:text-zinc-200">
                                             {item.total || '—'}
                                         </div>
 
@@ -254,8 +254,8 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -281,7 +281,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {/* Add Button - Last Page */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full print-hidden">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full print-hidden">
                                         <Plus size={10} className="mr-1" /> Add Equipment
                                     </button>
                                 </div>

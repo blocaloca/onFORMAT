@@ -325,30 +325,30 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 const isOnline = isMemberOnline(item.email) || item.email?.toLowerCase() === 'casteelio@gmail.com';
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
                                         {/* Dept */}
                                         <div className="relative">
                                             <select
                                                 value={item.department}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { department: e.target.value })}
-                                                className={`w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[11px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-[11px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                             </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 text-ellipsis overflow-hidden text-black`}>{item.department}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 text-ellipsis overflow-hidden text-black dark:text-zinc-100`}>{item.department}</div>
                                         </div>
                                         {/* Role */}
                                         <div className="relative">
                                             <select
                                                 value={item.role}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { role: e.target.value })}
-                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 text-[11px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 text-[11px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {roles.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                             </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] font-medium px-1 py-1.5 text-ellipsis overflow-hidden text-black`}>{item.role}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] font-medium px-1 py-1.5 text-ellipsis overflow-hidden text-black dark:text-zinc-100`}>{item.role}</div>
                                         </div>
                                         {/* Name */}
                                         <div>
@@ -356,25 +356,25 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.name}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { name: e.target.value })}
-                                                className={`w-full bg-transparent text-sm font-bold focus:bg-white rounded px-1 py-1 outline-none text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-sm font-bold focus:bg-white dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Name..."
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold px-1 py-1 text-black`}>{item.name || "—"}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold px-1 py-1 text-black dark:text-zinc-100`}>{item.name || "—"}</div>
                                         </div>
 
                                         {/* onSET Groups */}
                                         <div className="flex justify-center gap-1">
                                             {['A', 'B', 'C', 'D'].map(g => {
                                                 const isActive = groups.includes(g);
-                                                const activeClass = g === 'A' ? 'bg-emerald-500 text-black border-emerald-500'
+                                                const activeClass = g === 'A' ? 'bg-emerald-500 text-black dark:text-zinc-100 border-emerald-500'
                                                     : g === 'B' ? 'bg-blue-500 text-white border-blue-500'
-                                                        : g === 'C' ? 'bg-amber-500 text-black border-amber-500'
+                                                        : g === 'C' ? 'bg-amber-500 text-black dark:text-zinc-100 border-amber-500'
                                                             : 'bg-red-500 text-white border-red-500';
 
                                                 if (isPrinting) {
                                                     return isActive ? (
-                                                        <span key={g} className="text-[10px] font-black text-black mx-1">
+                                                        <span key={g} className="text-[10px] font-black text-black dark:text-zinc-100 mx-1">
                                                             {g}
                                                         </span>
                                                     ) : null;
@@ -385,7 +385,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         key={g}
                                                         onClick={() => toggleGroup(globalIdx, g)}
                                                         disabled={isLocked}
-                                                        className={`w-6 h-6 rounded flex items-center justify-center text-[9px] font-black leading-none border transition-all ${isActive ? activeClass : 'bg-transparent border-zinc-200 text-zinc-300 hover:border-zinc-400 hover:text-zinc-500'
+                                                        className={`w-6 h-6 rounded flex items-center justify-center text-[9px] font-black leading-none border transition-all ${isActive ? activeClass : 'bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-300 hover:border-zinc-400 hover:text-zinc-500'
                                                             }`}
                                                     >
                                                         <span className="mt-[1px]">{g}</span>
@@ -400,7 +400,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.email}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { email: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Email"
                                                 disabled={isLocked}
                                             />
@@ -412,7 +412,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.phone}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { phone: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Phone"
                                                 disabled={isLocked}
                                             />
@@ -441,8 +441,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         <Trash2 size={12} />
                                                     </button>
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -465,7 +465,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 <div className="pt-2 print-hidden">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Crew Member
                                     </button>

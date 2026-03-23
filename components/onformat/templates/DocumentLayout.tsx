@@ -49,7 +49,7 @@ export const DocumentLayout = ({
         return (
             <div className={`
                 mx-auto flex flex-col gap-6 
-                bg-white border border-zinc-200/80 rounded-xl mb-6 shadow-sm
+                bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-xl mb-6 shadow-sm
                 p-10
                 transition-colors duration-200
                 ${className}
@@ -124,7 +124,7 @@ export const DocumentLayout = ({
             `}</style>
 
             <div
-                className={`document-page bg-white border border-zinc-200/80 rounded-xl mb-6 shadow-sm mx-auto relative flex flex-col gap-8 ${className}`}
+                className={`document-page bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-xl mb-6 shadow-sm mx-auto relative flex flex-col gap-8 ${className}`}
                 style={{
                     width: `${width}px`,
                     height: `${height}px`,
@@ -133,10 +133,10 @@ export const DocumentLayout = ({
                 }}
             >
                 {/* Header */}
-                <div className="flex-shrink-0 relative z-50 bg-white">
+                <div className="flex-shrink-0 relative z-50 bg-white dark:bg-zinc-950">
                     {!hideHeader && (
                         <div>
-                            <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-6">
+                            <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
                                 <h1 className="text-3xl font-black uppercase tracking-normal leading-tight">{title}</h1>
                                 {metadata && metadata.date && (
                                     <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pb-1">
@@ -155,19 +155,19 @@ export const DocumentLayout = ({
                                             </div>
                                         )}
                                         <div className="flex gap-2">
-                                            <span className="text-black">{metadata.projectName || 'UNTITLED PROJECT'}</span>
+                                            <span className="text-black dark:text-zinc-100">{metadata.projectName || 'UNTITLED PROJECT'}</span>
                                         </div>
                                     </div>
 
                                     {(metadata.producer || metadata.directorNames) ? (
                                         <div className="flex gap-2">
                                             <span>{metadata.isTreatment ? 'DIRECTOR' : 'PRODUCER'}</span>
-                                            <span className="text-black">{metadata.isTreatment ? metadata.directorNames : metadata.producer}</span>
+                                            <span className="text-black dark:text-zinc-100">{metadata.isTreatment ? metadata.directorNames : metadata.producer}</span>
                                         </div>
                                     ) : (
                                         <div className="flex gap-2 opacity-0">
                                             <span>PRODUCER</span>
-                                            <span className="text-black">-</span>
+                                            <span className="text-black dark:text-zinc-100">-</span>
                                         </div>
                                     )}
                                 </div>

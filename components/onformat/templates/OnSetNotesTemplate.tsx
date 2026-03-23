@@ -163,11 +163,11 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(idx, { description: e.target.value })}
-                                                className={`flex-1 font-bold bg-transparent outline-none placeholder:text-zinc-300 uppercase ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`flex-1 font-bold bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 placeholder="NOTE SUBJECT / TOPIC"
                                                 disabled={isLocked}
                                             />
-                                            <div className={`flex-1 min-w-0 font-bold uppercase text-black pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`flex-1 min-w-0 font-bold uppercase text-black dark:text-zinc-100 pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {item.description}
                                             </div>
 
@@ -182,8 +182,8 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     </button>
 
                                                     {deleteConfirmIndex === idx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDelete(idx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -208,12 +208,12 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         <textarea
                                             value={item.body}
                                             onChange={e => handleUpdateItem(idx, { body: e.target.value })}
-                                            className={`w-full bg-zinc-50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white focus:ring-1 focus:ring-zinc-400 border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`w-full bg-zinc-50 dark:bg-zinc-900/50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400 border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="Write report details here..."
                                             rows={Math.max(3, item.body.split('\n').length)}
                                             disabled={isLocked}
                                         />
-                                        <div className={`w-full bg-zinc-50 p-3 min-h-[100px] text-sm leading-relaxed rounded-sm whitespace-pre-wrap break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                        <div className={`w-full bg-zinc-50 dark:bg-zinc-900/50 p-3 min-h-[100px] text-sm leading-relaxed rounded-sm whitespace-pre-wrap break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                             {item.body}
                                         </div>
                                     </div>
@@ -223,7 +223,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAdd}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200 dark:border-zinc-800"
                                     >
                                         <Plus size={10} /> Add Report Entry
                                     </button>

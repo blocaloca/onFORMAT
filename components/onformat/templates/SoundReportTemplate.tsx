@@ -180,14 +180,14 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             {pageTakes.map((take, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={take.id} className="grid grid-cols-[50px_40px_80px_60px_1fr_1fr_30px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={take.id} className="grid grid-cols-[50px_40px_80px_60px_1fr_1fr_30px_30px] gap-2 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Scene */}
                                         <input
                                             type="text"
                                             value={take.scene}
                                             onChange={e => handleUpdateTake(globalIdx, { scene: e.target.value })}
-                                            className={`font-bold text-center bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-bold text-center bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="-"
                                             disabled={isLocked}
                                         />
@@ -198,7 +198,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.take}
                                             onChange={e => handleUpdateTake(globalIdx, { take: e.target.value })}
-                                            className={`font-mono font-bold text-center bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-mono font-bold text-center bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="-"
                                             disabled={isLocked}
                                         />
@@ -209,7 +209,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.timecode}
                                             onChange={e => handleUpdateTake(globalIdx, { timecode: e.target.value })}
-                                            className={`font-mono text-[10px] text-center bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-mono text-[10px] text-center bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="00:00:00:00"
                                             disabled={isLocked}
                                         />
@@ -233,7 +233,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.description}
                                             onChange={e => handleUpdateTake(globalIdx, { description: e.target.value })}
-                                            className={`bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="Details..."
                                             disabled={isLocked}
                                         />
@@ -245,7 +245,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 type="text"
                                                 value={take.tracks}
                                                 onChange={e => handleUpdateTake(globalIdx, { tracks: e.target.value })}
-                                                className={`font-mono text-[9px] bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`font-mono text-[9px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 placeholder="Trk: Boom, Lav1..."
                                                 disabled={isLocked}
                                             />
@@ -255,7 +255,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 type="text"
                                                 value={take.notes}
                                                 onChange={e => handleUpdateTake(globalIdx, { notes: e.target.value })}
-                                                className={`text-[9px] italic text-zinc-400 bg-transparent outline-none w-full placeholder:text-zinc-200 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`text-[9px] italic text-zinc-400 bg-transparent outline-none w-full placeholder:text-zinc-200 dark:placeholder:text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 placeholder="Notes..."
                                                 disabled={isLocked}
                                             />
@@ -276,8 +276,8 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 </button>
 
                                                 {deleteConfirmIndex === globalIdx && (
-                                                    <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                    <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteTake(globalIdx)}
                                                             className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -301,7 +301,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2">
-                                    <button onClick={handleAddTake} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddTake} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Take
                                     </button>
                                 </div>

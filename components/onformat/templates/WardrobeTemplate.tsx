@@ -100,13 +100,13 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[120px_60px_60px_1fr_1fr_80px_30px] gap-4 py-3 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[120px_60px_60px_1fr_1fr_80px_30px] gap-4 py-3 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Char/Actor */}
                                         <div className="space-y-1">
                                             {isPrinting ? (
                                                 <>
-                                                    <div className="font-bold text-[10px] w-full uppercase text-black">{item.character || '—'}</div>
+                                                    <div className="font-bold text-[10px] w-full uppercase text-black dark:text-zinc-100">{item.character || '—'}</div>
                                                     <div className="text-[9px] w-full text-zinc-500">{item.actor || '—'}</div>
                                                 </>
                                             ) : (
@@ -115,7 +115,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.character}
                                                         onChange={e => handleUpdateItem(globalIdx, { character: e.target.value })}
-                                                        className="font-bold text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase"
+                                                        className="font-bold text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase"
                                                         placeholder="CHARACTER"
                                                         disabled={isLocked}
                                                     />
@@ -123,7 +123,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.actor}
                                                         onChange={e => handleUpdateItem(globalIdx, { actor: e.target.value })}
-                                                        className="text-[9px] bg-transparent outline-none w-full text-zinc-500 placeholder:text-zinc-200"
+                                                        className="text-[9px] bg-transparent outline-none w-full text-zinc-500 placeholder:text-zinc-200 dark:placeholder:text-zinc-700"
                                                         placeholder="Actor Name"
                                                         disabled={isLocked}
                                                     />
@@ -139,7 +139,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.lookNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { lookNumber: e.target.value })}
-                                                className="font-mono font-bold text-[10px] bg-transparent outline-none w-full text-center placeholder:text-zinc-300"
+                                                className="font-mono font-bold text-[10px] bg-transparent outline-none w-full text-center placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                                 placeholder="#"
                                                 disabled={isLocked}
                                             />
@@ -153,7 +153,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.sceneRange}
                                                 onChange={e => handleUpdateItem(globalIdx, { sceneRange: e.target.value })}
-                                                className="font-mono text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300"
+                                                className="font-mono text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                                 placeholder="1, 4, 12"
                                                 disabled={isLocked}
                                             />
@@ -166,7 +166,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <textarea
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 min-h-[40px] resize-none leading-relaxed"
+                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] resize-none leading-relaxed"
                                                 placeholder="Blue denim jacket, vintage tee..."
                                                 disabled={isLocked}
                                             />
@@ -179,14 +179,14 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <textarea
                                                 value={item.notes}
                                                 onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 min-h-[40px] resize-none leading-relaxed text-zinc-500 italic"
+                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] resize-none leading-relaxed text-zinc-500 italic"
                                                 placeholder="Returns to Zara..."
                                                 disabled={isLocked}
                                             />
                                         )}
 
                                         {isPrinting ? (
-                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black">
+                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black dark:text-zinc-100">
                                                 {item.status.toUpperCase()}
                                             </div>
                                         ) : (
@@ -196,7 +196,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 className={`appearance-none bg-transparent h-[22px] leading-none font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1
                                             ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
                                                         item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
-                                                            'border-zinc-200 text-zinc-400 bg-zinc-50'}`}
+                                                            'border-zinc-200 dark:border-zinc-800 text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50'}`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="concept">Concept</option>
@@ -217,8 +217,8 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -243,7 +243,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full print-hidden">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full print-hidden">
                                         <Plus size={10} className="mr-1" /> Add Look
                                     </button>
                                 </div>

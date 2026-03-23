@@ -94,7 +94,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             <div className="flex justify-end pb-2">
                                 <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-sm font-mono font-bold text-zinc-900">
+                                    <span className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100">
                                         ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -116,17 +116,17 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[140px_1fr_50px_100px_80px_80px_30px] gap-4 py-3 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[140px_1fr_50px_100px_80px_80px_30px] gap-4 py-3 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Item */}
                                         {isPrinting ? (
-                                            <div className="font-bold text-[10px] w-full uppercase text-black py-1">{item.item || '—'}</div>
+                                            <div className="font-bold text-[10px] w-full uppercase text-black dark:text-zinc-100 py-1">{item.item || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
                                                 value={item.item}
                                                 onChange={e => handleUpdateItem(globalIdx, { item: e.target.value })}
-                                                className="font-bold text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase"
+                                                className="font-bold text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase"
                                                 placeholder="ITEM NAME"
                                                 disabled={isLocked}
                                             />
@@ -140,7 +140,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 text-zinc-700"
+                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-zinc-700"
                                                 placeholder="Red vintage telephone..."
                                                 disabled={isLocked}
                                             />
@@ -154,7 +154,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.quantity}
                                                 onChange={e => handleUpdateItem(globalIdx, { quantity: e.target.value })}
-                                                className="font-mono text-[10px] bg-transparent outline-none w-full text-center placeholder:text-zinc-300"
+                                                className="font-mono text-[10px] bg-transparent outline-none w-full text-center placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                                 placeholder="1"
                                                 disabled={isLocked}
                                             />
@@ -168,7 +168,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.source}
                                                 onChange={e => handleUpdateItem(globalIdx, { source: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 italic"
+                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 italic"
                                                 placeholder="Prop House..."
                                                 disabled={isLocked}
                                             />
@@ -182,14 +182,14 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.cost}
                                                 onChange={e => handleUpdateItem(globalIdx, { cost: e.target.value })}
-                                                className="font-mono text-[10px] bg-transparent outline-none w-full text-right placeholder:text-zinc-300"
+                                                className="font-mono text-[10px] bg-transparent outline-none w-full text-right placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                                 placeholder="$0.00"
                                                 disabled={isLocked}
                                             />
                                         )}
 
                                         {isPrinting ? (
-                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black">
+                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black dark:text-zinc-100">
                                                 {item.status === 'pending' ? 'Needed' : item.status.toUpperCase()}
                                             </div>
                                         ) : (
@@ -198,7 +198,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
                                                 className={`appearance-none bg-transparent font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5
                                                 ${item.status === 'acquired' ? 'border-green-200 text-green-700 bg-green-50' :
-                                                        item.status === 'wrapped' ? 'border-zinc-200 text-zinc-500 bg-zinc-100 line-through' :
+                                                        item.status === 'wrapped' ? 'border-zinc-200 dark:border-zinc-800 text-zinc-500 bg-zinc-100 dark:bg-zinc-900 line-through' :
                                                             'border-red-200 text-red-400 bg-red-50'}`}
                                                 disabled={isLocked}
                                             >
@@ -220,8 +220,8 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -246,7 +246,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print-hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Prop
                                     </button>
                                 </div>

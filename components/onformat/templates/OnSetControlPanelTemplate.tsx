@@ -28,7 +28,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
     // Printing / PDF View -> Show Large QR Code
     if (isPrinting) {
         return (
-            <div className="flex flex-col items-center justify-center h-full pt-12 text-center bg-white text-black">
+            <div className="flex flex-col items-center justify-center h-full pt-12 text-center bg-white dark:bg-zinc-950 text-black dark:text-zinc-100">
                 <div className="border-[6px] border-black p-8 mb-12">
                     {/* Standardized Typography per request */}
                     <h1 className="text-4xl font-black uppercase tracking-tighter">onSET MOBILE</h1>
@@ -37,7 +37,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                     <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://onformat.io/join/${metadata?.projectId || 'demo'}`}
                         alt="Scan QR"
-                        className="w-full h-full bg-white p-2 object-contain"
+                        className="w-full h-full bg-white dark:bg-zinc-950 p-2 object-contain"
                     />
                 </div >
                 <p className="font-mono text-2xl uppercase font-bold tracking-widest">Scan to Join Set</p>
@@ -73,10 +73,10 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                         className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border transition-all
                             ${data.isLive
                                 ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] active:bg-emerald-600'
-                                : 'bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-500 active:bg-zinc-100 dark:active:bg-zinc-800'
+                                : 'bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-500 active:bg-zinc-100 dark:bg-zinc-900 dark:active:bg-zinc-800'
                             }`}
                     >
-                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white animate-pulse' : 'bg-zinc-500'}`}></div>
+                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white dark:bg-zinc-950 animate-pulse' : 'bg-zinc-500'}`}></div>
                         {data.isLive ? 'LIVE' : 'GO LIVE'}
                     </button>
                     {isLocked && <div className="flex items-center gap-1 text-zinc-600 text-[10px] uppercase font-bold"><Lock size={10} /> Locked</div>}
@@ -133,7 +133,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                             return (
                                                 <div
                                                     key={tool.key}
-                                                    className="flex items-center justify-between p-2 pl-0 active:bg-zinc-100 dark:active:bg-zinc-900/30 rounded transition-colors group"
+                                                    className="flex items-center justify-between p-2 pl-0 active:bg-zinc-100 dark:bg-zinc-900 dark:active:bg-zinc-900/30 rounded transition-colors group"
                                                 >
                                                     <span className="text-sm font-bold uppercase text-zinc-700 dark:text-zinc-300 transition-colors">{tool.label}</span>
 
@@ -176,7 +176,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             Invite crew to specific groups (A/B/C/D) via the Crew List document.
                         </p>
 
-                        <div className="flex justify-center bg-white p-2 rounded-lg mb-4">
+                        <div className="flex justify-center bg-white dark:bg-zinc-950 p-2 rounded-lg mb-4">
                             <img
                                 src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/join/${metadata?.projectId || 'demo'}`}
                                 alt="Join QR"

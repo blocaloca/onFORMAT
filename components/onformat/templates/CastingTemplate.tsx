@@ -104,7 +104,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                         {pageItems.map((item) => (
                             <div key={item.id} className={`break-inside-avoid ${!isPortrait ? 'flex gap-8 items-center' : ''}`}>
                                 {/* 4:5 Aspect Ratio Image Card */}
-                                <div className={`relative bg-zinc-100 mb-4 group overflow-hidden border border-zinc-200 ${!isPortrait ? 'w-1/2 aspect-[4/5] mb-0' : 'w-full aspect-[4/5]'}`}>
+                                <div className={`relative bg-zinc-100 dark:bg-zinc-900 mb-4 group overflow-hidden border border-zinc-200 dark:border-zinc-800 ${!isPortrait ? 'w-1/2 aspect-[4/5] mb-0' : 'w-full aspect-[4/5]'}`}>
                                     <ImageUpload
                                         value={item.imageUrl}
                                         onChange={(url) => updateItem(item.id, 'imageUrl', url)}
@@ -119,7 +119,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                     {!isLocked && (
                                         <button
                                             onClick={() => deleteItem(item.id)}
-                                            className="absolute top-2 right-2 p-2 bg-white/90 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                                            className="absolute top-2 right-2 p-2 bg-white dark:bg-zinc-950/90 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -143,7 +143,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                         )}
 
                                         {isPrinting ? (
-                                            <div className="text-xl font-bold text-black leading-tight block">{item.name}</div>
+                                            <div className="text-xl font-bold text-black dark:text-zinc-100 leading-tight block">{item.name}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -151,7 +151,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                 onChange={(e) => updateItem(item.id, 'name', e.target.value)}
                                                 placeholder="Talent Name"
                                                 disabled={isLocked}
-                                                className="w-full text-xl font-bold text-black outline-none placeholder:text-zinc-300 bg-transparent"
+                                                className="w-full text-xl font-bold text-black dark:text-zinc-100 outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 bg-transparent"
                                             />
                                         )}
                                     </div>
@@ -167,7 +167,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.agency}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, agency: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 bg-transparent"
                                                     placeholder="Agency Name"
                                                     disabled={isLocked}
                                                 />
@@ -182,7 +182,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.union}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, union: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 bg-transparent"
                                                     placeholder="SAG / Non-Union"
                                                     disabled={isLocked}
                                                 />
@@ -197,7 +197,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.contact}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, contact: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 bg-transparent"
                                                     placeholder="Email / Phone"
                                                     disabled={isLocked}
                                                 />
@@ -212,7 +212,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.sizes}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, sizes: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 bg-transparent"
                                                     placeholder="5'10, Shoe 10..."
                                                     disabled={isLocked}
                                                 />
@@ -229,7 +229,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                             <textarea
                                                 value={item.notes || ''}
                                                 onChange={(e) => updateItem(item.id, 'notes', e.target.value)}
-                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent text-sm resize-none h-16"
+                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 bg-transparent text-sm resize-none h-16"
                                                 placeholder="Additional notes..."
                                                 disabled={isLocked}
                                             />
@@ -250,7 +250,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                 <div className="max-w-md mx-auto py-8 text-center print-hidden">
                     <button
                         onClick={handleAddTalent}
-                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:border-black transition-colors rounded-sm"
+                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:border-black transition-colors rounded-sm"
                     >
                         <Plus size={14} /> <span>Add Talent</span>
                     </button>

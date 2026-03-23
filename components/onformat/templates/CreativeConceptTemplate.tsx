@@ -125,10 +125,10 @@ export const CreativeConceptTemplate = ({
                             value={page.content}
                             onChange={(e) => handleUpdatePage(page.id, e.target.value)}
                             placeholder={index === 0 ? "Start writing your project vision here..." : "Continue writing..."}
-                            className={`flex-1 w-full bg-zinc-50/30 resize-none outline-none text-sm leading-relaxed p-6 border border-transparent focus:border-zinc-200 focus:bg-white rounded-sm transition-colors ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                            className={`flex-1 w-full bg-zinc-50 dark:bg-zinc-900/50/30 resize-none outline-none text-sm leading-relaxed p-6 border border-transparent focus:border-zinc-200 dark:border-zinc-800 focus:bg-white dark:focus:bg-zinc-900 rounded-sm transition-colors ${isPrinting ? 'hidden' : 'print:hidden'}`}
                             disabled={isLocked}
                         />
-                        <div className={`${isPrinting ? 'block' : 'hidden print:block'} flex-1 w-full text-sm leading-relaxed p-6 whitespace-pre-wrap break-words text-black bg-transparent`}>
+                        <div className={`${isPrinting ? 'block' : 'hidden print:block'} flex-1 w-full text-sm leading-relaxed p-6 whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-transparent`}>
                             {page.content || "—"}
                         </div>
 
@@ -145,7 +145,7 @@ export const CreativeConceptTemplate = ({
 
                                 <button
                                     onClick={() => handleAction(page, 'brief')}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black hover:bg-zinc-100 px-3 py-2 rounded transition-colors"
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 px-3 py-2 rounded transition-colors"
                                 >
                                     Create Brief <ArrowRight size={12} />
                                 </button>
@@ -158,7 +158,7 @@ export const CreativeConceptTemplate = ({
                             <div className="mt-4 flex justify-center print:hidden">
                                 <button
                                     onClick={handleAddPage}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300 hover:text-black border border-dashed border-zinc-200 hover:border-black px-4 py-2 rounded-sm transition-all"
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-black px-4 py-2 rounded-sm transition-all"
                                 >
                                     <Plus size={12} /> Add Page
                                 </button>

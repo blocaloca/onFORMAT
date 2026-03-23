@@ -121,10 +121,10 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_80px_110px_1fr_80px_100px_1fr_30px] gap-4 py-4 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_80px_110px_1fr_80px_100px_1fr_30px] gap-4 py-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Thumbnail */}
-                                        <div className="relative w-full aspect-square bg-zinc-100 border border-zinc-200 overflow-hidden flex items-center justify-center group/image">
+                                        <div className="relative w-full aspect-square bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 overflow-hidden flex items-center justify-center group/image">
                                             {item.thumbnailUrl ? (
                                                 <img src={item.thumbnailUrl} alt="Thumb" className="w-full h-full object-cover" />
                                             ) : (
@@ -157,13 +157,13 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* File Number */}
                                         {/* File Number */}
                                         {isPrinting ? (
-                                            <div className="font-mono font-bold text-sm px-1 pt-1 leading-normal block text-black">{item.fileNumber}</div>
+                                            <div className="font-mono font-bold text-sm px-1 pt-1 leading-normal block text-black dark:text-zinc-100">{item.fileNumber}</div>
                                         ) : (
                                             <input
                                                 type="text"
                                                 value={item.fileNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                                className="font-mono font-bold text-sm bg-transparent outline-none focus:bg-white rounded px-1 pt-1 text-black"
+                                                className="font-mono font-bold text-sm bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 pt-1 text-black dark:text-zinc-100"
                                                 placeholder="A001_..."
                                                 disabled={isLocked}
                                             />
@@ -178,7 +178,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                     type="date"
                                                     value={item.dueDate}
                                                     onChange={e => handleUpdateItem(globalIdx, { dueDate: e.target.value })}
-                                                    className="font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white rounded px-1 w-full text-zinc-600 uppercase"
+                                                    className="font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 w-full text-zinc-600 uppercase"
                                                     disabled={isLocked}
                                                 />
                                             )}
@@ -187,12 +187,12 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* Description */}
                                         <div className="min-w-0">
                                             {isPrinting ? (
-                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block text-black">{item.description}</div>
+                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block text-black dark:text-zinc-100">{item.description}</div>
                                             ) : (
                                                 <textarea
                                                     value={item.description}
                                                     onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[40px] w-full text-[10px] text-black"
+                                                    className="bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] w-full text-[10px] text-black dark:text-zinc-100"
                                                     placeholder="Description..."
                                                     rows={Math.max(2, item.description.split('\n').length)}
                                                     disabled={isLocked}
@@ -246,7 +246,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <textarea
                                                     value={item.notes || ''}
                                                     onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                    className="bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 text-[10px] placeholder:text-zinc-300 min-h-[40px] w-full"
+                                                    className="bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden text-zinc-500 text-[10px] placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] w-full"
                                                     placeholder="Notes..."
                                                     rows={Math.max(2, (item.notes || '').split('\n').length)}
                                                     disabled={isLocked}
@@ -265,8 +265,8 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 </button>
 
                                                 {deleteConfirmIndex === globalIdx && (
-                                                    <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                    <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
                                                             className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -292,7 +292,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                             {/* Add Button - Moved inside the list container */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Deliverable
                                     </button>
                                 </div>

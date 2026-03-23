@@ -375,9 +375,9 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 {/* Header Grid: Date/Day + Vitals */}
                                 <div className="grid grid-cols-[1fr_2fr] gap-6">
                                     <div className="space-y-2">
-                                        <div className={isPrinting ? '' : 'border-b border-zinc-200'}>
+                                        <div className={isPrinting ? '' : 'border-b border-zinc-200 dark:border-zinc-800'}>
                                             {isPrinting ? (
-                                                <div className="block w-full text-2xl font-black uppercase text-black tracking-normal pb-1">
+                                                <div className="block w-full text-2xl font-black uppercase text-black dark:text-zinc-100 tracking-normal pb-1">
                                                     {shootDate || 'MM/DD/YYYY'}
                                                 </div>
                                             ) : (
@@ -386,7 +386,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     value={shootDate}
                                                     onChange={(e) => updateField('date', formatDate(e.target.value))}
                                                     placeholder="MM/DD/YYYY"
-                                                    className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
+                                                    className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 dark:placeholder:text-zinc-700 outline-none text-black dark:text-zinc-100 tracking-normal"
                                                     disabled={isLocked || !canEditVitals}
                                                 />
                                             )}
@@ -400,10 +400,10 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest">General Call</span>
                                             <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-widest w-32 text-center">GET onSET MOBILE</span>
                                         </div>
-                                        <div className={`grid grid-cols-[1fr_auto] ${isPrinting ? 'items-center' : 'border border-zinc-200 rounded-sm overflow-hidden bg-white h-32'}`}>
+                                        <div className={`grid grid-cols-[1fr_auto] ${isPrinting ? 'items-center' : 'border border-zinc-200 dark:border-zinc-800 rounded-sm overflow-hidden bg-white dark:bg-zinc-950 h-32'}`}>
                                             <div className={isPrinting ? 'py-4' : 'p-6 flex items-center'}>
                                                 {isPrinting ? (
-                                                    <div className="w-full font-sans text-5xl font-black text-black tracking-normal -translate-y-[35%]">
+                                                    <div className="w-full font-sans text-5xl font-black text-black dark:text-zinc-100 tracking-normal -translate-y-[35%]">
                                                         {generalCall || '00:00'}
                                                     </div>
                                                 ) : (
@@ -411,13 +411,13 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         type="text"
                                                         value={generalCall}
                                                         onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                        className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
+                                                        className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black dark:text-zinc-100 placeholder:text-zinc-100 tracking-normal"
                                                         placeholder="00:00"
                                                         disabled={isLocked || !canEditVitals}
                                                     />
                                                 )}
                                             </div>
-                                            <div className={`w-32 ${isPrinting ? '' : 'bg-zinc-50 border-l border-zinc-100'} p-3 flex items-center justify-center`}>
+                                            <div className={`w-32 ${isPrinting ? '' : 'bg-zinc-50 dark:bg-zinc-900/50 border-l border-zinc-100'} p-3 flex items-center justify-center`}>
                                                 <img
                                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
                                                     alt="Set QR"
@@ -429,7 +429,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 </div>
 
                                 {/* Logistics Row */}
-                                <div className={`grid grid-cols-4 gap-4 ${isPrinting ? 'border-t border-b border-black py-4' : 'bg-zinc-50 p-3 rounded-sm border border-zinc-100'}`}>
+                                <div className={`grid grid-cols-4 gap-4 ${isPrinting ? 'border-t border-b border-black py-4' : 'bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-sm border border-zinc-100'}`}>
                                     <div className="col-span-1">
                                         <div className="flex justify-between items-center mb-1">
                                             <label className="block text-[9px] font-bold uppercase text-zinc-400">Weather</label>
@@ -443,7 +443,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             </button>
                                         </div>
                                         {isPrinting ? (
-                                            <div className="text-[10px] font-bold uppercase text-black pt-0.5 leading-normal block">{data.weather}</div>
+                                            <div className="text-[10px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 leading-normal block">{data.weather}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -458,7 +458,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="col-span-1">
                                         <label className="block text-[9px] font-bold uppercase text-zinc-400 mb-1">Sun</label>
                                         {isPrinting ? (
-                                            <div className="text-[10px] font-bold uppercase text-black pt-0.5 leading-normal block">{data.sunriseSunset}</div>
+                                            <div className="text-[10px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 leading-normal block">{data.sunriseSunset}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -470,7 +470,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             />
                                         )}
                                     </div>
-                                    <div className={`col-span-2 ${isPrinting ? '' : 'border-l border-zinc-200 pl-4'}`}>
+                                    <div className={`col-span-2 ${isPrinting ? '' : 'border-l border-zinc-200 dark:border-zinc-800 pl-4'}`}>
                                         <div className="flex justify-between items-center mb-1">
                                             <label className="block text-[9px] font-bold uppercase text-zinc-400">Nearest Hospital</label>
                                             <button
@@ -508,7 +508,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.notes || ''}
                                                 onChange={(e) => updateField('notes', e.target.value)}
-                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
                                                 placeholder="General production notes..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -525,7 +525,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.basecamp || ''}
                                                 onChange={(e) => updateField('basecamp', e.target.value)}
-                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
                                                 placeholder="Basecamp Address..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -551,21 +551,21 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         <div></div>
                                     </div>
 
-                                    <div className="space-y-0 relative border-l border-zinc-200 ml-2 pl-4 pt-0">
+                                    <div className="space-y-0 relative border-l border-zinc-200 dark:border-zinc-800 ml-2 pl-4 pt-0">
                                         {pageItems.map((item: any, localIdx: number) => {
                                             const globalIdx = (pageIndex === 0) ? localIdx : ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                             return (
                                                 <div key={item.id} className={`relative group grid grid-cols-[50px_100px_1.5fr_1fr_30px] gap-4 mb-0.5 items-start ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                     <div>
                                                         {isPrinting ? (
-                                                            <div className="text-[10px] font-bold uppercase text-black pt-0.5 leading-normal block">{item.time}</div>
+                                                            <div className="text-[10px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 leading-normal block">{item.time}</div>
                                                         ) : (
                                                             <input
                                                                 type="text"
                                                                 value={item.time}
                                                                 onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
                                                                 placeholder="00:00"
-                                                                className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 text-black"
+                                                                className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 text-black dark:text-zinc-100"
                                                                 disabled={isLocked}
                                                             />
                                                         )}
@@ -576,7 +576,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         <select
                                                             value={item.type || 'Other'}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-black hover:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-black dark:text-zinc-100 hover:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                             disabled={isLocked}
                                                         >
                                                             <option value="Arrive">Arrive</option>
@@ -588,7 +588,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             <option value="Move">Move</option>
                                                             <option value="Other">Other</option>
                                                         </select>
-                                                        <div className={`text-[10px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                                        <div className={`text-[10px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                             {item.type || 'Other'}
                                                         </div>
                                                     </div>
@@ -605,10 +605,10 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                                 target.style.height = 'auto';
                                                                 target.style.height = target.scrollHeight + 'px';
                                                             }}
-                                                            className={`w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                            className={`w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 overflow-hidden text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                             disabled={isLocked}
                                                         />
-                                                        <div className={`text-[10px] font-medium uppercase text-black pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                                        <div className={`text-[10px] font-medium uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                             {item.description}
                                                         </div>
                                                     </div>
@@ -619,10 +619,10 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             value={item.location}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
                                                             placeholder="Location"
-                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                             disabled={isLocked}
                                                         />
-                                                        <div className={`text-[10px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                                        <div className={`text-[10px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                             {item.location}
                                                         </div>
                                                     </div>
@@ -630,8 +630,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     {!isLocked && canEditVitals && (
                                                         <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                             {eventToDelete === item.id ? (
-                                                                <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
-                                                                    <div className="text-[8px] font-bold uppercase text-zinc-900 text-center leading-tight">Remove?</div>
+                                                                <div className="absolute right-0 top-[-8px] z-50 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
+                                                                    <div className="text-[8px] font-bold uppercase text-zinc-900 dark:text-zinc-100 text-center leading-tight">Remove?</div>
                                                                     <button type="button" onClick={(e) => { e.preventDefault(); confirmDeleteEvent(item.id); }} className="w-full bg-red-500 hover:bg-red-600 text-white text-[8px] font-bold uppercase py-1 rounded-sm">Delete</button>
                                                                 </div>
                                                             ) : (
@@ -650,7 +650,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                                 <button
                                                     onClick={handleAddEvent}
-                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200 dark:border-zinc-800"
                                                 >
                                                     <Plus size={10} /> Add Item
                                                 </button>
@@ -672,21 +672,21 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div>Location</div>
                                     <div></div>
                                 </div>
-                                <div className="space-y-0 relative border-l border-zinc-200 ml-2 pl-4 pt-0">
+                                <div className="space-y-0 relative border-l border-zinc-200 dark:border-zinc-800 ml-2 pl-4 pt-0">
                                     {pageItems.map((item: any, localIdx: number) => {
                                         const globalIdx = ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                         return (
                                             <div key={item.id} className={`relative group grid grid-cols-[50px_100px_1.5fr_1fr_30px] gap-4 mb-0.5 items-start ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                 <div>
                                                     {isPrinting ? (
-                                                        <div className="text-[9px] font-bold uppercase text-black pt-0.5 leading-normal block">{item.time}</div>
+                                                        <div className="text-[9px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 leading-normal block">{item.time}</div>
                                                     ) : (
                                                         <input
                                                             type="text"
                                                             value={item.time}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
                                                             placeholder="00:00"
-                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5"
+                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5"
                                                             disabled={isLocked}
                                                         />
                                                     )}
@@ -695,12 +695,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 {/* Type Dropdown */}
                                                 <div className="relative">
                                                     {isPrinting ? (
-                                                        <div className="text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal block">{item.type || 'Other'}</div>
+                                                        <div className="text-[9px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 leading-normal block">{item.type || 'Other'}</div>
                                                     ) : (
                                                         <select
                                                             value={item.type || 'Other'}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black"
+                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100"
                                                             disabled={isLocked}
                                                         >
                                                             <option value="Arrive">Arrive</option>
@@ -718,7 +718,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                                 <div>
                                                     {isPrinting ? (
-                                                        <div className="text-[9px] font-medium uppercase text-black pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal block">{item.description}</div>
+                                                        <div className="text-[9px] font-medium uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal block">{item.description}</div>
                                                     ) : (
                                                         <textarea
                                                             value={item.description}
@@ -731,7 +731,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                                 target.style.height = 'auto';
                                                                 target.style.height = target.scrollHeight + 'px';
                                                             }}
-                                                            className="w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden"
+                                                            className="w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 overflow-hidden"
                                                             disabled={isLocked}
                                                         />
                                                     )}
@@ -739,14 +739,14 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                                 <div>
                                                     {isPrinting ? (
-                                                        <div className="text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal block">{item.location}</div>
+                                                        <div className="text-[9px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 leading-normal block">{item.location}</div>
                                                     ) : (
                                                         <input
                                                             type="text"
                                                             value={item.location}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
                                                             placeholder="Location"
-                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 pt-0.5"
+                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5"
                                                             disabled={isLocked}
                                                         />
                                                     )}
@@ -755,8 +755,8 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 {!isLocked && canEditVitals && (
                                                     <div className={`relative pt-0.5 ${eventToDelete === item.id ? 'z-50' : ''}`}>
                                                         {eventToDelete === item.id ? (
-                                                            <div className="absolute right-0 top-[-8px] z-50 bg-white border border-zinc-200 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
-                                                                <div className="text-[8px] font-bold uppercase text-zinc-900 text-center leading-tight">Remove?</div>
+                                                            <div className="absolute right-0 top-[-8px] z-50 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-xl p-2 rounded-sm w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in duration-200 origin-top-right delete-popup">
+                                                                <div className="text-[8px] font-bold uppercase text-zinc-900 dark:text-zinc-100 text-center leading-tight">Remove?</div>
                                                                 <button type="button" onClick={(e) => { e.preventDefault(); confirmDeleteEvent(item.id); }} className="w-full bg-red-500 hover:bg-red-600 text-white text-[8px] font-bold uppercase py-1 rounded-sm">Delete</button>
                                                             </div>
                                                         ) : (
@@ -774,7 +774,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                             <button
                                                 onClick={handleAddEvent}
-                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200 dark:border-zinc-800"
                                             >
                                                 <Plus size={10} /> Add Item
                                             </button>

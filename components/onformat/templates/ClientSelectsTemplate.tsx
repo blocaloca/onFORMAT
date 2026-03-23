@@ -103,13 +103,13 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 py-2 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
                                         {/* File Number */}
                                         <input
                                             type="text"
                                             value={item.fileNumber}
                                             onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                            className={`font-mono font-bold text-sm bg-transparent outline-none focus:bg-white rounded px-1 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-mono font-bold text-sm bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="..."
                                             disabled={isLocked}
                                         />
@@ -119,7 +119,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <textarea
                                             value={item.description}
                                             onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                            className={`bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="Description..."
                                             rows={Math.max(1, item.description.split('\n').length)}
                                             disabled={isLocked}
@@ -130,7 +130,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <textarea
                                             value={item.notes}
                                             onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                            className={`bg-transparent outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 italic placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden text-zinc-500 italic placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden`}
                                             placeholder="Notes..."
                                             rows={Math.max(1, item.notes.split('\n').length)}
                                             disabled={isLocked}
@@ -151,7 +151,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             >
                                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-black uppercase text-[10px] tracking-wider text-center pt-0.5 ${isPrinting ? 'text-black block' : `${STATUS_OPTIONS.find(o => o.value === item.status)?.className || 'text-zinc-200'} hidden`} print:block`}>
+                                            <div className={`font-black uppercase text-[10px] tracking-wider text-center pt-0.5 ${isPrinting ? 'text-black dark:text-zinc-100 block' : `${STATUS_OPTIONS.find(o => o.value === item.status)?.className || 'text-zinc-200'} hidden`} print:block`}>
                                                 {STATUS_OPTIONS.find(o => o.value === item.status)?.label || '-'}
                                             </div>
                                         </div>
@@ -167,8 +167,8 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 </button>
 
                                                 {deleteConfirmIndex === globalIdx && (
-                                                    <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                    <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
                                                             className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -192,7 +192,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Entry
                                     </button>
                                 </div>

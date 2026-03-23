@@ -156,11 +156,11 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         type="text"
                                         value={data.date || ''}
                                         onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
-                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                         placeholder="MM/DD/YYYY"
                                         disabled={isLocked}
                                     />
-                                    <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full font-mono font-bold text-sm border-b border-zinc-200 py-1`}>
+                                    <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 py-1`}>
                                         {data.date || "—"}
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const ampm = (data.callTime || "").split(" ")[1] || "AM";
                                                 onUpdate({ callTime: `${time} ${ampm}`.trim() });
                                             }}
-                                            className="flex-1 bg-transparent font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1"
+                                            className="flex-1 bg-transparent font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1"
                                             placeholder="00:00"
                                             disabled={isLocked}
                                         />
@@ -189,14 +189,14 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const newAmpm = currentAmpm === "AM" ? "PM" : "AM";
                                                 onUpdate({ callTime: `${time} ${newAmpm}`.trim() });
                                             }}
-                                            className="text-[10px] font-bold uppercase bg-zinc-100 hover:bg-zinc-200 px-2 py-1 rounded cursor-pointer transition-colors"
+                                            className="text-[10px] font-bold uppercase bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-2 py-1 rounded cursor-pointer transition-colors"
                                             disabled={isLocked}
                                         >
                                             {(data.callTime || "").split(" ")[1] || "AM"}
                                         </button>
                                     </div>
                                     {/* Call Time Print Mode */}
-                                    <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full font-mono font-bold text-sm border-b border-zinc-200 py-1`}>
+                                    <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 py-1`}>
                                         {data.callTime || "—"}
                                     </div>
                                 </div>
@@ -242,7 +242,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             {!isLocked && (
                                                 <button
                                                     onClick={() => handleDeleteItem(globalIdx)} // Direct delete for break
-                                                    className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-zinc-300 hover:text-red-500 transition-opacity opacity-0 group-hover:opacity-100 bg-white border border-zinc-200 shadow-sm rounded-full z-20 print:hidden"
+                                                    className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-zinc-300 hover:text-red-500 transition-opacity opacity-0 group-hover:opacity-100 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-full z-20 print:hidden"
                                                 >
                                                     <Trash2 size={12} />
                                                 </button>
@@ -252,18 +252,18 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 }
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Time */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-mono font-bold px-1 py-1 block text-black">{item.time || "—"}</div>
+                                                <div className="w-full text-sm font-mono font-bold px-1 py-1 block text-black dark:text-zinc-100">{item.time || "—"}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={item.time}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { time: formatTimeInput(e.target.value) })}
-                                                    className="w-full bg-transparent text-sm font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent text-sm font-mono font-bold focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
                                                     placeholder="00:00"
                                                     disabled={isLocked}
                                                 />
@@ -273,13 +273,13 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Scene */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-bold text-center px-1 py-1 block text-black">{item.scene || "—"}</div>
+                                                <div className="w-full text-sm font-bold text-center px-1 py-1 block text-black dark:text-zinc-100">{item.scene || "—"}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={item.scene}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { scene: e.target.value })}
-                                                    className="w-full bg-transparent text-sm font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent text-sm font-bold text-center focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
@@ -289,7 +289,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Setting (Toggle + Input) */}
                                         <div className="flex gap-1 w-full">
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-bold uppercase px-1 py-1 block text-black">
+                                                <div className="w-full text-sm font-bold uppercase px-1 py-1 block text-black dark:text-zinc-100">
                                                     {item.intExt} {item.set ? `. ${item.set}` : ''}
                                                 </div>
                                             ) : (
@@ -306,7 +306,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.set}
                                                         onChange={(e) => handleUpdateItem(globalIdx, { set: e.target.value })}
-                                                        className="w-full bg-transparent text-sm font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 min-w-0 text-black"
+                                                        className="w-full bg-transparent text-sm font-bold uppercase focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 min-w-0 text-black dark:text-zinc-100"
                                                         placeholder="SETTING"
                                                         disabled={isLocked}
                                                     />
@@ -317,12 +317,12 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Day/Night */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-[9px] font-bold uppercase text-center px-1 py-1 block text-black">{item.dayNight}</div>
+                                                <div className="w-full text-[9px] font-bold uppercase text-center px-1 py-1 block text-black dark:text-zinc-100">{item.dayNight}</div>
                                             ) : (
                                                 <select
                                                     value={item.dayNight}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { dayNight: e.target.value as any })}
-                                                    className="w-full bg-zinc-100 text-[11px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center text-black"
+                                                    className="w-full bg-zinc-100 dark:bg-zinc-900 text-[11px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center text-black dark:text-zinc-100"
                                                     disabled={isLocked}
                                                 >
                                                     {TIME_OF_DAY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -339,7 +339,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-transparent text-sm focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-600"
+                                                    className="w-full bg-transparent text-sm focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-600"
                                                     placeholder="Action / Notes..."
                                                     disabled={isLocked}
                                                 />
@@ -350,10 +350,10 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         <div className={`flex justify-center gap-1 pt-0.5 ${isPrinting ? 'hidden' : 'print:hidden'}`}>
                                             {!isLocked && (
                                                 <>
-                                                    <button onClick={() => handleMoveItem(globalIdx, 'up')} disabled={globalIdx === 0} className="text-zinc-300 hover:text-black disabled:opacity-20 transition-colors">
+                                                    <button onClick={() => handleMoveItem(globalIdx, 'up')} disabled={globalIdx === 0} className="text-zinc-300 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 disabled:opacity-20 transition-colors">
                                                         <ArrowUp size={12} />
                                                     </button>
-                                                    <button onClick={() => handleMoveItem(globalIdx, 'down')} disabled={globalIdx === items.length - 1} className="text-zinc-300 hover:text-black disabled:opacity-20 transition-colors">
+                                                    <button onClick={() => handleMoveItem(globalIdx, 'down')} disabled={globalIdx === items.length - 1} className="text-zinc-300 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 disabled:opacity-20 transition-colors">
                                                         <ArrowDown size={12} />
                                                     </button>
                                                 </>
@@ -372,8 +372,8 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -401,7 +401,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 <div className="pt-2 print-hidden flex gap-2">
                                     <button
                                         onClick={() => handleAddItem(false)}
-                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm border border-transparent hover:border-zinc-200 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm border border-transparent hover:border-zinc-200 dark:border-zinc-800 transition-all"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Scene
                                     </button>

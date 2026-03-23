@@ -108,7 +108,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                     onChange={(e) => updateLocation(index, field, e.target.value)}
                     placeholder={placeholder}
                     disabled={isLocked}
-                    className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-200 transition-colors"
+                    className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 transition-colors"
                 />
             )}
         </div>
@@ -144,7 +144,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 const renderDetailsSection = () => (
                     <div className="flex-1 flex flex-col gap-5 mt-2">
                         {isPrinting ? (
-                            <div className="w-full text-2xl font-black uppercase tracking-tight text-black py-1 leading-none">
+                            <div className="w-full text-2xl font-black uppercase tracking-tight text-black dark:text-zinc-100 py-1 leading-none">
                                 {loc.name || 'Location Name'}
                             </div>
                         ) : (
@@ -154,7 +154,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 onChange={(e) => updateLocation(index, 'name', e.target.value)}
                                 placeholder="LOCATION NAME"
                                 disabled={isLocked}
-                                className="w-full text-2xl font-black uppercase tracking-normal text-black bg-transparent border-none outline-none placeholder:text-zinc-200"
+                                className="w-full text-2xl font-black uppercase tracking-normal text-black dark:text-zinc-100 bg-transparent border-none outline-none placeholder:text-zinc-200 dark:placeholder:text-zinc-700"
                             />
                         )}
 
@@ -165,12 +165,12 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5"><MapPin size={10} /> Usage Type</span>
                                     {isPrinting ? (
-                                        <div className="text-sm font-bold text-black border-b border-zinc-100 py-1">{loc.usageType || 'General'}</div>
+                                        <div className="text-sm font-bold text-black dark:text-zinc-100 border-b border-zinc-100 py-1">{loc.usageType || 'General'}</div>
                                     ) : (
                                         <select
                                             value={loc.usageType || 'Set'}
                                             onChange={(e) => updateLocation(index, 'usageType', e.target.value)}
-                                            className="w-full text-sm font-bold text-black bg-transparent border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 cursor-pointer"
+                                            className="w-full text-sm font-bold text-black dark:text-zinc-100 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 cursor-pointer"
                                             disabled={isLocked}
                                         >
                                             <option value="Set">Set / Location</option>
@@ -190,7 +190,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                             value={loc.activeDays || ''}
                                             onChange={(e) => updateLocation(index, 'activeDays', e.target.value)}
                                             placeholder="e.g. Day 1, 10/24"
-                                            className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-300"
+                                            className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                             disabled={isLocked}
                                         />
                                     )}
@@ -206,7 +206,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                         <div className="flex-1 flex flex-col gap-2 min-h-[0px] overflow-hidden">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Notes & Logistics</span>
                             {isPrinting ? (
-                                <div className="w-full h-full p-3 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-zinc-50/30 whitespace-pre-wrap">
+                                <div className="w-full h-full p-3 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-zinc-50 dark:bg-zinc-900/50/30 whitespace-pre-wrap">
                                     {loc.notes}
                                 </div>
                             ) : (
@@ -215,7 +215,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                     onChange={(e) => updateLocation(index, 'notes', e.target.value)}
                                     placeholder="Logistics, parking, power..."
                                     disabled={isLocked}
-                                    className="w-full h-full bg-zinc-50/50 p-3 text-sm leading-relaxed text-zinc-600 resize-none border border-transparent focus:border-zinc-200 outline-none rounded-sm placeholder:text-zinc-300"
+                                    className="w-full h-full bg-zinc-50 dark:bg-zinc-900/50/50 p-3 text-sm leading-relaxed text-zinc-600 resize-none border border-transparent focus:border-zinc-200 dark:border-zinc-800 outline-none rounded-sm placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                 />
                             )}
                         </div>
@@ -250,7 +250,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                             {isPortrait ? (
                                 /* PORTRAIT LAYOUT: Vertical Stack */
                                 <div className="flex flex-col gap-6 h-full">
-                                    <div className="w-full aspect-[2.35/1] bg-zinc-50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                    <div className="w-full aspect-[2.35/1] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
                                         <ImageUploader
                                             currentUrl={loc.mainImage}
                                             onUpload={(url) => updateLocation(index, 'mainImage', url)}
@@ -261,7 +261,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                         />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <div className="w-full aspect-video bg-zinc-50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                        <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
                                             <ImageUploader
                                                 currentUrl={loc.smallImage1}
                                                 onUpload={(url) => updateLocation(index, 'smallImage1', url)}
@@ -271,7 +271,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                             />
                                         </div>
-                                        <div className="w-full aspect-video bg-zinc-50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                        <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
                                             <ImageUploader
                                                 currentUrl={loc.smallImage2}
                                                 onUpload={(url) => updateLocation(index, 'smallImage2', url)}
@@ -289,7 +289,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 <div className="grid grid-cols-12 gap-8 h-full">
                                     {/* Left: Main Image + Details */}
                                     <div className="col-span-8 flex flex-col gap-6 h-full">
-                                        <div className="w-full bg-zinc-50 border border-zinc-100 relative overflow-hidden rounded-sm h-[60%]">
+                                        <div className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm h-[60%]">
                                             <ImageUploader
                                                 currentUrl={loc.mainImage}
                                                 onUpload={(url) => updateLocation(index, 'mainImage', url)}
@@ -307,7 +307,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
 
                                     {/* Right: Stacked Small Images */}
                                     <div className="col-span-4 flex flex-col gap-4 h-full">
-                                        <div className="w-full aspect-video bg-zinc-50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                        <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
                                             <ImageUploader
                                                 currentUrl={loc.smallImage1}
                                                 onUpload={(url) => updateLocation(index, 'smallImage1', url)}
@@ -317,7 +317,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                             />
                                         </div>
-                                        <div className="w-full aspect-video bg-zinc-50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                        <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
                                             <ImageUploader
                                                 currentUrl={loc.smallImage2}
                                                 onUpload={(url) => updateLocation(index, 'smallImage2', url)}
@@ -340,7 +340,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 <div className="max-w-md mx-auto py-8 text-center print-hidden">
                     <button
                         onClick={handleAddLocation}
-                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:border-black transition-colors rounded-sm"
+                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:border-black transition-colors rounded-sm"
                     >
                         <Plus size={14} /> <span>Add Location</span>
                     </button>
