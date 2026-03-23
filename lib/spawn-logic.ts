@@ -36,9 +36,12 @@ export async function spawnDemoForUser(newUserId: string, newUserEmail: string) 
             .from('projects')
             .insert({
                 user_id: newUserId,
-                name: masterProject.name + ' (DEMO)',
+                name: 'Demo', // Renamed as requested
                 product_type: masterProject.product_type,
-                data: masterProject.data,
+                data: {
+                    ...(masterProject.data || {}),
+                    clientName: 'Cadence Coffee' // Updated as requested
+                },
                 current_version: 1,
                 is_demo: true,
                 is_template: true, // Mark it as template-spawned
