@@ -52,7 +52,7 @@ export const DEMO_PROJECT_DATA: Partial<WorkspaceState> = {
         ]
     },
     persona: 'HYBRID',
-    clientName: 'Demo Client',
-    projectName: 'Demo Project',
-    producer: 'onFORMAT Sytem'
+    clientName: 'Cadence Coffee',
+    projectName: 'Demo',
+    producer: 'onFORMAT System'
 };
