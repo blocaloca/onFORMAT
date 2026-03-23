@@ -70,8 +70,23 @@ export default function SignupPage() {
         } catch (e) { /* ignore */ }
       }
 
-      // CHECK IF SESSION ESTABLISHED
-      // If "Confirm Email" is ON in Supabase, data.session will be null.
+      // Clone Master Demo (Spawn-on-Signup Logic)
+      if (data.user) {
+        try {
+          await fetch('/api/auth/register-success', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: data.user.id, userEmail: email })
+          });
+          console.log("Successfully triggered Spawn-on-Signup for", email);
+        } catch (cloneErr) {
+          console.warn("⚠️ Failed to trigger Spawn-on-Signup background job:", cloneErr);
+        }
+      }
+
+      // NO LONGER STOPPING FOR SESSION NULL IF WE WANT THE USER EXPERIENCE TO FEEL FAST
+      // But if session is null, it means verification is pending.
+      // We still redirect OR show message.
       if (!data.session) {
         setError("Account created! Please check your email to verify your account.");
         return; // Stop here, do not redirect

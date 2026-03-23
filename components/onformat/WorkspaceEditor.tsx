@@ -163,9 +163,10 @@ interface WorkspaceEditorProps {
     userSubscription?: { status: string, tier: string };
     userEmail?: string;
     userRole?: string;
+    isReadOnly?: boolean;
 }
 
-export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, userRole, userEmail }: WorkspaceEditorProps) => {
+export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, userRole, userEmail, isReadOnly }: WorkspaceEditorProps) => {
 
     // Merge props into initial state if provided, with robust fallbacks
     const mergedInitialState = useMemo(() => {
@@ -326,9 +327,9 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
         const timeoutId = setTimeout(() => {
             // Logic: If onSave provided, use it. Else fall back to local storage if no Project ID (legacy DEV mode)
-            if (onSave) {
+            if (onSave && !isReadOnly) {
                 onSave(state);
-            } else if (!projectId) {
+            } else if (!projectId && !isReadOnly) {
                 try {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
                 } catch { }
@@ -624,6 +625,11 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     }, [state.phases, state.activePhase, state.activeTool, userRole]);
 
     const saveDraftForActiveTool = useCallback((incoming: string) => {
+        if (isReadOnly) {
+            console.warn("Read-only mode: Save ignored.");
+            return;
+        }
+
         setState(s => {
             let newState = { ...s };
             const activePhaseState = (newState.phases && newState.phases[newState.activePhase]) ? newState.phases[newState.activePhase] : { locked: false, drafts: {} };
@@ -1782,7 +1788,7 @@ Context:\n"${fullContext}"`;
                             ...s,
                             chat: { ...s.chat, [s.activeTool]: [] }
                         }))}
-                        isLocked={activePhaseState.locked}
+                        isLocked={!!(activePhaseState.locked || isReadOnly)}
 
 
                         isDocked={isAiDocked}
@@ -1882,6 +1888,13 @@ Context:\n"${fullContext}"`;
                         activeToolLabel={activeToolLabel}
                     />
 
+                    {isReadOnly && (
+                        <div className="bg-amber-500/10 border-b border-amber-200 py-1 px-4 flex items-center justify-center gap-2">
+                            <span className="text-[10px] font-bold text-amber-700 tracking-widest uppercase">READ-ONLY DEMO</span>
+                            <span className="text-[10px] text-amber-600/80 italic font-medium">Cloned from Master Template</span>
+                        </div>
+                    )}
+
                     {state.activeTool === 'project-export' ? (
                         <PrintDashboard
                             onClose={() => setState(s => ({ ...s, activeTool: 'brief' }))}
@@ -1911,7 +1924,7 @@ Context:\n"${fullContext}"`;
                         <DraftEditor
                             draft={currentDraft}
                             onDraftChange={saveDraftForActiveTool}
-                            isLocked={isToolLocked || trialLocked}
+                            isLocked={!!(isToolLocked || trialLocked || isReadOnly)}
                             activeToolLabel={activeToolLabel}
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             activeToolKey={state.activeTool as any}

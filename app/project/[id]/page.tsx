@@ -21,6 +21,9 @@ export default function ProjectPage() {
 
   const [userRole, setUserRole] = useState<string | undefined>(undefined);
 
+  const [permissionLock, setPermissionLock] = useState<'none' | 'read_only'>('none');
+  const [isTemplate, setIsTemplate] = useState(false);
+
   const fetchProject = async () => {
     setLoading(true);
 
@@ -51,6 +54,8 @@ export default function ProjectPage() {
     if (data) {
       if (data.data) setInitialState(data.data);
       setProjectName(data.name || 'Untitled');
+      setPermissionLock(data.permission_lock || 'none');
+      setIsTemplate(data.is_template || false);
 
       // IDENTITY ALIGNMENT: Strict user_id check
       const isOwner = user && data.user_id === user.id;
@@ -76,6 +81,12 @@ export default function ProjectPage() {
   };
 
   const handleSave = async (state: WorkspaceState) => {
+    // If read-only, DO NOT save
+    if (permissionLock === 'read_only' && userEmail !== 'casteelio@gmail.com') {
+      console.warn("Attempted to save to a Read-Only project. Ignoring.");
+      return;
+    }
+
     // Debounce or just save
     await supabase
       .from('projects')
@@ -90,15 +101,19 @@ export default function ProjectPage() {
     return <div className="h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 text-zinc-400 text-xs font-mono uppercase animate-pulse">Loading Workspace...</div>;
   }
 
+  // Founder Override: even if permission_lock is read_only, Founder can edit
+  const isReadOnly = permissionLock === 'read_only' && userEmail !== 'casteelio@gmail.com';
+
   return (
     <WorkspaceEditor
       projectId={id}
       projectName={projectName}
-      initialState={initialState}
+      initialState={initialState} // Pass data.data
       onSave={handleSave}
       userSubscription={userSubscription}
       userEmail={userEmail}
       userRole={userRole}
+      isReadOnly={isReadOnly}
     />
   );
 }
