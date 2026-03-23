@@ -125,7 +125,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                     metadata={pageIndex === 0 ? metadata : undefined}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         <div className="flex-1">
                             {pageItems.map((item, localIdx) => {
@@ -186,7 +186,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDelete(idx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

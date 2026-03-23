@@ -214,7 +214,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     placeholder="Describe the visual direction, tone, and style..."
                                     className={`w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-xs min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                 />
-                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-xs min-h-[60px] whitespace-pre-wrap break-words text-black`}>
+                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-sm min-h-[60px] whitespace-pre-wrap break-words text-black`}>
                                     {data.overview || "—"}
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(originalIndex)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

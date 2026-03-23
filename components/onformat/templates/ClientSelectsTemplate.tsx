@@ -87,7 +87,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                     metadata={metadata}
                     orientation={orientation}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Table Header */}
                         <div className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 border-b border-black pb-2 items-end">
@@ -142,7 +142,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-black uppercase text-[10px] tracking-wider text-center w-full cursor-pointer outline-none ${item.status === 'approved' ? 'text-green-600' :
+                                                className={`appearance-none bg-transparent font-black uppercase text-[11px] tracking-wider text-center w-full cursor-pointer outline-none ${item.status === 'approved' ? 'text-green-600' :
                                                     item.status === 'edit' ? 'text-blue-600' :
                                                         item.status === 'reshoot' ? 'text-orange-500' :
                                                             item.status === 'kill' ? 'text-red-500' : 'text-zinc-200'
@@ -171,7 +171,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
-                                                            className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                            className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                         >
                                                             Delete
                                                         </button>

@@ -125,7 +125,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                     metadata={metadata}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Header Tech Specs */}
                         <div className="border-b-2 border-black pb-4 mb-4">
@@ -191,7 +191,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             placeholder="-"
                                             disabled={isLocked}
                                         />
-                                        <div className={`font-bold text-center text-xs pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{take.scene}</div>
+                                        <div className={`font-bold text-center text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{take.scene}</div>
 
                                         {/* Take */}
                                         <input
@@ -202,7 +202,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             placeholder="-"
                                             disabled={isLocked}
                                         />
-                                        <div className={`font-mono font-bold text-center text-xs pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{take.take}</div>
+                                        <div className={`font-mono font-bold text-center text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{take.take}</div>
 
                                         {/* TC */}
                                         <input
@@ -237,7 +237,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             placeholder="Details..."
                                             disabled={isLocked}
                                         />
-                                        <div className={`text-xs pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{take.description}</div>
+                                        <div className={`text-sm pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{take.description}</div>
 
                                         {/* Tracks/Notes */}
                                         <div className="space-y-1">
@@ -280,7 +280,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                         <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteTake(globalIdx)}
-                                                            className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                            className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                         >
                                                             Delete
                                                         </button>

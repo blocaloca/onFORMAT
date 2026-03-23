@@ -155,7 +155,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                     metadata={metadata}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Header Info - Only on first page */}
                         {pageIndex === 0 && (
@@ -244,7 +244,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 <select
                                                     value={item.bestTake}
                                                     onChange={e => handleUpdateItem(globalIdx, { bestTake: e.target.value })}
-                                                    className="appearance-none bg-transparent font-bold text-[10px] text-center cursor-pointer outline-none border rounded px-2 py-1 w-20 hover:bg-zinc-100"
+                                                    className="appearance-none bg-transparent font-bold text-[11px] text-center cursor-pointer outline-none border rounded px-2 py-1 w-20 hover:bg-zinc-100"
                                                     disabled={isLocked}
                                                 >
                                                     <option value="">-</option>
@@ -298,7 +298,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

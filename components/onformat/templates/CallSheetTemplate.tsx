@@ -367,7 +367,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                     orientation={orientation}
                     metadata={metadata}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Page 1 Header & Logistics Grid */}
                         {pageIndex === 0 && (
@@ -450,7 +450,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.weather || ''}
                                                 onChange={e => updateField('weather', e.target.value)}
                                                 placeholder="75° Sunny"
-                                                className="w-full bg-transparent outline-none font-bold text-xs"
+                                                className="w-full bg-transparent outline-none font-bold text-sm"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -465,7 +465,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.sunriseSunset || ''}
                                                 onChange={e => updateField('sunriseSunset', e.target.value)}
                                                 placeholder="06:00 / 20:00"
-                                                className="w-full bg-transparent outline-none font-bold text-xs"
+                                                className="w-full bg-transparent outline-none font-bold text-sm"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -490,7 +490,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.hospital || ''}
                                                 onChange={e => updateField('hospital', e.target.value)}
                                                 placeholder="Hospital Name & Address"
-                                                className="w-full bg-transparent outline-none font-bold text-xs text-red-600"
+                                                className="w-full bg-transparent outline-none font-bold text-sm text-red-600"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -503,7 +503,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Notes</h3>
                                         {isPrinting ? (
-                                            <div className="w-full text-xs whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
+                                            <div className="w-full text-sm whitespace-pre-wrap break-words leading-relaxed block">{data.notes}</div>
                                         ) : (
                                             <textarea
                                                 value={data.notes || ''}
@@ -520,7 +520,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     <div className="min-w-0">
                                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-2">Basecamp</h3>
                                         {isPrinting ? (
-                                            <div className="w-full text-xs whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
+                                            <div className="w-full text-sm whitespace-pre-wrap break-words leading-relaxed block">{data.basecamp}</div>
                                         ) : (
                                             <textarea
                                                 value={data.basecamp || ''}

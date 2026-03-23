@@ -328,7 +328,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                         </button>
                                         <button
                                             onClick={() => setDeleteConfirmId(null)}
-                                            className="w-full bg-zinc-100 text-black text-[10px] font-bold py-2 rounded"
+                                            className="w-full bg-zinc-100 text-black text-[11px] font-bold py-2 rounded"
                                         >
                                             CANCEL
                                         </button>

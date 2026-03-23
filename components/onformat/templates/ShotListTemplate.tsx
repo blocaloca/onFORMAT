@@ -169,13 +169,13 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Scene */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className={`w-full text-xs font-medium px-2 py-2 block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.scene}</div>
+                                                <div className={`w-full text-sm font-medium px-2 py-2 block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.scene}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={shot.scene}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { scene: e.target.value })}
-                                                    className={`w-full text-xs font-medium focus:outline-none border px-2 py-2 rounded-sm transition-colors ${darkMode
+                                                    className={`w-full text-sm font-medium focus:outline-none border px-2 py-2 rounded-sm transition-colors ${darkMode
                                                         ? 'bg-black border-zinc-700 text-zinc-300 focus:border-white placeholder:text-zinc-700'
                                                         : 'bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300'}`}
                                                     placeholder="Sc #"
@@ -192,7 +192,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.size}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { size: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
+                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
                                                         ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
                                                         : 'bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50'}`}
                                                     disabled={isLocked}
@@ -210,7 +210,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.angle}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { angle: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
+                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
                                                         ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
                                                         : 'bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50'}`}
                                                     disabled={isLocked}
@@ -228,7 +228,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.movement}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { movement: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
+                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
                                                         ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
                                                         : 'bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50'}`}
                                                     disabled={isLocked}
@@ -241,14 +241,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Description */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className={`w-full text-xs leading-relaxed px-2 py-2 whitespace-pre-wrap block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.description}</div>
+                                                <div className={`w-full text-sm leading-relaxed px-2 py-2 whitespace-pre-wrap block ${darkMode ? 'text-zinc-300' : 'text-black'}`}>{shot.description}</div>
                                             ) : (
                                                 <textarea
                                                     data-index={globalIdx}
                                                     value={shot.description}
                                                     onChange={autoResize}
                                                     rows={1}
-                                                    className={`w-full text-xs leading-relaxed focus:outline-none border rounded-sm px-2 py-2 resize-none overflow-hidden min-h-[34px] transition-colors ${darkMode
+                                                    className={`w-full text-sm leading-relaxed focus:outline-none border rounded-sm px-2 py-2 resize-none overflow-hidden min-h-[34px] transition-colors ${darkMode
                                                         ? 'bg-black border-zinc-700 text-zinc-300 focus:border-white placeholder:text-zinc-700'
                                                         : 'bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300'}`}
                                                     placeholder="Describe the action..."
@@ -287,7 +287,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         <span className={`text-[10px] font-bold text-center uppercase tracking-widest ${darkMode ? 'text-zinc-300' : 'text-black'}`}>Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteShot(globalIdx)}
-                                                            className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                            className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                         >
                                                             Delete
                                                         </button>

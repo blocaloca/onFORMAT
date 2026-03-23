@@ -70,7 +70,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                     <button
                         onClick={() => !isLocked && onUpdate({ isLive: !data.isLive })}
                         disabled={isLocked}
-                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest border transition-all
+                        className={`flex items-center justify-center gap-2 px-4 py-2 rounded-sm text-[11px] font-bold uppercase tracking-widest border transition-all
                             ${data.isLive
                                 ? 'bg-[#22C55E] border-[#22C55E] text-white shadow-[0_0_10px_rgba(34,197,94,0.3)] active:bg-emerald-600'
                                 : 'bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-500 active:bg-zinc-100 dark:active:bg-zinc-800'
@@ -100,7 +100,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                     <div key={i} className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 p-3 rounded-lg flex items-center gap-3 transition-colors">
                                         <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                                         <div className="flex-1">
-                                            <p className="text-red-400 font-mono text-xs font-bold uppercase tracking-wider">DIT ISSUE: {issue.description || 'Check Log'}</p>
+                                            <p className="text-red-400 font-mono text-sm font-bold uppercase tracking-wider">DIT ISSUE: {issue.description || 'Check Log'}</p>
                                             <p className="text-[9px] text-zinc-500 font-mono">Time: {issue.time}</p>
                                         </div>
                                     </div>
@@ -110,7 +110,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                 {metadata?.latestNotification && (
                                     <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 p-3 rounded-lg flex items-center gap-3 transition-colors">
                                         <Zap className="text-emerald-500 fill-emerald-500 animate-pulse" size={16} />
-                                        <span className="text-emerald-400 font-mono text-xs font-bold uppercase tracking-wider">{metadata.latestNotification.msg}</span>
+                                        <span className="text-emerald-400 font-mono text-sm font-bold uppercase tracking-wider">{metadata.latestNotification.msg}</span>
                                         <span className="ml-auto text-[9px] text-zinc-500 font-mono">{new Date(metadata.latestNotification.time).toLocaleTimeString()}</span>
                                     </div>
                                 )}
@@ -135,7 +135,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                                     key={tool.key}
                                                     className="flex items-center justify-between p-2 pl-0 active:bg-zinc-100 dark:active:bg-zinc-900/30 rounded transition-colors group"
                                                 >
-                                                    <span className="text-xs font-bold uppercase text-zinc-700 dark:text-zinc-300 transition-colors">{tool.label}</span>
+                                                    <span className="text-sm font-bold uppercase text-zinc-700 dark:text-zinc-300 transition-colors">{tool.label}</span>
 
                                                     <div className="flex items-center gap-1">
                                                         {(['A', 'B', 'C', 'D'] as const).map(group => {

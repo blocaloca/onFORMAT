@@ -157,7 +157,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                     </div>
 
                                     {/* Specs Grid */}
-                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs border-t border-zinc-100 pt-3">
+                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm border-t border-zinc-100 pt-3">
                                         <div className="space-y-1">
                                             <label className="text-[9px] text-zinc-400 font-bold uppercase block">Agency</label>
                                             {isPrinting ? (
@@ -224,12 +224,12 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                     <div className="space-y-1 border-t border-zinc-100 pt-3 mt-2">
                                         <label className="text-[9px] text-zinc-400 font-bold uppercase block">Notes</label>
                                         {isPrinting ? (
-                                            <div className="font-medium text-zinc-600 min-h-[1rem] whitespace-pre-wrap text-xs block">{item.notes}</div>
+                                            <div className="font-medium text-zinc-600 min-h-[1rem] whitespace-pre-wrap text-sm block">{item.notes}</div>
                                         ) : (
                                             <textarea
                                                 value={item.notes || ''}
                                                 onChange={(e) => updateItem(item.id, 'notes', e.target.value)}
-                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent text-xs resize-none h-16"
+                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent text-sm resize-none h-16"
                                                 placeholder="Additional notes..."
                                                 disabled={isLocked}
                                             />

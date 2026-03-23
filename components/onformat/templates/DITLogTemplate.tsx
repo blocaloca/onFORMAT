@@ -317,7 +317,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                     orientation={orientation}
                     metadata={metadata}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Header Info - Only on first page */}
                         {pageIndex === 0 && (
@@ -394,7 +394,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             <select
                                                 value={item.eventType}
                                                 onChange={e => handleUpdateItem(globalIdx, { eventType: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none ${item.eventType === 'issue' ? 'text-red-600' : 'text-zinc-700'
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none ${item.eventType === 'issue' ? 'text-red-600' : 'text-zinc-700'
                                                     } ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
@@ -492,7 +492,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                         <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
-                                                            className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                            className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                         >
                                                             Delete
                                                         </button>
@@ -560,7 +560,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
 
                             <button
                                 onClick={() => handleStartIngest(alert)}
-                                className="ml-2 mt-1 bg-white hover:bg-zinc-200 text-black text-xs font-bold uppercase tracking-wider py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
+                                className="ml-2 mt-1 bg-white hover:bg-zinc-200 text-black text-sm font-bold uppercase tracking-wider py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
                             >
                                 <HardDrive size={14} /> Start Ingest
                             </button>

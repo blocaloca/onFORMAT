@@ -102,7 +102,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                     orientation={orientation}
                     metadata={metadata}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Table Header */}
                         <div className="grid grid-cols-[60px_80px_110px_1fr_80px_100px_1fr_30px] gap-4 border-b border-black pb-2 items-end">
@@ -157,13 +157,13 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* File Number */}
                                         {/* File Number */}
                                         {isPrinting ? (
-                                            <div className="font-mono font-bold text-xs px-1 pt-1 leading-normal block text-black">{item.fileNumber}</div>
+                                            <div className="font-mono font-bold text-sm px-1 pt-1 leading-normal block text-black">{item.fileNumber}</div>
                                         ) : (
                                             <input
                                                 type="text"
                                                 value={item.fileNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                                className="font-mono font-bold text-xs bg-transparent outline-none focus:bg-white rounded px-1 pt-1 text-black"
+                                                className="font-mono font-bold text-sm bg-transparent outline-none focus:bg-white rounded px-1 pt-1 text-black"
                                                 placeholder="A001_..."
                                                 disabled={isLocked}
                                             />
@@ -210,7 +210,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <select
                                                     value={item.format}
                                                     onChange={e => handleUpdateItem(globalIdx, { format: e.target.value })}
-                                                    className="appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700"
+                                                    className="appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700"
                                                     disabled={isLocked}
                                                 >
                                                     <option value="" disabled className="text-zinc-300">ASPECT</option>
@@ -229,7 +229,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <select
                                                     value={item.type || ''}
                                                     onChange={e => handleUpdateItem(globalIdx, { type: e.target.value })}
-                                                    className="appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700"
+                                                    className="appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700"
                                                     disabled={isLocked}
                                                 >
                                                     <option value="" disabled className="text-zinc-300">TYPE</option>
@@ -269,7 +269,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
-                                                            className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                            className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                         >
                                                             Delete
                                                         </button>

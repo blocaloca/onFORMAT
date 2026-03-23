@@ -288,7 +288,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     orientation={orientation}
                     metadata={metadata}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Legend for Status */}
                         {pageIndex === 0 && (
@@ -331,7 +331,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.department}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { department: e.target.value })}
-                                                className={`w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-zinc-100 hover:bg-zinc-200 text-[11px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -343,7 +343,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.role}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { role: e.target.value })}
-                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 text-[10px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 text-[11px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {roles.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -356,11 +356,11 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.name}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { name: e.target.value })}
-                                                className={`w-full bg-transparent text-xs font-bold focus:bg-white rounded px-1 py-1 outline-none text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-sm font-bold focus:bg-white rounded px-1 py-1 outline-none text-black ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Name..."
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-xs font-bold px-1 py-1 text-black`}>{item.name || "—"}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold px-1 py-1 text-black`}>{item.name || "—"}</div>
                                         </div>
 
                                         {/* onSET Groups */}
@@ -445,7 +445,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

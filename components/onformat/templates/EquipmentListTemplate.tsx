@@ -105,14 +105,14 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                     orientation={orientation}
                     metadata={metadata}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Header Context - Total on Page 1 */}
                         {pageIndex === 0 && (
                             <div className="flex justify-end pb-2">
                                 <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-xs font-mono font-bold text-zinc-900">
+                                    <span className="text-sm font-mono font-bold text-zinc-900">
                                         ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -148,7 +148,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 <select
                                                     value={item.category}
                                                     onChange={e => handleUpdateItem(globalIdx, { category: e.target.value as any })}
-                                                    className="appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700"
+                                                    className="appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700"
                                                     disabled={isLocked}
                                                 >
                                                     {CATEGORY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -158,7 +158,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                                         {/* Description */}
                                         {isPrinting ? (
-                                            <div className="font-medium text-xs w-full whitespace-pre-wrap min-h-[1rem] flex items-center">
+                                            <div className="font-medium text-sm w-full whitespace-pre-wrap min-h-[1rem] flex items-center">
                                                 {item.description}
                                             </div>
                                         ) : (
@@ -166,7 +166,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="font-medium text-xs bg-transparent outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full"
+                                                className="font-medium text-sm bg-transparent outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full"
                                                 placeholder="e.g. Sony FX3 Body..."
                                                 disabled={isLocked}
                                             />
@@ -181,7 +181,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             <select
                                                 value={item.source}
                                                 onChange={e => handleUpdateItem(globalIdx, { source: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-bold text-[9px] uppercase w-full cursor-pointer outline-none ${item.source === 'own' ? 'text-blue-600' : 'text-zinc-600'}`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none ${item.source === 'own' ? 'text-blue-600' : 'text-zinc-600'}`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="rent">RENT</option>
@@ -258,7 +258,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

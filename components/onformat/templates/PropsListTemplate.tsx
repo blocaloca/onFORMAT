@@ -87,14 +87,14 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                     metadata={metadata}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Header Context - Total on Page 1 */}
                         {pageIndex === 0 && (
                             <div className="flex justify-end pb-2">
                                 <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-xs font-mono font-bold text-zinc-900">
+                                    <span className="text-sm font-mono font-bold text-zinc-900">
                                         ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -196,7 +196,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-bold text-[9px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5
                                                 ${item.status === 'acquired' ? 'border-green-200 text-green-700 bg-green-50' :
                                                         item.status === 'wrapped' ? 'border-zinc-200 text-zinc-500 bg-zinc-100 line-through' :
                                                             'border-red-200 text-red-400 bg-red-50'}`}
@@ -224,7 +224,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

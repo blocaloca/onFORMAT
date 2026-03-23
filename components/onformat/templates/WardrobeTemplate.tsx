@@ -82,7 +82,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     metadata={metadata}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Table Header */}
                         <div className="grid grid-cols-[120px_60px_60px_1fr_1fr_80px_30px] gap-4 border-b border-black pb-2 items-end">
@@ -193,7 +193,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent h-[22px] leading-none font-bold text-[9px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1
+                                                className={`appearance-none bg-transparent h-[22px] leading-none font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1
                                             ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
                                                         item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
                                                             'border-zinc-200 text-zinc-400 bg-zinc-50'}`}
@@ -221,7 +221,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

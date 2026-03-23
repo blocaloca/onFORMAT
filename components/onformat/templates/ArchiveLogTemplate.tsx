@@ -117,7 +117,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                     orientation={orientation}
                     metadata={metadata}
                 >
-                    <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                         {/* Table Header */}
                         {/* Aligned with Grid Columns: [90, 80, 1fr, 100, 120, 60, 30] */}
@@ -159,7 +159,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <select
                                                 value={item.itemType || ''}
                                                 onChange={e => handleUpdateItem(globalIdx, { itemType: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">ITEM</option>
@@ -188,7 +188,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <select
                                                 value={item.activity}
                                                 onChange={e => handleUpdateItem(globalIdx, { activity: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">ACT</option>
@@ -204,7 +204,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <select
                                                 value={item.destination}
                                                 onChange={e => handleUpdateItem(globalIdx, { destination: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[10px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">DEST</option>
@@ -251,7 +251,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>

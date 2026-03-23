@@ -161,7 +161,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
             orientation={orientation}
             metadata={metadata}
         >
-            <div className={`space-y-6 text-xs font-sans h-full flex flex-col max-w-2xl mx-auto ${isPrinting ? 'text-black' : 'text-zinc-800'}`}>
+            <div className={`space-y-6 text-sm font-sans h-full flex flex-col max-w-2xl mx-auto ${isPrinting ? 'text-black' : 'text-zinc-800'}`}>
 
                 {/* Compact Header & Controls */}
                 <div className="flex items-end justify-between border-b-2 border-black pb-2 mb-4 shrink-0">
@@ -171,7 +171,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             value={localData.productionCompany || ''}
                             onChange={e => handleChange('productionCompany', e.target.value)}
                             onBlur={() => handleBlur('productionCompany')}
-                            className="font-bold text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide"
+                            className="font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide"
                             placeholder="PRODUCER NAME"
                             disabled={isLocked}
                         />
@@ -201,7 +201,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             value={localData.shootDates || ''}
                             onChange={e => handleChange('shootDates', e.target.value)}
                             onBlur={() => handleBlur('shootDates')}
-                            className="font-mono font-bold text-xs bg-transparent outline-none text-right"
+                            className="font-mono font-bold text-sm bg-transparent outline-none text-right"
                             placeholder="YYYY-MM-DD"
                             disabled={isLocked}
                         />
@@ -302,7 +302,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             {!isLocked && !isPrinting && (
                                 <button
                                     onClick={clearSignature}
-                                    className="mt-4 text-xs text-red-500 underline hover:text-red-600"
+                                    className="mt-4 text-sm text-red-500 underline hover:text-red-600"
                                 >
                                     Clear & Re-sign
                                 </button>

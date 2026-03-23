@@ -167,13 +167,13 @@ export const ReleasesManagerTemplate = ({
                 <div className="flex items-center gap-4 mb-6 border-b border-zinc-200 pb-2">
                     <button
                         onClick={() => setActiveTab('talent')}
-                        className={`text-xs font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'talent' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
+                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'talent' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
                     >
                         <User size={14} /> Talent
                     </button>
                     <button
                         onClick={() => setActiveTab('property')}
-                        className={`text-xs font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'property' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
+                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'property' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
                     >
                         <MapPin size={14} /> Property
                     </button>
@@ -183,10 +183,10 @@ export const ReleasesManagerTemplate = ({
                 <div className="flex-1 overflow-y-auto space-y-2">
                     {filteredReleases.length === 0 ? (
                         <div className="flex flex-col items-center justify-center h-40 text-zinc-400 border-2 border-dashed border-zinc-100 rounded-lg">
-                            <p className="text-xs font-medium">No {activeTab} releases yet.</p>
+                            <p className="text-sm font-medium">No {activeTab} releases yet.</p>
                             <button
                                 onClick={handleCreate}
-                                className="mt-2 text-xs font-bold uppercase text-blue-600 hover:underline"
+                                className="mt-2 text-sm font-bold uppercase text-blue-600 hover:underline"
                             >
                                 + Create First Release
                             </button>

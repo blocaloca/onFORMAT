@@ -97,7 +97,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         metadata={metadata}
                         subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                     >
-                        <div className="space-y-6 text-xs font-sans h-full flex flex-col">
+                        <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                             {/* Table Header */}
                             <div className="grid grid-cols-[60px_80px_1fr_1fr_30px] gap-6 border-b border-black pb-2 items-end">
@@ -134,11 +134,11 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={row.time}
                                                     onChange={e => handleUpdateRow(globalIdx, { time: handleDurationChange(e.target.value) })}
-                                                    className={`font-mono text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`font-mono text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="00:00:00"
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-mono text-xs text-black py-1`}>{row.time || "—"}</div>
+                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-mono text-sm text-black py-1`}>{row.time || "—"}</div>
                                             </div>
 
                                             {/* Visual */}
@@ -146,11 +146,11 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <textarea
                                                     value={row.visual}
                                                     onChange={e => handleUpdateRow(globalIdx, { visual: e.target.value })}
-                                                    className={`text-xs bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="ACTION DESCRIPTION..."
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-xs leading-relaxed uppercase whitespace-pre-wrap text-black`}>{row.visual}</div>
+                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-sm leading-relaxed uppercase whitespace-pre-wrap text-black`}>{row.visual}</div>
                                             </div>
 
                                             {/* Audio */}
@@ -158,11 +158,11 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <textarea
                                                     value={row.audio}
                                                     onChange={e => handleUpdateRow(globalIdx, { audio: e.target.value })}
-                                                    className={`text-xs font-mono bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`text-sm font-mono bg-transparent outline-none w-full placeholder:text-zinc-300 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="Dialogue or SFX..."
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-xs font-mono leading-relaxed whitespace-pre-wrap text-black`}>{row.audio}</div>
+                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-sm font-mono leading-relaxed whitespace-pre-wrap text-black`}>{row.audio}</div>
                                             </div>
 
                                             {/* Delete Button */}
@@ -179,7 +179,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                             <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteRow(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
                                                             >
                                                                 Delete
                                                             </button>
