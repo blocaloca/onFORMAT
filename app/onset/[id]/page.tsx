@@ -36,8 +36,9 @@ import {
     MobileVisionView,
     MobileStoryboardView
 } from './components';
-import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save } from 'lucide-react';
+import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save, Moon, Sun } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
+import { useTheme } from '@/components/ThemeProvider';
 
 /* --------------------------------------------------------------------------------
  * COMPONENTS
@@ -48,7 +49,7 @@ const MobileLanding = ({ projectName, status }: any) => (
             {projectName}
         </h1>
         <div className="h-px w-12 bg-zinc-800 my-4 mx-auto" />
-        <p className="text-[10px] font-mono uppercase text-zinc-500 tracking-wider">
+        <p className="text-[10px] font-mono uppercase text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 tracking-wider">
             {status}
         </p>
     </div>
@@ -83,6 +84,7 @@ export default function OnSetMobilePage() {
     const [data, setData] = useState<MobileState>({ project: null, docs: {} });
     const [mediaAlerts, setMediaAlerts] = useState<any[]>([]);
     const [isConnected, setIsConnected] = useState(false);
+    const { theme, toggleTheme } = useTheme();
 
     const [userEmail, setUserEmail] = useState<string>('');
     const [userRole, setUserRole] = useState<string>('');
@@ -1139,16 +1141,16 @@ export default function OnSetMobilePage() {
 
     if (loading) {
         return (
-            <div className="h-screen bg-zinc-50/50 text-zinc-900 flex flex-col items-center justify-center gap-4">
+            <div className="h-screen bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
                 <img src="/octo%20logo%202.png" className="w-16 animate-pulse opacity-50 contrast-0 grayscale" />
-                <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">Connecting/...</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">Connecting/...</p>
             </div>
         );
     }
 
     if (!data.project) {
         return (
-            <div className="h-screen bg-zinc-50/50 text-black flex flex-col items-center justify-center gap-4">
+            <div className="h-screen bg-zinc-50/50 text-black dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
                 <p className="text-[17px] font-black tracking-tight uppercase text-red-500">Project Not Found</p>
             </div>
         );
@@ -1156,7 +1158,7 @@ export default function OnSetMobilePage() {
 
     return (
         <ProjectDataProvider data={data} userEmail={userEmail}>
-            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50/50 text-black font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 relative z-10">
+            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50/50 text-black dark:text-zinc-100 font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 dark:border-zinc-700 relative z-10">
 
                 {/* TOP ROW: Header & Alerts */}
                 <div className="flex flex-col z-50 shrink-0">
@@ -1165,11 +1167,11 @@ export default function OnSetMobilePage() {
                         <div className="h-16 md:h-18 flex items-center justify-between px-6">
                             <div className="flex flex-col items-start mt-2 shrink-0">
                                 <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
-                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-none mt-1">by onFORMAT</span>
+                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 leading-none mt-1">by onFORMAT</span>
                             </div>
                             <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
                             <div className="flex flex-col flex-1 min-w-0">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 leading-none mb-0.5 truncate">{data.project.name}</span>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 leading-none mb-0.5 truncate">{data.project.name}</span>
                                 <div className="flex items-center gap-2 mt-0.5">
                                     <div className="flex items-center gap-1.5">
                                         <span
@@ -1180,7 +1182,7 @@ export default function OnSetMobilePage() {
                                             {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive !== false ? 'LIVE' : 'STANDBY')}
                                         </span>
                                         {isOffline && lastSyncTime && (
-                                            <span className="text-[9px] font-mono text-zinc-400 ml-1 leading-none">{lastSyncTime}</span>
+                                            <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500 ml-1 leading-none">{lastSyncTime}</span>
                                         )}
                                     </div>
 
@@ -1190,7 +1192,7 @@ export default function OnSetMobilePage() {
                                 <BetaFeedbackTrigger variant="icon" />
                                 <button
                                     onClick={() => setShowMenu(true)}
-                                    className="w-11 h-11 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-600 md:hover:text-zinc-900 transition-colors border border-transparent md:hover:border-zinc-300 shrink-0">
+                                    className="w-11 h-11 rounded-full bg-zinc-100 dark:bg-zinc-900/50 flex items-center justify-center text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 md:hover:text-zinc-900 dark:text-zinc-100 transition-colors border border-transparent md:hover:border-zinc-300 dark:border-zinc-700 shrink-0">
                                     <Menu size={18} />
                                 </button>
                             </div>
@@ -1201,18 +1203,18 @@ export default function OnSetMobilePage() {
                     {mediaAlerts.length > 0 && activeTab !== 'dit-log' && (
                         <button
                             onClick={() => setActiveTab('dit-log')}
-                            className="w-full bg-[#EAB308] text-black px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative shadow-sm"
+                            className="w-full bg-[#EAB308] text-black dark:text-zinc-100 px-4 py-3 flex items-center justify-between animate-in slide-in-from-top-2 z-40 relative shadow-sm"
                         >
                             <div className="flex items-center gap-3">
                                 <div className="bg-black/10 p-1.5 rounded-full">
                                     <HardDrive size={16} />
                                 </div>
                                 <div className="text-left">
-                                    <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 text-black">Media Alert</p>
-                                    <p className="text-xs font-bold leading-none text-black">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
+                                    <p className="text-[10px] font-black uppercase tracking-wider leading-none mb-0.5 text-black dark:text-zinc-100">Media Alert</p>
+                                    <p className="text-xs font-bold leading-none text-black dark:text-zinc-100">{mediaAlerts.length} New Roll{mediaAlerts.length > 1 ? 's' : ''} Pulled</p>
                                 </div>
                             </div>
-                            <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide text-black border border-black/20">
+                            <div className="bg-black/10 px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-wide text-black dark:text-zinc-100 border border-black/20">
                                 View
                             </div>
                         </button>
@@ -1228,29 +1230,29 @@ export default function OnSetMobilePage() {
                             />
 
                             {/* Drawer */}
-                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 border-l border-zinc-100 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
+                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 dark:bg-zinc-900 border-l border-zinc-100 dark:border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                                 <div className="flex justify-between items-center mb-8">
-                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500">System</h2>
-                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 hover:bg-zinc-50/50 p-2 rounded-full text-zinc-600 transition-colors">
+                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">System</h2>
+                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 hover:bg-zinc-50/50 p-2 rounded-full text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 transition-colors">
                                         <Menu size={14} />
                                     </button>
                                 </div>
 
                                 <div className="space-y-6 flex-1">
                                     {/* Identity Card */}
-                                    <div className="bg-zinc-100 shadow-inner p-4 rounded-xl border border-zinc-100">
+                                    <div className="bg-zinc-100 dark:bg-zinc-900/50 shadow-inner p-4 rounded-xl border border-zinc-100 dark:border-zinc-800">
                                         <div className="flex items-center gap-3 mb-2">
                                             <UserCircle size={20} className="text-emerald-500" />
                                             <div>
-                                                <p className="text-xs font-bold text-zinc-900">{userRole || 'Crew Member'}</p>
-                                                <p className="text-[10px] font-mono text-zinc-500 break-all">{userEmail}</p>
+                                                <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{userRole || 'Crew Member'}</p>
+                                                <p className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 break-all">{userEmail}</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Status */}
                                     <div className="space-y-2">
-                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider">
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 uppercase font-bold tracking-wider">
                                             <span>Permissions</span>
                                             {(() => {
                                                 const crew = data.docs['crew-list']?.crew || [];
@@ -1258,7 +1260,7 @@ export default function OnSetMobilePage() {
                                                 let units = me?.onSetGroups || [];
                                                 if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
 
-                                                if (units.length === 0) return <span className="text-zinc-500">None</span>;
+                                                if (units.length === 0) return <span className="text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">None</span>;
 
                                                 return (
                                                     <div className="flex items-center gap-1">
@@ -1270,23 +1272,33 @@ export default function OnSetMobilePage() {
                                                 );
                                             })()}
                                         </div>
-                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 uppercase font-bold tracking-wider mt-4">
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 uppercase font-bold tracking-wider mt-4">
                                             <span>Sync Status</span>
                                             <span className={data.docs['onset-mobile-control']?.isLive !== false ? "text-emerald-600" : "text-amber-600"}>
                                                 {data.docs['onset-mobile-control']?.isLive !== false ? 'Live' : 'Standby'}
                                             </span>
                                         </div>
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 uppercase font-bold tracking-wider mt-4">
+                                            <span>Appearance</span>
+                                            <button 
+                                                onClick={toggleTheme}
+                                                className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 transition-colors"
+                                            >
+                                                {theme === 'dark' ? <Moon size={12} /> : <Sun size={12} />}
+                                                <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
                                 {myProjects.length > 0 && (
-                                    <div className="space-y-2 mt-2 pt-6 border-t border-zinc-100">
-                                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Other Active Sets</h3>
+                                    <div className="space-y-2 mt-2 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 mb-3">Other Active Sets</h3>
                                         <div className="space-y-2">
                                             {myProjects.map(p => (
                                                 <Link key={p.id} href={`/onset/${p.id}`} className="block">
-                                                    <div className="bg-zinc-100 hover:bg-zinc-50/50 transition-colors p-3 rounded-lg border border-zinc-300 flex items-center justify-between group">
-                                                        <span className="text-xs font-bold text-zinc-900 truncate flex-1 pr-4">{p.name}</span>
+                                                    <div className="bg-zinc-100 dark:bg-zinc-900/50 hover:bg-zinc-50/50 transition-colors p-3 rounded-lg border border-zinc-300 dark:border-zinc-700 flex items-center justify-between group">
+                                                        <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate flex-1 pr-4">{p.name}</span>
                                                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover:animate-pulse"></div>
                                                     </div>
                                                 </Link>
@@ -1295,7 +1307,7 @@ export default function OnSetMobilePage() {
                                     </div>
                                 )}
 
-                                <div className="border-t border-zinc-100 mt-6 pt-6 space-y-3">
+                                <div className="border-t border-zinc-100 dark:border-zinc-800 mt-6 pt-6 space-y-3">
                                     <button
                                         onClick={async () => {
                                             // Explicit Presence Cleanup for Mobile
@@ -1317,7 +1329,7 @@ export default function OnSetMobilePage() {
                                             localStorage.removeItem('onset_user_email');
                                             window.location.reload();
                                         }}
-                                        className="w-full bg-zinc-50/50 text-zinc-600 border border-zinc-300 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 transition-colors">
+                                        className="w-full bg-zinc-50/50 text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 border border-zinc-300 dark:border-zinc-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 transition-colors">
                                         <LogOut size={14} /> Disconnect from Set
                                     </button>
 
@@ -1351,8 +1363,8 @@ export default function OnSetMobilePage() {
                     }
 
                     {/* CONFIDENTIAL BANNER */}
-                    <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-100 shadow-sm relative z-40 bg-zinc-100/50">
-                        <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
+                    <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-100 dark:border-zinc-800 shadow-sm relative z-40 bg-zinc-100/50">
+                        <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
                     </div>
                 </div>
 
@@ -1492,7 +1504,7 @@ export default function OnSetMobilePage() {
                 </main>
 
                 {/* BOTTOM NAV ROWS */}
-                <nav className="shrink-0 w-full min-w-0 bg-zinc-100 border-t border-zinc-300 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+                <nav className="shrink-0 w-full min-w-0 bg-zinc-100 dark:bg-zinc-900/50 border-t border-zinc-300 dark:border-zinc-700 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                     <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                         {(() => {
                             const availableKeys = data.availableKeys || [];
@@ -1543,8 +1555,8 @@ export default function OnSetMobilePage() {
                                         className={`
                                     flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-50/50 relative
                                     ${activeTab === key
-                                                ? 'bg-zinc-50/50 text-zinc-900 shadow-sm border border-zinc-300' // Active State
-                                                : 'bg-zinc-100 text-zinc-600 border border-transparent hover:bg-zinc-50/50' // Inactive
+                                                ? 'bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-300 dark:border-zinc-700' // Active State
+                                                : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 border border-transparent hover:bg-zinc-50/50' // Inactive
                                             }
                                 `}
                                     >

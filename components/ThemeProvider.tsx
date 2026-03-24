@@ -20,10 +20,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
 
     useEffect(() => {
-        // Exception: OnSET Mobile is ALWAYS Dark Mode
         if (pathname?.startsWith('/onset')) {
-            setThemeState('dark');
-            document.documentElement.classList.add('dark');
+            const savedOnsetTheme = (localStorage.getItem('onset_theme') as Theme) || 'dark';
+            setThemeState(savedOnsetTheme);
+            if (savedOnsetTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         } else {
             // Read from local storage or default to light
             const savedTheme = (localStorage.getItem('theme') as Theme) || 'light';
@@ -37,10 +41,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }, [pathname]);
 
     const setTheme = (newTheme: Theme) => {
-        // Enforce always-dark on mobile
         if (pathname?.startsWith('/onset')) {
-            setThemeState('dark');
-            document.documentElement.classList.add('dark');
+            setThemeState(newTheme);
+            localStorage.setItem('onset_theme', newTheme);
+            if (newTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
             return;
         }
 
