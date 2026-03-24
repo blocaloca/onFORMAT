@@ -40,7 +40,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         onUpdate?.({ [field]: value });
     };
 
-    const inputStyle = "w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-white/20 transition-all resize-none placeholder:text-zinc-300 dark:placeholder:text-zinc-700 font-sans text-zinc-900 dark:text-white";
+    const inputStyle = "w-full bg-zinc-50 dark:bg-zinc-100 border border-zinc-200 dark:border-zinc-300 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all resize-none placeholder:text-zinc-400 dark:placeholder:text-zinc-500 font-sans text-zinc-900 dark:text-zinc-950";
     const labelStyle = "block font-bold text-zinc-500 dark:text-zinc-400 mb-2 text-[10px] uppercase tracking-widest";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {
@@ -60,7 +60,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                     onChange={(e) => handleChange(key, e.target.value)}
                     placeholder={placeholder}
                 />
-                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black dark:text-white whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-md p-3`}>
+                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black dark:text-zinc-950 whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-100 border border-zinc-200 dark:border-zinc-300 rounded-md p-3`}>
                     {textVal || "—"}
                 </div>
             </div>
