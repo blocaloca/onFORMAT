@@ -248,7 +248,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     value={shot.description}
                                                     onChange={autoResize}
                                                     rows={1}
-                                                    className={`w-full text-sm leading-relaxed focus:outline-none border rounded-sm px-2 py-2 resize-none overflow-hidden min-h-[34px] transition-colors ${darkMode ? 'bg-black border-zinc-700 focus:border-white placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300'}`}
+                                                    className={`w-full text-sm leading-relaxed focus:outline-none border rounded-sm px-2 py-2 resize-none overflow-hidden min-h-[34px] transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300`}
                                                     placeholder="Describe the action..."
                                                     disabled={isLocked}
                                                     style={{ height: 'auto' }} // Initial reset

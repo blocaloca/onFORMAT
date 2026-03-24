@@ -179,7 +179,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <input
                             value={data.productionCompany || ''}
                             onChange={e => updateField('productionCompany', e.target.value)}
-                            className="font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase tracking-wide"
+                            className="w-full bg-zinc-50 border border-zinc-200 text-sm font-bold px-2 py-1 outline-none text-zinc-900 placeholder:text-zinc-400 uppercase tracking-wide rounded-sm"
                             placeholder="PRODUCER NAME"
                             disabled={isLocked}
                         />
@@ -209,7 +209,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             type="date"
                             value={data.shootDate || ''}
                             onChange={e => updateField('shootDate', e.target.value)}
-                            className="font-mono font-bold text-sm bg-transparent outline-none text-right"
+                            className="bg-zinc-50 border border-zinc-200 text-sm font-mono font-bold px-2 py-1 outline-none text-right text-zinc-900 rounded-sm"
                             placeholder="YYYY-MM-DD"
                             disabled={isLocked}
                         />
@@ -225,7 +225,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             </p>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify"
+                                className="w-full h-full bg-zinc-50 rounded-sm border border-zinc-200 p-2 text-sm leading-relaxed resize-none outline-none text-zinc-900 placeholder:text-zinc-400 font-serif text-justify"
                                 placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
                                 value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_STANDARD_TEXT)}
                                 onChange={e => updateField(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
@@ -242,7 +242,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <input
                                 value={data.talentName || ''}
                                 onChange={e => updateField('talentName', e.target.value)}
-                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-sm font-bold focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
+                                className="w-full bg-zinc-50 border border-zinc-200 rounded-sm p-2 text-sm font-bold focus:border-zinc-400 outline-none transition-colors text-zinc-900 placeholder:text-zinc-400"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -252,7 +252,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <input
                                 value={data.role || ''}
                                 onChange={e => updateField('role', e.target.value)}
-                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-sm focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
+                                className="w-full bg-zinc-50 border border-zinc-200 rounded-sm p-2 text-sm focus:border-zinc-400 outline-none transition-colors text-zinc-900 placeholder:text-zinc-400"
                                 placeholder="Role"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -262,7 +262,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <input
                                 value={data.address || ''}
                                 onChange={e => updateField('address', e.target.value)}
-                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-sm focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
+                                className="w-full bg-zinc-50 border border-zinc-200 rounded-sm p-2 text-sm focus:border-zinc-400 outline-none transition-colors text-zinc-900 placeholder:text-zinc-400"
                                 placeholder="Address or Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -295,7 +295,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 <input
                                     value={typedName}
                                     onChange={e => setTypedName(e.target.value)}
-                                    className="w-full text-center font-bold text-lg bg-zinc-50 dark:bg-zinc-900/50 border-b-2 border-zinc-200 dark:border-zinc-800 outline-none focus:border-emerald-500 transition-colors py-2 mb-2 font-mono"
+                                    className="w-full text-center font-bold text-lg bg-zinc-50 border border-zinc-200 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-emerald-500 rounded-sm transition-colors py-2 mb-2 font-mono"
                                     placeholder="Type Full Name"
                                 />
                                 <p className="text-[9px] text-zinc-400 text-center max-w-xs">

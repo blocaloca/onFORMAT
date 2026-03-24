@@ -331,7 +331,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.department}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { department: e.target.value })}
-                                                className={`w-full appearance-none bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-[11px] uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden text-zinc-900 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -343,7 +343,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.role}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { role: e.target.value })}
-                                                className={`w-full appearance-none bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 text-[11px] font-medium px-1 py-1.5 rounded cursor-pointer focus:outline-none text-ellipsis overflow-hidden text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm font-medium px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden text-zinc-900 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             >
                                                 {roles.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -356,7 +356,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.name}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { name: e.target.value })}
-                                                className={`w-full bg-transparent text-sm font-bold focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-zinc-50 border border-zinc-200 text-sm font-bold focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 outline-none text-zinc-900 placeholder:text-zinc-400 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Name..."
                                                 disabled={isLocked}
                                             />
@@ -400,7 +400,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.email}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { email: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 outline-none placeholder:text-zinc-400 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Email"
                                                 disabled={isLocked}
                                             />
@@ -412,7 +412,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.phone}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { phone: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 outline-none placeholder:text-zinc-400 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Phone"
                                                 disabled={isLocked}
                                             />

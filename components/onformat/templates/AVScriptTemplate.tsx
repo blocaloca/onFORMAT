@@ -121,7 +121,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={row.scene}
                                                     onChange={e => handleUpdateRow(globalIdx, { scene: e.target.value })}
-                                                    className={`font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-center ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 text-center ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
@@ -134,7 +134,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={row.time}
                                                     onChange={e => handleUpdateRow(globalIdx, { time: handleDurationChange(e.target.value) })}
-                                                    className={`font-mono text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`font-mono text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="00:00:00"
                                                     disabled={isLocked}
                                                 />
@@ -146,7 +146,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <textarea
                                                     value={row.visual}
                                                     onChange={e => handleUpdateRow(globalIdx, { visual: e.target.value })}
-                                                    className={`text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="ACTION DESCRIPTION..."
                                                     disabled={isLocked}
                                                 />
@@ -158,7 +158,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <textarea
                                                     value={row.audio}
                                                     onChange={e => handleUpdateRow(globalIdx, { audio: e.target.value })}
-                                                    className={`text-sm font-mono bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                    className={`text-sm font-mono bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                     placeholder="Dialogue or SFX..."
                                                     disabled={isLocked}
                                                 />
