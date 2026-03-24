@@ -140,7 +140,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
             <div className="space-y-6 pb-20 animate-in slide-in-from-bottom-4 duration-300">
                 <div className="flex items-center justify-between mb-4 mt-2">
                     <h3 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-zinc-100">{editingMember ? 'Edit Member' : 'Add Crew Member'}</h3>
-                    <button onClick={() => setIsAdding(false)} className="bg-zinc-50/50 p-2 rounded-full text-zinc-600 dark:text-zinc-400 dark:text-zinc-500"><X size={18} /></button>
+                    <button onClick={() => setIsAdding(false)} className="bg-zinc-50/50 dark:bg-zinc-900/50 p-2 rounded-full text-zinc-600 dark:text-zinc-400 dark:text-zinc-500"><X size={18} /></button>
                 </div>
 
                 <div className="space-y-4">
@@ -202,10 +202,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                                 <button
                                     key={g}
                                     onClick={() => toggleGroup(g)}
-                                    className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg transition-all shadow-sm
-                                        ${form.onSetGroups.includes(g)
-                                            ? (g === 'A' ? 'bg-[#22C55E] text-white scale-110 shadow-emerald-500/20 shadow-lg border-none' : g === 'B' ? 'bg-[#3B82F6] text-white scale-110 shadow-blue-500/20 shadow-lg border-none' : g === 'C' ? 'bg-[#EAB308] text-white scale-110 shadow-yellow-500/20 shadow-lg border-none' : 'bg-[#EF4444] text-white scale-110 shadow-red-500/20 shadow-lg border-none')
-                                            : 'bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-900/50 opacity-100'}`}
+                                    className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg transition-all shadow-sm ${form.onSetGroups.includes(g) ? (g === 'A' ? 'bg-[#22C55E] text-white scale-110 shadow-emerald-500/20 shadow-lg border-none' : g === 'B' ? 'bg-[#3B82F6] text-white scale-110 shadow-blue-500/20 shadow-lg border-none' : g === 'C' ? 'bg-[#EAB308] text-white scale-110 shadow-yellow-500/20 shadow-lg border-none' : 'bg-[#EF4444] text-white scale-110 shadow-red-500/20 shadow-lg border-none') : 'bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-900/50 opacity-100'}`}
                                 >
                                     {g}
                                 </button>
@@ -216,7 +213,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                     <div className="pt-6 flex flex-col gap-3">
                         <button
                             onClick={handleSubmit}
-                            className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
+                            className="w-full bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-lg shadow-zinc-900/10 font-black uppercase tracking-widest py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-transform"
                         >
                             <Save size={18} />
                             <span>{editingMember ? 'Update Member' : 'Save to Crew List'}</span>
@@ -241,7 +238,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
     return (
         <div className="space-y-4">
             {/* Search & Add */}
-            <div className="sticky top-0 z-10 bg-zinc-50/50 pb-2 pt-2 flex gap-2">
+            <div className="sticky top-0 z-10 bg-zinc-50/50 dark:bg-zinc-900/50 pb-2 pt-2 flex gap-2">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-zinc-400 dark:text-zinc-500" size={14} />
                     <input
@@ -263,7 +260,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
 
             {Object.entries(grouped).map(([dept, members]) => (
                 <div key={dept} className="space-y-3">
-                    <div className="sticky top-14 z-0 bg-zinc-50/80 backdrop-blur-md py-2 px-1">
+                    <div className="sticky top-14 z-0 bg-zinc-50/80 dark:bg-zinc-900/80 backdrop-blur-md py-2 px-1">
                         <h3 className="text-[10px] font-black uppercase text-emerald-600 tracking-[0.2em] flex items-center gap-2">
                             <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
                             {dept}
@@ -289,8 +286,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                                     {m.onSetGroups && m.onSetGroups.length > 0 && (
                                         <div className="flex gap-1 mt-1">
                                             {m.onSetGroups.map((g: string) => (
-                                                <span key={g} className={`text-[10px] font-black uppercase w-6 h-6 flex items-center justify-center rounded-full shadow-sm 
-                                                    ${g === 'A' ? 'bg-[#22C55E] text-white' : g === 'B' ? 'bg-[#3B82F6] text-white' : g === 'C' ? 'bg-[#EAB308] text-white' : 'bg-[#EF4444] text-white'}`}>{g}</span>
+                                                <span key={g} className={`text-[10px] font-black uppercase w-6 h-6 flex items-center justify-center rounded-full shadow-sm ${g === 'A' ? 'bg-[#22C55E] text-white dark:text-zinc-900 dark:text-zinc-100' : g === 'B' ? 'bg-[#3B82F6] text-white dark:text-zinc-900 dark:text-zinc-100' : g === 'C' ? 'bg-[#EAB308] text-white dark:text-zinc-900 dark:text-zinc-100' : 'bg-[#EF4444] text-white dark:text-zinc-900 dark:text-zinc-100'}`}>{g}</span>
                                             ))}
                                         </div>
                                     )}
@@ -373,7 +369,7 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
                                 <div className="mt-8 pt-8 border-t border-zinc-800">
                                     <button
                                         onClick={() => setViewDoc(null)}
-                                        className="w-full bg-zinc-900 text-white font-black uppercase py-4 rounded tracking-widest hover:bg-emerald-400"
+                                        className="w-full bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 font-black uppercase py-4 rounded tracking-widest hover:bg-emerald-400"
                                     >
                                         I have read and agree to protect the privacy of this production.
                                     </button>
@@ -392,7 +388,7 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
     }
 
     return (
-        <div className="h-screen bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-screen bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center p-6 text-center">
             <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Welcome to Set</h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 mb-8 uppercase font-bold tracking-widest">Please identify yourself</p>
 
@@ -407,7 +403,7 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
             <button
                 onClick={() => onJoin(val)}
                 disabled={!val}
-                className="w-[90%] max-w-[340px] bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
+                className="w-[90%] max-w-[340px] bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-lg shadow-zinc-900/10 font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
             >
                 Enter
             </button>
@@ -481,7 +477,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                         onCheckShot && onCheckShot(shot.id, 'COMPLETE', true);
                                         setConfirmingId(null);
                                     }}
-                                    className="flex-1 bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded active:scale-95 transition-transform"
+                                    className="flex-1 bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded active:scale-95 transition-transform"
                                 >
                                     Log & Complete
                                 </button>
@@ -490,7 +486,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                         onCheckShot && onCheckShot(shot.id, 'COMPLETE', false);
                                         setConfirmingId(null);
                                     }}
-                                    className="flex-1 bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 font-bold uppercase text-xs py-3 rounded"
+                                    className="flex-1 bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 font-bold uppercase text-xs py-3 rounded"
                                 >
                                     Just Complete
                                 </button>
@@ -509,9 +505,9 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 
                         <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap gap-2 mb-2">
-                                <span className="bg-zinc-50/50 text-zinc-700 dark:text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
-                                <span className="bg-zinc-50/50 text-zinc-700 dark:text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
-                                <span className="bg-zinc-50/50 text-zinc-700 dark:text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
+                                <span className="bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.size || 'SIZE?'}</span>
+                                <span className="bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.angle || 'ANGLE?'}</span>
+                                <span className="bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-700 dark:text-zinc-300 text-[9px] font-bold px-1.5 py-0.5 rounded-sm uppercase">{shot.movement || 'STATIC'}</span>
                             </div>
                             <p className="text-xs text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 font-medium leading-normal mb-1">{shot.description}</p>
                             <p className="text-[10px] text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 font-mono truncate">{shot.technical || ''}</p>
@@ -528,10 +524,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                                         setConfirmingId(shot.id);
                                     }
                                 }}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${isComplete
-                                    ? 'bg-emerald-500 border-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.3)]'
-                                    : 'bg-zinc-50/50 border-zinc-200 dark:border-zinc-800 text-transparent hover:border-zinc-400 hover:text-zinc-400 dark:text-zinc-500'
-                                    }`}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center border transition-colors ${isComplete ? 'bg-emerald-500 border-emerald-500 text-white shadow-[0_0_12px_rgba(16,185,129,0.3)]' : 'bg-zinc-50/50 dark:bg-zinc-900/50 border-zinc-200 dark:border-zinc-800 text-transparent hover:border-zinc-400 hover:text-zinc-400 dark:text-zinc-500' }`}
                             >
                                 <Check size={16} strokeWidth={4} />
                             </button>
@@ -818,7 +811,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                     {onAdd && (
                         <button
                             onClick={() => handleStartIngest(alert)}
-                            className="bg-zinc-900 text-white font-black uppercase text-[10px] tracking-widest py-3 rounded-xl w-full hover:bg-emerald-500 transition-colors shadow-lg shadow-zinc-900/10"
+                            className="bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 font-black uppercase text-[10px] tracking-widest py-3 rounded-xl w-full hover:bg-emerald-500 transition-colors shadow-lg shadow-zinc-900/10"
                         >
                             Start Ingest
                         </button>
@@ -852,7 +845,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 type="time"
                                 value={form.time}
                                 onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm"
                             />
                         </div>
                         <div>
@@ -861,7 +854,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 <select
                                     value={form.status}
                                     onChange={e => setForm({ ...form, status: e.target.value })}
-                                    className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm appearance-none"
+                                    className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm appearance-none"
                                 >
                                     <option value="complete">Complete</option>
                                     <option value="pending">Pending</option>
@@ -876,7 +869,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
 
                     <div className="mb-6">
                         <label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 block mb-2 px-1">Task Category</label>
-                        <div className="grid grid-cols-3 gap-2 bg-zinc-100/80 p-1.5 rounded-2xl border border-black/[0.02]">
+                        <div className="grid grid-cols-3 gap-2 bg-zinc-100/80 dark:bg-zinc-900/80 p-1.5 rounded-2xl border border-black/[0.02]">
                             {['offload', 'backup', 'transcode', 'qc', 'transfer', 'issue'].map(t => (
                                 <button
                                     key={t}
@@ -897,7 +890,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="Roll A001"
                                 value={form.source}
                                 onChange={e => setForm({ ...form, source: e.target.value })}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm placeholder:text-zinc-300"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm placeholder:text-zinc-300"
                             />
                         </div>
                         <div>
@@ -906,7 +899,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="Backup Drive"
                                 value={form.destination}
                                 onChange={e => setForm({ ...form, destination: e.target.value })}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm placeholder:text-zinc-300"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm placeholder:text-zinc-300"
                             />
                         </div>
                     </div>
@@ -918,7 +911,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="128"
                                 value={(form as any).dataSize || ''}
                                 onChange={e => setForm({ ...form, dataSize: e.target.value } as any)}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm placeholder:text-zinc-300"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm placeholder:text-zinc-300"
                             />
                         </div>
                         <div>
@@ -927,7 +920,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 placeholder="xxhash"
                                 value={(form as any).checksum || ''}
                                 onChange={e => setForm({ ...form, checksum: e.target.value } as any)}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-mono font-bold transition-all text-xs placeholder:text-zinc-300"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-mono font-bold transition-all text-xs placeholder:text-zinc-300"
                             />
                         </div>
                     </div>
@@ -938,13 +931,13 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                             placeholder="Add specifics about ingest or verification..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-medium transition-all text-sm h-32 placeholder:text-zinc-300 resize-none"
+                            className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-medium transition-all text-sm h-32 placeholder:text-zinc-300 resize-none"
                         />
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20"
+                        className="w-full bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600 hover:shadow-emerald-500/20"
                     >
                         <Save size={18} />
                         <span>Commit to Log</span>
@@ -982,7 +975,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
                                 <div className="font-black text-sm text-zinc-900 dark:text-zinc-100 uppercase tracking-wider">{item.eventType || 'EVENT'}</div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 text-xs text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 mb-3 bg-zinc-50/50 p-3 rounded-xl border border-black/[0.03]">
+                            <div className="grid grid-cols-2 gap-4 text-xs text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 mb-3 bg-zinc-50/50 dark:bg-zinc-900/50 p-3 rounded-xl border border-black/[0.03]">
                                 <div>
                                     <span className="text-[8px] font-black uppercase text-zinc-400 dark:text-zinc-500 block mb-0.5 tracking-widest">Source</span>
                                     <span className="font-mono text-zinc-900 dark:text-zinc-100 font-bold">{item.source || '-'}</span>
@@ -1187,10 +1180,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                         <button
                                             key={cam}
                                             onClick={() => setRollForm({ ...rollForm, camera: cam })}
-                                            className={`flex-1 py-3 text-xs font-black rounded-xl transition-all shadow-sm ${rollForm.camera === cam
-                                                ? (cam === 'A' ? 'bg-emerald-500 text-white' : cam === 'B' ? 'bg-blue-500 text-white' : 'bg-amber-400 text-black dark:text-zinc-100')
-                                                : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:text-zinc-500'
-                                                }`}
+                                            className={`flex-1 py-3 text-xs font-black rounded-xl transition-all shadow-sm ${rollForm.camera === cam ? (cam === 'A' ? 'bg-emerald-500 text-white' : cam === 'B' ? 'bg-blue-500 text-white' : 'bg-amber-400 text-black dark:text-zinc-100') : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:text-zinc-500' }`}
                                         >
                                             Unit {cam}
                                         </button>
@@ -1250,7 +1240,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             </button>
                             <button
                                 onClick={confirmNewRoll}
-                                className="flex-1 bg-zinc-900 text-white font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl shadow-xl shadow-zinc-900/20 hover:bg-emerald-600 transition-colors"
+                                className="flex-1 bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl shadow-xl shadow-zinc-900/20 hover:bg-emerald-600 transition-colors"
                             >
                                 Confirm
                             </button>
@@ -1277,7 +1267,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 type="time"
                                 value={form.time}
                                 onChange={e => setForm({ ...form, time: e.target.value })}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-bold transition-all text-sm"
                             />
                         </div>
                         <div className="col-span-1">
@@ -1286,7 +1276,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 type="number"
                                 value={form.take}
                                 onChange={e => setForm({ ...form, take: e.target.value })}
-                                className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-emerald-600 font-black text-center text-sm"
+                                className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-emerald-600 font-black text-center text-sm"
                             />
                         </div>
                     </div>
@@ -1298,7 +1288,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 placeholder="1"
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-zinc-100/30 rounded-xl px-4 py-4 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-black text-center uppercase tracking-tighter text-lg"
+                                className="w-full bg-zinc-100/30 dark:bg-zinc-900/30 rounded-xl px-4 py-4 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-black text-center uppercase tracking-tighter text-lg"
                             />
                         </div>
                         <div className="col-span-1">
@@ -1307,13 +1297,13 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                                 placeholder="A"
                                 value={form.shotId}
                                 onChange={e => setForm({ ...form, shotId: e.target.value })}
-                                className="w-full bg-zinc-100/30 rounded-xl px-4 py-4 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-black text-center uppercase tracking-tighter text-lg"
+                                className="w-full bg-zinc-100/30 dark:bg-zinc-900/30 rounded-xl px-4 py-4 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-black text-center uppercase tracking-tighter text-lg"
                             />
                         </div>
                     </div>
 
                     {/* Tech Specs Grid */}
-                    <div className="bg-zinc-100/50 p-4 rounded-2xl border border-black/[0.02] mb-6">
+                    <div className="bg-zinc-100/50 dark:bg-zinc-900/50 p-4 rounded-2xl border border-black/[0.02] mb-6">
                         <div className="mb-4 flex justify-between items-center border-b border-black/[0.03] pb-3">
                             <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 dark:text-zinc-500">Card Data</span>
                             <span className="font-mono text-[10px] font-black text-emerald-600">{form.roll}</span>
@@ -1365,12 +1355,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             <button
                                 key={s.id}
                                 onClick={() => setForm({ ...form, status: s.id })}
-                                className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm ${form.status === s.id
-                                    ? (s.id === 'circle' ? 'bg-amber-400 text-black dark:text-zinc-100 shadow-amber-500/20' :
-                                        s.id === 'bad' ? 'bg-red-500 text-white shadow-red-500/20' :
-                                            'bg-emerald-500 text-white shadow-emerald-500/20')
-                                    : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-500'
-                                    }`}
+                                className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-sm ${form.status === s.id ? (s.id === 'circle' ? 'bg-amber-400 text-black dark:text-zinc-100 shadow-amber-500/20' : s.id === 'bad' ? 'bg-red-500 text-white shadow-red-500/20' : 'bg-emerald-500 text-white shadow-emerald-500/20') : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-500' }`}
                             >
                                 {s.label}
                             </button>
@@ -1383,13 +1368,13 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             placeholder="Performance or technical notes..."
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-zinc-50/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-medium transition-all text-sm h-28 placeholder:text-zinc-300 resize-none"
+                            className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 rounded-xl px-4 py-3 border border-black/[0.05] focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-zinc-900 dark:text-zinc-100 font-medium transition-all text-sm h-28 placeholder:text-zinc-300 resize-none"
                         />
                     </div>
 
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600"
+                        className="w-full bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600"
                     >
                         <Save size={18} />
                         <span>Commit Shot</span>
@@ -1413,10 +1398,7 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
                             <div className="w-px h-8 bg-zinc-300"></div>
                             <div className="flex-1">
                                 <div className="flex justify-between items-baseline mb-1">
-                                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${item.status === 'circle' ? 'bg-yellow-500 text-black dark:text-zinc-100' :
-                                        item.status === 'bad' ? 'text-red-500 bg-red-900/20' :
-                                            'text-emerald-600 bg-emerald-900/20'
-                                        }`}>
+                                    <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded ${item.status === 'circle' ? 'bg-yellow-500 text-black dark:text-zinc-100' : item.status === 'bad' ? 'text-red-500 bg-red-900/20' : 'text-emerald-600 bg-emerald-900/20' }`}>
                                         {item.status === 'circle' ? 'BUY' : item.status === 'bad' ? 'NG' : 'GOOD'}
                                     </span>
                                     {item.take && <span className="text-[9px] font-mono text-zinc-600 dark:text-zinc-400 dark:text-zinc-500">TK {item.take}</span>}
@@ -1542,7 +1524,7 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
                             )}
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
-                                    <div className="bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
+                                    <div className="bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider flex items-center gap-1">
                                         <span>SCENE</span>
                                         <EditableInput
                                             value={item.scene || '-'}
@@ -1559,10 +1541,7 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
                                         />
                                     </div>
                                 </div>
-                                <div className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' :
-                                    item.dayNight === 'NIGHT' ? 'bg-blue-900/30 text-blue-400' :
-                                        'bg-zinc-50/50 text-zinc-500 dark:text-zinc-400 dark:text-zinc-500'
-                                    }`}>
+                                <div className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${item.dayNight === 'DAY' ? 'bg-amber-500/10 text-amber-500' : item.dayNight === 'NIGHT' ? 'bg-blue-900/30 text-blue-400' : 'bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 dark:text-zinc-500' }`}>
                                     <EditableInput
                                         value={item.dayNight || 'DAY'}
                                         onSave={(val) => updateItem(i, { dayNight: val })}
@@ -1732,7 +1711,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                         )}
                         <button
                             onClick={handleSubmit}
-                            className="flex-1 bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600"
+                            className="flex-1 bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600"
                         >
                             <Save size={18} />
                             <span>{editingId ? 'Update Note' : 'Save Note'}</span>
@@ -1836,7 +1815,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {items.map((loc: any, i: number) => (
                 <div key={loc.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(loc.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(loc.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
@@ -1855,7 +1834,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
                                 value={loc.name || 'Unknown Location'}
                                 onSave={(val) => onUpdate?.({ ...loc, name: val })}
                                 isEditable={isOwner}
-                                className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
+                                className="text-xl font-black uppercase text-white dark:text-zinc-900 dark:text-zinc-100 tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
                             />
                             {loc.address && (
                                 <a
@@ -2096,7 +2075,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
 
                     <div className="mb-4">
                         <label className="text-[10px] font-bold uppercase text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 block mb-2">Type</label>
-                        <div className="flex bg-zinc-50/50 p-1 rounded-lg border border-zinc-300 dark:border-zinc-700">
+                        <div className="flex bg-zinc-50/50 dark:bg-zinc-900/50 p-1 rounded-lg border border-zinc-300 dark:border-zinc-700">
                             <button
                                 onClick={() => setNewReleaseType('talent')}
                                 className={`flex-1 py-3 text-[10px] font-bold uppercase rounded-md transition-all ${newReleaseType === 'talent' ? 'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 shadow-sm' : 'text-zinc-500 dark:text-zinc-400 dark:text-zinc-500'}`}
@@ -2437,7 +2416,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                                 Cancel
                             </button>
                         )}
-                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600">
+                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600">
                             <Save size={18} />
                             <span>{editingId ? 'Update' : 'Save'}</span>
                         </button>
@@ -2458,12 +2437,12 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                                     <div className="flex items-center gap-3">
                                         <div className="bg-zinc-900 px-3 py-1.5 rounded-xl">
                                             <span className="text-[8px] uppercase font-black text-zinc-400 dark:text-zinc-500 block text-center leading-none mb-1 tracking-widest">Scene</span>
-                                            <span className="text-sm font-black text-white block text-center leading-none">{item.scene || '-'}</span>
+                                            <span className="text-sm font-black text-white dark:text-zinc-900 dark:text-zinc-100 block text-center leading-none">{item.scene || '-'}</span>
                                         </div>
                                         {item.bestTake && (
                                             <div className="bg-emerald-500 px-3 py-1.5 rounded-xl shadow-lg shadow-emerald-500/20">
                                                 <span className="text-[8px] uppercase font-black text-emerald-900/50 block text-center leading-none mb-1 tracking-widest">Best Take</span>
-                                                <span className="text-sm font-black text-white block text-center leading-none tracking-tighter">{item.bestTake}</span>
+                                                <span className="text-sm font-black text-white dark:text-zinc-900 dark:text-zinc-100 block text-center leading-none tracking-tighter">{item.bestTake}</span>
                                             </div>
                                         )}
                                     </div>
@@ -2670,7 +2649,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
 
                     <button
                         onClick={() => setForm({ ...form, circled: !form.circled })}
-                        className={`flex items-center gap-3 w-full mb-6 p-4 rounded-xl border transition-all ${form.circled ? 'bg-emerald-500 border-emerald-600' : 'bg-zinc-50/50 border-black/[0.05]'}`}
+                        className={`flex items-center gap-3 w-full mb-6 p-4 rounded-xl border transition-all ${form.circled ? 'bg-emerald-500 border-emerald-600' : 'bg-zinc-50/50 dark:bg-zinc-900/50 border-black/[0.05]'}`}
                     >
                         <div className={`w-6 h-6 rounded-full border flex items-center justify-center ${form.circled ? 'bg-white dark:bg-zinc-950 border-white text-emerald-600' : 'border-zinc-300 dark:border-zinc-700'}`}>
                             {form.circled && <Check size={14} strokeWidth={4} />}
@@ -2709,7 +2688,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                     </div>
 
                     <div className="flex gap-2">
-                        <button onClick={handleSubmit} className="w-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                        <button onClick={handleSubmit} className="w-full bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-lg shadow-zinc-900/10 font-bold uppercase text-xs py-3 rounded flex items-center justify-center gap-2 active:scale-95 transition-transform">
                             <Save size={14} />
                             <span>{editingId ? 'Update Take' : 'Save Take'}</span>
                         </button>
@@ -2744,7 +2723,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                     </div>
                                     <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate mb-0.5">{take.description || 'No Description'}</p>
                                     <div className="flex flex-wrap gap-2">
-                                        {take.tracks && <span className="text-[9px] bg-zinc-50/50 px-1 rounded text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 font-mono border border-zinc-300 dark:border-zinc-700">{take.tracks}</span>}
+                                        {take.tracks && <span className="text-[9px] bg-zinc-50/50 dark:bg-zinc-900/50 px-1 rounded text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 font-mono border border-zinc-300 dark:border-zinc-700">{take.tracks}</span>}
                                         {take.notes && <span className="text-[9px] text-zinc-500 dark:text-zinc-400 dark:text-zinc-500 italic truncate">{take.notes}</span>}
                                     </div>
                                 </div>
@@ -2763,7 +2742,7 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
                                     <div className="absolute inset-0 bg-zinc-50 dark:bg-zinc-900 flex items-center justify-between px-4 rounded-lg z-10 border border-red-500">
                                         <span className="text-xs font-bold text-red-500 uppercase">Delete?</span>
                                         <div className="flex gap-2">
-                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-900 dark:text-zinc-100 bg-zinc-50/50 px-3 py-1 rounded shadow-sm border border-zinc-300 dark:border-zinc-700">No</button>
+                                            <button onClick={() => setDeleteConfirmId(null)} className="text-xs text-zinc-900 dark:text-zinc-100 bg-zinc-50/50 dark:bg-zinc-900/50 px-3 py-1 rounded shadow-sm border border-zinc-300 dark:border-zinc-700">No</button>
                                             <button onClick={() => { onDelete && onDelete(take.id); setDeleteConfirmId(null); }} className="text-xs text-zinc-900 dark:text-zinc-100 bg-red-600 px-3 py-1 rounded">Yes</button>
                                         </div>
                                     </div>
@@ -2842,7 +2821,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
             {slides.map((slide: any, i: number) => (
                 <div key={slide.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(slide.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 md:group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
@@ -2901,7 +2880,7 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
             {items.map((item: any, i: number) => (
                 <div key={item.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] p-6 shadow-sm border border-black/[0.03] hover:shadow-md transition-all flex gap-5 overflow-hidden items-center group relative">
                     {imageKey && (item[imageKey] || isOwner) && (
-                        <div className="w-20 h-20 shrink-0 bg-zinc-50/50 rounded-2xl overflow-hidden border border-black/[0.03] relative shadow-inner">
+                        <div className="w-20 h-20 shrink-0 bg-zinc-50/50 dark:bg-zinc-900/50 rounded-2xl overflow-hidden border border-black/[0.03] relative shadow-inner">
                             {isOwner ? (
                                 <ImageUploader
                                     currentUrl={item[imageKey] || ''}
@@ -2935,7 +2914,7 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
                         {detailKeys && detailKeys.length > 0 && (
                             <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
                                 {detailKeys.map((k: string) => (
-                                    <div key={k} className="bg-zinc-50/50 px-2.5 py-1 rounded-lg border border-black/[0.02] flex items-center gap-2">
+                                    <div key={k} className="bg-zinc-50/50 dark:bg-zinc-900/50 px-2.5 py-1 rounded-lg border border-black/[0.02] flex items-center gap-2">
                                         <span className="opacity-40 font-black uppercase text-[8px] tracking-widest">{k}</span>
                                         <EditableInput
                                             value={item[k] || ''}
@@ -2981,7 +2960,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
             {items.map((item: any, i: number) => (
                 <div key={item.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
@@ -2999,7 +2978,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                                 value={item.title || 'Untitled Image'}
                                 onSave={(val) => onUpdate?.({ ...item, title: val })}
                                 isEditable={isOwner}
-                                className="text-xl font-black uppercase text-white tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
+                                className="text-xl font-black uppercase text-white dark:text-zinc-900 dark:text-zinc-100 tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
                             />
                         </div>
                     </div>
@@ -3033,7 +3012,7 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
             {items.map((item: any, i: number) => (
                 <div key={item.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
@@ -3051,7 +3030,7 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
                                 value={item.character || 'TBD'}
                                 onSave={(val) => onUpdate?.({ ...item, character: val })}
                                 isEditable={isOwner}
-                                className="text-xl font-black uppercase text-white tracking-tight leading-none p-0 bg-transparent border-none text-left"
+                                className="text-xl font-black uppercase text-white dark:text-zinc-900 dark:text-zinc-100 tracking-tight leading-none p-0 bg-transparent border-none text-left"
                             />
                         </div>
                     </div>
@@ -3102,7 +3081,7 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
             {items.map((item: any, i: number) => (
                 <div key={item.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex flex-col group relative">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
@@ -3166,7 +3145,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
             {items.map((item: any, i: number) => (
                 <div key={item.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex gap-4 items-center group relative overflow-hidden">
                     {isOwner && onDelete && (
-                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 bg-black/50 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
                     )}
@@ -3186,7 +3165,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
                                 />
                             </div>
                             {(item.quantity || isOwner) && (
-                                <div className="flex items-center gap-1 bg-zinc-50/50 px-1.5 py-0.5 rounded border border-zinc-300 dark:border-zinc-700">
+                                <div className="flex items-center gap-1 bg-zinc-50/50 dark:bg-zinc-900/50 px-1.5 py-0.5 rounded border border-zinc-300 dark:border-zinc-700">
                                     <span className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">QTY:</span>
                                     <EditableInput
                                         value={item.quantity || '1'}
@@ -3345,7 +3324,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                                 Cancel
                             </button>
                         )}
-                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600">
+                        <button onClick={handleSubmit} className="flex-1 bg-zinc-900 text-white dark:text-zinc-900 dark:text-zinc-100 shadow-xl shadow-zinc-900/10 font-black uppercase text-[10px] tracking-[0.2em] py-5 rounded-[20px] flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-emerald-600">
                             <Save size={18} />
                             <span>{editingId ? 'Update Select' : 'Save Select'}</span>
                         </button>
@@ -3397,7 +3376,7 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { d
                                         <span className="text-xs font-bold text-red-600 uppercase mb-3 tracking-widest">Delete Select?</span>
                                         <div className="flex gap-4 w-full">
                                             <button onClick={() => setDeleteConfirmId(null)} className="flex-1 text-xs font-bold text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 bg-white dark:bg-zinc-950 border border-zinc-300 dark:border-zinc-700 py-2 rounded uppercase tracking-wider">Cancel</button>
-                                            <button onClick={() => { onDelete && onDelete(item.id); setDeleteConfirmId(null); }} className="flex-1 text-xs font-bold text-white bg-red-600 py-2 rounded uppercase tracking-wider shadow-sm shadow-red-500/30 border border-red-700">Delete</button>
+                                            <button onClick={() => { onDelete && onDelete(item.id); setDeleteConfirmId(null); }} className="flex-1 text-xs font-bold text-white dark:text-zinc-900 dark:text-zinc-100 bg-red-600 py-2 rounded uppercase tracking-wider shadow-sm shadow-red-500/30 border border-red-700">Delete</button>
                                         </div>
                                     </div>
                                 )}
@@ -3432,7 +3411,7 @@ export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (to
                                     const newGroups = isDelegated ? groups.filter((g: string) => g !== 'D') : [...groups, 'D'];
                                     onUpdate(key, newGroups);
                                 }}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-white transition-all ${isDelegated ? 'bg-red-500 shadow-lg scale-110' : 'bg-zinc-300'}`}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-white dark:text-zinc-900 dark:text-zinc-100 transition-all ${isDelegated ? 'bg-red-500 shadow-lg scale-110' : 'bg-zinc-300'}`}
                             >
                                 D
                             </button>
@@ -3487,7 +3466,7 @@ export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data
                 {items.map((item: any, i: number) => (
                     <div key={item.id || i} className="bg-white dark:bg-zinc-950 rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex flex-col group relative">
                         {isOwner && onDelete && (
-                            <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => onDelete(item.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-900 dark:text-zinc-100 opacity-0 md:group-hover:opacity-100 transition-opacity">
                                 <X size={14} />
                             </button>
                         )}

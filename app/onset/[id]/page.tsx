@@ -45,7 +45,7 @@ import { useTheme } from '@/components/ThemeProvider';
  * -------------------------------------------------------------------------------- */
 const MobileLanding = ({ projectName, status }: any) => (
     <div className="flex flex-col items-center justify-center h-[80vh] text-center p-8 animate-in fade-in duration-700">
-        <h1 className="text-xl font-bold uppercase tracking-widest text-white mb-2">
+        <h1 className="text-xl font-bold uppercase tracking-widest text-white dark:text-zinc-900 dark:text-zinc-100 mb-2">
             {projectName}
         </h1>
         <div className="h-px w-12 bg-zinc-800 my-4 mx-auto" />
@@ -1141,7 +1141,7 @@ export default function OnSetMobilePage() {
 
     if (loading) {
         return (
-            <div className="h-screen bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
+            <div className="h-screen bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
                 <img src="/octo%20logo%202.png" className="w-16 animate-pulse opacity-50 contrast-0 grayscale" />
                 <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">Connecting/...</p>
             </div>
@@ -1150,7 +1150,7 @@ export default function OnSetMobilePage() {
 
     if (!data.project) {
         return (
-            <div className="h-screen bg-zinc-50/50 text-black dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
+            <div className="h-screen bg-zinc-50/50 dark:bg-zinc-900/50 text-black dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
                 <p className="text-[17px] font-black tracking-tight uppercase text-red-500">Project Not Found</p>
             </div>
         );
@@ -1158,12 +1158,12 @@ export default function OnSetMobilePage() {
 
     return (
         <ProjectDataProvider data={data} userEmail={userEmail}>
-            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50/50 text-black dark:text-zinc-100 font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 dark:border-zinc-700 relative z-10">
+            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50/50 dark:bg-zinc-900/50 text-black dark:text-zinc-100 font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 dark:border-zinc-700 relative z-10">
 
                 {/* TOP ROW: Header & Alerts */}
                 <div className="flex flex-col z-50 shrink-0">
                     {/* HEADER */}
-                    <header className="bg-zinc-100/90 backdrop-blur-md border-b border-zinc-100/80 pt-safe transition-all w-full relative">
+                    <header className="bg-zinc-100/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-zinc-100/80 dark:border-zinc-800/80 pt-safe transition-all w-full relative">
                         <div className="h-16 md:h-18 flex items-center justify-between px-6">
                             <div className="flex flex-col items-start mt-2 shrink-0">
                                 <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
@@ -1233,7 +1233,7 @@ export default function OnSetMobilePage() {
                             <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 dark:bg-zinc-900 border-l border-zinc-100 dark:border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                                 <div className="flex justify-between items-center mb-8">
                                     <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">System</h2>
-                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 hover:bg-zinc-50/50 p-2 rounded-full text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 transition-colors">
+                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-50/50 dark:bg-zinc-900/50 p-2 rounded-full text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 transition-colors">
                                         <Menu size={14} />
                                     </button>
                                 </div>
@@ -1264,10 +1264,10 @@ export default function OnSetMobilePage() {
 
                                                 return (
                                                     <div className="flex items-center gap-1">
-                                                        {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white rounded-full shadow-sm shadow-[#22C55E]/20 w-4 h-4 flex items-center justify-center">A</span>}
-                                                        {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white rounded-full shadow-sm shadow-[#3B82F6]/20 w-4 h-4 flex items-center justify-center">B</span>}
-                                                        {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white rounded-full shadow-sm shadow-[#EAB308]/20 w-4 h-4 flex items-center justify-center">C</span>}
-                                                        {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white rounded-full shadow-sm shadow-[#EF4444]/20 w-4 h-4 flex items-center justify-center">D</span>}
+                                                        {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white dark:text-zinc-900 dark:text-zinc-100 rounded-full shadow-sm shadow-[#22C55E]/20 w-4 h-4 flex items-center justify-center">A</span>}
+                                                        {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white dark:text-zinc-900 dark:text-zinc-100 rounded-full shadow-sm shadow-[#3B82F6]/20 w-4 h-4 flex items-center justify-center">B</span>}
+                                                        {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white dark:text-zinc-900 dark:text-zinc-100 rounded-full shadow-sm shadow-[#EAB308]/20 w-4 h-4 flex items-center justify-center">C</span>}
+                                                        {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white dark:text-zinc-900 dark:text-zinc-100 rounded-full shadow-sm shadow-[#EF4444]/20 w-4 h-4 flex items-center justify-center">D</span>}
                                                     </div>
                                                 );
                                             })()}
@@ -1329,7 +1329,7 @@ export default function OnSetMobilePage() {
                                             localStorage.removeItem('onset_user_email');
                                             window.location.reload();
                                         }}
-                                        className="w-full bg-zinc-50/50 text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 border border-zinc-300 dark:border-zinc-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 transition-colors">
+                                        className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 border border-zinc-300 dark:border-zinc-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 dark:bg-zinc-900/50 transition-colors">
                                         <LogOut size={14} /> Disconnect from Set
                                     </button>
 
@@ -1363,7 +1363,7 @@ export default function OnSetMobilePage() {
                     }
 
                     {/* CONFIDENTIAL BANNER */}
-                    <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-100 dark:border-zinc-800 shadow-sm relative z-40 bg-zinc-100/50">
+                    <div className="bg-stripes-zinc text-center py-1 border-b border-zinc-100 dark:border-zinc-800 shadow-sm relative z-40 bg-zinc-100/50 dark:bg-zinc-900/50">
                         <p className="text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400 dark:text-zinc-500">Confidential Materials • {new Date().getFullYear()}</p>
                     </div>
                 </div>
@@ -1374,7 +1374,7 @@ export default function OnSetMobilePage() {
                         <div className="absolute inset-0 z-40 pointer-events-none overflow-hidden opacity-[0.03] flex items-center justify-center">
                             <div className="grid grid-cols-2 gap-24 -rotate-12 transform scale-150">
                                 {Array.from({ length: 12 }).map((_, i) => (
-                                    <div key={i} className="text-xl font-black uppercase text-white whitespace-nowrap select-none">
+                                    <div key={i} className="text-xl font-black uppercase text-white dark:text-zinc-900 dark:text-zinc-100 whitespace-nowrap select-none">
                                         {userEmail} • {userRole || 'Crew'}
                                     </div>
                                 ))}
@@ -1552,13 +1552,11 @@ export default function OnSetMobilePage() {
                                     <button
                                         key={key}
                                         onClick={() => setActiveTab(key)}
-                                        className={`
-                                    flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-50/50 relative
-                                    ${activeTab === key
-                                                ? 'bg-zinc-50/50 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-300 dark:border-zinc-700' // Active State
-                                                : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400 dark:text-zinc-500 border border-transparent hover:bg-zinc-50/50' // Inactive
-                                            }
-                                `}
+                                        className={`flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-50/50 dark:active:bg-zinc-800/50 relative ${
+                                            activeTab === key 
+                                            ? 'bg-zinc-50/50 dark:bg-zinc-800/40 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-300 dark:border-zinc-700' 
+                                            : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-300 border border-transparent hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50' 
+                                        }`}
                                     >
                                         {DOC_LABELS[key] || key}
                                     </button>

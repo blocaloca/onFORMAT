@@ -8,7 +8,7 @@ export default function OnSetMobileLayout({
 }) {
     // Light Mode enforced per user request
     return (
-        <div className="fixed inset-0 w-full bg-zinc-100 overflow-hidden flex flex-col font-sans antialiased text-zinc-900">
+        <div className="fixed inset-0 w-full bg-zinc-100 dark:bg-black overflow-hidden flex flex-col font-sans antialiased text-zinc-900 dark:text-zinc-100">
             {/* Content Area - Filling remaining space */}
             <main className="relative z-10 w-full h-full flex flex-col items-center justify-center overflow-hidden p-0">
                 {children}
