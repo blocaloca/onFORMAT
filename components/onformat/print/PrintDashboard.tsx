@@ -106,6 +106,19 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
         if (savedLogo) {
             setCoverSettings(s => ({ ...s, studioLogo: savedLogo }));
         }
+
+        // Force Light Mode for the entire Print Room (resolves dark mode leaking into documents)
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) {
+            document.documentElement.classList.remove('dark');
+        }
+
+        return () => {
+            // Restore dark mode when Print Room closes
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            }
+        };
     }, []);
 
     // Persistence: Save preference on change
