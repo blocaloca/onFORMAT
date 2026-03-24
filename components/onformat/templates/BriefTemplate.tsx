@@ -40,31 +40,30 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         onUpdate?.({ [field]: value });
     };
 
-    const inputStyle = "w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-sm outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 min-h-[60px] font-sans text-zinc-900";
-    const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest text-zinc-900";
+    const inputStyle = "w-full bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all resize-none placeholder:text-zinc-300 min-h-[60px] font-sans text-zinc-900 dark:text-zinc-100";
+    const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {
         let val = data[key];
 
         // Safety: Handle legacy object/array data to prevent React crash
-        // The migration useEffect will convert this to string shortly
         if (typeof val === 'object' && val !== null) {
             val = '';
         }
 
         const textVal = (val as string) || '';
         return (
-            <>
+            <div className="relative group/field">
                 <textarea
-                    className={`print:hidden text-zinc-900`}
+                    className={`${inputStyle} ${minHeight} print:hidden`}
                     value={textVal}
                     onChange={(e) => handleChange(key, e.target.value)}
                     placeholder={placeholder}
                 />
-                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-normal text-black dark:text-zinc-100 whitespace-pre-wrap bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-3 rounded-sm`}>
+                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black dark:text-zinc-100 whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-md p-3`}>
                     {textVal || "—"}
                 </div>
-            </>
+            </div>
         );
     };
 
