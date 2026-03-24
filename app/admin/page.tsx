@@ -8,6 +8,7 @@ import { UserActions } from './AdminActions';
 import { isFounder } from '@/lib/permissions';
 import AnnouncementEditor from '@/components/admin/AnnouncementEditor';
 import Link from 'next/link';
+import MarketingDashboard from '@/components/admin/MarketingDashboard';
 
 export default async function AdminPage() {
   // 1. Auth Check
@@ -248,6 +249,9 @@ export default async function AdminPage() {
             </div>
           </div>
         </section>
+
+        {/* Marketing Pipeline Section */}
+        <MarketingDashboard />
       </div>
     </div>
   );
