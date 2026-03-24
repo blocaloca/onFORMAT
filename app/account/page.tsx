@@ -268,9 +268,9 @@ export default function AccountPage() {
     if (loading && !profile) return <div className="h-screen bg-zinc-50 flex items-center justify-center text-zinc-900"><Loader2 className="animate-spin" /></div>;
 
     // Corrected Display Logic
-    const isScout = (!profile || !profile.subscription_status || profile.subscription_tier === 'scout');
-    const isPro = profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro';
+    const isPro = (profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro') || profile?.manual_pro_override;
     const isStudio = profile?.subscription_status === 'active' && profile?.subscription_tier === 'studio';
+    const isScout = !isPro && !isStudio && (!profile?.subscription_status || profile?.subscription_tier === 'scout');
 
     return (
         <div className="min-h-screen relative bg-zinc-50 text-zinc-950 font-sans p-6 md:p-12">

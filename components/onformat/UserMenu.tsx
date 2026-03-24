@@ -125,7 +125,7 @@ export const UserMenu = ({ email }: { email?: string }) => {
 
                         {!isFounder(email) && (
                             <p className={`font-mono text-[10px] tracking-widest uppercase truncate ${daysLeft <= 3 || isLocked ? 'text-amber-500 dark:text-amber-400 font-bold' : 'text-zinc-500 dark:text-zinc-400'}`}>
-                                {isLocked ? 'TRIAL EXPIRED' : `TRIAL: ${daysLeft} DAYS LEFT`}
+                                {daysLeft === 999 ? 'PRO ACCOUNT' : (isLocked ? 'TRIAL EXPIRED' : `TRIAL: ${daysLeft} DAYS LEFT`)}
                             </p>
                         )}
                     </div>

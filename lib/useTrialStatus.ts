@@ -26,13 +26,13 @@ export function useTrialStatus() {
 
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('subscription_tier, subscription_status, created_at')
+                    .select('subscription_tier, subscription_status, created_at, manual_pro_override')
                     .eq('id', user.id)
                     .single();
 
                 if (profile) {
-                    // 1. Founder / Admin bypass
-                    if (isFounder(user.email)) {
+                    // 1. Founder / Admin bypass / Manual Pro Override
+                    if (isFounder(user.email) || profile.manual_pro_override) {
                         setStatus({
                             isLocked: false,
                             daysLeft: 999, // Infinite
