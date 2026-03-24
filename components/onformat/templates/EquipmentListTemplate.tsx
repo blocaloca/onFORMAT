@@ -148,7 +148,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 <select
                                                     value={item.category}
                                                     onChange={e => handleUpdateItem(globalIdx, { category: e.target.value as any })}
-                                                    className="appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 dark:text-zinc-300"
+                                                    className="appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     {CATEGORY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -166,7 +166,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="font-medium text-sm bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full"
+                                                className="font-medium text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full text-zinc-900"
                                                 placeholder="e.g. Sony FX3 Body..."
                                                 disabled={isLocked}
                                             />
@@ -181,7 +181,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             <select
                                                 value={item.source}
                                                 onChange={e => handleUpdateItem(globalIdx, { source: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none ${item.source === 'own' ? 'text-blue-600' : 'text-zinc-600'}`}
+                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-600 text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="rent">RENT</option>
@@ -199,7 +199,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.vendor}
                                                 onChange={e => handleUpdateItem(globalIdx, { vendor: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300 w-full"
+                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 placeholder:text-zinc-200 w-full text-zinc-900"
                                                 placeholder={item.source === 'rent' ? 'Rental House...' : '—'}
                                                 disabled={isLocked || item.source === 'own'}
                                             />
@@ -215,7 +215,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.dayRate}
                                                 onChange={e => handleUpdateItem(globalIdx, { dayRate: e.target.value })}
-                                                className="text-right font-mono text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300"
+                                                className="text-right font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 placeholder:text-zinc-200 text-zinc-900"
                                                 placeholder="$0.00"
                                                 disabled={isLocked}
                                             />
@@ -231,7 +231,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.quantity}
                                                 onChange={e => handleUpdateItem(globalIdx, { quantity: e.target.value })}
-                                                className="text-center font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1"
+                                                className="text-center font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-900"
                                                 placeholder="1"
                                                 disabled={isLocked}
                                             />

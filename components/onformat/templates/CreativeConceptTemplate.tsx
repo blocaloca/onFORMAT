@@ -125,7 +125,7 @@ export const CreativeConceptTemplate = ({
                             value={page.content}
                             onChange={(e) => handleUpdatePage(page.id, e.target.value)}
                             placeholder={index === 0 ? "Start writing your project vision here..." : "Continue writing..."}
-                            className={`flex-1 w-full bg-zinc-50 dark:bg-zinc-900/50/30 resize-none outline-none text-sm leading-relaxed p-6 border border-transparent focus:border-zinc-200 dark:border-zinc-800 focus:bg-white dark:focus:bg-zinc-900 rounded-sm transition-colors ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                            className={`flex-1 w-full bg-zinc-50 resize-none outline-none text-sm leading-relaxed p-6 border border-transparent focus:border-zinc-200 focus:bg-white rounded-sm transition-colors print:hidden text-zinc-900`}
                             disabled={isLocked}
                         />
                         <div className={`${isPrinting ? 'block' : 'hidden print:block'} flex-1 w-full text-sm leading-relaxed p-6 whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-transparent`}>

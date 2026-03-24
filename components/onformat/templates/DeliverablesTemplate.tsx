@@ -163,7 +163,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.fileNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                                className="font-mono font-bold text-sm bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 pt-1 text-black dark:text-zinc-100"
+                                                className="font-mono font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 pt-1 text-black"
                                                 placeholder="A001_..."
                                                 disabled={isLocked}
                                             />
@@ -178,7 +178,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                     type="date"
                                                     value={item.dueDate}
                                                     onChange={e => handleUpdateItem(globalIdx, { dueDate: e.target.value })}
-                                                    className="font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 w-full text-zinc-600 uppercase"
+                                                    className="font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 w-full text-zinc-600 uppercase text-zinc-900"
                                                     disabled={isLocked}
                                                 />
                                             )}
@@ -192,7 +192,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <textarea
                                                     value={item.description}
                                                     onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] w-full text-[10px] text-black dark:text-zinc-100"
+                                                    className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[40px] w-full text-[10px] text-black"
                                                     placeholder="Description..."
                                                     rows={Math.max(2, item.description.split('\n').length)}
                                                     disabled={isLocked}
@@ -210,7 +210,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <select
                                                     value={item.format}
                                                     onChange={e => handleUpdateItem(globalIdx, { format: e.target.value })}
-                                                    className="appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 dark:text-zinc-300"
+                                                    className="appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     <option value="" disabled className="text-zinc-300">ASPECT</option>
@@ -229,7 +229,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <select
                                                     value={item.type || ''}
                                                     onChange={e => handleUpdateItem(globalIdx, { type: e.target.value })}
-                                                    className="appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 dark:text-zinc-300"
+                                                    className="appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     <option value="" disabled className="text-zinc-300">TYPE</option>
@@ -246,7 +246,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <textarea
                                                     value={item.notes || ''}
                                                     onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                    className="bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden text-zinc-500 text-[10px] placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] w-full"
+                                                    className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 text-[10px] placeholder:text-zinc-300 min-h-[40px] w-full text-zinc-900"
                                                     placeholder="Notes..."
                                                     rows={Math.max(2, (item.notes || '').split('\n').length)}
                                                     disabled={isLocked}

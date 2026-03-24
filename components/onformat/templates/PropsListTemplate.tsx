@@ -126,7 +126,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.item}
                                                 onChange={e => handleUpdateItem(globalIdx, { item: e.target.value })}
-                                                className="font-bold text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase"
+                                                className="font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 uppercase text-zinc-900"
                                                 placeholder="ITEM NAME"
                                                 disabled={isLocked}
                                             />
@@ -140,7 +140,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-zinc-700 dark:text-zinc-300"
+                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 text-zinc-700 text-zinc-900"
                                                 placeholder="Red vintage telephone..."
                                                 disabled={isLocked}
                                             />
@@ -154,7 +154,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.quantity}
                                                 onChange={e => handleUpdateItem(globalIdx, { quantity: e.target.value })}
-                                                className="font-mono text-[10px] bg-transparent outline-none w-full text-center placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                                className="font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full text-center placeholder:text-zinc-300 text-zinc-900"
                                                 placeholder="1"
                                                 disabled={isLocked}
                                             />
@@ -168,7 +168,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.source}
                                                 onChange={e => handleUpdateItem(globalIdx, { source: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 italic"
+                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 italic text-zinc-900"
                                                 placeholder="Prop House..."
                                                 disabled={isLocked}
                                             />
@@ -182,7 +182,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 type="text"
                                                 value={item.cost}
                                                 onChange={e => handleUpdateItem(globalIdx, { cost: e.target.value })}
-                                                className="font-mono text-[10px] bg-transparent outline-none w-full text-right placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                                className="font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full text-right placeholder:text-zinc-300 text-zinc-900"
                                                 placeholder="$0.00"
                                                 disabled={isLocked}
                                             />
@@ -196,10 +196,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5
-                                                ${item.status === 'acquired' ? 'border-green-200 text-green-700 bg-green-50' :
-                                                        item.status === 'wrapped' ? 'border-zinc-200 dark:border-zinc-800 text-zinc-500 bg-zinc-100 dark:bg-zinc-900 line-through' :
-                                                            'border-red-200 text-red-400 bg-red-50'}`}
+                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5 ${item.status === 'acquired' ? 'border-green-200 text-green-700 bg-green-50' : item.status === 'wrapped' ? 'border-zinc-200 text-zinc-500 bg-zinc-100 line-through' : 'border-red-200 text-red-400 bg-red-50'} text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="pending">Needed</option>

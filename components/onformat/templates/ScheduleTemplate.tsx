@@ -156,7 +156,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         type="text"
                                         value={data.date || ''}
                                         onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
-                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                        className={`w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 print:hidden text-zinc-900`}
                                         placeholder="MM/DD/YYYY"
                                         disabled={isLocked}
                                     />
@@ -176,7 +176,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const ampm = (data.callTime || "").split(" ")[1] || "AM";
                                                 onUpdate({ callTime: `${time} ${ampm}`.trim() });
                                             }}
-                                            className="flex-1 bg-transparent font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1"
+                                            className="flex-1 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 text-zinc-900"
                                             placeholder="00:00"
                                             disabled={isLocked}
                                         />
@@ -232,7 +232,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     value={item.set.replace('END OF DAY', '').trim()} // Piggyback date/label on 'set'
                                                     onChange={(e) => handleUpdateItem(globalIdx, { set: `END OF DAY ${e.target.value}` })}
                                                     placeholder="NEXT DAY DATE"
-                                                    className={`bg-transparent text-white placeholder:text-zinc-500 outline-none text-center min-w-[100px] ${isPrinting ? 'hidden' : ''}`}
+                                                    className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 placeholder:text-zinc-500 outline-none text-center min-w-[100px] ${isPrinting ? 'hidden' : ''} text-zinc-900`}
                                                     disabled={isLocked}
                                                 />
                                                 {isPrinting && <span>{item.set.replace('END OF DAY', '').trim()}</span>}
@@ -263,7 +263,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.time}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { time: formatTimeInput(e.target.value) })}
-                                                    className="w-full bg-transparent text-sm font-mono font-bold focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
+                                                    className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
                                                     placeholder="00:00"
                                                     disabled={isLocked}
                                                 />
@@ -279,7 +279,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.scene}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { scene: e.target.value })}
-                                                    className="w-full bg-transparent text-sm font-bold text-center focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
+                                                    className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
@@ -297,7 +297,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     <select
                                                         value={item.intExt}
                                                         onChange={(e) => handleUpdateItem(globalIdx, { intExt: e.target.value as any })}
-                                                        className="bg-black text-white text-[11px] font-bold uppercase px-1 rounded-sm appearance-none cursor-pointer text-center w-10 flex-shrink-0"
+                                                        className="bg-black text-[11px] font-bold uppercase px-1 rounded-sm appearance-none cursor-pointer text-center w-10 flex-shrink-0 text-zinc-900"
                                                         disabled={isLocked}
                                                     >
                                                         {INT_EXT_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -306,7 +306,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.set}
                                                         onChange={(e) => handleUpdateItem(globalIdx, { set: e.target.value })}
-                                                        className="w-full bg-transparent text-sm font-bold uppercase focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 min-w-0 text-black dark:text-zinc-100"
+                                                        className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 min-w-0 text-black"
                                                         placeholder="SETTING"
                                                         disabled={isLocked}
                                                     />
@@ -322,7 +322,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={item.dayNight}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { dayNight: e.target.value as any })}
-                                                    className="w-full bg-zinc-100 dark:bg-zinc-900 text-[11px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center text-black dark:text-zinc-100"
+                                                    className="w-full bg-zinc-100 text-[11px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center text-black"
                                                     disabled={isLocked}
                                                 >
                                                     {TIME_OF_DAY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -339,7 +339,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-transparent text-sm focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-600"
+                                                    className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-600 text-zinc-900"
                                                     placeholder="Action / Notes..."
                                                     disabled={isLocked}
                                                 />

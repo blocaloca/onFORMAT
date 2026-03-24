@@ -212,7 +212,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     value={data.overview || ''}
                                     onChange={(e) => onUpdate({ overview: e.target.value })}
                                     placeholder="Describe the visual direction, tone, and style..."
-                                    className={`w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-3 text-sm min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 resize-none placeholder-zinc-300 dark:placeholder-zinc-600 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                    className={`w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-sm min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 print:hidden text-zinc-900`}
                                 />
                                 <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-sm min-h-[60px] whitespace-pre-wrap break-words text-black dark:text-zinc-100`}>
                                     {data.overview || "—"}
@@ -311,7 +311,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 </div>
                                             ) : (
                                                 <textarea
-                                                    className="w-full text-[10px] text-center font-mono text-zinc-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 resize-none overflow-hidden"
+                                                    className="w-full text-[10px] text-center font-mono text-zinc-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 resize-none overflow-hidden text-zinc-900"
                                                     placeholder="CAPTION..."
                                                     rows={2}
                                                     value={item.caption}

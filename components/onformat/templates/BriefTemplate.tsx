@@ -41,7 +41,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
     };
 
     const inputStyle = "w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-sm outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 min-h-[60px] font-sans text-zinc-900";
-    const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest";
+    const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest text-zinc-900";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {
         let val = data[key];
@@ -56,7 +56,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         return (
             <>
                 <textarea
-                    className={`${inputStyle} ${minHeight} ${isPrinting ? 'hidden' : 'print:hidden'} text-zinc-900`}
+                    className={`print:hidden text-zinc-900`}
                     value={textVal}
                     onChange={(e) => handleChange(key, e.target.value)}
                     placeholder={placeholder}

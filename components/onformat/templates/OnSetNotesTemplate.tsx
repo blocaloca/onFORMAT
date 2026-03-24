@@ -138,7 +138,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.date}
                                                 onChange={e => handleUpdateItem(idx, { date: formatDate(e.target.value) })}
-                                                className={`font-mono font-bold w-24 bg-transparent outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`font-mono font-bold w-24 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="MM/DD/YYYY"
                                                 disabled={isLocked}
                                             />
@@ -150,7 +150,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.time}
                                                 onChange={e => handleUpdateItem(idx, { time: e.target.value })}
-                                                className={`font-mono font-bold w-16 bg-transparent outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`font-mono font-bold w-16 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="00:00"
                                                 disabled={isLocked}
                                             />
@@ -163,7 +163,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(idx, { description: e.target.value })}
-                                                className={`flex-1 font-bold bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`flex-1 font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 uppercase ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="NOTE SUBJECT / TOPIC"
                                                 disabled={isLocked}
                                             />
@@ -208,7 +208,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         <textarea
                                             value={item.body}
                                             onChange={e => handleUpdateItem(idx, { body: e.target.value })}
-                                            className={`w-full bg-zinc-50 dark:bg-zinc-900/50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400 border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`w-full bg-zinc-50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white focus:ring-1 focus:ring-zinc-400 border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Write report details here..."
                                             rows={Math.max(3, item.body.split('\n').length)}
                                             disabled={isLocked}

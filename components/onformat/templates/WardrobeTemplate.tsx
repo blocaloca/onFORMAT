@@ -115,7 +115,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.character}
                                                         onChange={e => handleUpdateItem(globalIdx, { character: e.target.value })}
-                                                        className="font-bold text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 uppercase"
+                                                        className="font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 uppercase text-zinc-900"
                                                         placeholder="CHARACTER"
                                                         disabled={isLocked}
                                                     />
@@ -123,7 +123,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.actor}
                                                         onChange={e => handleUpdateItem(globalIdx, { actor: e.target.value })}
-                                                        className="text-[9px] bg-transparent outline-none w-full text-zinc-500 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300"
+                                                        className="text-[9px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full text-zinc-500 placeholder:text-zinc-200 text-zinc-900"
                                                         placeholder="Actor Name"
                                                         disabled={isLocked}
                                                     />
@@ -139,7 +139,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.lookNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { lookNumber: e.target.value })}
-                                                className="font-mono font-bold text-[10px] bg-transparent outline-none w-full text-center placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                                className="font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full text-center placeholder:text-zinc-300 text-zinc-900"
                                                 placeholder="#"
                                                 disabled={isLocked}
                                             />
@@ -153,7 +153,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.sceneRange}
                                                 onChange={e => handleUpdateItem(globalIdx, { sceneRange: e.target.value })}
-                                                className="font-mono text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                                className="font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 text-zinc-900"
                                                 placeholder="1, 4, 12"
                                                 disabled={isLocked}
                                             />
@@ -166,7 +166,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <textarea
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] resize-none leading-relaxed"
+                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[40px] resize-none leading-relaxed text-zinc-900"
                                                 placeholder="Blue denim jacket, vintage tee..."
                                                 disabled={isLocked}
                                             />
@@ -179,7 +179,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <textarea
                                                 value={item.notes}
                                                 onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[40px] resize-none leading-relaxed text-zinc-500 italic"
+                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[40px] resize-none leading-relaxed text-zinc-500 italic text-zinc-900"
                                                 placeholder="Returns to Zara..."
                                                 disabled={isLocked}
                                             />
@@ -193,10 +193,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent h-[22px] leading-none font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1
-                                            ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' :
-                                                        item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' :
-                                                            'border-zinc-200 dark:border-zinc-800 text-zinc-400 bg-zinc-50 dark:bg-zinc-900/50'}`}
+                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 h-[22px] leading-none font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' : item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-zinc-200 text-zinc-400 bg-zinc-50'} text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="concept">Concept</option>

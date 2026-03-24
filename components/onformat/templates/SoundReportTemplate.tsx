@@ -132,32 +132,32 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             <div className="grid grid-cols-6 gap-6">
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Date</label>
-                                    <input value={data.date || ''} onChange={e => updateField('date', formatDate(e.target.value))} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="MM/DD/YYYY" disabled={isLocked} />
+                                    <input value={data.date || ''} onChange={e => updateField('date', formatDate(e.target.value))} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="MM/DD/YYYY" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.date}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Roll #</label>
-                                    <input value={data.roll || ''} onChange={e => updateField('roll', e.target.value)} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="1" disabled={isLocked} />
+                                    <input value={data.roll || ''} onChange={e => updateField('roll', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="1" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.roll}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Sample Rate</label>
-                                    <input value={data.sampleRate || ''} onChange={e => updateField('sampleRate', e.target.value)} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="48kHz" disabled={isLocked} />
+                                    <input value={data.sampleRate || ''} onChange={e => updateField('sampleRate', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="48kHz" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.sampleRate}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Bit Depth</label>
-                                    <input value={data.bitDepth || ''} onChange={e => updateField('bitDepth', e.target.value)} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="24bit" disabled={isLocked} />
+                                    <input value={data.bitDepth || ''} onChange={e => updateField('bitDepth', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="24bit" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.bitDepth}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">FPS</label>
-                                    <input value={data.fps || ''} onChange={e => updateField('fps', e.target.value)} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="23.98" disabled={isLocked} />
+                                    <input value={data.fps || ''} onChange={e => updateField('fps', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="23.98" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.fps}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Mixer</label>
-                                    <input value={data.mixer || ''} onChange={e => updateField('mixer', e.target.value)} className={`font-bold bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="Name" disabled={isLocked} />
+                                    <input value={data.mixer || ''} onChange={e => updateField('mixer', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="Name" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.mixer}</div>
                                 </div>
                             </div>
@@ -187,7 +187,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.scene}
                                             onChange={e => handleUpdateTake(globalIdx, { scene: e.target.value })}
-                                            className={`font-bold text-center bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-bold text-center bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="-"
                                             disabled={isLocked}
                                         />
@@ -198,7 +198,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.take}
                                             onChange={e => handleUpdateTake(globalIdx, { take: e.target.value })}
-                                            className={`font-mono font-bold text-center bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-mono font-bold text-center bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="-"
                                             disabled={isLocked}
                                         />
@@ -209,7 +209,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.timecode}
                                             onChange={e => handleUpdateTake(globalIdx, { timecode: e.target.value })}
-                                            className={`font-mono text-[10px] text-center bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-mono text-[10px] text-center bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="00:00:00:00"
                                             disabled={isLocked}
                                         />
@@ -233,7 +233,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             type="text"
                                             value={take.description}
                                             onChange={e => handleUpdateTake(globalIdx, { description: e.target.value })}
-                                            className={`bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Details..."
                                             disabled={isLocked}
                                         />
@@ -245,7 +245,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 type="text"
                                                 value={take.tracks}
                                                 onChange={e => handleUpdateTake(globalIdx, { tracks: e.target.value })}
-                                                className={`font-mono text-[9px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`font-mono text-[9px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="Trk: Boom, Lav1..."
                                                 disabled={isLocked}
                                             />
@@ -255,7 +255,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 type="text"
                                                 value={take.notes}
                                                 onChange={e => handleUpdateTake(globalIdx, { notes: e.target.value })}
-                                                className={`text-[9px] italic text-zinc-400 bg-transparent outline-none w-full placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`text-[9px] italic text-zinc-400 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-200 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="Notes..."
                                                 disabled={isLocked}
                                             />

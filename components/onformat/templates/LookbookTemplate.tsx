@@ -302,7 +302,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <div className="w-full text-[10px] font-mono text-gray-500 whitespace-pre-wrap break-words block mt-1">{item.caption}</div>
                                             ) : (
                                                 <textarea
-                                                    className="w-full text-[10px] font-mono text-gray-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-400 focus:bg-white placeholder-gray-300 resize-none overflow-hidden mt-1"
+                                                    className="w-full text-[10px] font-mono text-gray-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-400 focus:bg-white placeholder-gray-300 resize-none overflow-hidden mt-1 text-zinc-900"
                                                     placeholder="Add notes..."
                                                     rows={2}
                                                     value={item.caption}

@@ -109,7 +109,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             type="text"
                                             value={item.fileNumber}
                                             onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                            className={`font-mono font-bold text-sm bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`font-mono font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="..."
                                             disabled={isLocked}
                                         />
@@ -119,7 +119,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <textarea
                                             value={item.description}
                                             onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                            className={`bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Description..."
                                             rows={Math.max(1, item.description.split('\n').length)}
                                             disabled={isLocked}
@@ -130,7 +130,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <textarea
                                             value={item.notes}
                                             onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                            className={`bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 resize-none overflow-hidden text-zinc-500 italic placeholder:text-zinc-300 dark:placeholder:text-zinc-600 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                            className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 italic placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Notes..."
                                             rows={Math.max(1, item.notes.split('\n').length)}
                                             disabled={isLocked}
@@ -142,11 +142,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-transparent font-black uppercase text-[11px] tracking-wider text-center w-full cursor-pointer outline-none ${item.status === 'approved' ? 'text-green-600' :
-                                                    item.status === 'edit' ? 'text-blue-600' :
-                                                        item.status === 'reshoot' ? 'text-orange-500' :
-                                                            item.status === 'kill' ? 'text-red-500' : 'text-zinc-200'
-                                                    } ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-black uppercase text-[11px] tracking-wider text-center w-full cursor-pointer outline-none ${item.status === 'approved' ? 'text-green-600' : item.status === 'edit' ? 'text-blue-600' : item.status === 'reshoot' ? 'text-orange-500' : item.status === 'kill' ? 'text-red-500' : 'text-zinc-200' } ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}

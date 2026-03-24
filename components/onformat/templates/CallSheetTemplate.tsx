@@ -386,7 +386,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     value={shootDate}
                                                     onChange={(e) => updateField('date', formatDate(e.target.value))}
                                                     placeholder="MM/DD/YYYY"
-                                                    className="block w-full bg-transparent text-2xl font-black uppercase placeholder:text-zinc-200 dark:placeholder:text-zinc-700 outline-none text-black dark:text-zinc-100 tracking-normal"
+                                                    className="block w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
                                                     disabled={isLocked || !canEditVitals}
                                                 />
                                             )}
@@ -411,7 +411,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         type="text"
                                                         value={generalCall}
                                                         onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                        className="w-full bg-transparent font-sans text-5xl font-black outline-none text-black dark:text-zinc-100 placeholder:text-zinc-100 tracking-normal"
+                                                        className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
                                                         placeholder="00:00"
                                                         disabled={isLocked || !canEditVitals}
                                                     />
@@ -450,7 +450,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.weather || ''}
                                                 onChange={e => updateField('weather', e.target.value)}
                                                 placeholder="75° Sunny"
-                                                className="w-full bg-transparent outline-none font-bold text-sm"
+                                                className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none font-bold text-sm text-zinc-900"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -465,7 +465,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.sunriseSunset || ''}
                                                 onChange={e => updateField('sunriseSunset', e.target.value)}
                                                 placeholder="06:00 / 20:00"
-                                                className="w-full bg-transparent outline-none font-bold text-sm"
+                                                className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none font-bold text-sm text-zinc-900"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -490,7 +490,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.hospital || ''}
                                                 onChange={e => updateField('hospital', e.target.value)}
                                                 placeholder="Hospital Name & Address"
-                                                className="w-full bg-transparent outline-none font-bold text-sm text-red-600"
+                                                className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none font-bold text-sm text-red-600 text-zinc-900"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -508,7 +508,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.notes || ''}
                                                 onChange={(e) => updateField('notes', e.target.value)}
-                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed text-zinc-900"
                                                 placeholder="General production notes..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -525,7 +525,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.basecamp || ''}
                                                 onChange={(e) => updateField('basecamp', e.target.value)}
-                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed text-zinc-900"
                                                 placeholder="Basecamp Address..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -565,7 +565,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                                 value={item.time}
                                                                 onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
                                                                 placeholder="00:00"
-                                                                className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 text-black dark:text-zinc-100"
+                                                                className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-black"
                                                                 disabled={isLocked}
                                                             />
                                                         )}
@@ -576,7 +576,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         <select
                                                             value={item.type || 'Other'}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-black dark:text-zinc-100 hover:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                            className={`w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none appearance-none cursor-pointer pt-0.5 text-black hover:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                             disabled={isLocked}
                                                         >
                                                             <option value="Arrive">Arrive</option>
@@ -605,7 +605,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                                 target.style.height = 'auto';
                                                                 target.style.height = target.scrollHeight + 'px';
                                                             }}
-                                                            className={`w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 overflow-hidden text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                            className={`w-full text-[10px] font-medium uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                             disabled={isLocked}
                                                         />
                                                         <div className={`text-[10px] font-medium uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
@@ -619,7 +619,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             value={item.location}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
                                                             placeholder="Location"
-                                                            className={`w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                            className={`w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                             disabled={isLocked}
                                                         />
                                                         <div className={`text-[10px] font-bold uppercase text-black dark:text-zinc-100 pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
@@ -686,7 +686,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             value={item.time}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
                                                             placeholder="00:00"
-                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5"
+                                                            className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-zinc-900"
                                                             disabled={isLocked}
                                                         />
                                                     )}
@@ -700,7 +700,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         <select
                                                             value={item.type || 'Other'}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100"
+                                                            className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black"
                                                             disabled={isLocked}
                                                         >
                                                             <option value="Arrive">Arrive</option>
@@ -731,7 +731,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                                 target.style.height = 'auto';
                                                                 target.style.height = target.scrollHeight + 'px';
                                                             }}
-                                                            className="w-full text-[10px] font-medium uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5 overflow-hidden"
+                                                            className="w-full text-[10px] font-medium uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-zinc-900"
                                                             disabled={isLocked}
                                                         />
                                                     )}
@@ -746,7 +746,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                             value={item.location}
                                                             onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
                                                             placeholder="Location"
-                                                            className="w-full text-[10px] font-bold uppercase bg-transparent outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 pt-0.5"
+                                                            className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-zinc-900"
                                                             disabled={isLocked}
                                                         />
                                                     )}

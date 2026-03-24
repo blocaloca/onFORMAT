@@ -175,9 +175,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={shot.scene}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { scene: e.target.value })}
-                                                    className={`w-full text-sm font-medium focus:outline-none border px-2 py-2 rounded-sm transition-colors ${darkMode
-                                                        ? 'bg-black border-zinc-700 text-zinc-300 focus:border-white placeholder:text-zinc-700'
-                                                        : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-black dark:text-zinc-100 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 placeholder:text-zinc-300 dark:placeholder:text-zinc-600'}`}
+                                                    className={`w-full text-sm font-medium focus:outline-none border px-2 py-2 rounded-sm transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300`}
                                                     placeholder="Sc #"
                                                     disabled={isLocked}
                                                 />
@@ -192,9 +190,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.size}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { size: e.target.value })}
-                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
-                                                        ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
-                                                        : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-black dark:text-zinc-100 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50'}`}
+                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_SIZES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -210,9 +206,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.angle}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { angle: e.target.value })}
-                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
-                                                        ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
-                                                        : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-black dark:text-zinc-100 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50'}`}
+                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_ANGLES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -228,9 +222,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.movement}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { movement: e.target.value })}
-                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors ${darkMode
-                                                        ? 'bg-black border-zinc-700 text-zinc-400 focus:border-white hover:bg-zinc-900'
-                                                        : 'bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 text-black dark:text-zinc-100 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50'}`}
+                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_MOVEMENTS.map(opt => <option key={opt} value={opt}>{opt}</option>)}

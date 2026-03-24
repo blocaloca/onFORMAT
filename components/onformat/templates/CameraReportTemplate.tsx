@@ -184,7 +184,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         value={data.date || ''}
                                         onChange={e => updateField('date', formatDate(e.target.value))}
                                         placeholder="MM/DD/YYYY"
-                                        className={`font-bold text-sm bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                        className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                         disabled={isLocked}
                                     />
                                     <div className={`font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
@@ -231,7 +231,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.roll || data.roll}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { roll: e.target.value })}
-                                                            className="bg-transparent font-black font-mono text-sm w-16 outline-none hover:bg-white dark:bg-zinc-950 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 uppercase"
+                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-black font-mono text-sm w-16 outline-none hover:bg-white focus:bg-white rounded px-1 uppercase text-zinc-900"
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -239,7 +239,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.camera || data.camera}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { camera: e.target.value })}
-                                                            className="bg-transparent font-bold text-sm w-8 outline-none hover:bg-white dark:bg-zinc-950 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 uppercase text-center"
+                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-sm w-8 outline-none hover:bg-white focus:bg-white rounded px-1 uppercase text-center text-zinc-900"
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -247,7 +247,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.mediaType || 'Card'}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { mediaType: e.target.value })}
-                                                            className="bg-transparent font-bold text-sm w-20 outline-none hover:bg-white dark:bg-zinc-950 focus:bg-white dark:focus:bg-zinc-900 rounded px-1"
+                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-sm w-20 outline-none hover:bg-white focus:bg-white rounded px-1 text-zinc-900"
                                                         />
                                                     </div>
                                                 </div>
@@ -257,7 +257,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.soundRoll || ''}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { soundRoll: e.target.value })}
-                                                            className="bg-transparent font-bold text-sm w-16 outline-none hover:bg-white dark:bg-zinc-950 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 uppercase text-right"
+                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-sm w-16 outline-none hover:bg-white focus:bg-white rounded px-1 uppercase text-right text-zinc-900"
                                                             placeholder="-"
                                                         />
                                                     </div>
@@ -266,47 +266,44 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         )}
 
                                         <div className="grid grid-cols-[40px_40px_40px_1fr_50px_30px_30px_30px_40px_80px_1fr_30px_30px] gap-2 py-1.5 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
-                                            <input type="text" value={item.scene} onChange={e => handleUpdateItem(globalIdx, { scene: e.target.value })} className={`text-center font-bold bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="-" disabled={isLocked} />
+                                            <input type="text" value={item.scene} onChange={e => handleUpdateItem(globalIdx, { scene: e.target.value })} className={`text-center font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.scene}</div>
 
-                                            <input type="text" value={item.shot} onChange={e => handleUpdateItem(globalIdx, { shot: e.target.value })} className={`text-center font-bold bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="-" disabled={isLocked} />
+                                            <input type="text" value={item.shot} onChange={e => handleUpdateItem(globalIdx, { shot: e.target.value })} className={`text-center font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.shot}</div>
 
-                                            <input type="text" value={item.take} onChange={e => handleUpdateItem(globalIdx, { take: e.target.value })} className={`text-center font-mono font-bold bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="-" disabled={isLocked} />
+                                            <input type="text" value={item.take} onChange={e => handleUpdateItem(globalIdx, { take: e.target.value })} className={`text-center font-mono font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-mono font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.take}</div>
 
-                                            <input type="text" value={item.description} onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })} className={`bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="Shot description..." disabled={isLocked} />
+                                            <input type="text" value={item.description} onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })} className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="Shot description..." disabled={isLocked} />
                                             <div className={`text-sm px-1 pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.description}</div>
 
-                                            <input type="text" value={item.lens} onChange={e => handleUpdateItem(globalIdx, { lens: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="mm" disabled={isLocked} />
+                                            <input type="text" value={item.lens} onChange={e => handleUpdateItem(globalIdx, { lens: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="mm" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.lens}</div>
 
-                                            <input type="text" value={item.fps} onChange={e => handleUpdateItem(globalIdx, { fps: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="fps" disabled={isLocked} />
+                                            <input type="text" value={item.fps} onChange={e => handleUpdateItem(globalIdx, { fps: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="fps" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.fps}</div>
 
-                                            <input type="text" value={item.shutter} onChange={e => handleUpdateItem(globalIdx, { shutter: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="180" disabled={isLocked} />
+                                            <input type="text" value={item.shutter} onChange={e => handleUpdateItem(globalIdx, { shutter: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="180" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.shutter}</div>
 
-                                            <input type="text" value={item.wb} onChange={e => handleUpdateItem(globalIdx, { wb: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="5600" disabled={isLocked} />
+                                            <input type="text" value={item.wb} onChange={e => handleUpdateItem(globalIdx, { wb: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="5600" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.wb}</div>
 
-                                            <input type="text" value={item.iso} onChange={e => handleUpdateItem(globalIdx, { iso: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="iso" disabled={isLocked} />
+                                            <input type="text" value={item.iso} onChange={e => handleUpdateItem(globalIdx, { iso: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="iso" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.iso}</div>
 
-                                            <input type="text" value={item.timecode} onChange={e => handleUpdateItem(globalIdx, { timecode: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="00:00:00:00" disabled={isLocked} />
+                                            <input type="text" value={item.timecode} onChange={e => handleUpdateItem(globalIdx, { timecode: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="00:00:00:00" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.timecode}</div>
 
-                                            <input type="text" value={item.notes} onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })} className={`bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 text-zinc-500 italic w-full ${isPrinting ? 'hidden' : ''} print:hidden`} placeholder="..." disabled={isLocked} />
+                                            <input type="text" value={item.notes} onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })} className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-500 italic w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="..." disabled={isLocked} />
                                             <div className={`text-xs px-1 pt-0.5 leading-normal text-zinc-500 italic break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.notes}</div>
 
                                             <div className="relative flex justify-center">
                                                 <select
                                                     value={item.status}
                                                     onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                    className={`appearance-none bg-transparent font-bold text-center w-full cursor-pointer outline-none ${item.status === 'circle' ? 'text-yellow-500' :
-                                                        item.status === 'good' ? 'text-green-600' :
-                                                            item.status === 'bad' ? 'text-red-500 text-opacity-50' : 'text-zinc-200'
-                                                        } ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                    className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-center w-full cursor-pointer outline-none ${item.status === 'circle' ? 'text-yellow-500' : item.status === 'good' ? 'text-green-600' : item.status === 'bad' ? 'text-red-500 text-opacity-50' : 'text-zinc-200' } ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                     disabled={isLocked}
                                                 >
                                                     {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}

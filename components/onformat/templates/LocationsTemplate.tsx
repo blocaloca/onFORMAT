@@ -108,7 +108,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                     onChange={(e) => updateLocation(index, field, e.target.value)}
                     placeholder={placeholder}
                     disabled={isLocked}
-                    className="w-full text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 transition-colors"
+                    className="w-full text-sm font-medium text-zinc-700 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-200 transition-colors text-zinc-900"
                 />
             )}
         </div>
@@ -154,7 +154,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 onChange={(e) => updateLocation(index, 'name', e.target.value)}
                                 placeholder="LOCATION NAME"
                                 disabled={isLocked}
-                                className="w-full text-2xl font-black uppercase tracking-normal text-black dark:text-zinc-100 bg-transparent border-none outline-none placeholder:text-zinc-200 dark:placeholder:text-zinc-700"
+                                className="w-full text-2xl font-black uppercase tracking-normal text-black bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-none outline-none placeholder:text-zinc-200"
                             />
                         )}
 
@@ -170,7 +170,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                         <select
                                             value={loc.usageType || 'Set'}
                                             onChange={(e) => updateLocation(index, 'usageType', e.target.value)}
-                                            className="w-full text-sm font-bold text-black dark:text-zinc-100 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 cursor-pointer"
+                                            className="w-full text-sm font-bold text-black bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 cursor-pointer"
                                             disabled={isLocked}
                                         >
                                             <option value="Set">Set / Location</option>
@@ -190,7 +190,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                             value={loc.activeDays || ''}
                                             onChange={(e) => updateLocation(index, 'activeDays', e.target.value)}
                                             placeholder="e.g. Day 1, 10/24"
-                                            className="w-full text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                            className="w-full text-sm font-medium text-zinc-700 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-300 text-zinc-900"
                                             disabled={isLocked}
                                         />
                                     )}
@@ -215,7 +215,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                     onChange={(e) => updateLocation(index, 'notes', e.target.value)}
                                     placeholder="Logistics, parking, power..."
                                     disabled={isLocked}
-                                    className="w-full h-full bg-zinc-50 dark:bg-zinc-900/50/50 p-3 text-sm leading-relaxed text-zinc-600 resize-none border border-transparent focus:border-zinc-200 dark:border-zinc-800 outline-none rounded-sm placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                    className="w-full h-full bg-zinc-50 p-3 text-sm leading-relaxed text-zinc-600 resize-none border border-transparent focus:border-zinc-200 outline-none rounded-sm placeholder:text-zinc-300 text-zinc-900"
                                 />
                             )}
                         </div>

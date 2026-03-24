@@ -361,7 +361,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     <div className="flex items-center gap-1">
                                                         <span className="text-[8px] font-bold text-zinc-300 uppercase">SC</span>
                                                         <input
-                                                            className={`w-8 text-[9px] font-mono text-right bg-white rounded-sm border-zinc-200 border outline-none border-b ${invalidScene && item.sceneLink ? 'border-red-400 text-red-500' : 'border-zinc-200 text-zinc-600 focus:border-zinc-400 focus:bg-white focus:text-black'}`}
+                                                            className={`w-8 text-[9px] font-mono text-right bg-white rounded-sm border-zinc-200 border outline-none border-b border-zinc-200 text-zinc-600 focus:border-zinc-400 focus:bg-white focus:text-black`}
                                                             placeholder="#"
                                                             value={item.sceneLink || ''}
                                                             onChange={(e) => handleUpdateItem(originalIndex, { sceneLink: e.target.value })}
