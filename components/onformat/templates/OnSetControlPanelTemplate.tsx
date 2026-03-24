@@ -188,7 +188,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             <input
                                 readOnly
                                 value={`onformat.io/join/${metadata?.projectId?.substring(0, 6)}...`}
-                                className="flex-1 bg-white dark:bg-black border border-zinc-300 dark:border-zinc-700 rounded px-2 py-2 text-[10px] font-mono text-zinc-900 dark:text-zinc-300 focus:outline-none transition-colors"
+                                className="flex-1 bg-white border border-zinc-300 rounded px-2 py-2 text-[10px] font-mono text-zinc-900 focus:outline-none transition-colors"
                             />
                             <button
                                 onClick={() => navigator.clipboard.writeText(`https://onformat.io/join/${metadata?.projectId}`)}

@@ -275,7 +275,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black dark:text-zinc-100 bg-transparent outline-none focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 text-left uppercase tracking-widest h-4 leading-4"
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-white rounded-sm border-zinc-200 border outline-none focus:border-zinc-400 focus:bg-white text-left uppercase tracking-widest h-4 leading-4"
                                                     placeholder="00"
                                                     value={item.imageNumber || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}
@@ -289,7 +289,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="flex-1 text-[10px] font-bold text-zinc-900 dark:text-zinc-100 bg-transparent outline-none focus:text-black dark:text-zinc-100 uppercase tracking-wider h-4 leading-4"
+                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-white rounded-sm border-zinc-200 border outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
                                                     placeholder="SCENE / SHOT TITLE"
                                                     value={item.title || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { title: e.target.value })}
@@ -344,7 +344,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     </div>
                                                 ) : (
                                                     <input
-                                                        className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-transparent border-none focus:text-black dark:text-zinc-100 outline-none placeholder-zinc-300 dark:placeholder-zinc-600 py-0.5"
+                                                        className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-white rounded-sm border-zinc-200 border border-none focus:text-black outline-none placeholder-zinc-300 py-0.5"
                                                         placeholder="SHOT TYPE / ANGLE"
                                                         value={item.caption}
                                                         onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
@@ -361,7 +361,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     <div className="flex items-center gap-1">
                                                         <span className="text-[8px] font-bold text-zinc-300 uppercase">SC</span>
                                                         <input
-                                                            className={`w-8 text-[9px] font-mono text-right bg-transparent outline-none border-b ${invalidScene && item.sceneLink ? 'border-red-400 text-red-500' : 'border-zinc-200 dark:border-zinc-800 text-zinc-600 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 focus:text-black dark:text-zinc-100'}`}
+                                                            className={`w-8 text-[9px] font-mono text-right bg-white rounded-sm border-zinc-200 border outline-none border-b ${invalidScene && item.sceneLink ? 'border-red-400 text-red-500' : 'border-zinc-200 text-zinc-600 focus:border-zinc-400 focus:bg-white focus:text-black'}`}
                                                             placeholder="#"
                                                             value={item.sceneLink || ''}
                                                             onChange={(e) => handleUpdateItem(originalIndex, { sceneLink: e.target.value })}

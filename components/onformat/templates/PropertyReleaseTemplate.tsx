@@ -217,7 +217,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             </p>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-transparent text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 dark:placeholder:text-zinc-600 font-serif text-justify"
+                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify"
                                 placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
                                 value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_PROPERTY_TEXT)}
                                 onChange={e => handleChange(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}

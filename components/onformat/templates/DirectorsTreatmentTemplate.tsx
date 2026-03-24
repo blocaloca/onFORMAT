@@ -147,7 +147,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     </div>
                 ) : (
                     <input
-                        className="w-full bg-transparent text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300 dark:placeholder-zinc-600"
+                        className="w-full bg-white rounded-sm border-zinc-200 border text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300 text-zinc-900"
                         value={slide.title}
                         onChange={(e) => updateSlide(slide.id, { title: e.target.value })}
                         placeholder="SLIDE TITLE"
@@ -160,7 +160,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     </div>
                 ) : (
                     <input
-                        className="w-full bg-transparent text-[10px] uppercase tracking-widest text-emerald-600 font-bold outline-none placeholder-emerald-300/50 mb-2"
+                        className="w-full bg-white rounded-sm border-zinc-200 border text-[10px] uppercase tracking-widest text-emerald-600 font-bold outline-none placeholder-emerald-300/50 mb-2 text-zinc-900"
                         value={slide.category}
                         onChange={(e) => updateSlide(slide.id, { category: e.target.value })}
                         placeholder="TYPE OF TREATMENT (E.G. CINEMATOGRAPHY, WARDROBE)"
@@ -183,7 +183,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                         </div>
                     ) : (
                         <textarea
-                            className="w-full h-full bg-transparent text-lg leading-relaxed outline-none resize-none placeholder-zinc-200 font-serif whitespace-pre-wrap"
+                            className="w-full h-full bg-white rounded-sm border-zinc-200 border text-lg leading-relaxed outline-none resize-none placeholder-zinc-200 font-serif whitespace-pre-wrap text-zinc-900"
                             value={slide.content}
                             onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
                             placeholder="Write your narrative here..."
@@ -222,7 +222,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                             </div>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-transparent text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 dark:placeholder-zinc-600 font-sans"
+                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans text-zinc-900"
                                 value={slide.content}
                                 onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
                                 placeholder="Add a caption or brief description..."
@@ -281,7 +281,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                             </div>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-transparent text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 dark:placeholder-zinc-600 font-sans whitespace-pre-wrap"
+                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans whitespace-pre-wrap text-zinc-900"
                                 value={slide.content}
                                 onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
                                 placeholder="Describe the visual approach, key beat, or character note..."

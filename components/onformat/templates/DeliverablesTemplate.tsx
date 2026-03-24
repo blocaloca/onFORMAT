@@ -136,7 +136,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             type="file"
                                                             accept="image/*"
-                                                            className="hidden"
+                                                            className="hidden text-zinc-900"
                                                             onChange={(e) => {
                                                                 const file = e.target.files?.[0];
                                                                 if (file) {

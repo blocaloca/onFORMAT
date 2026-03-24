@@ -311,7 +311,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 </div>
                                             ) : (
                                                 <textarea
-                                                    className="w-full text-[10px] text-center font-mono text-zinc-500 bg-transparent outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 dark:placeholder-zinc-600 resize-none overflow-hidden"
+                                                    className="w-full text-[10px] text-center font-mono text-zinc-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 resize-none overflow-hidden"
                                                     placeholder="CAPTION..."
                                                     rows={2}
                                                     value={item.caption}
