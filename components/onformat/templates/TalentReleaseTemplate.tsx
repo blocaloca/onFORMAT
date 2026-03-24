@@ -242,7 +242,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <input
                                 value={data.talentName || ''}
                                 onChange={e => updateField('talentName', e.target.value)}
-                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-xs font-bold focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
+                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-sm font-bold focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -252,7 +252,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <input
                                 value={data.role || ''}
                                 onChange={e => updateField('role', e.target.value)}
-                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-xs focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
+                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-sm focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
                                 placeholder="Role"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -262,7 +262,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <input
                                 value={data.address || ''}
                                 onChange={e => updateField('address', e.target.value)}
-                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-xs focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
+                                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 p-1 text-sm focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none transition-colors"
                                 placeholder="Address or Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />

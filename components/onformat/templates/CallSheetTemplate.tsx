@@ -508,7 +508,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.notes || ''}
                                                 onChange={(e) => updateField('notes', e.target.value)}
-                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
                                                 placeholder="General production notes..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -525,7 +525,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.basecamp || ''}
                                                 onChange={(e) => updateField('basecamp', e.target.value)}
-                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-xs rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
+                                                className="w-full bg-zinc-100 dark:bg-zinc-900 shadow-inner border border-zinc-200 dark:border-zinc-800 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed"
                                                 placeholder="Basecamp Address..."
                                                 rows={3}
                                                 disabled={isLocked}

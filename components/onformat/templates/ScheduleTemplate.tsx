@@ -156,7 +156,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         type="text"
                                         value={data.date || ''}
                                         onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
-                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                        className={`w-full bg-transparent font-mono font-bold text-sm border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                         placeholder="MM/DD/YYYY"
                                         disabled={isLocked}
                                     />

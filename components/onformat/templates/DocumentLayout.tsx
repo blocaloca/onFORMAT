@@ -49,7 +49,7 @@ export const DocumentLayout = ({
         return (
             <div className={`
                 mx-auto flex flex-col gap-6 
-                bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-xl mb-6 shadow-sm
+                bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800/80 rounded-xl mb-6 shadow-sm
                 p-10
                 transition-colors duration-200
                 ${className}

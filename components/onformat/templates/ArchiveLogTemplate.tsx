@@ -146,7 +146,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     type="text"
                                                     value={item.date}
                                                     onChange={e => handleUpdateItem(globalIdx, { date: e.target.value })}
-                                                    className={`font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 w-full text-center ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                    className={`font-mono font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 w-full text-center ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                     placeholder="YYYY-MM-DD"
                                                     disabled={isLocked}
                                                 />
@@ -159,13 +159,13 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <select
                                                 value={item.itemType || ''}
                                                 onChange={e => handleUpdateItem(globalIdx, { itemType: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">ITEM</option>
                                                 {ITEM_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {ITEM_OPTIONS.find(o => o.value === item.itemType)?.label || ''}
                                             </div>
                                         </div>
@@ -176,7 +176,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.itemName || ''}
                                                 onChange={e => handleUpdateItem(globalIdx, { itemName: e.target.value })}
-                                                className={`font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`font-bold text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 placeholder="Name/Description..."
                                                 disabled={isLocked}
                                             />
@@ -188,13 +188,13 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <select
                                                 value={item.activity}
                                                 onChange={e => handleUpdateItem(globalIdx, { activity: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">ACT</option>
                                                 {ACTIVITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {ACTIVITY_OPTIONS.find(o => o.value === item.activity)?.label || ''}
                                             </div>
                                         </div>
@@ -204,13 +204,13 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <select
                                                 value={item.destination}
                                                 onChange={e => handleUpdateItem(globalIdx, { destination: e.target.value })}
-                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`appearance-none bg-transparent font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">DEST</option>
                                                 {DESTINATION_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {DESTINATION_OPTIONS.find(o => o.value === item.destination)?.label || ''}
                                             </div>
                                         </div>
@@ -274,7 +274,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <textarea
                                                 value={item.notes}
                                                 onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className={`resize-none bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full text-[10px] text-zinc-500 overflow-hidden ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`resize-none bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full text-[10px] text-zinc-500 overflow-hidden ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 placeholder="Detailed notes..."
                                                 rows={Math.max(2, item.notes.split('\n').length)}
                                                 disabled={isLocked}
@@ -290,7 +290,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     type="text"
                                                     value={item.link}
                                                     onChange={e => handleUpdateItem(globalIdx, { link: e.target.value })}
-                                                    className={`text-[10px] bg-transparent outline-none focus:bg-white dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full text-blue-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                    className={`text-[10px] bg-transparent outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600 w-full text-blue-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                     placeholder="URL..."
                                                     disabled={isLocked}
                                                 />

@@ -255,7 +255,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 type="text"
                                                 value={take.notes}
                                                 onChange={e => handleUpdateTake(globalIdx, { notes: e.target.value })}
-                                                className={`text-[9px] italic text-zinc-400 bg-transparent outline-none w-full placeholder:text-zinc-200 dark:placeholder:text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                className={`text-[9px] italic text-zinc-400 bg-transparent outline-none w-full placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden`}
                                                 placeholder="Notes..."
                                                 disabled={isLocked}
                                             />

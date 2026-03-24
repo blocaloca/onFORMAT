@@ -356,7 +356,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.name}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { name: e.target.value })}
-                                                className={`w-full bg-transparent text-sm font-bold focus:bg-white dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-sm font-bold focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Name..."
                                                 disabled={isLocked}
                                             />
@@ -400,7 +400,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.email}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { email: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Email"
                                                 disabled={isLocked}
                                             />
@@ -412,7 +412,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.phone}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { phone: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-[10px] text-zinc-600 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 rounded px-1 py-1 outline-none ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="Phone"
                                                 disabled={isLocked}
                                             />

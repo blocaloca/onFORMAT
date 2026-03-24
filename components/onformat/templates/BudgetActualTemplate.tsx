@@ -159,7 +159,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.description}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`w-full bg-transparent text-sm font-bold uppercase focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-sm font-bold uppercase focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 disabled={isLocked}
                                             />
                                             <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black dark:text-zinc-100`}>{item.description}</div>
@@ -176,7 +176,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="number"
                                                 value={item.actual || ''}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { actual: parseFloat(e.target.value) || 0 })}
-                                                className={`w-full bg-transparent text-sm font-mono font-bold text-right focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-sm font-mono font-bold text-right focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="0.00"
                                                 disabled={isLocked}
                                             />
@@ -194,7 +194,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.notes}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className={`w-full bg-transparent text-[10px] text-zinc-500 font-mono focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
+                                                className={`w-full bg-transparent text-[10px] text-zinc-500 font-mono focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 ${isPrinting ? 'hidden' : 'print:hidden'}`}
                                                 placeholder="..."
                                                 disabled={isLocked}
                                             />
