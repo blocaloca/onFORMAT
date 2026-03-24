@@ -181,7 +181,15 @@ export default async function AdminPage() {
                 </thead>
                 <tbody className="divide-y divide-zinc-100">
                   {users.map((u: any) => {
-                    const tierLabel = u.manual_pro_override ? 'Founder Override' : (u.tier || 'Scout');
+                    const tierRaw = u.subscription?.tier || 'trial';
+                    const tierMap: Record<string, string> = {
+                      'scout': 'Solo',
+                      'free': 'Solo',
+                      'pro': 'Pro',
+                      'studio': 'Studio',
+                      'trial': 'Free Trial'
+                    };
+                    const tierLabel = u.manual_pro_override ? 'Founder Override' : (tierMap[tierRaw] || 'Solo');
 
                     return (
                       <tr key={u.id} className="group hover:bg-zinc-50 transition-colors">
@@ -214,7 +222,7 @@ export default async function AdminPage() {
                         <td className="px-6 py-4">
                           <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${u.manual_pro_override
                             ? 'bg-amber-100 text-amber-700'
-                            : u.tier === 'pro'
+                            : u.subscription?.tier === 'pro' || u.subscription?.tier === 'studio'
                               ? 'bg-black text-white'
                               : 'bg-zinc-100 text-zinc-500'
                             }`}>

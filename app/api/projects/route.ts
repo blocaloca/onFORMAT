@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
     // 2. Get user's subscription tier, status, and creation date for trial enforcement
     const { data: userProfile, error: tierError } = await supabase
       .from('profiles')
-      .select('subscription_tier, subscription_status, created_at')
+      .select('subscription_tier, subscription_status, created_at, manual_pro_override')
       .eq('id', finalUserId)
       .single();
 
@@ -174,6 +174,8 @@ export async function POST(request: NextRequest) {
     const tierKey = (userProfile?.subscription_tier || 'free') as keyof typeof STRIPE_PLANS;
     const plan = STRIPE_PLANS[tierKey] || STRIPE_PLANS.free;
     const status = userProfile?.subscription_status || 'trial';
+
+    const hasProPrivileges = isFounder || userProfile?.manual_pro_override;
 
     // Trial Enforcement Logic (14 days)
     let isTrialExpired = false;
@@ -186,7 +188,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!isFounder && isTrialExpired) {
+    if (!hasProPrivileges && isTrialExpired) {
       console.warn(`⛔️ User ${finalUserId} trial expired.`);
       return NextResponse.json(
         {
@@ -200,7 +202,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Enforce General Project Limit
     // Note: We check if count is >= max. (e.g. if max is 3, and they have 3, they cannot create another).
-    if (!isFounder && (projectCount || 0) >= plan.maxProjects) {
+    if (!hasProPrivileges && (projectCount || 0) >= plan.maxProjects) {
       console.warn(`⛔️ User ${finalUserId} reached project limit for tier ${tierKey}. Count: ${projectCount}, Max: ${plan.maxProjects}`);
       return NextResponse.json(
         {
@@ -212,7 +214,7 @@ export async function POST(request: NextRequest) {
         { status: 403 }
       );
     }
-    console.log(`✅ Limit Check Passed: ${isFounder ? 'Founder Override' : `${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects}`} (Tier: ${tierKey}, Trial: ${isTrialExpired ? 'Expired' : 'Active'})`);
+    console.log(`✅ Limit Check Passed: ${hasProPrivileges ? 'Founder/Override' : `${projectCount}/${plan.maxProjects === Infinity ? '∞' : plan.maxProjects}`} (Tier: ${tierKey}, Trial: ${isTrialExpired ? 'Expired' : 'Active'})`);
     // ----------------------------
 
     // Construct proper initial state to prevent WorkspaceEditor crash
