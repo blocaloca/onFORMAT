@@ -24,27 +24,33 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         if (pathname?.startsWith('/onset')) {
             setThemeState('dark');
             document.documentElement.classList.add('dark');
-            // We don't save to localStorage to avoid flipping the desktop app preference
         } else {
-            // FORCE LIGHT MODE (Machined Glass Pivot) for main app
-            setThemeState('light');
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
+            // Read from local storage or default to light
+            const savedTheme = (localStorage.getItem('theme') as Theme) || 'light';
+            setThemeState(savedTheme);
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         }
     }, [pathname]);
 
     const setTheme = (newTheme: Theme) => {
-        // Enforce Light Mode override unless on mobile path
+        // Enforce always-dark on mobile
         if (pathname?.startsWith('/onset')) {
             setThemeState('dark');
             document.documentElement.classList.add('dark');
             return;
         }
 
-        const forcedTheme = 'light';
-        setThemeState(forcedTheme);
-        localStorage.setItem('theme', forcedTheme);
-        document.documentElement.classList.remove('dark');
+        setThemeState(newTheme);
+        localStorage.setItem('theme', newTheme);
+        if (newTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
     };
 
     const toggleTheme = () => {

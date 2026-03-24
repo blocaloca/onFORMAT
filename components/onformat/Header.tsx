@@ -35,10 +35,10 @@ export const Header = ({ projectName, activeToolLabel }: HeaderProps) => {
       <div className="flex items-center gap-4">
         <button
           onClick={() => setTheme(darkMode ? 'light' : 'dark')}
-          className="p-1.5 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 dark:text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           title="Toggle Theme"
         >
-          {darkMode ? <Sun size={14} /> : <Moon size={14} />}
+          {darkMode ? <Sun size={16} /> : <Moon size={16} />}
         </button>
       </div>
 
