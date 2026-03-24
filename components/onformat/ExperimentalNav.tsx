@@ -84,7 +84,7 @@ const NavHeader = () => (
 );
 
 const NavSectionTitle = ({ children }: { children: React.ReactNode }) => (
-    <div className={`px-4 font-sans text-[10px] font-bold uppercase tracking-widest mb-2 mt-6 text-zinc-500`}>
+    <div className={`px-4 font-sans text-[10px] font-bold uppercase tracking-widest mb-2 mt-6 text-zinc-500 dark:text-zinc-400`}>
         {children}
     </div>
 );
@@ -116,8 +116,8 @@ const NavItem = ({
 }: NavItemProps) => {
     const content = (
         <div className="flex items-center gap-3 truncate">
-            {Icon && <Icon size={16} className={active ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-300'} />}
-            <span className={active ? 'font-bold truncate text-zinc-900 dark:text-white font-mono text-[11px] tracking-wide uppercase' : 'truncate font-mono text-[11px] font-bold tracking-wide uppercase text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-300 transition-colors'}>
+            {Icon && <Icon size={16} className={active ? 'text-zinc-900 dark:text-zinc-100 dark:text-white' : 'text-zinc-400 dark:text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 dark:group-hover:text-zinc-300'} />}
+            <span className={active ? 'font-bold truncate text-zinc-900 dark:text-zinc-100 dark:text-white font-mono text-[11px] tracking-wide uppercase' : 'truncate font-mono text-[11px] font-bold tracking-wide uppercase text-zinc-500 dark:text-zinc-400 dark:text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 dark:group-hover:text-zinc-300 transition-colors'}>
                 {children}
             </span>
         </div>
@@ -126,8 +126,8 @@ const NavItem = ({
     const className = `
         w-full flex items-center justify-between px-3 py-2.5 transition-all group relative block rounded-md
         ${active
-            ? 'bg-zinc-300/50 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
-            : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-300/30 dark:hover:bg-zinc-800/50'
+            ? 'bg-zinc-300/50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 dark:text-white shadow-sm'
+            : 'text-zinc-500 dark:text-zinc-400 dark:text-zinc-400 hover:bg-zinc-300/30 dark:hover:bg-zinc-800/50'
         }
     `;
 
@@ -146,14 +146,14 @@ const NavItem = ({
             )}
 
             {count !== undefined && (
-                <div className={`ml-auto shrink-0 flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[9px] font-bold font-mono transition-colors border ${active ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-600' : 'bg-zinc-200/50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 group-hover:border-zinc-300 dark:group-hover:border-zinc-600'}`}>
+                <div className={`ml-auto shrink-0 flex items-center justify-center min-w-[1.25rem] h-5 px-1.5 rounded-full text-[9px] font-bold font-mono transition-colors border ${active ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 border-zinc-300 dark:border-zinc-600' : 'bg-zinc-200/50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 dark:text-zinc-400 border-zinc-200 dark:border-zinc-700 group-hover:border-zinc-300 dark:border-zinc-800 dark:group-hover:border-zinc-600'}`}>
                     {count}
                 </div>
             )}
 
             {onAction && (
                 <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAction(e); }} className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all absolute right-2 hover:bg-zinc-200`}>
-                    <MoreVertical size={12} className={'text-zinc-500'} />
+                    <MoreVertical size={12} className={'text-zinc-500 dark:text-zinc-400'} />
                 </div>
             )}
         </>
@@ -210,7 +210,7 @@ export const ExperimentalDashboardNav = ({
     const allProjectsCount = projects.length;
 
     return (
-        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 border-zinc-300 backdrop-blur-md`}>
+        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 dark:bg-zinc-900/60 border-zinc-300 dark:border-zinc-800 backdrop-blur-md`}>
             <NavHeader />
 
             {/* AI Slot (Preserving Dashboard Chat functionality) */}
@@ -230,7 +230,7 @@ export const ExperimentalDashboardNav = ({
                             group relative w-full flex items-center justify-center gap-2 px-3 py-2.5 
                             text-xs font-bold uppercase tracking-widest rounded-sm transition-all duration-300
                             ${isLocked
-                                ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed border-zinc-400'
+                                ? 'bg-zinc-300 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400 cursor-not-allowed border-zinc-400 dark:border-zinc-600'
                                 : 'bg-[#3B82F6] border border-blue-400 shadow-md text-white hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.6)] active:scale-[0.98]'
                             }
                         `}
@@ -267,7 +267,7 @@ export const ExperimentalDashboardNav = ({
                     })}
                     <button
                         onClick={onComposeFolder}
-                        className={`w-full flex items-center justify-center gap-2 mt-4 px-4 py-2 border border-zinc-300 dark:border-zinc-800 rounded bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900/50 dark:hover:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest transition-colors text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300`}
+                        className={`w-full flex items-center justify-center gap-2 mt-4 px-4 py-2 border border-zinc-300 dark:border-zinc-800 rounded bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900/50 dark:hover:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest transition-colors text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 dark:hover:text-zinc-300`}
                     >
                         <Plus size={12} /> New Folder
                     </button>
@@ -331,11 +331,11 @@ export const ExperimentalWorkspaceNav = ({
     };
 
     return (
-        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 border-zinc-300 backdrop-blur-md`}>
+        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 dark:bg-zinc-900/60 border-zinc-300 dark:border-zinc-800 backdrop-blur-md`}>
             <NavHeader />
 
             <div className="px-8 mb-6">
-                <Link href="/dashboard" className={`flex items-center gap-2 text-[10px] uppercase tracking-wider transition-colors text-zinc-500 hover:text-zinc-900 border border-transparent hover:border-zinc-200 rounded px-2 py-1 -ml-2 w-fit font-bold`}>
+                <Link href="/dashboard" className={`flex items-center gap-2 text-[10px] uppercase tracking-wider transition-colors text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 border border-transparent hover:border-zinc-200 rounded px-2 py-1 -ml-2 w-fit font-bold`}>
                     <ChevronLeft size={12} /> Back to Projects
                 </Link>
             </div>
@@ -351,7 +351,7 @@ export const ExperimentalWorkspaceNav = ({
                                 ? 'bg-destructive/10 border-destructive text-destructive'
                                 : mobileStatus?.isLive
                                     ? 'bg-blue-500/10 border-blue-500/50 text-blue-500'
-                                    : 'bg-white/40 backdrop-blur-sm border-white/50 shadow-sm text-zinc-600 hover:bg-white/60 hover:text-zinc-900 hover:shadow-[0_0_15px_rgba(255,255,255,0.6)]'
+                                    : 'bg-white/40 dark:bg-zinc-800/40 backdrop-blur-sm border-white/50 dark:border-zinc-700/50 shadow-sm text-zinc-600 dark:text-zinc-300 hover:bg-white/60 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 hover:shadow-[0_0_15px_rgba(255,255,255,0.6)]'
                             }
                         `}
                     >
@@ -363,7 +363,7 @@ export const ExperimentalWorkspaceNav = ({
 
                         <div className={`p-1.5 rounded-lg ${mobileStatus?.hasAlert ? 'bg-destructive/20 text-destructive' :
                             mobileStatus?.isLive ? 'bg-[#3B82F6]/20 text-[#3B82F6]' :
-                                'bg-zinc-100/50 text-zinc-500 group-hover:text-zinc-900'
+                                'bg-zinc-100/50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100'
                             }`}>
                             <Smartphone size={18} />
                             {mobileStatus?.hasAlert && (
@@ -372,7 +372,7 @@ export const ExperimentalWorkspaceNav = ({
                         </div>
 
                         <div className="text-left w-full overflow-hidden">
-                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-[#3B82F6]' : 'text-zinc-700 group-hover:text-black'}`}>
+                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-[#3B82F6]' : 'text-zinc-700 dark:text-zinc-300 group-hover:text-black'}`}>
                                 onSET Mobile
                             </div>
                             {mobileStatus?.hasAlert ? (
@@ -398,15 +398,15 @@ export const ExperimentalWorkspaceNav = ({
                         const isActiveContext = activePhase === phase.key;
 
                         return (
-                            <div key={phase.key} className={`rounded-sm overflow-hidden transition-all mb-2 bg-white/40 backdrop-blur-sm border border-white/50 shadow-sm`}>
+                            <div key={phase.key} className={`rounded-sm overflow-hidden transition-all mb-2 bg-white/40 dark:bg-zinc-800/40 backdrop-blur-sm border border-white/50 dark:border-zinc-700/50 shadow-sm`}>
                                 {/* Accordion Header */}
                                 <button
                                     onClick={() => togglePhase(phase.key)}
                                     className={`
                                         w-full flex items-center justify-between px-4 py-3 font-sans text-[10px] font-bold uppercase tracking-widest transition-colors
                                         ${isActiveContext
-                                            ? 'text-zinc-900'
-                                            : 'text-zinc-500 hover:bg-white/40 hover:text-zinc-700'
+                                            ? 'text-zinc-900 dark:text-zinc-100'
+                                            : 'text-zinc-500 dark:text-zinc-400 hover:bg-white/40 dark:bg-zinc-800/40 hover:text-zinc-700 dark:text-zinc-300'
                                         }
                                     `}
                                 >
@@ -414,7 +414,7 @@ export const ExperimentalWorkspaceNav = ({
                                     <ChevronDown
                                         size={14}
                                         className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''} ${isExpanded
-                                            ? 'text-zinc-900'
+                                            ? 'text-zinc-900 dark:text-zinc-100'
                                             : 'text-zinc-400'
                                             }`}
                                     />
@@ -427,7 +427,7 @@ export const ExperimentalWorkspaceNav = ({
                                         ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
                                     `}
                                 >
-                                    <div className={`py-2 bg-zinc-50/50 border-t border-white/20`}>
+                                    <div className={`py-2 bg-zinc-50/50 dark:bg-zinc-900/50 border-t border-white/20 dark:border-zinc-700/20`}>
                                         {tools.map(tool => (
                                             <button
                                                 key={tool.key}
@@ -435,15 +435,15 @@ export const ExperimentalWorkspaceNav = ({
                                                 className={`
                                                     w-full text-left px-4 pl-8 py-2 text-xs transition-colors relative block
                                                     ${activeTool === tool.key
-                                                        ? 'text-zinc-900 font-bold bg-white/50'
-                                                        : 'text-zinc-500 hover:text-zinc-800 hover:bg-white/30 font-medium'
+                                                        ? 'text-zinc-900 dark:text-zinc-100 font-bold bg-white/50 dark:bg-zinc-800/50'
+                                                        : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-white/30 dark:bg-zinc-800/30 font-medium'
                                                     }
                                                 `}
                                             >
                                                 {activeTool === tool.key ? (
                                                     <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.5)]`} />
                                                 ) : (
-                                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-zinc-300 opacity-50`} />
+                                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700 opacity-50`} />
                                                 )}
                                                 {alerts?.[tool.key] && (
                                                     <div className="absolute right-2 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_4px_rgba(239,68,68,0.5)]" />

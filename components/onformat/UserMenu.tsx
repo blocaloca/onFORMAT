@@ -56,44 +56,44 @@ export const UserMenu = ({ email }: { email?: string }) => {
 
     return (
         <>
-            <div className="relative mt-auto p-4 border-t border-zinc-300 bg-zinc-100">
+            <div className="relative mt-auto p-4 border-t border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950">
                 {/* Popover */}
                 {isOpen && (
-                    <div className="absolute bottom-full left-4 right-4 mb-2 bg-zinc-900 border border-zinc-700 shadow-2xl rounded-sm overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2">
-                        <div className="p-3 border-b border-zinc-800 bg-zinc-950">
-                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">Signed in as</p>
+                    <div className="absolute bottom-full left-4 right-4 mb-2 bg-zinc-900 dark:bg-zinc-800 border border-zinc-700 shadow-2xl rounded-sm overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2">
+                        <div className="p-3 border-b border-zinc-800 dark:border-zinc-700 bg-zinc-950 dark:bg-zinc-900">
+                            <p className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">Signed in as</p>
                             <p className="text-xs text-white truncate font-mono">{email || 'user@onset.com'}</p>
                         </div>
                         <div className="py-1">
                             <button
                                 onClick={() => router.push('/account')}
-                                className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-white flex items-center gap-2 transition-colors"
+                                className="w-full text-left px-4 py-2 text-xs text-zinc-300 hover:bg-zinc-800 dark:hover:bg-zinc-700 hover:text-white flex items-center gap-2 transition-colors"
                             >
                                 <User size={14} /> Account & Billing
                             </button>
                         </div>
                         {isFounder(email) && (
-                            <div className="border-t border-zinc-800 py-1">
+                            <div className="border-t border-zinc-800 dark:border-zinc-700 py-1">
                                 <button
                                     onClick={() => router.push('/admin')}
-                                    className="w-full text-left px-4 py-2 text-xs text-purple-400 hover:bg-zinc-800 hover:text-purple-300 flex items-center gap-2 transition-colors"
+                                    className="w-full text-left px-4 py-2 text-xs text-purple-400 hover:bg-zinc-800 dark:hover:bg-zinc-700 hover:text-purple-300 flex items-center gap-2 transition-colors"
                                 >
                                     Admin Console
                                 </button>
                             </div>
                         )}
-                        <div className="border-t border-zinc-800 py-1">
+                        <div className="border-t border-zinc-800 dark:border-zinc-700 py-1">
                             <button
                                 onClick={() => {
                                     setIsOpen(false);
                                     setIsFeedbackOpen(true);
                                 }}
-                                className="w-full text-left px-4 py-2 text-xs text-emerald-400 hover:bg-zinc-800 hover:text-emerald-300 flex items-center gap-2 transition-colors"
+                                className="w-full text-left px-4 py-2 text-xs text-emerald-400 hover:bg-zinc-800 dark:hover:bg-zinc-700 hover:text-emerald-300 flex items-center gap-2 transition-colors"
                             >
                                 <MessageSquare size={14} /> Send Feedback
                             </button>
                         </div>
-                        <div className="border-t border-zinc-800 py-1">
+                        <div className="border-t border-zinc-800 dark:border-zinc-700 py-1">
                             <button
                                 onClick={handleLogout}
                                 className="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-900/20 hover:text-red-300 flex items-center gap-2 transition-colors"
@@ -107,9 +107,9 @@ export const UserMenu = ({ email }: { email?: string }) => {
                 {/* Trigger Button */}
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className={`w-full flex items-center gap-3 p-2 rounded-sm transition-all border ${isOpen ? 'bg-zinc-200 border-zinc-300' : 'hover:bg-zinc-200/50 border-transparent hover:border-zinc-300'}`}
+                    className={`w-full flex items-center gap-3 p-2 rounded-sm transition-all border ${isOpen ? 'bg-zinc-200 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700' : 'hover:bg-zinc-200/50 dark:hover:bg-zinc-800/50 border-transparent hover:border-zinc-300 dark:hover:border-zinc-700'}`}
                 >
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-200 border border-zinc-300 flex items-center justify-center text-zinc-600 font-bold text-xs shadow-inner">
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-400 font-bold text-xs shadow-inner">
                         {avatarUrl ? (
                             <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
@@ -118,18 +118,18 @@ export const UserMenu = ({ email }: { email?: string }) => {
                     </div>
                     <div className="flex-1 text-left min-w-0">
                         <div className="flex items-center gap-1">
-                            <p className="text-xs font-bold text-zinc-700 truncate tracking-wide">Account</p>
-                            {isFounder(email) && <span className="bg-zinc-800 text-white px-1 py-0.5 text-[8px] rounded uppercase font-mono tracking-widest leading-none translate-y-px">Founder</span>}
+                            <p className="text-xs font-bold text-zinc-700 dark:text-zinc-300 truncate tracking-wide">Account</p>
+                            {isFounder(email) && <span className="bg-zinc-800 dark:bg-zinc-700 text-white px-1 py-0.5 text-[8px] rounded uppercase font-mono tracking-widest leading-none translate-y-px">Founder</span>}
                         </div>
-                        <p className="text-[10px] text-zinc-500 truncate mb-1">{email || 'user@example.com'}</p>
+                        <p className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate mb-1">{email || 'user@example.com'}</p>
 
                         {!isFounder(email) && (
-                            <p className={`font-mono text-[10px] tracking-widest uppercase truncate ${daysLeft <= 3 || isLocked ? 'text-amber-500 font-bold' : 'text-zinc-500'}`}>
+                            <p className={`font-mono text-[10px] tracking-widest uppercase truncate ${daysLeft <= 3 || isLocked ? 'text-amber-500 dark:text-amber-400 font-bold' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                 {isLocked ? 'TRIAL EXPIRED' : `TRIAL: ${daysLeft} DAYS LEFT`}
                             </p>
                         )}
                     </div>
-                    <ChevronUp size={14} className={`text-zinc-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronUp size={14} className={`text-zinc-400 dark:text-zinc-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                 </button>
             </div>
 

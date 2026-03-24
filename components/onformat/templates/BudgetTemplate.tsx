@@ -215,7 +215,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-transparent text-sm font-normal focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-800 dark:text-zinc-200"
+                                                    className=""w-full bg-transparent text-sm font-normal focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-800 dark:text-zinc-200"
                                                     placeholder="Details..."
                                                     disabled={isLocked}
                                                 />
@@ -247,7 +247,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     type="number"
                                                     value={item.rate || ''}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { rate: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-transparent text-sm font-mono text-right focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
+                                                    className=""w-full bg-transparent text-sm font-mono text-right focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
                                                     placeholder="0.00"
                                                     disabled={isLocked}
                                                 />
@@ -263,7 +263,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     type="number"
                                                     value={item.quantity || ''}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { quantity: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-transparent text-sm font-mono text-center focus:outline-none focus:bg-white dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
+                                                    className=""w-full bg-transparent text-sm font-mono text-center focus:outline-none focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black dark:text-zinc-100"
                                                     placeholder="1"
                                                     disabled={isLocked}
                                                 />

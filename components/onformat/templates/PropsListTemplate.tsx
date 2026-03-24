@@ -134,13 +134,13 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Description */}
                                         {isPrinting ? (
-                                            <div className="text-[10px] w-full text-zinc-700 py-1">{item.description || '—'}</div>
+                                            <div className=""text-[10px] w-full text-zinc-700 dark:text-zinc-300 py-1">{item.description || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-zinc-700"
+                                                className=""text-[10px] bg-transparent outline-none w-full placeholder:text-zinc-300 dark:placeholder:text-zinc-600 text-zinc-700 dark:text-zinc-300"
                                                 placeholder="Red vintage telephone..."
                                                 disabled={isLocked}
                                             />
@@ -148,7 +148,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Qty */}
                                         {isPrinting ? (
-                                            <div className="font-mono text-[10px] w-full text-center text-zinc-700 py-1">{item.quantity || '—'}</div>
+                                            <div className=""font-mono text-[10px] w-full text-center text-zinc-700 dark:text-zinc-300 py-1">{item.quantity || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -162,7 +162,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Source */}
                                         {isPrinting ? (
-                                            <div className="text-[10px] w-full text-zinc-700 italic py-1">{item.source || '—'}</div>
+                                            <div className=""text-[10px] w-full text-zinc-700 dark:text-zinc-300 italic py-1">{item.source || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -176,7 +176,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Cost */}
                                         {isPrinting ? (
-                                            <div className="font-mono text-[10px] w-full text-right text-zinc-700 py-1">{item.cost || '—'}</div>
+                                            <div className=""font-mono text-[10px] w-full text-right text-zinc-700 dark:text-zinc-300 py-1">{item.cost || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"

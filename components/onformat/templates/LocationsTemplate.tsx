@@ -98,7 +98,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
             </div>
             {isPrinting ? (
-                <div className="w-full text-sm font-medium text-zinc-700 border-b border-zinc-100 py-1 min-h-[1.75rem] flex items-center">
+                <div className=""w-full text-sm font-medium text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 py-1 min-h-[1.75rem] flex items-center">
                     {value || '-'}
                 </div>
             ) : (
@@ -108,7 +108,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                     onChange={(e) => updateLocation(index, field, e.target.value)}
                     placeholder={placeholder}
                     disabled={isLocked}
-                    className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 transition-colors"
+                    className=""w-full text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 transition-colors"
                 />
             )}
         </div>
@@ -170,7 +170,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                         <select
                                             value={loc.usageType || 'Set'}
                                             onChange={(e) => updateLocation(index, 'usageType', e.target.value)}
-                                            className="w-full text-sm font-bold text-black dark:text-zinc-100 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 cursor-pointer"
+                                            className=""w-full text-sm font-bold text-black dark:text-zinc-100 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 cursor-pointer"
                                             disabled={isLocked}
                                         >
                                             <option value="Set">Set / Location</option>
@@ -183,14 +183,14 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5"><FileText size={10} /> Active Dates</span>
                                     {isPrinting ? (
-                                        <div className="text-sm font-medium text-zinc-700 border-b border-zinc-100 py-1">{loc.activeDays || 'All Days'}</div>
+                                        <div className=""text-sm font-medium text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 py-1">{loc.activeDays || 'All Days'}</div>
                                     ) : (
                                         <input
                                             type="text"
                                             value={loc.activeDays || ''}
                                             onChange={(e) => updateLocation(index, 'activeDays', e.target.value)}
                                             placeholder="e.g. Day 1, 10/24"
-                                            className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
+                                            className=""w-full text-sm font-medium text-zinc-700 dark:text-zinc-300 bg-transparent border-b border-zinc-200 dark:border-zinc-800 focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 outline-none py-1 placeholder:text-zinc-300 dark:placeholder:text-zinc-600"
                                             disabled={isLocked}
                                         />
                                     )}

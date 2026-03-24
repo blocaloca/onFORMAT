@@ -1709,11 +1709,11 @@ Context:\n"${fullContext}"`;
 
 
     return (
-        <div className="h-screen bg-white flex flex-col font-sans text-foreground transition-colors duration-300">
+        <div className="h-screen bg-white dark:bg-zinc-950 flex flex-col font-sans text-foreground transition-colors duration-300">
 
-            <main className="flex-1 flex overflow-hidden relative bg-zinc-50 transition-colors duration-300">
+            <main className="flex-1 flex overflow-hidden relative bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
                 {trialLocked && (
-                    <div className="absolute inset-0 z-50 bg-zinc-100/70 backdrop-blur-sm flex items-center justify-center">
+                    <div className="absolute inset-0 z-50 bg-zinc-100/70 dark:bg-zinc-900/70 backdrop-blur-sm flex items-center justify-center">
                         <div className="bg-zinc-50 border border-zinc-200 shadow-xl rounded-xl p-8 max-w-md text-center">
                             <h2 className="font-sans font-bold text-2xl mb-2 text-zinc-800 tracking-tight">TRIAL CONCLUDED</h2>
                             <p className="text-zinc-600 text-sm mb-6">Upgrade your workspace to unlock the production console.</p>
