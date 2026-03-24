@@ -51,7 +51,6 @@ export const generatePdfFromDom = async (
             scale: 2, // 2x scale for Retina-like quality
             useCORS: true, // Allow loading remote images
             logging: false,
-            letterRendering: true, // Fixes font kerning/smashing issues
             allowTaint: true
         });
 

@@ -123,7 +123,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.actor}
                                                         onChange={e => handleUpdateItem(globalIdx, { actor: e.target.value })}
-                                                        className=""text-[9px] bg-transparent outline-none w-full text-zinc-500 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300"
+                                                        className="text-[9px] bg-transparent outline-none w-full text-zinc-500 placeholder:text-zinc-200 dark:placeholder:text-zinc-700 dark:text-zinc-300"
                                                         placeholder="Actor Name"
                                                         disabled={isLocked}
                                                     />

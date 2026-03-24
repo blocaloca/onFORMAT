@@ -193,7 +193,7 @@ export default function FeaturesPage() {
             ].map(item => (
               <div key={item.title} className="bg-zinc-800/50 border border-zinc-700 p-10 rounded-[30px] hover:bg-zinc-800 transition-colors">
                 <div className="w-12 h-12 bg-zinc-700/50 rounded-2xl flex items-center justify-center mb-8 text-white">
-                  {React.cloneElement(item.icon as React.ReactElement, { size: 20 })}
+                  {React.cloneElement(item.icon as React.ReactElement<any>, { size: 20 })}
                 </div>
                 <h3 className="text-lg font-black tracking-widest uppercase mb-4">{item.title}</h3>
                 <p className="text-zinc-400 font-medium leading-relaxed">{item.desc}</p>

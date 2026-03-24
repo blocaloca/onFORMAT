@@ -275,7 +275,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className=""w-6 flex-shrink-0 text-[10px] font-bold text-black dark:text-zinc-100 bg-transparent outline-none focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 text-left uppercase tracking-widest h-4 leading-4"
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black dark:text-zinc-100 bg-transparent outline-none focus:border-zinc-400 focus:bg-white dark:bg-zinc-950 dark:focus:bg-zinc-900 text-left uppercase tracking-widest h-4 leading-4"
                                                     placeholder="00"
                                                     value={item.imageNumber || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}

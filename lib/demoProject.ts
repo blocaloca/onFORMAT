@@ -20,8 +20,10 @@ export const DEMO_PROJECT_DATA: Partial<WorkspaceState> = {
             }
         },
         PRE_PRODUCTION: { locked: false, drafts: {} },
+        PRODUCTION: { locked: false, drafts: {} },
         ON_SET: { locked: false, drafts: {} },
-        POST: { locked: false, drafts: {} }
+        POST: { locked: false, drafts: {} },
+        STRATEGY: { locked: false, drafts: {} }
     },
     chat: {
         'brief': [
