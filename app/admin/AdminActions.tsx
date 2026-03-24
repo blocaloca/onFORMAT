@@ -15,8 +15,12 @@ export function UserActions({ user }: { user: any }) {
     const handleTogglePro = async () => {
         setIsPendingPro(true);
         try {
-            await toggleProOverride(user.id, user.manual_pro_override || false);
-            router.refresh();
+            const res = await toggleProOverride(user.id, user.manual_pro_override || false);
+            if (!res.success) {
+                alert(`Error: ${res.error}`);
+            } else {
+                router.refresh();
+            }
         } finally {
             setIsPendingPro(false);
         }
@@ -25,8 +29,12 @@ export function UserActions({ user }: { user: any }) {
     const handleToggleBeta = async () => {
         setIsPendingBeta(true);
         try {
-            await toggleBetaUser(user.id, user.is_beta_user || false);
-            router.refresh();
+            const res = await toggleBetaUser(user.id, user.is_beta_user || false);
+            if (!res.success) {
+                alert(`Error: ${res.error}`);
+            } else {
+                router.refresh();
+            }
         } finally {
             setIsPendingBeta(false);
         }

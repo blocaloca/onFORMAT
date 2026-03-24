@@ -270,7 +270,7 @@ export default function AccountPage() {
     // Corrected Display Logic
     const isPro = (profile?.subscription_status === 'active' && profile?.subscription_tier === 'pro') || profile?.manual_pro_override;
     const isStudio = profile?.subscription_status === 'active' && profile?.subscription_tier === 'studio';
-    const isScout = !isPro && !isStudio && (!profile?.subscription_status || profile?.subscription_tier === 'scout');
+    const isScout = !isPro && !isStudio;
 
     return (
         <div className="min-h-screen relative bg-zinc-50 text-zinc-950 font-sans p-6 md:p-12">
@@ -278,7 +278,6 @@ export default function AccountPage() {
                 <ArrowLeft size={16} /> BACK TO DASHBOARD
             </Link>
 
-            {/* HEADER WITH BETA BADGE */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-zinc-200 pb-8">
                 <div>
                     <h1 className="text-4xl font-black text-zinc-900 tracking-tight flex items-center">
@@ -286,6 +285,11 @@ export default function AccountPage() {
                         {profile?.is_beta_user && (
                             <span className="ml-4 px-3 py-1 bg-zinc-900 text-zinc-50 text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm">
                                 Beta User
+                            </span>
+                        )}
+                        {profile?.manual_pro_override && (
+                            <span className="ml-4 px-3 py-1 bg-amber-400 text-black text-[10px] font-black uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1.5">
+                                <Crown size={10} fill="currentColor" /> Founder Override
                             </span>
                         )}
                     </h1>

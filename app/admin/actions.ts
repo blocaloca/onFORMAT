@@ -75,7 +75,7 @@ export async function toggleProOverride(userIdOrFormData: string | FormData, cur
         state = currentState!;
     }
 
-    console.log(`SERVER ACTION: Toggling Pro Override for ${userId} (From: ${state})`);
+    console.log(`SERVER ACTION: Toggling Pro Override for ${userId} (Target State: ${!state})`);
 
     try {
         const { error } = await adminSupabase
@@ -83,13 +83,17 @@ export async function toggleProOverride(userIdOrFormData: string | FormData, cur
             .update({ manual_pro_override: !state })
             .eq('id', userId);
 
-        if (error) throw error;
+        if (error) {
+            console.error("Pro Toggle Error:", error.message);
+            throw error;
+        }
+
+        revalidatePath('/admin');
+        return { success: true };
     } catch (error: any) {
         console.error("Pro Toggle Error:", error.message);
-        throw new Error(error.message);
+        return { success: false, error: error.message };
     }
-
-    revalidatePath('/admin');
 }
 
 // Action: Toggle Beta User
@@ -105,7 +109,7 @@ export async function toggleBetaUser(userIdOrFormData: string | FormData, curren
         state = currentState!;
     }
 
-    console.log(`SERVER ACTION: Toggling Beta for ${userId} (From: ${state})`);
+    console.log(`SERVER ACTION: Toggling Beta for ${userId} (Target State: ${!state})`);
 
     try {
         const { error } = await adminSupabase
@@ -113,13 +117,17 @@ export async function toggleBetaUser(userIdOrFormData: string | FormData, curren
             .update({ is_beta_user: !state })
             .eq('id', userId);
 
-        if (error) throw error;
+        if (error) {
+            console.error("Beta Toggle Error:", error.message);
+            throw error;
+        }
+
+        revalidatePath('/admin');
+        return { success: true };
     } catch (error: any) {
         console.error("Beta Toggle Error:", error.message);
-        throw new Error(error.message);
+        return { success: false, error: error.message };
     }
-
-    revalidatePath('/admin');
 }
 
 // Action: Update Subscription Tier Manually
