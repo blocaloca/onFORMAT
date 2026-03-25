@@ -15,6 +15,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [accessCode, setAccessCode] = useState('');
+  
+  const PRIVATE_BETA_CODE = "ONFORMAT2025"; // Temporary access code
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +40,11 @@ export default function LoginPage() {
         router.push('/dashboard');
         router.refresh();
       } else {
+        // PRIVATE BETA ENFORCEMENT
+        if (accessCode.toUpperCase() !== PRIVATE_BETA_CODE) {
+          throw new Error("Invalid Beta Access Code. Unauthorized registration attempt.");
+        }
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
@@ -125,6 +133,20 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+
+              {!isLogin && (
+                <div className="relative group animate-in slide-in-from-top-2">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 group-focus-within:text-emerald-500 transition-colors" size={16} />
+                  <input
+                    type="text"
+                    value={accessCode}
+                    onChange={(e) => setAccessCode(e.target.value)}
+                    placeholder="BETA ACCESS CODE"
+                    className="w-full bg-emerald-50/30 border border-emerald-100 pl-12 p-3.5 text-xs text-emerald-900 font-bold outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all placeholder-emerald-300 rounded-lg uppercase tracking-widest font-mono"
+                    required
+                  />
+                </div>
+              )}
             </div>
 
             {/* Premium Glass Button */}
@@ -152,7 +174,7 @@ export default function LoginPage() {
               onClick={() => { setIsLogin(!isLogin); setMessage(''); }}
               className="text-[10px] text-zinc-500 hover:text-zinc-900 uppercase tracking-widest font-bold transition-colors"
             >
-              {isLogin ? "Need an account? Create one" : "Already have an account? Sign In"}
+              {isLogin ? "Private Beta? Request Entry" : "Back to Sign In"}
             </button>
 
             {isLogin && (

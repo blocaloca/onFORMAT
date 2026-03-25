@@ -63,7 +63,7 @@ export default function LandingPage() {
                 : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               }
             >
-              {user ? "Dashboard" : "Start Free Trial"} <ArrowRight size={14} />
+              {user ? "Dashboard" : "Join Private Beta"} <ArrowRight size={14} />
             </Link>
           ) : (
             <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
@@ -88,10 +88,11 @@ export default function LandingPage() {
           {!user && (
             <>
               <Link href="/login" className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
-                Start 14-Day Free Trial <ArrowRight size={18} />
+                Join Private Beta <ArrowRight size={18} />
               </Link>
-              <p className="text-[10px] md:text-xs font-bold text-zinc-400 uppercase tracking-widest">
-                No credit card • No tier selection required
+              <p className="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Invitation / Access Code Required
               </p>
             </>
           )}

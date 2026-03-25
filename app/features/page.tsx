@@ -123,7 +123,7 @@ export default function FeaturesPage() {
                 : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               }
             >
-              {user ? "Dashboard" : "Start Free Trial"} <ArrowRight size={14} />
+              {user ? "Dashboard" : "Join Private Beta"} <ArrowRight size={14} />
             </Link>
           ) : (
             <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
@@ -157,7 +157,7 @@ export default function FeaturesPage() {
                 <div className="pt-8">
                   {!user && (
                     <Link href="/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group">
-                      Start Free Trial <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      Join Private Beta <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                   )}
                 </div>

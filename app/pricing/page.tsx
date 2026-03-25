@@ -82,7 +82,7 @@ export default function PricingPage() {
                                 : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
                             }
                         >
-                            {user ? "Dashboard" : "Start Free Trial"} <ArrowRight size={14} />
+                            {user ? "Dashboard" : "Join Private Beta"} <ArrowRight size={14} />
                         </Link>
                     ) : (
                         <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
