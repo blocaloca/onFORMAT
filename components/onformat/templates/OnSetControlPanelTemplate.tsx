@@ -28,7 +28,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
     // Printing / PDF View -> Show Large QR Code
     if (isPrinting) {
         return (
-            <div className="flex flex-col items-center justify-center h-full pt-12 text-center bg-white dark:bg-zinc-950 text-black dark:text-zinc-100">
+            <div className="flex flex-col items-center justify-center h-full pt-12 text-center bg-white text-black">
                 <div className="border-[6px] border-black p-8 mb-12">
                     {/* Standardized Typography per request */}
                     <h1 className="text-4xl font-black uppercase tracking-tighter">onSET MOBILE</h1>
@@ -37,7 +37,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                     <img
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=https://onformat.io/join/${metadata?.projectId || 'demo'}`}
                         alt="Scan QR"
-                        className="w-full h-full bg-white dark:bg-zinc-950 p-2 object-contain"
+                        className="w-full h-full bg-white p-2 object-contain"
                     />
                 </div >
                 <p className="font-mono text-2xl uppercase font-bold tracking-widest">Scan to Join Set</p>
@@ -48,13 +48,13 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
     // Editor View
     return (
-        <div className="max-w-5xl mx-auto py-10 px-6 bg-white dark:bg-zinc-950 min-h-screen text-zinc-900 dark:text-white rounded-xl border border-zinc-200 dark:border-zinc-900 shadow-xl dark:shadow-2xl transition-colors">
+        <div className="max-w-5xl mx-auto py-10 px-6 bg-white min-h-screen text-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-900 shadow-xl dark:shadow-2xl transition-colors">
 
             {/* HEADER: Standardized to match Document Layout */}
-            <div className="flex items-end justify-between mb-8 border-b border-zinc-200 dark:border-zinc-800 pb-4 transition-colors">
+            <div className="flex items-end justify-between mb-8 border-b border-zinc-200 pb-4 transition-colors">
                 <div>
                     {/* Smaller Title */}
-                    <h1 className="text-3xl font-black uppercase tracking-tight mb-1 text-zinc-900 dark:text-white">onSET Mobile Control</h1>
+                    <h1 className="text-3xl font-black uppercase tracking-tight mb-1 text-zinc-900">onSET Mobile Control</h1>
                     <div className="flex items-center gap-3 text-zinc-500">
                         <span className="font-mono text-[10px] uppercase tracking-widest">
                             Sync Control
@@ -76,7 +76,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                 : 'bg-transparent border-zinc-300 dark:border-zinc-700 text-zinc-500 active:bg-zinc-100 dark:bg-zinc-900 dark:active:bg-zinc-800'
                             }`}
                     >
-                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white dark:bg-zinc-950 animate-pulse' : 'bg-zinc-500'}`}></div>
+                        <div className={`w-1.5 h-1.5 rounded-full ${data.isLive ? 'bg-white animate-pulse' : 'bg-zinc-500'}`}></div>
                         {data.isLive ? 'LIVE' : 'GO LIVE'}
                     </button>
                     {isLocked && <div className="flex items-center gap-1 text-zinc-600 text-[10px] uppercase font-bold"><Lock size={10} /> Locked</div>}
@@ -125,7 +125,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                             return (
                                 <div key={phase}>
-                                    <h3 className="text-[10px] font-black uppercase text-zinc-500 mb-3 tracking-widest border-b border-zinc-200 dark:border-zinc-800 pb-1 transition-colors">{phase.replace('_', ' ')}</h3>
+                                    <h3 className="text-[10px] font-black uppercase text-zinc-500 mb-3 tracking-widest border-b border-zinc-200 pb-1 transition-colors">{phase.replace('_', ' ')}</h3>
                                     <div className="space-y-1">
                                         {visibleTools.map((tool: any) => {
                                             const groups = toolGroups[tool.key] || [];
@@ -135,7 +135,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                                                     key={tool.key}
                                                     className="flex items-center justify-between p-2 pl-0 active:bg-zinc-100 dark:bg-zinc-900 dark:active:bg-zinc-900/30 rounded transition-colors group"
                                                 >
-                                                    <span className="text-sm font-bold uppercase text-zinc-700 dark:text-zinc-300 transition-colors">{tool.label}</span>
+                                                    <span className="text-sm font-bold uppercase text-zinc-700 transition-colors">{tool.label}</span>
 
                                                     <div className="flex items-center gap-1">
                                                         {(['A', 'B', 'C', 'D'] as const).map(group => {
@@ -164,7 +164,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
 
                 {/* RIGHT COL: PROJECT ACCESS (SPAN 1) */}
                 <div>
-                    <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-xl sticky top-4 transition-colors">
+                    <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 p-5 rounded-xl sticky top-4 transition-colors">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-sm font-black uppercase tracking-tight flex items-center gap-2 text-white">
                                 <Users size={16} className="text-emerald-500" />
@@ -176,7 +176,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, isPrinting
                             Invite crew to specific groups (A/B/C/D) via the Crew List document.
                         </p>
 
-                        <div className="flex justify-center bg-white dark:bg-zinc-950 p-2 rounded-lg mb-4">
+                        <div className="flex justify-center bg-white p-2 rounded-lg mb-4">
                             <img
                                 src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/join/${metadata?.projectId || 'demo'}`}
                                 alt="Join QR"

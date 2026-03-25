@@ -111,7 +111,7 @@ export const ReleasesManagerTemplate = ({
         const BackButton = (
             <button
                 onClick={() => setView('list')}
-                className="absolute top-4 left-4 z-50 flex items-center gap-1 text-xs font-bold uppercase text-zinc-500 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 bg-white dark:bg-zinc-950/80 px-2 py-1 rounded backdrop-blur-sm shadow-sm"
+                className="absolute top-4 left-4 z-50 flex items-center gap-1 text-xs font-bold uppercase text-zinc-500 hover:text-black dark:hover:text-zinc-100 bg-white/80 px-2 py-1 rounded backdrop-blur-sm shadow-sm"
             >
                 <ArrowLeft size={12} /> Back to List
             </button>
@@ -164,16 +164,16 @@ export const ReleasesManagerTemplate = ({
             <div className="h-full flex flex-col">
 
                 {/* Tabs */}
-                <div className="flex items-center gap-4 mb-6 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                <div className="flex items-center gap-4 mb-6 border-b border-zinc-200 pb-2">
                     <button
                         onClick={() => setActiveTab('talent')}
-                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'talent' ? 'text-black dark:text-zinc-100 border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
+                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'talent' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
                     >
                         <User size={14} /> Talent
                     </button>
                     <button
                         onClick={() => setActiveTab('property')}
-                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'property' ? 'text-black dark:text-zinc-100 border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
+                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'property' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
                     >
                         <MapPin size={14} /> Property
                     </button>
@@ -196,11 +196,11 @@ export const ReleasesManagerTemplate = ({
                             <div
                                 key={item.id}
                                 onClick={() => { setActiveId(item.id); setView('detail'); }}
-                                className="group flex items-center justify-between p-3 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
+                                className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
                             >
                                 <div className="flex items-center gap-3">
                                     {isPrinting ? (
-                                        <div className="w-8 h-8 flex items-center justify-center text-black dark:text-zinc-100">
+                                        <div className="w-8 h-8 flex items-center justify-center text-black">
                                             {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
                                         </div>
                                     ) : (
@@ -209,7 +209,7 @@ export const ReleasesManagerTemplate = ({
                                         </div>
                                     )}
                                     <div>
-                                        <h4 className="text-sm font-bold text-zinc-800 dark:text-zinc-200 leading-none mb-1">
+                                        <h4 className="text-sm font-bold text-zinc-800 leading-none mb-1">
                                             {item.name || '(Untitled)'}
                                         </h4>
                                         <p className="text-[10px] text-zinc-500 font-mono uppercase">
@@ -221,7 +221,7 @@ export const ReleasesManagerTemplate = ({
                                 <div className="flex items-center gap-4">
                                     <div className="text-right">
                                         {isPrinting ? (
-                                            <span className="text-[10px] font-bold uppercase py-0.5 text-black dark:text-zinc-100">
+                                            <span className="text-[10px] font-bold uppercase py-0.5 text-black">
                                                 {item.status}
                                             </span>
                                         ) : (
@@ -244,7 +244,7 @@ export const ReleasesManagerTemplate = ({
                                         </button>
                                     )}
 
-                                    <ChevronRight size={16} className="text-zinc-300 group-hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100" />
+                                    <ChevronRight size={16} className="text-zinc-300 group-hover:text-black dark:hover:text-zinc-100" />
                                 </div>
                             </div>
                         ))
@@ -257,7 +257,7 @@ export const ReleasesManagerTemplate = ({
                         <button
                             onClick={handleCreate}
                             disabled={isLocked}
-                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200 dark:border-zinc-800"
+                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                         >
                             <Plus size={10} /> Add {activeTab} Release
                         </button>

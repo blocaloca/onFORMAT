@@ -98,7 +98,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
             </div>
             {isPrinting ? (
-                <div className="w-full text-sm font-medium text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 py-1 min-h-[1.75rem] flex items-center">
+                <div className="w-full text-sm font-medium text-zinc-700 border-b border-zinc-100 py-1 min-h-[1.75rem] flex items-center">
                     {value || '-'}
                 </div>
             ) : (
@@ -144,7 +144,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 const renderDetailsSection = () => (
                     <div className="flex-1 flex flex-col gap-5 mt-2">
                         {isPrinting ? (
-                            <div className="w-full text-2xl font-black uppercase tracking-tight text-black dark:text-zinc-100 py-1 leading-none">
+                            <div className="w-full text-2xl font-black uppercase tracking-tight text-black py-1 leading-none">
                                 {loc.name || 'Location Name'}
                             </div>
                         ) : (
@@ -165,7 +165,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5"><MapPin size={10} /> Usage Type</span>
                                     {isPrinting ? (
-                                        <div className="text-sm font-bold text-black dark:text-zinc-100 border-b border-zinc-100 py-1">{loc.usageType || 'General'}</div>
+                                        <div className="text-sm font-bold text-black border-b border-zinc-100 py-1">{loc.usageType || 'General'}</div>
                                     ) : (
                                         <select
                                             value={loc.usageType || 'Set'}
@@ -183,7 +183,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 <div className="space-y-1">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5"><FileText size={10} /> Active Dates</span>
                                     {isPrinting ? (
-                                        <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 border-b border-zinc-100 py-1">{loc.activeDays || 'All Days'}</div>
+                                        <div className="text-sm font-medium text-zinc-700 border-b border-zinc-100 py-1">{loc.activeDays || 'All Days'}</div>
                                     ) : (
                                         <input
                                             type="text"
@@ -340,7 +340,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 <div className="max-w-md mx-auto py-8 text-center print-hidden">
                     <button
                         onClick={handleAddLocation}
-                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:border-black transition-colors rounded-sm"
+                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:border-black transition-colors rounded-sm"
                     >
                         <Plus size={14} /> <span>Add Location</span>
                     </button>

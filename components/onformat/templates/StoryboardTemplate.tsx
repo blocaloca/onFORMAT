@@ -277,7 +277,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
 
                                         {/* Lookbook Picker Overlay */}
                                         {isPinOpen && (
-                                            <div className="absolute inset-0 z-50 bg-white dark:bg-zinc-950 border border-black shadow-xl rounded-sm flex flex-col p-2 animate-in fade-in zoom-in-95 duration-100 h-[300px] overflow-hidden">
+                                            <div className="absolute inset-0 z-50 bg-white border border-black shadow-xl rounded-sm flex flex-col p-2 animate-in fade-in zoom-in-95 duration-100 h-[300px] overflow-hidden">
                                                 <div className="flex justify-between items-center mb-2 pb-2 border-b border-zinc-100">
                                                     <span className="text-[10px] font-bold uppercase tracking-widest">Select Reference</span>
                                                     <button onClick={() => setActivePinTargetId(null)} className="text-zinc-600 hover:text-red-500 text-[10px] uppercase font-bold">Close</button>
@@ -308,7 +308,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         {/* Header Row: Number + Title */}
                                         <div className="flex items-center gap-2 w-full mb-1 border-b border-zinc-100 pb-1">
                                             {isPrinting ? (
-                                                <div className="w-6 flex-shrink-0 text-[10px] font-bold text-black dark:text-zinc-100 text-left uppercase tracking-widest h-4 leading-4">
+                                                <div className="w-6 flex-shrink-0 text-[10px] font-bold text-black text-left uppercase tracking-widest h-4 leading-4">
                                                     {item.imageNumber}
                                                 </div>
                                             ) : (
@@ -322,7 +322,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             )}
 
                                             {isPrinting ? (
-                                                <div className="flex-1 text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider h-4 leading-4">
+                                                <div className="flex-1 text-[10px] font-bold text-zinc-900 uppercase tracking-wider h-4 leading-4">
                                                     {item.title}
                                                 </div>
                                             ) : (
@@ -337,24 +337,24 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         </div>
 
                                         {!isLocked && (
-                                            <div className="absolute top-10 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white dark:bg-zinc-950/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 dark:border-zinc-800 shadow-sm print:hidden">
+                                            <div className="absolute top-10 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm print:hidden">
                                                 {/* Pin Button */}
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
                                                     <button onClick={() => setActivePinTargetId(isPinOpen ? null : item.id)} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${isPinOpen ? 'text-blue-600 bg-blue-50' : 'text-zinc-400'}`} title="Pin from Lookbook"><Pin size={12} /></button>
                                                 </div>
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '3:2' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '3:2' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="3:2"><Monitor size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '16:9' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="16:9"><Crop size={12} /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '3:2' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '3:2' ? 'text-black' : 'text-zinc-400'}`} title="3:2"><Monitor size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Crop size={12} /></button>
                                                 </div>
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'medium' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'medium' ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
                                                 </div>
                                                 <button onClick={() => handleDeleteItem(originalIndex)} className="p-1 rounded hover:bg-red-50 text-zinc-400 hover:text-red-500"><Trash2 size={12} /></button>
                                             </div>
                                         )}
 
-                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} relative overflow-hidden transition-all ${isPrinting ? 'bg-transparent' : `bg-zinc-50 dark:bg-zinc-900/50 border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200 dark:border-zinc-800'}`}`}>
+                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} relative overflow-hidden transition-all ${isPrinting ? 'bg-transparent' : `bg-zinc-50 dark:bg-zinc-900/50 border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200'}`}`}>
                                             {isPrinting ? (
                                                 item.url ? (
                                                     <img src={item.url} className="w-full h-full object-cover" />
@@ -424,7 +424,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                 <div className="py-8 flex flex-col items-center gap-4 print:hidden pb-20">
                     <button
                         onClick={handleAddItem}
-                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-white dark:bg-zinc-950 px-8 py-3 transition-all rounded-full hover:shadow-lg shadow-sm"
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-white px-8 py-3 transition-all rounded-full hover:shadow-lg shadow-sm"
                     >
                         <span>+ Add Frame</span>
                     </button>

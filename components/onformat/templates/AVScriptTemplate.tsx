@@ -117,7 +117,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Scene */}
                                             {isPrinting ? (
-                                                <div className="font-bold text-sm text-center text-black dark:text-zinc-100 py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm">
+                                                <div className="font-bold text-sm text-center text-black py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm">
                                                     {row.scene || "—"}
                                                 </div>
                                             ) : (
@@ -133,7 +133,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Duration */}
                                             {isPrinting ? (
-                                                <div className="font-mono text-sm text-black dark:text-zinc-100 py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm text-center">
+                                                <div className="font-mono text-sm text-black py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm text-center">
                                                     {row.time || "—"}
                                                 </div>
                                             ) : (
@@ -149,7 +149,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Visual */}
                                             {isPrinting ? (
-                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap text-black dark:text-zinc-100 bg-zinc-50/30 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
+                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap text-black bg-zinc-50/30 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
                                                     {row.visual || "—"}
                                                 </div>
                                             ) : (
@@ -164,7 +164,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Audio */}
                                             {isPrinting ? (
-                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap text-black dark:text-zinc-100 bg-zinc-50/10 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
+                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap text-black bg-zinc-50/10 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
                                                     {row.audio || "—"}
                                                 </div>
                                             ) : (
@@ -187,8 +187,8 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         <Trash2 size={12} />
                                                     </button>
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteRow(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -227,7 +227,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     )}
                                 {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                     <div className="pt-2">
-                                        <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                        <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                             <Plus size={10} className="mr-1" /> Add Scene
                                         </button>
                                     </div>

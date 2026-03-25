@@ -167,7 +167,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 placeholder="NOTE SUBJECT / TOPIC"
                                                 disabled={isLocked}
                                             />
-                                            <div className={`flex-1 min-w-0 font-bold uppercase text-black dark:text-zinc-100 pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`flex-1 min-w-0 font-bold uppercase text-black pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {item.description}
                                             </div>
 
@@ -182,8 +182,8 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     </button>
 
                                                     {deleteConfirmIndex === idx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDelete(idx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -223,7 +223,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAdd}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200 dark:border-zinc-800"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Report Entry
                                     </button>

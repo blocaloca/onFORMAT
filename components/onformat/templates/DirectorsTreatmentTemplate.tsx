@@ -142,7 +142,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
         const TitleBlock = (
             <div className="mb-4">
                 {isPrinting ? (
-                    <div className="w-full text-xl font-black uppercase tracking-normal text-black dark:text-zinc-100 bg-transparent">
+                    <div className="w-full text-xl font-black uppercase tracking-normal text-black bg-transparent">
                         {slide.title}
                     </div>
                 ) : (
@@ -178,7 +178,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     {TitleBlock}
                     {renderLayoutControls(slide)}
                     {isPrinting ? (
-                        <div className="w-full h-full bg-transparent text-lg leading-relaxed font-serif whitespace-pre-wrap text-black dark:text-zinc-100">
+                        <div className="w-full h-full bg-transparent text-lg leading-relaxed font-serif whitespace-pre-wrap text-black">
                             {slide.content}
                         </div>
                     ) : (
@@ -200,7 +200,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="flex flex-col h-full relative group">
                     {TitleBlock}
                     {renderLayoutControls(slide)}
-                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 dark:border-zinc-800 relative print:border-none print:bg-white dark:bg-zinc-950 overflow-hidden shrink-0">
+                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden shrink-0">
                         {isPrinting ? (
                             <img
                                 src={slide.modules.image1 || ''}
@@ -217,7 +217,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     </div>
                     <div className="mt-4 flex-1">
                         {isPrinting ? (
-                            <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black dark:text-zinc-100">
+                            <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black">
                                 {slide.content}
                             </div>
                         ) : (
@@ -242,7 +242,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
                     {/* Left: Images */}
                     <div className="flex flex-col gap-4 h-full">
-                        <div className="flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 dark:border-zinc-800 relative print:border-none print:bg-white dark:bg-zinc-950 overflow-hidden">
+                        <div className="flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
                             {isPrinting ? (
                                 <img
                                     src={slide.modules.image1 || ''}
@@ -257,7 +257,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                 />
                             )}
                         </div>
-                        <div className="flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 dark:border-zinc-800 relative print:border-none print:bg-white dark:bg-zinc-950 overflow-hidden">
+                        <div className="flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
                             {isPrinting ? (
                                 <img
                                     src={slide.modules.image2 || ''}
@@ -276,7 +276,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     {/* Right: Text */}
                     <div className="h-full">
                         {isPrinting ? (
-                            <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black dark:text-zinc-100">
+                            <div className="w-full h-full bg-transparent text-sm leading-relaxed font-sans whitespace-pre-wrap text-black">
                                 {slide.content}
                             </div>
                         ) : (
@@ -319,7 +319,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                     <Trash2 size={14} />
                                 </button>
                                 {deleteConfirmId === slide.id && (
-                                    <div className="absolute right-0 top-8 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-2 rounded w-32 animate-in fade-in zoom-in-95">
+                                    <div className="absolute right-0 top-8 z-50 bg-white shadow-xl border border-zinc-200 p-2 rounded w-32 animate-in fade-in zoom-in-95">
                                         <button
                                             onClick={() => removeSlide(slide.id)}
                                             className="w-full bg-red-500 text-white text-[10px] font-bold py-2 rounded mb-1"
@@ -328,7 +328,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                         </button>
                                         <button
                                             onClick={() => setDeleteConfirmId(null)}
-                                            className="w-full bg-zinc-100 dark:bg-zinc-900 text-black dark:text-zinc-100 text-[11px] font-bold py-2 rounded"
+                                            className="w-full bg-zinc-100 dark:bg-zinc-900 text-black text-[11px] font-bold py-2 rounded"
                                         >
                                             CANCEL
                                         </button>
@@ -346,7 +346,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     <div className="flex flex-col gap-4">
                         <button
                             onClick={() => addSlide()}
-                            className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-6 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:border-black transition-all rounded-sm group"
+                            className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-6 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:border-black transition-all rounded-sm group"
                         >
                             <Plus size={16} className="group-hover:scale-110 transition-transform" />
                             <span>Add New Slide</span>

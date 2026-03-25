@@ -175,7 +175,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         {/* Category */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 text-ellipsis overflow-hidden whitespace-nowrap block text-zinc-900 dark:text-zinc-100">{item.category}</div>
+                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 text-ellipsis overflow-hidden whitespace-nowrap block text-zinc-900">{item.category}</div>
                                             ) : (
                                                 <select
                                                     value={item.category}
@@ -191,7 +191,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         {/* SubCategory */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] font-medium px-2 py-2 text-ellipsis overflow-hidden whitespace-nowrap block text-zinc-900 dark:text-zinc-100">{item.subCategory}</div>
+                                                <div className="w-full text-[10px] font-medium px-2 py-2 text-ellipsis overflow-hidden whitespace-nowrap block text-zinc-900">{item.subCategory}</div>
                                             ) : (
                                                 <select
                                                     value={item.subCategory}
@@ -209,7 +209,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         {/* Description */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-normal px-1 py-1.5 block text-zinc-800 dark:text-zinc-200 leading-relaxed">{item.description || "—"}</div>
+                                                <div className="w-full text-sm font-normal px-1 py-1.5 block text-zinc-800 leading-relaxed">{item.description || "—"}</div>
                                             ) : (
                                                 <input
                                                     type="text"
@@ -225,7 +225,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         {/* Rate Type */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-1 py-2 text-center block text-zinc-900 dark:text-zinc-100">{item.rateType}</div>
+                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-1 py-2 text-center block text-zinc-900">{item.rateType}</div>
                                             ) : (
                                                 <select
                                                     value={item.rateType}
@@ -241,7 +241,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         {/* Rate */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-mono text-right px-1 py-1.5 block text-black dark:text-zinc-100">{formatter.format(item.rate)}</div>
+                                                <div className="w-full text-sm font-mono text-right px-1 py-1.5 block text-black">{formatter.format(item.rate)}</div>
                                             ) : (
                                                 <input
                                                     type="number"
@@ -257,7 +257,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         {/* Quantity */}
                                         <div>
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-mono text-center px-1 py-1.5 block text-black dark:text-zinc-100">{item.quantity}</div>
+                                                <div className="w-full text-sm font-mono text-center px-1 py-1.5 block text-black">{item.quantity}</div>
                                             ) : (
                                                 <input
                                                     type="number"
@@ -272,7 +272,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
 
                                         {/* Line Total */}
                                         <div className="text-right pt-1">
-                                            <span className="text-sm font-mono font-bold text-black dark:text-zinc-100">{formatter.format(lineTotal)}</span>
+                                            <span className="text-sm font-mono font-bold text-black">{formatter.format(lineTotal)}</span>
                                         </div>
 
                                         {/* Delete Button with Confirmation Popover */}
@@ -287,8 +287,8 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -316,7 +316,7 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                 <div className="pt-2 print-hidden">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Line Item
                                     </button>

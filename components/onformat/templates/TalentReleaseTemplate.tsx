@@ -170,7 +170,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
             orientation={orientation}
             metadata={metadata}
         >
-            <div className={`space-y-6 text-sm font-sans h-full flex flex-col max-w-2xl mx-auto ${isPrinting ? 'text-black dark:text-zinc-100' : 'text-zinc-800 dark:text-zinc-200'}`}>
+            <div className={`space-y-6 text-sm font-sans h-full flex flex-col max-w-2xl mx-auto ${isPrinting ? 'text-black' : 'text-zinc-800'}`}>
 
                 {/* Compact Header & Controls */}
                 <div className="flex items-end justify-between border-b-2 border-black pb-2 mb-4 shrink-0">
@@ -190,13 +190,13 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div className="flex gap-1 mx-4">
                             <button
                                 onClick={() => onUpdate({ isCustom: false })}
-                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${!data.isCustom ? 'bg-black text-white border-black' : 'bg-white dark:bg-zinc-950 text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300'}`}
+                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${!data.isCustom ? 'bg-black text-white border-black' : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
                             >
                                 Standard
                             </button>
                             <button
                                 onClick={() => onUpdate({ isCustom: true })}
-                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${data.isCustom ? 'bg-black text-white border-black' : 'bg-white dark:bg-zinc-950 text-zinc-400 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300'}`}
+                                className={`text-[8px] font-bold uppercase px-2 py-1 rounded-sm border transition-all ${data.isCustom ? 'bg-black text-white border-black' : 'bg-white text-zinc-400 border-zinc-200 hover:border-zinc-300'}`}
                             >
                                 Custom
                             </button>
@@ -290,7 +290,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                         </div>
                     ) : (
                         <div className={`flex flex-col items-center gap-2 ${isPrinting ? 'hidden' : 'block'}`}>
-                            <div className="border border-zinc-300 rounded bg-white dark:bg-zinc-950 shadow-sm overflow-hidden w-full max-w-[400px] p-4 flex flex-col items-center">
+                            <div className="border border-zinc-300 rounded bg-white shadow-sm overflow-hidden w-full max-w-[400px] p-4 flex flex-col items-center">
                                 <label className="text-[9px] uppercase font-bold text-zinc-400 mb-2 w-full text-center">Type Name to Sign</label>
                                 <input
                                     value={typedName}
@@ -305,7 +305,7 @@ export const TalentReleaseTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <div className="flex gap-2 mt-2">
                                 <button
                                     onClick={() => setTypedName('')}
-                                    className="flex items-center gap-1 text-[10px] font-bold uppercase text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded"
+                                    className="flex items-center gap-1 text-[10px] font-bold uppercase text-zinc-400 hover:text-black dark:hover:text-zinc-100 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded"
                                 >
                                     Clear
                                 </button>

@@ -62,11 +62,11 @@ export const DocumentLayout = ({
                 }}>
                 {/* Header (Simplified for Control Panel) */}
                 {!hideHeader && (
-                    <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-2">
+                    <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-2">
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-sans font-bold uppercase tracking-tight text-zinc-900 dark:text-zinc-900">{title}</h1>
                             {metadata?.date && (
-                                <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
+                                <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest mt-1">
                                     {metadata.date}
                                 </span>
                             )}
@@ -136,7 +136,7 @@ export const DocumentLayout = ({
                 <div className="flex-shrink-0 relative z-50 bg-white dark:bg-white">
                     {!hideHeader && (
                         <div>
-                            <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
+                            <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-6">
                                 <h1 className="text-3xl font-black uppercase tracking-normal leading-tight">{title}</h1>
                                 {metadata && metadata.date && (
                                     <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pb-1">
@@ -167,7 +167,7 @@ export const DocumentLayout = ({
                                     ) : (
                                         <div className="flex gap-2 opacity-0">
                                             <span>PRODUCER</span>
-                                            <span className="text-black dark:text-zinc-100">-</span>
+                                            <span className="text-black">-</span>
                                         </div>
                                     )}
                                 </div>

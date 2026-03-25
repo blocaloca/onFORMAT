@@ -94,7 +94,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             <div className="flex justify-end pb-2">
                                 <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100">
+                                    <span className="text-sm font-mono font-bold text-zinc-900">
                                         ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -120,7 +120,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Item */}
                                         {isPrinting ? (
-                                            <div className="font-bold text-[10px] w-full uppercase text-black dark:text-zinc-100 py-1">{item.item || '—'}</div>
+                                            <div className="font-bold text-[10px] w-full uppercase text-black py-1">{item.item || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -134,7 +134,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Description */}
                                         {isPrinting ? (
-                                            <div className="text-[10px] w-full text-zinc-700 dark:text-zinc-300 py-1">{item.description || '—'}</div>
+                                            <div className="text-[10px] w-full text-zinc-700 py-1">{item.description || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -148,7 +148,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Qty */}
                                         {isPrinting ? (
-                                            <div className="font-mono text-[10px] w-full text-center text-zinc-700 dark:text-zinc-300 py-1">{item.quantity || '—'}</div>
+                                            <div className="font-mono text-[10px] w-full text-center text-zinc-700 py-1">{item.quantity || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -162,7 +162,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Source */}
                                         {isPrinting ? (
-                                            <div className="text-[10px] w-full text-zinc-700 dark:text-zinc-300 italic py-1">{item.source || '—'}</div>
+                                            <div className="text-[10px] w-full text-zinc-700 italic py-1">{item.source || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -176,7 +176,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                         {/* Cost */}
                                         {isPrinting ? (
-                                            <div className="font-mono text-[10px] w-full text-right text-zinc-700 dark:text-zinc-300 py-1">{item.cost || '—'}</div>
+                                            <div className="font-mono text-[10px] w-full text-right text-zinc-700 py-1">{item.cost || '—'}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -189,7 +189,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )}
 
                                         {isPrinting ? (
-                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black dark:text-zinc-100">
+                                            <div className="text-[10px] font-bold uppercase text-center w-full py-1 text-black">
                                                 {item.status === 'pending' ? 'Needed' : item.status.toUpperCase()}
                                             </div>
                                         ) : (
@@ -217,8 +217,8 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -243,7 +243,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print-hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Prop
                                     </button>
                                 </div>

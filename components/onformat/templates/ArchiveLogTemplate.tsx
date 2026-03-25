@@ -165,7 +165,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 <option value="" disabled className="text-zinc-300">ITEM</option>
                                                 {ITEM_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {ITEM_OPTIONS.find(o => o.value === item.itemType)?.label || ''}
                                             </div>
                                         </div>
@@ -194,7 +194,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 <option value="" disabled className="text-zinc-300">ACT</option>
                                                 {ACTIVITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {ACTIVITY_OPTIONS.find(o => o.value === item.activity)?.label || ''}
                                             </div>
                                         </div>
@@ -210,14 +210,14 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 <option value="" disabled className="text-zinc-300">DEST</option>
                                                 {DESTINATION_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                            <div className={`font-bold text-[10px] uppercase text-zinc-700 ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                 {DESTINATION_OPTIONS.find(o => o.value === item.destination)?.label || ''}
                                             </div>
                                         </div>
 
                                         <div className="col-start-6 flex justify-center items-center w-full">
                                             {isPrinting ? (
-                                                <div className="text-center py-1 text-[10px] font-bold uppercase text-black dark:text-zinc-100 w-full">
+                                                <div className="text-center py-1 text-[10px] font-bold uppercase text-black w-full">
                                                     {item.status === 'complete' && 'DONE'}
                                                     {item.status === 'in-progress' && 'DOING'}
                                                     {item.status === 'pending' && 'TODO'}
@@ -230,7 +230,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 >
                                                     {item.status === 'complete' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-green-100 text-green-700 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DONE</span>}
                                                     {item.status === 'in-progress' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DOING</span>}
-                                                    {item.status === 'pending' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 border border-zinc-200 dark:border-zinc-800 rounded text-[9px] font-bold uppercase tracking-wider leading-none">TODO</span>}
+                                                    {item.status === 'pending' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">TODO</span>}
                                                 </button>
                                             )}
                                         </div>
@@ -247,8 +247,8 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -305,7 +305,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                             {/* Add Button - Last Page */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Archive Task
                                     </button>
                                 </div>

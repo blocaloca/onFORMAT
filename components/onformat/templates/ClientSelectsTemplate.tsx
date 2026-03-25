@@ -147,7 +147,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             >
                                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                             </select>
-                                            <div className={`font-black uppercase text-[10px] tracking-wider text-center pt-0.5 ${isPrinting ? 'text-black dark:text-zinc-100 block' : `${STATUS_OPTIONS.find(o => o.value === item.status)?.className || 'text-zinc-200'} hidden`} print:block`}>
+                                            <div className={`font-black uppercase text-[10px] tracking-wider text-center pt-0.5 ${isPrinting ? 'text-black block' : `${STATUS_OPTIONS.find(o => o.value === item.status)?.className || 'text-zinc-200'} hidden`} print:block`}>
                                                 {STATUS_OPTIONS.find(o => o.value === item.status)?.label || '-'}
                                             </div>
                                         </div>
@@ -163,8 +163,8 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 </button>
 
                                                 {deleteConfirmIndex === globalIdx && (
-                                                    <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                    <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
                                                             className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -188,7 +188,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Entry
                                     </button>
                                 </div>

@@ -214,7 +214,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     placeholder="Describe the visual direction, tone, and style..."
                                     className={`w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-sm min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 print:hidden text-zinc-900`}
                                 />
-                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-sm min-h-[60px] whitespace-pre-wrap break-words text-black dark:text-zinc-100`}>
+                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-sm min-h-[60px] whitespace-pre-wrap break-words text-black`}>
                                     {data.overview || "—"}
                                 </div>
                             </div>
@@ -239,19 +239,19 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     >
                                         {/* Toolbar (Hover) */}
                                         {!isLocked && (
-                                            <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white dark:bg-zinc-950/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                            <div className="absolute top-2 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
 
 
                                                 {/* Size Selector */}
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${(!item.size || item.size === 'medium') ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'large' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${(!item.size || item.size === 'medium') ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'large' ? 'text-black' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
                                                 </div>
 
                                                 {/* Caption Toggle */}
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { showCaption: !item.showCaption })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.showCaption !== false ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Lines"><Type size={12} /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { showCaption: !item.showCaption })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.showCaption !== false ? 'text-black' : 'text-zinc-400'}`} title="Lines"><Type size={12} /></button>
                                                 </div>
 
                                                 {/* Delete Button with Confirmation Popover */}
@@ -265,8 +265,8 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     </button>
 
                                                     {deleteConfirmIndex === originalIndex && (
-                                                        <div className="absolute right-0 top-8 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-8 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(originalIndex)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -288,7 +288,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )}
 
                                         {/* Image Container */}
-                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} shadow-sm relative ${isPrinting ? 'bg-transparent' : 'bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 dark:border-zinc-800'}`}>
+                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} shadow-sm relative ${isPrinting ? 'bg-transparent' : 'bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200'}`}>
                                             {isPrinting ? (
                                                 item.url ? (
                                                     <img src={item.url} className="w-full h-full object-cover" />
@@ -306,7 +306,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         {/* Caption */}
                                         {(item.showCaption !== false) && (
                                             isPrinting ? (
-                                                <div className="w-full text-[10px] text-center font-mono text-black dark:text-zinc-100 whitespace-pre-wrap break-words min-h-[2em]">
+                                                <div className="w-full text-[10px] text-center font-mono text-black whitespace-pre-wrap break-words min-h-[2em]">
                                                     {item.caption}
                                                 </div>
                                             ) : (
@@ -330,7 +330,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                             <div className="py-4 flex justify-center print-hidden">
                                 <button
                                     onClick={handleAddItem}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black px-6 py-2 transition-colors rounded-sm"
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black px-6 py-2 transition-colors rounded-sm"
                                 >
                                     <span>+ Add Image</span>
                                 </button>

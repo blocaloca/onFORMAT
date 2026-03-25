@@ -80,7 +80,7 @@ export const CreativeConceptTemplate = ({
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent opacity-50" />
                         
                         {index > 0 && (
-                            <div className="mb-6 px-6 py-2 border-l border-zinc-200 dark:border-zinc-800">
+                            <div className="mb-6 px-6 py-2 border-l border-zinc-200">
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
                                     Laboratory Continuation / {index + 1}
                                 </span>

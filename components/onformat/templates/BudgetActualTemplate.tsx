@@ -121,7 +121,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 </div>
                                 <div className="text-right">
                                     <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Variance</h2>
-                                    <div className={`text-xl font-mono font-bold ${totalVariance < 0 ? 'text-red-500' : 'text-zinc-900 dark:text-zinc-100'}`}>
+                                    <div className={`text-xl font-mono font-bold ${totalVariance < 0 ? 'text-red-500' : 'text-zinc-900'}`}>
                                         {totalVariance < 0 ? '-' : '+'}{formatter.format(Math.abs(totalVariance))}
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                         )}
 
                         {!metadata?.importedBudget?.items && items.length === 0 && !isLocked && (
-                            <div className="text-center p-8 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 dark:border-zinc-800 rounded text-zinc-400 text-xs uppercase tracking-widest">
+                            <div className="text-center p-8 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 rounded text-zinc-400 text-xs uppercase tracking-widest">
                                 No Budget Data Found in Pre-Production
                             </div>
                         )}
@@ -162,7 +162,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 className={`w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black print:hidden`}
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black dark:text-zinc-100`}>{item.description}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black`}>{item.description}</div>
                                         </div>
 
                                         {/* Budgeted (ReadOnly) */}
@@ -180,7 +180,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 placeholder="0.00"
                                                 disabled={isLocked}
                                             />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-mono font-bold text-right px-1 py-1 text-black dark:text-zinc-100`}>{formatter.format(item.actual)}</div>
+                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-mono font-bold text-right px-1 py-1 text-black`}>{formatter.format(item.actual)}</div>
                                         </div>
 
                                         {/* Variance */}
@@ -220,7 +220,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 <div className="pt-2 print-hidden flex justify-between items-center">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Line Item
                                     </button>

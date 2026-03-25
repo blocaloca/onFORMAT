@@ -124,7 +124,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                     <div key={item.id} className="grid grid-cols-[60px_80px_110px_1fr_80px_100px_1fr_30px] gap-4 py-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Thumbnail */}
-                                        <div className="relative w-full aspect-square bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 overflow-hidden flex items-center justify-center group/image">
+                                        <div className="relative w-full aspect-square bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 overflow-hidden flex items-center justify-center group/image">
                                             {item.thumbnailUrl ? (
                                                 <img src={item.thumbnailUrl} alt="Thumb" className="w-full h-full object-cover" />
                                             ) : (
@@ -157,7 +157,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* File Number */}
                                         {/* File Number */}
                                         {isPrinting ? (
-                                            <div className="font-mono font-bold text-sm px-1 pt-1 leading-normal block text-black dark:text-zinc-100">{item.fileNumber}</div>
+                                            <div className="font-mono font-bold text-sm px-1 pt-1 leading-normal block text-black">{item.fileNumber}</div>
                                         ) : (
                                             <input
                                                 type="text"
@@ -187,7 +187,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* Description */}
                                         <div className="min-w-0">
                                             {isPrinting ? (
-                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block text-black dark:text-zinc-100">{item.description}</div>
+                                                <div className="px-1 pt-1 leading-normal whitespace-pre-wrap break-words text-[10px] block text-black">{item.description}</div>
                                             ) : (
                                                 <textarea
                                                     value={item.description}
@@ -203,7 +203,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* Aspect Select */}
                                         <div className="relative pt-1">
                                             {isPrinting ? (
-                                                <div className="font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 block">
+                                                <div className="font-bold text-[10px] uppercase text-zinc-700 block">
                                                     {ASPECT_OPTIONS.find(o => o.value === item.format)?.label || ''}
                                                 </div>
                                             ) : (
@@ -222,7 +222,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         {/* Type Select */}
                                         <div className="relative pt-1">
                                             {isPrinting ? (
-                                                <div className="font-bold text-[10px] uppercase text-zinc-700 dark:text-zinc-300 block">
+                                                <div className="font-bold text-[10px] uppercase text-zinc-700 block">
                                                     {TYPE_OPTIONS.find(o => o.value === item.type)?.label || ''}
                                                 </div>
                                             ) : (
@@ -265,8 +265,8 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 </button>
 
                                                 {deleteConfirmIndex === globalIdx && (
-                                                    <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                    <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                        <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                         <button
                                                             onClick={() => handleDeleteItem(globalIdx)}
                                                             className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -292,7 +292,7 @@ export const DeliverablesTemplate = ({ data, onUpdate, isLocked = false, plain, 
                             {/* Add Button - Moved inside the list container */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Deliverable
                                     </button>
                                 </div>

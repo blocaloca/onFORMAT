@@ -112,7 +112,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <div className="flex justify-end pb-2">
                                 <div className="flex items-center gap-4">
                                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Total</span>
-                                    <span className="text-sm font-mono font-bold text-zinc-900 dark:text-zinc-100">
+                                    <span className="text-sm font-mono font-bold text-zinc-900">
                                         ${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -141,7 +141,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         {/* Category */}
                                         <div className="relative">
                                             {isPrinting ? (
-                                                <div className="font-bold text-[10px] uppercase w-full text-zinc-700 dark:text-zinc-300">
+                                                <div className="font-bold text-[10px] uppercase w-full text-zinc-700">
                                                     {CATEGORY_OPTIONS.find(opt => opt.value === item.category)?.label || item.category}
                                                 </div>
                                             ) : (
@@ -207,7 +207,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                                         {/* Rate */}
                                         {isPrinting ? (
-                                            <div className="text-right font-mono text-[10px] text-zinc-700 dark:text-zinc-300">
+                                            <div className="text-right font-mono text-[10px] text-zinc-700">
                                                 {item.dayRate}
                                             </div>
                                         ) : (
@@ -223,7 +223,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                                         {/* Quantity */}
                                         {isPrinting ? (
-                                            <div className="text-center font-bold text-[10px] text-zinc-700 dark:text-zinc-300">
+                                            <div className="text-center font-bold text-[10px] text-zinc-700">
                                                 {item.quantity}
                                             </div>
                                         ) : (
@@ -238,7 +238,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         )}
 
                                         {/* Total - Read Only usually */}
-                                        <div className="text-right font-mono font-bold text-[10px] text-zinc-800 dark:text-zinc-200">
+                                        <div className="text-right font-mono font-bold text-[10px] text-zinc-800">
                                             {item.total || '—'}
                                         </div>
 
@@ -254,8 +254,8 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -281,7 +281,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {/* Add Button - Last Page */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full print-hidden">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full print-hidden">
                                         <Plus size={10} className="mr-1" /> Add Equipment
                                     </button>
                                 </div>

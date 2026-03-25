@@ -202,7 +202,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {/* Header Row: Number + Title */}
                                         <div className="flex items-center gap-2 w-full mb-1 border-b border-zinc-100 pb-1">
                                             {isPrinting ? (
-                                                <div className="w-6 flex-shrink-0 text-[10px] font-bold text-black dark:text-zinc-100 text-left uppercase tracking-widest h-4 leading-4">
+                                                <div className="w-6 flex-shrink-0 text-[10px] font-bold text-black text-left uppercase tracking-widest h-4 leading-4">
                                                     {item.imageNumber}
                                                 </div>
                                             ) : (
@@ -216,7 +216,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             )}
 
                                             {isPrinting ? (
-                                                <div className="flex-1 text-[10px] font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider h-4 leading-4">
+                                                <div className="flex-1 text-[10px] font-bold text-zinc-900 uppercase tracking-wider h-4 leading-4">
                                                     {item.title}
                                                 </div>
                                             ) : (
@@ -232,34 +232,34 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                         {/* Toolbar (Hover) */}
                                         {!isLocked && (
-                                            <div className="absolute top-12 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white dark:bg-zinc-950/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                                            <div className="absolute top-12 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
                                                 {/* Aspect Ratio Selector */}
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '16:9' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="16:9"><Monitor size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '9:16' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '9:16' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="9:16"><Smartphone size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '1:1' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '1:1' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="1:1"><Square size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '4:5' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '4:5' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="4:5"><Crop size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '5:4' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '5:4' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="5:4"><Maximize size={12} className="rotate-90" /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Monitor size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '9:16' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '9:16' ? 'text-black' : 'text-zinc-400'}`} title="9:16"><Smartphone size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '1:1' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '1:1' ? 'text-black' : 'text-zinc-400'}`} title="1:1"><Square size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '4:5' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '4:5' ? 'text-black' : 'text-zinc-400'}`} title="4:5"><Crop size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '5:4' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '5:4' ? 'text-black' : 'text-zinc-400'}`} title="5:4"><Maximize size={12} className="rotate-90" /></button>
                                                 </div>
 
                                                 {/* Size Selector */}
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${(!item.size || item.size === 'medium') ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'large' ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${(!item.size || item.size === 'medium') ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'large' ? 'text-black' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
                                                 </div>
 
                                                 {/* Caption Toggle */}
-                                                <div className="flex items-center border-r border-zinc-200 dark:border-zinc-800 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { showCaption: !item.showCaption })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.showCaption ? 'text-black dark:text-zinc-100' : 'text-zinc-400'}`} title="Notes"><Type size={12} /></button>
+                                                <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { showCaption: !item.showCaption })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.showCaption ? 'text-black' : 'text-zinc-400'}`} title="Notes"><Type size={12} /></button>
                                                 </div>
 
                                                 {/* Delete Button with Confirmation Popover */}
                                                 <div className="relative">
                                                     <button onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === originalIndex ? null : originalIndex)} className={`p-1 rounded hover:bg-red-50 ml-1 hover:text-red-500 ${deleteConfirmIndex === originalIndex ? 'text-red-500' : 'text-zinc-400'}`} title="Remove"><Trash2 size={12} /></button>
                                                     {deleteConfirmIndex === originalIndex && (
-                                                        <div className="absolute right-0 top-8 z-50 bg-white dark:bg-zinc-950 shadow-xl border border-zinc-200 dark:border-zinc-800 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black dark:text-zinc-100">Remove?</span>
+                                                        <div className="absolute right-0 top-8 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
+                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
                                                             <button
                                                                 onClick={() => handleDeleteItem(originalIndex)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
@@ -321,7 +321,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             <div className="pt-8 flex justify-center print-hidden">
                                 <button
                                     onClick={handleAddItem}
-                                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black px-6 py-3 transition-colors rounded-sm"
+                                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black px-6 py-3 transition-colors rounded-sm"
                                 >
                                     <span>+ Add Image</span>
                                 </button>
