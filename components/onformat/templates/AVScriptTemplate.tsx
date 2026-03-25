@@ -116,54 +116,66 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                             {/* Scene */}
-                                            <div className="contents">
+                                            {isPrinting ? (
+                                                <div className="font-bold text-sm text-center text-black dark:text-zinc-100 py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm">
+                                                    {row.scene || "—"}
+                                                </div>
+                                            ) : (
                                                 <input
                                                     type="text"
                                                     value={row.scene}
                                                     onChange={e => handleUpdateRow(globalIdx, { scene: e.target.value })}
-                                                    className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 text-center print:hidden`}
+                                                    className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 py-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 text-center`}
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-bold text-sm text-center text-black dark:text-zinc-100 py-1`}>{row.scene || "—"}</div>
-                                            </div>
+                                            )}
 
                                             {/* Duration */}
-                                            <div className="contents">
+                                            {isPrinting ? (
+                                                <div className="font-mono text-sm text-black dark:text-zinc-100 py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm text-center">
+                                                    {row.time || "—"}
+                                                </div>
+                                            ) : (
                                                 <input
                                                     type="text"
                                                     value={row.time}
                                                     onChange={e => handleUpdateRow(globalIdx, { time: handleDurationChange(e.target.value) })}
-                                                    className={`font-mono text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 print:hidden`}
+                                                    className={`font-mono text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 py-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400`}
                                                     placeholder="00:00:00"
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} font-mono text-sm text-black dark:text-zinc-100 py-1`}>{row.time || "—"}</div>
-                                            </div>
+                                            )}
 
                                             {/* Visual */}
-                                            <div className="contents">
+                                            {isPrinting ? (
+                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap text-black dark:text-zinc-100 bg-zinc-50/30 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
+                                                    {row.visual || "—"}
+                                                </div>
+                                            ) : (
                                                 <textarea
                                                     value={row.visual}
                                                     onChange={e => handleUpdateRow(globalIdx, { visual: e.target.value })}
-                                                    className={`text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase print:hidden`}
+                                                    className={`text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase`}
                                                     placeholder="ACTION DESCRIPTION..."
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-sm leading-relaxed uppercase whitespace-pre-wrap text-black dark:text-zinc-100`}>{row.visual}</div>
-                                            </div>
+                                            )}
 
                                             {/* Audio */}
-                                            <div className="contents">
+                                            {isPrinting ? (
+                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap text-black dark:text-zinc-100 bg-zinc-50/10 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
+                                                    {row.audio || "—"}
+                                                </div>
+                                            ) : (
                                                 <textarea
                                                     value={row.audio}
                                                     onChange={e => handleUpdateRow(globalIdx, { audio: e.target.value })}
-                                                    className={`text-sm font-mono bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed print:hidden`}
+                                                    className={`text-sm font-mono bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed`}
                                                     placeholder="Dialogue or SFX..."
                                                     disabled={isLocked}
                                                 />
-                                                <div className={`${isPrinting ? 'block' : 'hidden print:block'} text-sm font-mono leading-relaxed whitespace-pre-wrap text-black dark:text-zinc-100`}>{row.audio}</div>
-                                            </div>
+                                            )}
 
                                             {/* Delete Button */}
                                             {!isLocked && (
