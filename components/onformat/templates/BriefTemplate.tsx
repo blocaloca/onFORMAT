@@ -40,8 +40,8 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         onUpdate?.({ [field]: value });
     };
 
-    const inputStyle = "w-full bg-zinc-50 dark:bg-zinc-100 border border-zinc-200 dark:border-zinc-300 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all resize-none placeholder:text-zinc-400 dark:placeholder:text-zinc-500 font-sans text-zinc-900 dark:text-zinc-950";
-    const labelStyle = "block font-bold text-zinc-500 dark:text-zinc-400 mb-2 text-[10px] uppercase tracking-widest";
+    const inputStyle = "w-full bg-zinc-50 border border-zinc-200 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all resize-none placeholder:text-zinc-400 font-sans text-zinc-900";
+    const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {
         let val = data[key];
@@ -60,82 +60,167 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                     onChange={(e) => handleChange(key, e.target.value)}
                     placeholder={placeholder}
                 />
-                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black dark:text-zinc-950 whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-100 border border-zinc-200 dark:border-zinc-300 rounded-md p-3`}>
+                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3`}>
                     {textVal || "—"}
                 </div>
             </div>
         );
     };
 
+    const pages = [
+        {
+            title: "Creative Brief: Strategy",
+            sections: [
+                { label: 'Vision', field: 'product', placeholder: 'Vision Summary...', minHeight: 'min-h-[80px]' },
+                { label: 'Objective', field: 'objective', placeholder: 'Primary goal...', minHeight: 'min-h-[60px]' },
+                { label: 'Target Audience', field: 'targetAudience', placeholder: 'Who are we talking to?', minHeight: 'min-h-[80px]' },
+                { label: 'Tone & Style', field: 'tone', placeholder: 'Adjectives describing the feel...', minHeight: 'min-h-[80px]' },
+                { label: 'Key Message', field: 'keyMessage', placeholder: 'The one thing to remember...', minHeight: 'min-h-[80px]' },
+            ]
+        },
+        {
+            title: "Creative Brief: Execution",
+            sections: [
+                { label: 'Narrative / Creative Approach', field: 'narrative', placeholder: 'Describe the story in detail...', minHeight: 'min-h-[220px]' },
+                { label: 'Talent / Casting', field: 'talent', placeholder: 'Key roles, demographic...', minHeight: 'min-h-[100px]' },
+                { label: 'Location / Setting', field: 'location', placeholder: 'Where is this taking place?', minHeight: 'min-h-[100px]' },
+                { label: 'Deliverables', field: 'deliverables', placeholder: 'Required assets...', minHeight: 'min-h-[100px]' },
+            ]
+        }
+    ];
+
+    // --- EDITOR VIEW ---
+    if (!isPrinting) {
+        return (
+            <div className="flex flex-col gap-8">
+                <DocumentLayout
+                    title="Creative Brief"
+                    hideHeader={false}
+                    metadata={metadata}
+                    plain={plain}
+                    orientation={orientation}
+                    isPrinting={isPrinting}
+                >
+                    <div className="space-y-6 h-full flex flex-col">
+                        <div className="space-y-6">
+                            {pages[0].sections.map(s => (
+                                <section key={s.field}>
+                                    <label className={labelStyle}>{s.label}</label>
+                                    {renderField(s.field as keyof BriefData, s.placeholder, s.minHeight)}
+                                </section>
+                            ))}
+                            <div className="border-b border-zinc-100 my-4" />
+                            {pages[1].sections.map(s => (
+                                <section key={s.field}>
+                                    <label className={labelStyle}>{s.label}</label>
+                                    {renderField(s.field as keyof BriefData, s.placeholder, s.minHeight)}
+                                </section>
+                            ))}
+                        </div>
+                    </div>
+                </DocumentLayout>
+            </div>
+        );
+    }
+
+    // --- PRINTING VIEW (PAGINATED) ---
     return (
         <div className="flex flex-col gap-8">
-            <DocumentLayout
-                title="Creative Brief"
-                hideHeader={false}
-                metadata={metadata}
-                plain={plain}
-                orientation={orientation}
-                isPrinting={isPrinting}
-            >
-                <div className="space-y-6 h-full flex flex-col">
-                    {/* Strategy Section */}
-                    <div className="space-y-6 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-                        <section>
-                            <label className={labelStyle}>Vision</label>
-                            {renderField('product', 'Vision Summary... (Auto-filled from Project Vision)', 'min-h-[80px]')}
-                        </section>
+            {pages.map((page, idx) => {
+                const isExecutionPage = idx === 1;
+                const narrativeText = data.narrative || '';
+                const CHAR_LIMIT = 2000;
 
-                        <section>
-                            <label className={labelStyle}>Objective</label>
-                            {renderField('objective', 'What is the primary goal of this project?', 'min-h-[60px]')}
-                        </section>
+                // Only split narrative if it's the execution page and text is long
+                if (isExecutionPage && narrativeText.length > CHAR_LIMIT) {
+                    const pages_split = [];
+                    let remaining = narrativeText;
+                    while (remaining.length > 0) {
+                        if (remaining.length <= CHAR_LIMIT) {
+                            pages_split.push(remaining);
+                            break;
+                        }
+                        let breakIdx = remaining.lastIndexOf('\n', CHAR_LIMIT);
+                        if (breakIdx === -1 || breakIdx < CHAR_LIMIT * 0.5) breakIdx = remaining.lastIndexOf(' ', CHAR_LIMIT);
+                        if (breakIdx === -1) breakIdx = CHAR_LIMIT;
+                        pages_split.push(remaining.substring(0, breakIdx));
+                        remaining = remaining.substring(breakIdx).trim();
+                    }
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <section>
-                                <label className={labelStyle}>Target Audience</label>
-                                {renderField('targetAudience', 'Who are we talking to?', 'min-h-[80px]')}
-                            </section>
+                    return pages_split.map((chunk, chunkIdx) => (
+                        <DocumentLayout
+                            key={`exec-${chunkIdx}`}
+                            title={page.title}
+                            hideHeader={false}
+                            metadata={metadata}
+                            plain={plain}
+                            orientation={orientation}
+                            isPrinting={isPrinting}
+                            subtitle={chunkIdx > 0 ? `Execution (Cont. ${chunkIdx})` : `Execution`}
+                        >
+                            <div className="space-y-6 h-full flex flex-col">
+                                <div className="space-y-6">
+                                    {chunkIdx === 0 ? (
+                                        // First execution page: Narrative (part 1) + Talent/Location/Deliverables
+                                        <>
+                                            <section>
+                                                <label className={labelStyle}>Narrative / Creative Approach</label>
+                                                <div className="text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3 min-h-[220px]">
+                                                    {chunk}
+                                                </div>
+                                            </section>
+                                            <section>
+                                                <label className={labelStyle}>Talent / Casting</label>
+                                                {renderField('talent', '...', 'min-h-[100px]')}
+                                            </section>
+                                            <section>
+                                                <label className={labelStyle}>Location / Setting</label>
+                                                {renderField('location', '...', 'min-h-[100px]')}
+                                            </section>
+                                            <section>
+                                                <label className={labelStyle}>Deliverables</label>
+                                                {renderField('deliverables', '...', 'min-h-[100px]')}
+                                            </section>
+                                        </>
+                                    ) : (
+                                        // Continuation pages: Only Narrative
+                                        <section>
+                                            <label className={labelStyle}>Narrative / Creative Approach (Cont.)</label>
+                                            <div className="text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3 min-h-[500px]">
+                                                {chunk}
+                                            </div>
+                                        </section>
+                                    )}
+                                </div>
+                            </div>
+                        </DocumentLayout>
+                    ));
+                }
 
-                            <section>
-                                <label className={labelStyle}>Tone & Style</label>
-                                {renderField('tone', 'Adjectives describing the feel...', 'min-h-[80px]')}
-                            </section>
+                return (
+                    <DocumentLayout
+                        key={idx}
+                        title={page.title}
+                        hideHeader={false}
+                        metadata={metadata}
+                        plain={plain}
+                        orientation={orientation}
+                        isPrinting={isPrinting}
+                        subtitle={idx > 0 ? `Execution` : `Strategy`}
+                    >
+                        <div className="space-y-6 h-full flex flex-col">
+                            <div className="space-y-6">
+                                {page.sections.map(s => (
+                                    <section key={s.field}>
+                                        <label className={labelStyle}>{s.label}</label>
+                                        {renderField(s.field as keyof BriefData, s.placeholder, s.minHeight)}
+                                    </section>
+                                ))}
+                            </div>
                         </div>
-
-                        <section>
-                            <label className={labelStyle}>Key Message</label>
-                            {renderField('keyMessage', 'The one thing the audience should remember...', 'min-h-[80px]')}
-                        </section>
-                    </div>
-
-                    {/* Execution Section */}
-                    <div className="space-y-6 pt-2">
-
-
-                        <section>
-                            <label className={labelStyle}>Narrative / Creative Approach</label>
-                            {renderField('narrative', 'Describe the story, concept, or creative execution in detail...', 'min-h-[180px]')}
-                        </section>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <section>
-                                <label className={labelStyle}>Talent / Casting</label>
-                                {renderField('talent', 'Key roles, demographic, look...', 'min-h-[100px]')}
-                            </section>
-
-                            <section>
-                                <label className={labelStyle}>Location / Setting</label>
-                                {renderField('location', 'Where is this taking place? Studio, outdoor, specific spots...', 'min-h-[100px]')}
-                            </section>
-                        </div>
-
-                        <section>
-                            <label className={labelStyle}>Deliverables</label>
-                            {renderField('deliverables', 'List required assets, formats, and aspect ratios...', 'min-h-[100px]')}
-                        </section>
-                    </div>
-                </div>
-            </DocumentLayout>
+                    </DocumentLayout>
+                );
+            })}
         </div>
     );
 };

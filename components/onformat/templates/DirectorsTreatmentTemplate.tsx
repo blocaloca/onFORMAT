@@ -296,49 +296,85 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
 
     return (
         <>
-            {slides.map((slide, index) => (
-                <DocumentLayout
-                    key={slide.id}
-                    title="Treatment"
-                    subtitle={`Page ${index + 1}`}
-                    hideHeader={false}
-                    plain={plain}
-                    orientation={orientation}
-                    metadata={metadata}
-                >
-                    <div className="h-full relative">
-                        {renderSlideContent(slide)}
+            {slides.map((slide, slideIndex) => {
+                const CHAR_LIMIT = 2000;
+                
+                const splitContent = (text: string) => {
+                    if (!text) return [""];
+                    const pages = [];
+                    let remaining = text;
+                    while (remaining.length > 0) {
+                        if (remaining.length <= CHAR_LIMIT) {
+                            pages.push(remaining);
+                            break;
+                        }
+                        let breakIdx = remaining.lastIndexOf('\n', CHAR_LIMIT);
+                        if (breakIdx === -1 || breakIdx < CHAR_LIMIT * 0.5) breakIdx = remaining.lastIndexOf(' ', CHAR_LIMIT);
+                        if (breakIdx === -1) breakIdx = CHAR_LIMIT;
+                        pages.push(remaining.substring(0, breakIdx));
+                        remaining = remaining.substring(breakIdx).trim();
+                    }
+                    return pages;
+                };
 
-                        {/* Slide Controls (Delete) */}
-                        {!isLocked && !isPrinting && !plain && (
-                            <div className="absolute top-0 right-0 mt-0 mr-0">
-                                <button
-                                    onClick={() => setDeleteConfirmId(deleteConfirmId === slide.id ? null : slide.id)}
-                                    className="text-zinc-300 hover:text-red-500 transition-colors p-2"
-                                >
-                                    <Trash2 size={14} />
-                                </button>
-                                {deleteConfirmId === slide.id && (
-                                    <div className="absolute right-0 top-8 z-50 bg-white shadow-xl border border-zinc-200 p-2 rounded w-32 animate-in fade-in zoom-in-95">
+                const contentChunks = isPrinting ? splitContent(slide.content) : [slide.content];
+
+                return contentChunks.map((chunk, chunkIdx) => {
+                    const isContinuation = chunkIdx > 0;
+                    const displaySlide = {
+                        ...slide,
+                        content: chunk,
+                        // Hide images on continuation to save space/clearer flow
+                        modules: isContinuation ? { image1: '', image2: '' } : slide.modules,
+                        layout: isContinuation ? 'Text' : slide.layout,
+                        title: isContinuation ? `${slide.title} (Cont.)` : slide.title
+                    };
+
+                    return (
+                        <DocumentLayout
+                            key={`${slide.id}-${chunkIdx}`}
+                            title="Treatment"
+                            subtitle={`Slide ${slideIndex + 1}${isContinuation ? ' (Cont.)' : ''}`}
+                            hideHeader={false}
+                            plain={plain}
+                            orientation={orientation}
+                            metadata={metadata}
+                        >
+                            <div className="h-full relative">
+                                {renderSlideContent(displaySlide as TreatmentSlide)}
+
+                                {/* Slide Controls (Delete) - Only on first page of slide */}
+                                {!isLocked && !isPrinting && !plain && !isContinuation && (
+                                    <div className="absolute top-0 right-0 mt-0 mr-0">
                                         <button
-                                            onClick={() => removeSlide(slide.id)}
-                                            className="w-full bg-red-500 text-white text-[10px] font-bold py-2 rounded mb-1"
+                                            onClick={() => setDeleteConfirmId(deleteConfirmId === slide.id ? null : slide.id)}
+                                            className="text-zinc-300 hover:text-red-500 transition-colors p-2"
                                         >
-                                            CONFIRM DELETE
+                                            <Trash2 size={14} />
                                         </button>
-                                        <button
-                                            onClick={() => setDeleteConfirmId(null)}
-                                            className="w-full bg-zinc-100 dark:bg-zinc-900 text-black text-[11px] font-bold py-2 rounded"
-                                        >
-                                            CANCEL
-                                        </button>
+                                        {deleteConfirmId === slide.id && (
+                                            <div className="absolute right-0 top-8 z-50 bg-white shadow-xl border border-zinc-200 p-2 rounded w-32 animate-in fade-in zoom-in-95">
+                                                <button
+                                                    onClick={() => removeSlide(slide.id)}
+                                                    className="w-full bg-red-500 text-white text-[10px] font-bold py-2 rounded mb-1"
+                                                >
+                                                    CONFIRM DELETE
+                                                </button>
+                                                <button
+                                                    onClick={() => setDeleteConfirmId(null)}
+                                                    className="w-full bg-zinc-100 dark:bg-zinc-900 text-black text-[11px] font-bold py-2 rounded"
+                                                >
+                                                    CANCEL
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
-                        )}
-                    </div>
-                </DocumentLayout>
-            ))}
+                        </DocumentLayout>
+                    );
+                });
+            })}
 
             {/* Empty State / Add Slide Menu */}
             {!plain && !isPrinting && !isLocked && (

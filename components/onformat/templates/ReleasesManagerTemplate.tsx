@@ -153,118 +153,132 @@ export const ReleasesManagerTemplate = ({
     // List View
     const filteredReleases = releases.filter(r => r.type === activeTab);
 
+    const ITEMS_PER_PAGE = 10;
+    const totalPages = Math.ceil(Math.max(filteredReleases.length, 1) / ITEMS_PER_PAGE);
+    const paginatedReleases = Array.from({ length: totalPages }, (_, i) => filteredReleases.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+
     return (
-        <DocumentLayout
-            title="Releases Manager"
-            hideHeader={false}
-            plain={plain}
-            orientation={orientation}
-            metadata={metadata}
-        >
-            <div className="h-full flex flex-col">
+        <div className="flex flex-col gap-8">
+            {paginatedReleases.map((pageItems, pageIdx) => (
+                <DocumentLayout
+                    key={pageIdx}
+                    title="Releases Manager"
+                    hideHeader={false}
+                    plain={plain}
+                    orientation={orientation}
+                    metadata={metadata}
+                    subtitle={pageIdx > 0 ? `Page ${pageIdx + 1}` : ''}
+                >
+                    <div className="h-full flex flex-col">
 
-                {/* Tabs */}
-                <div className="flex items-center gap-4 mb-6 border-b border-zinc-200 pb-2">
-                    <button
-                        onClick={() => setActiveTab('talent')}
-                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'talent' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
-                    >
-                        <User size={14} /> Talent
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('property')}
-                        className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'property' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
-                    >
-                        <MapPin size={14} /> Property
-                    </button>
-                </div>
-
-                {/* List */}
-                <div className="flex-1 overflow-y-auto space-y-2">
-                    {filteredReleases.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-40 text-zinc-400 border-2 border-dashed border-zinc-100 rounded-lg">
-                            <p className="text-sm font-medium">No {activeTab} releases yet.</p>
-                            <button
-                                onClick={handleCreate}
-                                className="mt-2 text-sm font-bold uppercase text-blue-600 hover:underline"
-                            >
-                                + Create First Release
-                            </button>
-                        </div>
-                    ) : (
-                        filteredReleases.map(item => (
-                            <div
-                                key={item.id}
-                                onClick={() => { setActiveId(item.id); setView('detail'); }}
-                                className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
-                            >
-                                <div className="flex items-center gap-3">
-                                    {isPrinting ? (
-                                        <div className="w-8 h-8 flex items-center justify-center text-black">
-                                            {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
-                                        </div>
-                                    ) : (
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'}`}>
-                                            {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
-                                        </div>
-                                    )}
-                                    <div>
-                                        <h4 className="text-sm font-bold text-zinc-800 leading-none mb-1">
-                                            {item.name || '(Untitled)'}
-                                        </h4>
-                                        <p className="text-[10px] text-zinc-500 font-mono uppercase">
-                                            {item.description || 'No Role/Address'}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-center gap-4">
-                                    <div className="text-right">
-                                        {isPrinting ? (
-                                            <span className="text-[10px] font-bold uppercase py-0.5 text-black">
-                                                {item.status}
-                                            </span>
-                                        ) : (
-                                            <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${item.status === 'signed' ? 'bg-green-100 text-green-700' : 'bg-yellow-50 text-yellow-600'}`}>
-                                                {item.status}
-                                            </span>
-                                        )}
-                                        <div className="text-[9px] text-zinc-400 mt-0.5 flex items-center justify-end gap-1">
-                                            <Clock size={8} /> {new Date(item.dateCreated).toLocaleDateString()}
-                                        </div>
-                                    </div>
-
-                                    {!isLocked && (
-                                        <button
-                                            onClick={(e) => handleDelete(e, item.id)}
-                                            className="opacity-0 group-hover:opacity-100 p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 rounded text-zinc-400 hover:text-red-500 transition-all"
-                                            title="Delete Release"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    )}
-
-                                    <ChevronRight size={16} className="text-zinc-300 group-hover:text-black dark:hover:text-zinc-100" />
-                                </div>
+                        {/* Tabs (Hidden in Print) */}
+                        {!isPrinting && pageIdx === 0 && (
+                            <div className="flex items-center gap-4 mb-6 border-b border-zinc-200 pb-2 print:hidden">
+                                <button
+                                    onClick={() => setActiveTab('talent')}
+                                    className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'talent' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
+                                >
+                                    <User size={14} /> Talent
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('property')}
+                                    className={`text-sm font-bold uppercase tracking-wider pb-1 flex items-center gap-2 transition-colors ${activeTab === 'property' ? 'text-black border-b-2 border-black' : 'text-zinc-400 hover:text-zinc-600'}`}
+                                >
+                                    <MapPin size={14} /> Property
+                                </button>
                             </div>
-                        ))
-                    )}
-                </div>
+                        )}
 
-                {/* Footer Action */}
-                {!isPrinting && (
-                    <div className="pt-4 mt-4 border-t border-zinc-100 flex justify-start">
-                        <button
-                            onClick={handleCreate}
-                            disabled={isLocked}
-                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
-                        >
-                            <Plus size={10} /> Add {activeTab} Release
-                        </button>
+                        {/* List */}
+                        <div className="flex-1 overflow-y-auto space-y-2">
+                            {pageItems.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-40 text-zinc-400 border-2 border-dashed border-zinc-100 rounded-lg">
+                                    <p className="text-sm font-medium">No {activeTab} releases yet.</p>
+                                    <button
+                                        onClick={handleCreate}
+                                        className="mt-2 text-sm font-bold uppercase text-blue-600 hover:underline"
+                                    >
+                                        + Create First Release
+                                    </button>
+                                </div>
+                            ) : (
+                                pageItems.map(item => (
+                                    <div
+                                        key={item.id}
+                                        onClick={() => { setActiveId(item.id); setView('detail'); }}
+                                        className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            {isPrinting ? (
+                                                <div className="w-8 h-8 flex items-center justify-center text-black">
+                                                    {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
+                                                </div>
+                                            ) : (
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'}`}>
+                                                    {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h4 className="text-sm font-bold text-zinc-800 leading-none mb-1">
+                                                    {item.name || '(Untitled)'}
+                                                </h4>
+                                                <p className="text-[10px] text-zinc-500 font-mono uppercase">
+                                                    {item.description || 'No Role/Address'}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-right">
+                                                {isPrinting ? (
+                                                    <span className="text-[10px] font-bold uppercase py-0.5 text-black">
+                                                        {item.status}
+                                                    </span>
+                                                ) : (
+                                                    <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${item.status === 'signed' ? 'bg-green-100 text-green-700' : 'bg-yellow-50 text-yellow-600'}`}>
+                                                        {item.status}
+                                                    </span>
+                                                )}
+                                                <div className="text-[9px] text-zinc-400 mt-0.5 flex items-center justify-end gap-1">
+                                                    <Clock size={8} /> {new Date(item.dateCreated).toLocaleDateString()}
+                                                </div>
+                                            </div>
+
+                                            {!isLocked && !isPrinting && (
+                                                <button
+                                                    onClick={(e) => handleDelete(e, item.id)}
+                                                    className="opacity-0 group-hover:opacity-100 p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 rounded text-zinc-400 hover:text-red-500 transition-all"
+                                                    title="Delete Release"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            )}
+
+                                            {!isPrinting && (
+                                                <ChevronRight size={16} className="text-zinc-300 group-hover:text-black dark:hover:text-zinc-100" />
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Footer Action */}
+                        {!isPrinting && pageIdx === totalPages - 1 && (
+                            <div className="pt-4 mt-4 border-t border-zinc-100 flex justify-start">
+                                <button
+                                    onClick={handleCreate}
+                                    disabled={isLocked}
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                >
+                                    <Plus size={10} /> Add {activeTab} Release
+                                </button>
+                            </div>
+                        )}
+
                     </div>
-                )}
-
-            </div>
-        </DocumentLayout>
+                </DocumentLayout>
+            ))}
+        </div>
     );
 };
