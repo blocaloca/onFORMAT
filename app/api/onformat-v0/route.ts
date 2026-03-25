@@ -1,10 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import { createClient } from '@/lib/supabase-server'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { phase, toolType, lockedPhases, phaseData, messages, provider, mode = 'ASSIST' } = body
+    const { 
+      phase, 
+      toolType, 
+      lockedPhases, 
+      phaseData, 
+      messages, 
+      provider, 
+      mode = 'ASSIST' 
+    } = body
+
+    // STEP 3: Tier-Based Defense (Rate Limiting)
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get user profile for tier check
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('subscription_tier, ai_request_count')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError) {
+      console.error('Profile fetch error:', profileError)
+      return NextResponse.json({ error: 'Failed to verify subscription status' }, { status: 500 })
+    }
+
+    const tier = profile?.subscription_tier?.toLowerCase() || 'trial'
+    const count = profile?.ai_request_count || 0
+
+    // Logic enforcement
+    if (['scout', 'none', 'trial', 'basic'].includes(tier) && count >= 10) {
+      return NextResponse.json({ error: 'Upgrade to Pro to unlock more AI Assists' }, { status: 403 })
+    }
+
+    if (tier === 'pro' && count >= 50) {
+      return NextResponse.json({ error: 'Upgrade to Studio to unlock even more AI Assists' }, { status: 403 })
+    }
 
     // Get OpenRouter API key from environment
     const apiKey = process.env.OPENROUTER_API_KEY
@@ -24,21 +65,35 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Build system prompt
-    const systemPrompt = buildSystemPrompt(phase, toolType, lockedPhases, phaseData, mode)
+    // STEP 2: Payload Trimming (Strict Context Window)
+    // Locate the specific prompt the user is currently interacting with (last user message)
+    const lastUserMessage = messages.slice().reverse().find((m: any) => m.role === 'user')?.content || 'No prompt provided.'
 
+    // STEP 1: The Model Swap (gpt-5-nano)
     // Call OpenRouter
     const completion = await openai.chat.completions.create({
-      model: 'deepseek/deepseek-chat',
+      model: 'openai/gpt-5-nano',
       messages: [
-        { role: 'system', content: systemPrompt },
-        ...messages,
+        { 
+          role: 'system', 
+          content: 'You are an expert creative director assistant. Your only job is to refine, punch up, or brainstorm around the specific snippet of a treatment document the user provides. Be concise and impactful.' 
+        },
+        { 
+          role: 'user', 
+          content: lastUserMessage 
+        },
       ],
       temperature: 0.7,
       max_tokens: 2000,
     })
 
     const assistantMessage = completion.choices[0]?.message?.content || ''
+
+    // Increment AI Request Count in Database
+    await supabase
+      .from('profiles')
+      .update({ ai_request_count: count + 1 })
+      .eq('id', user.id)
 
     return NextResponse.json({ message: assistantMessage })
   } catch (error: any) {
