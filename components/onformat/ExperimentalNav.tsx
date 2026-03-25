@@ -186,10 +186,7 @@ interface DashboardSidebarProps {
     userEmail?: string;
     darkMode?: boolean;
     onNewProject?: () => void;
-    AiComponent?: React.ReactNode;
-    onToggleAi?: () => void;
     heading?: string;
-    isAiDocked?: boolean;
     projects?: any[];
     isLocked?: boolean;
 }
@@ -202,7 +199,6 @@ export const ExperimentalDashboardNav = ({
     onFolderAction,
     userEmail,
     onNewProject,
-    AiComponent,
     projects = [],
     isLocked = false
 }: DashboardSidebarProps) => {
@@ -212,13 +208,6 @@ export const ExperimentalDashboardNav = ({
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 dark:bg-zinc-900/60 border-zinc-300 dark:border-zinc-800 backdrop-blur-md`}>
             <NavHeader />
-
-            {/* AI Slot (Preserving Dashboard Chat functionality) */}
-            {AiComponent && (
-                <div className="px-4 mb-4">
-                    {AiComponent}
-                </div>
-            )}
 
             {/* New Project Action - Premium Glass Refactor */}
             {onNewProject && (
@@ -298,8 +287,6 @@ interface WorkspaceSidebarProps {
     darkMode?: boolean;
     userEmail?: string;
     producerName?: string;
-    onToggleAi?: () => void;
-    isAiDocked?: boolean;
     mobileStatus?: { isLive: boolean; hasAlert: boolean; alertMsg?: string }; // New prop
 }
 

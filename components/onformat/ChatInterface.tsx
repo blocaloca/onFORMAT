@@ -208,7 +208,7 @@ export const ChatInterface = ({
     }
     const dynamicPlaceholder = hasActions
         ? "Something else...?"
-        : (placeholderHint || "Ask AI Liaison...");
+        : (placeholderHint || "Architect your vision...");
 
     if (isDocked) return null;
 
@@ -228,12 +228,12 @@ export const ChatInterface = ({
                 onMouseDown={startDrag}
             >
                 <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-white tracking-widest flex items-center gap-2">
-                        AI LIAISON
-                        {isSending && <Loader2 size={12} className="text-green-400 animate-spin" style={{ filter: 'drop-shadow(0 0 2px rgba(74, 222, 128, 0.5))' }} />}
+                    <span className="text-[10px] font-black text-white tracking-[0.2em] flex items-center gap-2">
+                        AI VISION
+                        {isSending && <Loader2 size={12} className="text-zinc-400 animate-spin" />}
                     </span>
-                    <span className="text-[9px] text-zinc-500 font-mono pl-2 border-l border-zinc-700">
-                        {(activeToolLabel || '').toUpperCase()}
+                    <span className="text-[9px] text-zinc-500 font-mono pl-2 border-l border-zinc-700 tracking-wider">
+                        LAB
                     </span>
                 </div>
 
