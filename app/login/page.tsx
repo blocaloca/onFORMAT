@@ -70,7 +70,7 @@ export default function LoginPage() {
         {/* LOGO & HEADER */}
         <div className="text-center mb-10 flex flex-col items-center">
           <div className="w-64 max-w-[80vw] mx-auto flex justify-center mb-4">
-            <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="w-full h-auto object-contain" />
+            <img src="/octo%20logo%20bk.png" alt="onFORMAT Logo" className="w-full h-auto object-contain" />
           </div>
           {!isLogin && (
             <div className="text-zinc-600 font-medium text-sm">

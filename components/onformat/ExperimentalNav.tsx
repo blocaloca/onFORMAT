@@ -73,15 +73,20 @@ export const getPhaseLabel = (key: Phase): string => {
 
 // --- Shared Components ---
 
-const NavHeader = () => (
-    <div className={`p-8 pb-4 text-foreground`}>
-        <Link href="/" className="flex justify-center mb-10 hover:opacity-80 transition-opacity w-full">
-            <img src="/octo%20logo%202.png" alt="onFORMAT Logo" className="h-20 w-auto object-contain" />
-        </Link>
+const NavHeader = () => {
+    const { theme } = useTheme();
+    const logoSrc = theme === 'dark' ? '/octo logo wt.png' : '/octo logo bk.png';
 
-        <div className="h-px w-full bg-border opacity-50 mb-0" />
-    </div>
-);
+    return (
+        <div className={`p-8 pb-4 text-foreground`}>
+            <Link href="/" className="flex justify-center mb-10 hover:opacity-80 transition-opacity w-full">
+                <img src={logoSrc} alt="onFORMAT Logo" className="h-20 w-auto object-contain" />
+            </Link>
+
+            <div className="h-px w-full bg-border opacity-50 mb-0" />
+        </div>
+    );
+};
 
 const NavSectionTitle = ({ children }: { children: React.ReactNode }) => (
     <div className={`px-4 font-sans text-[10px] font-bold uppercase tracking-widest mb-2 mt-6 text-zinc-500 dark:text-zinc-400`}>

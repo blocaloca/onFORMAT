@@ -1142,7 +1142,7 @@ export default function OnSetMobilePage() {
     if (loading) {
         return (
             <div className="h-screen bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center gap-4">
-                <img src="/octo%20logo%202.png" className="w-16 animate-pulse opacity-50 contrast-0 grayscale" />
+                <img src={theme === 'dark' ? "/octo%20logo%20wt.png" : "/octo%20logo%20bk.png"} className="w-16 animate-pulse opacity-50" />
                 <p className="text-[10px] font-mono uppercase tracking-widest text-zinc-500 dark:text-zinc-300">Connecting/...</p>
             </div>
         );

@@ -69,7 +69,7 @@ export default function PricingPage() {
             {/* Nav */}
             <nav className="fixed top-0 w-full z-50 px-8 py-5 flex items-center justify-between bg-zinc-50/80 backdrop-blur-xl border-b border-zinc-200">
                 <Link href="/" className="flex items-center group">
-                    <img src="/octo%20logo%202-%20long.png" alt="onFORMAT Logo" className="h-[50px] md:h-[60px] w-auto object-contain" />
+                    <img src="/octo%20logo%20bk.png" alt="onFORMAT Logo" className="h-[60px] md:h-[70px] w-auto object-contain" />
                 </Link>
                 <div className="flex items-center gap-8">
                     <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
