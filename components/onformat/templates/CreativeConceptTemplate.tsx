@@ -87,12 +87,12 @@ export const CreativeConceptTemplate = ({
                             </div>
                         )}
 
-                        <div className="flex-1 flex flex-col bg-white dark:bg-zinc-950/20 rounded-lg p-1 border border-zinc-100 dark:border-zinc-800/50 shadow-inner group-hover:border-zinc-200 dark:group-hover:border-zinc-700 transition-all duration-300">
+                        <div className="flex-1 flex flex-col bg-white rounded-lg p-1 border border-zinc-200 shadow-inner group-hover:border-zinc-300 transition-all duration-300">
                             <textarea
                                 value={page.content}
                                 onChange={(e) => handleUpdatePage(page.id, e.target.value)}
                                 placeholder={index === 0 ? "// Architect your vision here... \n// Paste conceptual seeds from the AI Strategist and refine them into your North Star." : "Continue the architectural blueprint..."}
-                                className={`flex-1 w-full bg-zinc-50/50 dark:bg-zinc-900/30 resize-none outline-none text-sm leading-relaxed p-8 rounded-md transition-all font-mono tracking-tight text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-900/50`}
+                                className={`flex-1 w-full bg-white resize-none outline-none text-sm leading-relaxed p-8 rounded-md transition-all font-mono tracking-tight text-black placeholder:text-zinc-400 focus:bg-white`}
                                 disabled={isLocked}
                                 spellCheck={false}
                             />
