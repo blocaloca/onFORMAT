@@ -92,16 +92,10 @@ export const DocumentLayout = ({
     }
 
     // --- PRINT MODE (Fixed Paper) ---
-    // User Request: Make document 20% larger in workspace (1.2x scale)
-    // FIX: reset scaling for Print Room to prevent cropping
-    // Always use standard 96DPI dimensions (1.0 scale) to ensure Editor matches PDF output (WYSIWYG).
-    // Zooming is handled by the parent container's CSS transform.
-    const SCALE = 1.0;
-    // const width = orientation === 'landscape' ? 1056 : 816;
-    // const height = orientation === 'landscape' ? 816 : 1056;
-
+    const SCALE = 1.0; // Default scale for PDF capture
+    
     return (
-        <>
+        <div className="flex flex-col items-center w-full">
             {/* Print Styles Injection */}
             <style jsx global>{`
                 @media print {
@@ -123,70 +117,79 @@ export const DocumentLayout = ({
                 }
             `}</style>
 
-            <div
-                className={`document-page bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl mb-6 shadow-sm mx-auto relative flex flex-col gap-8 ${className}`}
-                style={{
-                    width: `${width}px`,
-                    height: `${height}px`,
-                    padding: '32px 40px 40px 40px', // Balance between 'moving up' and 'not clipping'
-                    marginBottom: '40px' // Spacing between pages in editor
+            <div 
+                className="bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] ring-1 ring-zinc-200/50 relative overflow-hidden shrink-0 mb-8"
+                style={{ 
+                    width: width, 
+                    height: height,
                 }}
             >
-                {/* Header */}
-                <div className="flex-shrink-0 relative z-50 bg-white dark:bg-white">
-                    {!hideHeader && (
-                        <div>
-                            <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-6">
-                                <h1 className="text-3xl font-black uppercase tracking-normal leading-tight">{title}</h1>
-                                {metadata && metadata.date && (
-                                    <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pb-1">
-                                        {metadata.date}
-                                    </div>
-                                )}
-                            </div>
-
-                            {metadata && (
-                                <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 min-h-[1.25rem]">
-                                    <div className="flex items-center gap-4">
-                                        {(metadata.clientName || !metadata.projectName) && (
-                                            <div className="flex gap-2">
-                                                <span>{metadata.clientName || 'UNKNOWN CLIENT'}</span>
-                                                <span>{'/' + '/'}</span>
-                                            </div>
-                                        )}
-                                        <div className="flex gap-2">
-                                            <span className="text-black dark:text-black">{metadata.projectName || 'UNTITLED PROJECT'}</span>
-                                        </div>
-                                    </div>
-
-                                    {(metadata.producer || metadata.directorNames) ? (
-                                        <div className="flex gap-2">
-                                            <span>{metadata.isTreatment ? 'DIRECTOR' : 'PRODUCER'}</span>
-                                            <span className="text-black dark:text-black">{metadata.isTreatment ? metadata.directorNames : metadata.producer}</span>
-                                        </div>
-                                    ) : (
-                                        <div className="flex gap-2 opacity-0">
-                                            <span>PRODUCER</span>
-                                            <span className="text-black">-</span>
+                <div
+                    className="document-page print-page-capture bg-white dark:bg-white border-zinc-200 relative flex flex-col gap-8 origin-top-left"
+                    data-orientation={orientation}
+                    style={{
+                        width: `${width}px`,
+                        height: `${height}px`,
+                        padding: '32px 40px 40px 40px',
+                        transform: 'scale(var(--print-scale, 1))',
+                    }}
+                >
+                    {/* Header */}
+                    <div className="flex-shrink-0 relative z-50 bg-white dark:bg-white">
+                        {!hideHeader && (
+                            <div>
+                                <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-6">
+                                    <h1 className="text-3xl font-black uppercase tracking-normal leading-tight text-black">{title}</h1>
+                                    {metadata && metadata.date && (
+                                        <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pb-1">
+                                            {metadata.date}
                                         </div>
                                     )}
                                 </div>
-                            )}
-                        </div>
-                    )}
-                </div>
 
-                {/* Content Area - Flex Grow to fill page */}
-                <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0">
-                    {children}
-                </div>
+                                {metadata && (
+                                    <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 min-h-[1.25rem]">
+                                        <div className="flex items-center gap-4">
+                                            {(metadata.clientName || !metadata.projectName) && (
+                                                <div className="flex gap-2">
+                                                    <span>{metadata.clientName || 'UNKNOWN CLIENT'}</span>
+                                                    <span>{'/' + '/'}</span>
+                                                </div>
+                                            )}
+                                            <div className="flex gap-2">
+                                                <span className="text-black">{metadata.projectName || 'UNTITLED PROJECT'}</span>
+                                            </div>
+                                        </div>
 
-                {/* Footer */}
-                <div className="mt-auto pt-6 border-t border-gray-100 flex justify-between text-[8px] text-gray-400 font-mono uppercase">
-                    <span>Generated by onFORMAT</span>
-                    <span>{new Date().toLocaleDateString()}</span>
+                                        {(metadata.producer || metadata.directorNames) ? (
+                                            <div className="flex gap-2">
+                                                <span>{metadata.isTreatment ? 'DIRECTOR' : 'PRODUCER'}</span>
+                                                <span className="text-black">{metadata.isTreatment ? metadata.directorNames : metadata.producer}</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex gap-2 opacity-0">
+                                                <span>PRODUCER</span>
+                                                <span className="text-black">-</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Content Area */}
+                    <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0 text-black">
+                        {children}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="mt-auto pt-6 border-t border-gray-100 flex justify-between text-[8px] text-gray-400 font-mono uppercase">
+                        <span>Generated by onFORMAT</span>
+                        <span>{new Date().toLocaleDateString()}</span>
+                    </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };

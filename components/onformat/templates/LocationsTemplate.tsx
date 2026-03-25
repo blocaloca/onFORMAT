@@ -126,7 +126,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
     );
 
     // Content Components to reduce duplication
-    const renderDetailsSection = (index: number, loc: LocationPage, isPrinting: boolean, isLocked: boolean, updateLocation: any, isPortrait: boolean, pageIdx: number) => (
+    const renderDetailsSection = (index: number, loc: LocationPage, isPrinting: boolean, isLocked: boolean, updateLocation: any, isPortrait: boolean, pageIdx: number, noteChunk: string) => (
         <div className="flex-1 flex flex-col gap-5 mt-2">
             {isPrinting ? (
                 <div className="w-full text-2xl font-black uppercase tracking-tight text-black py-1 leading-none">
@@ -192,7 +192,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Notes & Logistics {pageIdx > 0 ? '(Cont.)' : ''}</span>
                 {isPrinting ? (
                     <div className="w-full h-full p-3 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-zinc-50 whitespace-pre-wrap">
-                        {loc.notes}
+                        {noteChunk}
                     </div>
                 ) : (
                     <textarea
@@ -308,7 +308,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                         />
                                                     </div>
                                                 </div>
-                                                {renderDetailsSection(index, loc, !!isPrinting, isLocked, updateLocation, true, pageIdx)}
+                                                {renderDetailsSection(index, loc, !!isPrinting, isLocked, updateLocation, true, pageIdx, noteChunk)}
                                             </>
                                         )}
                                         {isContinuation && (
@@ -341,7 +341,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                     </div>
                                                     {/* In Landscape, Details fit below Main Image */}
                                                     <div className="flex-1 relative">
-                                                        {renderDetailsSection(index, loc, !!isPrinting, isLocked, updateLocation, false, pageIdx)}
+                                                        {renderDetailsSection(index, loc, !!isPrinting, isLocked, updateLocation, false, pageIdx, noteChunk)}
                                                     </div>
                                                 </div>
 

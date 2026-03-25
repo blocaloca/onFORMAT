@@ -32,7 +32,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
 
 
     return (
-        <>
+        <div className="flex flex-col items-center gap-4 w-full" style={{ '--print-scale': scale } as any}>
             {/* 1. Cover Page */}
             {coverSettings.showCover && (() => {
                 // Cover Dimensions Logic
@@ -96,11 +96,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                     };
 
                     return (
-                        <PDFPreviewWrapper
-                            key={uniqueKey}
-                            orientation={orientationOverride || 'portrait'}
-                            scale={scale}
-                        >
+                        <React.Fragment key={uniqueKey}>
                             {Template ? (
                                 <Template
                                     data={versionData}
@@ -115,7 +111,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                                     Template Not Found for {item.label}
                                 </div>
                             )}
-                        </PDFPreviewWrapper>
+                        </React.Fragment>
                     );
                 });
             })}
@@ -126,6 +122,6 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                     Select documents from the sidebar to preview
                 </div>
             )}
-        </>
+        </div>
     );
 };
