@@ -49,7 +49,7 @@ export const DocumentLayout = ({
         return (
             <div className={`
                 mx-auto flex flex-col gap-6 
-                bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800/80 rounded-xl mb-6 shadow-sm
+                bg-white dark:bg-white text-zinc-900 dark:text-zinc-900 border border-zinc-200 dark:border-zinc-300 rounded-xl mb-6 shadow-sm
                 p-10
                 transition-colors duration-200
                 ${className}
@@ -64,7 +64,7 @@ export const DocumentLayout = ({
                 {!hideHeader && (
                     <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-2">
                         <div className="flex flex-col">
-                            <h1 className="text-2xl font-sans font-bold uppercase tracking-tight text-zinc-900 dark:text-zinc-100">{title}</h1>
+                            <h1 className="text-2xl font-sans font-bold uppercase tracking-tight text-zinc-900 dark:text-zinc-900">{title}</h1>
                             {metadata?.date && (
                                 <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mt-1">
                                     {metadata.date}
@@ -74,9 +74,9 @@ export const DocumentLayout = ({
 
                         {/* Status / Metadata Pill */}
                         {metadata && (
-                            <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
+                            <div className="flex items-center gap-3 text-[10px] font-mono uppercase tracking-wider text-zinc-400 dark:text-zinc-400">
                                 <span className="hidden sm:inline">{metadata.projectName || 'UNTITLED'}</span>
-                                {metadata.clientName && <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">{'/' + '/'}</span>}
+                                {metadata.clientName && <span className="hidden sm:inline text-zinc-300 dark:text-zinc-300">{'/' + '/'}</span>}
                                 {metadata.clientName && <span className="hidden sm:inline">{metadata.clientName}</span>}
                             </div>
                         )}
@@ -84,7 +84,7 @@ export const DocumentLayout = ({
                 )}
 
                 {/* Content Area */}
-                <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0 text-zinc-900 dark:text-zinc-100 overflow-y-auto -m-2 p-2 rounded">
+                <div className="font-sans leading-relaxed flex-1 relative min-h-0 z-0 text-zinc-900 dark:text-zinc-900 overflow-y-auto -m-2 p-2 rounded">
                     {children}
                 </div>
             </div>
@@ -124,7 +124,7 @@ export const DocumentLayout = ({
             `}</style>
 
             <div
-                className={`document-page bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 rounded-xl mb-6 shadow-sm mx-auto relative flex flex-col gap-8 ${className}`}
+                className={`document-page bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl mb-6 shadow-sm mx-auto relative flex flex-col gap-8 ${className}`}
                 style={{
                     width: `${width}px`,
                     height: `${height}px`,
@@ -133,7 +133,7 @@ export const DocumentLayout = ({
                 }}
             >
                 {/* Header */}
-                <div className="flex-shrink-0 relative z-50 bg-white dark:bg-zinc-950">
+                <div className="flex-shrink-0 relative z-50 bg-white dark:bg-white">
                     {!hideHeader && (
                         <div>
                             <div className="flex justify-between items-end border-b border-zinc-200 dark:border-zinc-800 pb-4 mb-6">
@@ -155,14 +155,14 @@ export const DocumentLayout = ({
                                             </div>
                                         )}
                                         <div className="flex gap-2">
-                                            <span className="text-black dark:text-zinc-100">{metadata.projectName || 'UNTITLED PROJECT'}</span>
+                                            <span className="text-black dark:text-black">{metadata.projectName || 'UNTITLED PROJECT'}</span>
                                         </div>
                                     </div>
 
                                     {(metadata.producer || metadata.directorNames) ? (
                                         <div className="flex gap-2">
                                             <span>{metadata.isTreatment ? 'DIRECTOR' : 'PRODUCER'}</span>
-                                            <span className="text-black dark:text-zinc-100">{metadata.isTreatment ? metadata.directorNames : metadata.producer}</span>
+                                            <span className="text-black dark:text-black">{metadata.isTreatment ? metadata.directorNames : metadata.producer}</span>
                                         </div>
                                     ) : (
                                         <div className="flex gap-2 opacity-0">

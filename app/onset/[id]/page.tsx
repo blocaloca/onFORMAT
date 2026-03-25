@@ -1158,16 +1158,16 @@ export default function OnSetMobilePage() {
 
     return (
         <ProjectDataProvider data={data} userEmail={userEmail}>
-            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50/50 dark:bg-zinc-900/50 text-black dark:text-zinc-100 font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 dark:border-zinc-700 relative z-10">
+            <div className="w-full h-full max-w-md mx-auto min-w-0 flex flex-col bg-zinc-50 dark:bg-black text-black dark:text-zinc-100 font-sans font-inter overflow-hidden md:h-[90dvh] md:rounded-2xl md:border border-zinc-300 dark:border-zinc-800 relative z-10">
 
                 {/* TOP ROW: Header & Alerts */}
                 <div className="flex flex-col z-50 shrink-0">
                     {/* HEADER */}
-                    <header className="bg-zinc-100/90 dark:bg-zinc-900/90 backdrop-blur-md border-b border-zinc-100/80 dark:border-zinc-800/80 pt-safe transition-all w-full relative">
+                    <header className="bg-zinc-100/90 dark:bg-black/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 pt-safe transition-all w-full relative">
                         <div className="h-16 md:h-18 flex items-center justify-between px-6">
                             <div className="flex flex-col items-start mt-2 shrink-0">
-                                <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight">ONSET</span>
-                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-300 leading-none mt-1">by onFORMAT</span>
+                                <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight text-zinc-900 dark:text-white">ONSET</span>
+                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 leading-none mt-1">by onFORMAT</span>
                             </div>
                             <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
                             <div className="flex flex-col flex-1 min-w-0">
@@ -1230,22 +1230,22 @@ export default function OnSetMobilePage() {
                             />
 
                             {/* Drawer */}
-                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 dark:bg-zinc-900 border-l border-zinc-100 dark:border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
+                            <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 dark:bg-[#0A0A0A] border-l border-zinc-100 dark:border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                                 <div className="flex justify-between items-center mb-8">
-                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">System</h2>
-                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-50/50 dark:bg-zinc-900/50 p-2 rounded-full text-zinc-600 dark:text-zinc-300 transition-colors">
+                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">System</h2>
+                                    <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 dark:bg-zinc-800/50 p-2 rounded-full text-zinc-600 dark:text-zinc-300 transition-colors">
                                         <Menu size={14} />
                                     </button>
                                 </div>
 
                                 <div className="space-y-6 flex-1">
                                     {/* Identity Card */}
-                                    <div className="bg-zinc-100 dark:bg-zinc-900/50 shadow-inner p-4 rounded-xl border border-zinc-100 dark:border-zinc-800">
+                                    <div className="bg-zinc-100 dark:bg-zinc-800 shadow-inner p-4 rounded-xl border border-zinc-200 dark:border-zinc-700">
                                         <div className="flex items-center gap-3 mb-2">
                                             <UserCircle size={20} className="text-emerald-500" />
                                             <div>
-                                                <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">{userRole || 'Crew Member'}</p>
-                                                <p className="text-[10px] font-mono text-zinc-500 dark:text-zinc-300 break-all">{userEmail}</p>
+                                                <p className="text-xs font-bold text-zinc-900 dark:text-white">{userRole || 'Crew Member'}</p>
+                                                <p className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 break-all">{userEmail}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -1504,7 +1504,7 @@ export default function OnSetMobilePage() {
                 </main>
 
                 {/* BOTTOM NAV ROWS */}
-                <nav className="shrink-0 w-full min-w-0 bg-zinc-100 dark:bg-zinc-900/50 border-t border-zinc-300 dark:border-zinc-700 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
+                <nav className="shrink-0 w-full min-w-0 bg-white dark:bg-black border-t border-zinc-200 dark:border-zinc-800 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
                     <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
                         {(() => {
                             const availableKeys = data.availableKeys || [];
@@ -1552,10 +1552,10 @@ export default function OnSetMobilePage() {
                                     <button
                                         key={key}
                                         onClick={() => setActiveTab(key)}
-                                        className={`flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-50/50 dark:active:bg-zinc-800/50 relative ${
+                                        className={`flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-100 dark:active:bg-zinc-800 relative ${
                                             activeTab === key 
-                                            ? 'bg-zinc-50/50 dark:bg-zinc-800/40 text-zinc-900 dark:text-zinc-100 shadow-sm border border-zinc-300 dark:border-zinc-700' 
-                                            : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-200 dark:hover:text-zinc-300 border border-transparent hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50' 
+                                            ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-md border border-zinc-800 dark:border-zinc-200' 
+                                            : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800' 
                                         }`}
                                     >
                                         {DOC_LABELS[key] || key}
