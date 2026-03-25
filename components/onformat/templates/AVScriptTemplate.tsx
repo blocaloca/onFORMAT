@@ -149,14 +149,14 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Visual */}
                                             {isPrinting ? (
-                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap text-black bg-zinc-50/30 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
+                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-zinc-50/30 p-4 border border-zinc-200 rounded-sm min-h-[100px] overflow-hidden">
                                                     {row.visual || "—"}
                                                 </div>
                                             ) : (
                                                 <textarea
                                                     value={row.visual}
                                                     onChange={e => handleUpdateRow(globalIdx, { visual: e.target.value })}
-                                                    className={`text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase`}
+                                                    className={`text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase break-words`}
                                                     placeholder="ACTION DESCRIPTION..."
                                                     disabled={isLocked}
                                                 />
@@ -164,14 +164,14 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Audio */}
                                             {isPrinting ? (
-                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap text-black bg-zinc-50/10 p-4 border border-zinc-200 rounded-sm min-h-[100px]">
+                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-zinc-50/10 p-4 border border-zinc-200 rounded-sm min-h-[100px] overflow-hidden">
                                                     {row.audio || "—"}
                                                 </div>
                                             ) : (
                                                 <textarea
                                                     value={row.audio}
                                                     onChange={e => handleUpdateRow(globalIdx, { audio: e.target.value })}
-                                                    className={`text-sm font-mono bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed`}
+                                                    className={`text-sm font-mono bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed break-words`}
                                                     placeholder="Dialogue or SFX..."
                                                     disabled={isLocked}
                                                 />
