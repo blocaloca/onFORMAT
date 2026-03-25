@@ -424,34 +424,34 @@ export const ScriptView = ({ data }: { data: any }) => {
     if (!data || !data.rows || data.rows.length === 0) return <EmptyState label="Script" />;
 
     return (
-        <div className="space-y-8">
+        <div className="bg-white dark:bg-white p-6 rounded-[30px] shadow-sm border border-black/[0.03] space-y-10">
             {data.rows.map((row: any, i: number) => (
                 <div key={row.id || i} className="flex gap-4 group">
                     <div className="w-8 shrink-0 pt-1">
-                        <div className="w-6 h-6 rounded-full bg-zinc-100 dark:bg-zinc-50/50 shadow-inner border border-zinc-100 dark:border-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-500 dark:text-zinc-500 font-mono">
+                        <div className="w-7 h-7 rounded-full bg-zinc-100 dark:bg-zinc-100 shadow-inner border border-zinc-200 dark:border-zinc-200 flex items-center justify-center text-[10px] font-black text-zinc-600 dark:text-zinc-600 font-mono">
                             {row.scene || i + 1}
                         </div>
                     </div>
-                    <div className="flex-1 space-y-2">
-                        <div className="flex items-baseline justify-between border-b border-zinc-800 pb-2 mb-2">
-                            <span className="text-[10px] uppercase font-black tracking-widest text-zinc-500 dark:text-zinc-500">
+                    <div className="flex-1 space-y-4">
+                        <div className="flex items-baseline justify-between border-b border-zinc-100 dark:border-zinc-100 pb-2">
+                            <span className="text-[10px] uppercase font-black tracking-widest text-zinc-400 dark:text-zinc-400">
                                 {row.time || '00:00'}
                             </span>
                         </div>
 
                         <div className="font-mono text-base leading-relaxed text-zinc-900 dark:text-black">
-                            <span className="text-zinc-500 dark:text-zinc-500 uppercase text-[10px] font-bold block mb-1">Visual</span>
-                            {row.visual}
+                            <span className="text-zinc-400 dark:text-zinc-400 uppercase text-[9px] font-black tracking-widest block mb-1">Visual</span>
+                            <div className="whitespace-pre-wrap">{row.visual}</div>
                         </div>
 
-                        <div className="font-sans font-inter text-base leading-relaxed text-zinc-800 dark:text-zinc-200 pl-4 border-l border-emerald-500/30 w-full">
-                            <span className="text-emerald-600/70 uppercase text-[10px] font-bold block mb-1">Audio</span>
-                            {row.audio}
+                        <div className="font-sans font-inter text-base leading-relaxed text-zinc-800 dark:text-zinc-800 pl-4 border-l border-emerald-500/30 w-full bg-zinc-50/30 dark:bg-zinc-50/30 py-2 rounded-r-lg">
+                            <span className="text-emerald-600 uppercase text-[9px] font-black tracking-widest block mb-1">Audio</span>
+                            <div className="whitespace-pre-wrap">{row.audio}</div>
                         </div>
                     </div>
                 </div>
             ))}
-            <div className="h-12 text-center text-[10px] text-zinc-800 dark:text-zinc-200 uppercase font-bold pt-8">End of Script</div>
+            <div className="h-12 text-center text-[10px] text-zinc-400 dark:text-zinc-400 uppercase font-black tracking-widest pt-8 border-t border-zinc-50 dark:border-zinc-50">End of Script</div>
         </div>
     );
 };
@@ -1676,7 +1676,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             type="time"
                             value={form.time}
                             onChange={e => setForm({ ...form, time: e.target.value })}
-                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
+                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-base"
                         />
                     </div>
 
@@ -1686,7 +1686,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             placeholder="Topic (e.g. Safety Meeting)"
                             value={form.description}
                             onChange={e => setForm({ ...form, description: e.target.value })}
-                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500 font-bold"
+                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-base placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500"
                         />
                     </div>
 
@@ -1696,7 +1696,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
                             placeholder="Enter details..."
                             value={form.body}
                             onChange={e => setForm({ ...form, body: e.target.value })}
-                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black text-base p-2 rounded focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 min-h-[120px] placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500 resize-none leading-relaxed"
+                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 text-base min-h-[120px] placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500 resize-none leading-relaxed"
                         />
                     </div>
 
@@ -2365,7 +2365,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                             <input
                                 value={form.scene}
                                 onChange={e => setForm({ ...form, scene: e.target.value })}
-                                className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black p-2 rounded text-center font-bold"
+                                className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500"
                                 placeholder="#"
                             />
                         </div>
@@ -2374,7 +2374,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                             <input
                                 value={form.bestTake}
                                 onChange={e => setForm({ ...form, bestTake: e.target.value })}
-                                className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black p-2 rounded text-center font-bold"
+                                className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500"
                                 placeholder="1"
                             />
                         </div>
@@ -2385,7 +2385,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         <textarea
                             value={form.visual}
                             onChange={e => setForm({ ...form, visual: e.target.value })}
-                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black p-2 rounded h-20 text-sm"
+                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500 h-28 text-sm"
                             placeholder="Description..."
                         />
                     </div>
@@ -2395,7 +2395,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         <textarea
                             value={form.audio}
                             onChange={e => setForm({ ...form, audio: e.target.value })}
-                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black p-2 rounded h-20 text-sm"
+                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500 h-28 text-sm"
                             placeholder="Dialogue/Sound..."
                         />
                     </div>
@@ -2405,7 +2405,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
                         <textarea
                             value={form.notes}
                             onChange={e => setForm({ ...form, notes: e.target.value })}
-                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black p-2 rounded h-20 text-sm italic text-zinc-500 dark:text-zinc-500"
+                            className="w-full bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow text-zinc-900 dark:text-black font-bold outline-none focus:border-emerald-500 h-28 text-sm italic text-zinc-500 dark:text-zinc-500"
                             placeholder="Notes..."
                         />
                     </div>
