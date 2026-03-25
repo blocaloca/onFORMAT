@@ -1028,7 +1028,62 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         activeToolLabel="Creative Lab"
                         activeToolKey={state.activeTool}
                         placeholderHint="Architect your vision..."
-                        onInsertToDraft={saveDraftForActiveTool}
+                        onInsertToDraft={(text: string) => {
+                            // Smart Append Logic for AI VISION
+                            // This ensures AI snippets don't corrupt the document stack JSON structure.
+                            setState(s => {
+                                const activePhaseKey = s.activePhase;
+                                const activeToolKey = s.activeTool;
+                                const raw = s.phases[activePhaseKey]?.drafts?.[activeToolKey] || '[]';
+                                
+                                let stack: any[] = [];
+                                try {
+                                    const parsed = JSON.parse(raw);
+                                    stack = Array.isArray(parsed) ? parsed : [parsed];
+                                } catch {
+                                    stack = [{}];
+                                }
+                                if (stack.length === 0) stack.push({});
+
+                                const head = { ...stack[0] };
+
+                                if (activeToolKey === 'project-vision') {
+                                    // Lab Logic: Append to active page content
+                                    const pages = head.pages || [{ id: `p-${Date.now()}`, content: '' }];
+                                    const activeId = head.activePageId || pages[0].id;
+                                    const updatedPages = pages.map((p: any) => {
+                                        if (p.id === activeId) {
+                                            return { ...p, content: p.content + (p.content ? '\n\n' : '') + text };
+                                        }
+                                        return p;
+                                    });
+                                    stack[0] = { ...head, pages: updatedPages, activePageId: activeId };
+                                } else {
+                                    // Generic Logic: Append to text or primary field
+                                    const currentText = typeof head === 'string' ? head : (head.content || head.text || '');
+                                    const newText = currentText + (currentText ? '\n\n' : '') + text;
+                                    if (typeof head === 'object') {
+                                        stack[0] = { ...head, content: newText };
+                                    } else {
+                                        stack[0] = newText;
+                                    }
+                                }
+
+                                return {
+                                    ...s,
+                                    phases: {
+                                        ...s.phases,
+                                        [activePhaseKey]: {
+                                            ...s.phases[activePhaseKey],
+                                            drafts: {
+                                                ...s.phases[activePhaseKey].drafts,
+                                                [activeToolKey]: JSON.stringify(stack)
+                                            }
+                                        }
+                                    }
+                                };
+                            });
+                        }}
                         onClear={() => setState(s => ({
                             ...s,
                             chat: { ...s.chat, [s.activeTool]: [] }
