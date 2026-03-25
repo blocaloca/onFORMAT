@@ -100,9 +100,9 @@ export const hasAccess = (user: Profile, tier: string) => {
 The system implements a tiered "Pay-to-Play" model for AI usage to manage API costs (OpenRouter / gpt-5-nano).
 
 ### AI Request Limits
-- **Scout / None / Trial**: Max **10** requests.
-- **Pro**: Max **50** requests.
-- **Studio**: **Unlimited** requests.
+- **Scout / None / Trial / Solo**: Max **25** Priority Assists / mo.
+- **Pro**: Max **200** Priority Assists / mo.
+- **Studio**: **Unlimited** Priority Assists.
 
 ### Enforcement Logic
 Before every OpenRouter call, the API:

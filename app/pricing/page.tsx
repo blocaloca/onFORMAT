@@ -114,7 +114,7 @@ export default function PricingPage() {
                                 <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
                             <ul className="space-y-4 mb-10">
-                                {['3 Active Projects'].map(f => (
+                                {['3 Active Projects', '25 Priority AI Creative Assists'].map(f => (
                                     <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
                                         <Check size={14} className="text-zinc-400" /> {f}
                                     </li>
@@ -142,7 +142,7 @@ export default function PricingPage() {
                                 <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
                             <ul className="space-y-4 mb-10">
-                                {['Unlimited Active Projects'].map(f => (
+                                {['Unlimited Active Projects', '200 Priority AI Creative Assists'].map(f => (
                                     <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-600 uppercase tracking-tight">
                                         <Check size={14} className="text-zinc-600" /> {f}
                                     </li>
@@ -182,7 +182,7 @@ export default function PricingPage() {
                                 <span className="text-xs font-bold text-zinc-400 uppercase">/mo</span>
                             </div>
                             <ul className="space-y-4 mb-10">
-                                {['Unlimited Active Projects', '3 Producer Seats', 'Priority Support'].map(f => (
+                                {['Unlimited Active Projects', 'Unlimited AI Creative Assists', 'Priority Support'].map(f => (
                                     <li key={f} className="flex items-center gap-3 text-xs font-bold text-zinc-400 uppercase tracking-tight">
                                         <Check size={14} className="text-zinc-300" /> {f}
                                     </li>

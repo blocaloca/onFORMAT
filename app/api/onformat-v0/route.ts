@@ -38,13 +38,22 @@ export async function POST(request: NextRequest) {
     const tier = profile?.subscription_tier?.toLowerCase() || 'trial'
     const count = profile?.ai_request_count || 0
 
-    // Logic enforcement
-    if (['scout', 'none', 'trial', 'basic'].includes(tier) && count >= 10) {
-      return NextResponse.json({ error: 'Upgrade to Pro to unlock more AI Assists' }, { status: 403 })
+    // STEP 3: Tier-Based Defense (Soft-Wall Rate Limiting)
+    const IS_SOLO = ['scout', 'none', 'trial', 'basic', 'solo', 'free'].includes(tier);
+    
+    // Enforcement logic (New higher thresholds)
+    if (IS_SOLO && count >= 25) {
+      return NextResponse.json({ 
+        message: "You've had a productive month! You've reached the 25-assist limit for the Solo Tier. Upgrade to Pro in your account settings for 200 monthly High-Priority Assists and even faster creative speed.",
+        isLimitReached: true 
+      });
     }
 
-    if (tier === 'pro' && count >= 50) {
-      return NextResponse.json({ error: 'Upgrade to Studio to unlock even more AI Assists' }, { status: 403 })
+    if (tier === 'pro' && count >= 200) {
+      return NextResponse.json({ 
+        message: "You've reached your 200 monthly High-Priority Assists. Upgrade to Studio for unlimited creative intelligence and priority support.",
+        isLimitReached: true 
+      });
     }
 
     // Get OpenRouter API key from environment
