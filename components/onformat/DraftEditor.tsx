@@ -286,6 +286,7 @@ export const DraftEditor = ({
                 onOpenPrintRoom={onOpenPrintRoom}
                 onToggleAi={onOpenAi}
                 isAiDocked={isAiDocked}
+                activeToolKey={activeToolKey}
             />
 
             <div className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-zinc-900 flex flex-col" id="document-preview-area">

@@ -15,6 +15,7 @@ interface DocumentNavBarProps {
     onOpenPrintRoom?: () => void;
     onToggleAi?: () => void;
     isAiDocked?: boolean;
+    activeToolKey?: string;
 }
 
 import { useTheme } from '@/components/ThemeProvider';
@@ -28,7 +29,8 @@ export const DocumentNavBar = ({
     title,
     onOpenPrintRoom,
     onToggleAi,
-    isAiDocked
+    isAiDocked,
+    activeToolKey
 }: DocumentNavBarProps) => {
     const { theme } = useTheme();
     const darkMode = theme === 'dark';
@@ -100,26 +102,19 @@ export const DocumentNavBar = ({
             <div className="flex items-center gap-3">
 
 
-                {onToggleAi && (
+                {onToggleAi && activeToolKey === 'project-vision' && (
                     <button
                         onClick={onToggleAi}
                         className={`
-                            flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-widest rounded-sm transition-colors border shadow-sm
-                            ${isAiDocked
-                                ? (darkMode ? 'bg-zinc-800 text-emerald-500 border-zinc-700 hover:bg-zinc-700 hover:text-emerald-400' : 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100') // Active/Docked/Shown? Actually "Docked" usually means hidden side panel in some contexts, or shown. In WorkspaceEditor: isAiDocked=true means HIDDEN (docked away). 
-                                // Let's check WorkspaceEditor logic: 
-                                // const aiMode = isAiDocked ? 'OFF' : ...
-                                // So isAiDocked = TRUE means AI is OFF.
-                                // isAiDocked = FALSE means AI is OPEN.
-                                // isAiDocked = FALSE means AI is OPEN.
-                                // So if !isAiDocked (AI Open), we want it bright.
-                                : (darkMode ? 'bg-emerald-900/30 text-emerald-400 border-emerald-800/50 hover:bg-emerald-900/50' : 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 shadow-md')
+                            flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] rounded-sm transition-colors border shadow-sm
+                            ${!isAiDocked
+                                ? (darkMode ? 'bg-zinc-800 text-white border-zinc-700 hover:bg-zinc-700' : 'bg-zinc-100 text-zinc-900 border-zinc-300 hover:bg-zinc-200 shadow-md')
+                                : (darkMode ? 'bg-zinc-900 text-zinc-500 border-zinc-800 hover:text-white' : 'bg-white text-zinc-400 border-zinc-200 hover:text-zinc-900')
                             }
-                            ${!isAiDocked ? '' : 'opacity-60 hover:opacity-100'} 
                         `}
                     >
-                        <Sparkles size={14} className={!isAiDocked ? "text-emerald-400 fill-emerald-400/20" : "text-zinc-500"} />
-                        <span>AI Liaison</span>
+                        <Sparkles size={14} className={!isAiDocked ? "text-white" : "text-zinc-500"} />
+                        <span>AI VISION</span>
                     </button>
                 )}
 
