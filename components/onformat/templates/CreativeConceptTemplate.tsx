@@ -41,17 +41,8 @@ export const CreativeConceptTemplate = ({
 }: CreativeConceptTemplateProps) => {
 
     useEffect(() => {
-        // Migration: Convert legacy 'visions' to 'pages'
-        if (data.visions && !data.pages) {
-            const migrated = data.visions.map((v: any) => ({
-                id: v.id,
-                content: v.title ? `## ${v.title}\n\n${v.content}` : v.content
-            }));
-            onUpdate({
-                pages: migrated.length > 0 ? migrated : [{ id: `page-${Date.now()}`, content: '' }],
-                visions: undefined
-            });
-        } else if (!data.pages) {
+        // Migration: Ensure at least one page exists
+        if (!data.pages || data.pages.length === 0) {
             onUpdate({ pages: [{ id: `page-${Date.now()}`, content: '' }] });
         }
     }, []);
@@ -71,103 +62,75 @@ export const CreativeConceptTemplate = ({
         onUpdate({ pages: [...pages, newPage] });
     };
 
-    const handleDeletePage = (id: string) => {
-        if (confirm('Delete this page?')) {
-            onUpdate({ pages: pages.filter(p => p.id !== id) });
-        }
-    };
-
-    const handleAction = (page: VisionPage, action: string) => {
-        if (action === 'workshop') {
-            onUpdate({ activePageId: page.id });
-            if (onOpenAi) onOpenAi();
-        } else if (action === 'brief' && onGenerateFromVision) {
-            if (onOpenAi) onOpenAi();
-            // "Creative brief becomes the single source of truth"
-            onGenerateFromVision('brief', page.content, "Create a creative brief based on this vision");
-        }
-    };
-
     return (
-        <>
+        <div className="space-y-12 pb-20">
             {pages.map((page, index) => (
                 <DocumentLayout
                     key={page.id}
-                    title="Project Vision"
-                    subtitle={index === 0 ? "CONCEPT DRAFT" : `PAGE ${index + 1}`}
+                    title="AI VISION LAB"
+                    subtitle={index === 0 ? "ARCHITECTURAL DRAFT" : `EXPANSION PAGE ${index + 1}`}
                     hideHeader={index > 0}
                     plain={plain}
                     orientation={orientation}
                     metadata={index === 0 ? metadata : undefined}
                 >
-                    <div className="flex flex-col h-full font-sans relative group">
-
-                        {/* Page Header (Cont.) */}
+                    <div className="flex flex-col h-full font-sans relative group min-h-[600px]">
+                        
+                        {/* Lab Design Accents */}
+                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent opacity-50" />
+                        
                         {index > 0 && (
-                            <div className="mb-4 text-center text-sm font-bold text-zinc-500">
-                                Project Vision (Cont. Page {index + 1})
+                            <div className="mb-6 px-6 py-2 border-l border-zinc-200 dark:border-zinc-800">
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
+                                    Laboratory Continuation / {index + 1}
+                                </span>
                             </div>
                         )}
 
-                        {/* Controls (Delete Page) */}
-                        {!isLocked && pages.length > 1 && (
-                            <button
-                                onClick={() => handleDeletePage(page.id)}
-                                className="absolute top-0 right-0 p-2 text-zinc-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all z-10"
-                                title="Delete Page"
-                            >
-                                <Trash2 size={14} />
-                            </button>
-                        )}
-
-                        {/* Main Text Area */}
-                        <textarea
-                            value={page.content}
-                            onChange={(e) => handleUpdatePage(page.id, e.target.value)}
-                            placeholder={index === 0 ? "Start writing your project vision here..." : "Continue writing..."}
-                            className={`flex-1 w-full bg-zinc-50 resize-none outline-none text-sm leading-relaxed p-6 border border-transparent focus:border-zinc-200 focus:bg-white rounded-sm transition-colors print:hidden text-zinc-900`}
-                            disabled={isLocked}
-                        />
-                        <div className={`${isPrinting ? 'block' : 'hidden print:block'} flex-1 w-full text-sm leading-relaxed p-6 whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-transparent`}>
-                            {page.content || "—"}
+                        <div className="flex-1 flex flex-col bg-white dark:bg-zinc-950/20 rounded-lg p-1 border border-zinc-100 dark:border-zinc-800/50 shadow-inner group-hover:border-zinc-200 dark:group-hover:border-zinc-700 transition-all duration-300">
+                            <textarea
+                                value={page.content}
+                                onChange={(e) => handleUpdatePage(page.id, e.target.value)}
+                                placeholder={index === 0 ? "// Architect your vision here... \n// Paste conceptual seeds from the AI Strategist and refine them into your North Star." : "Continue the architectural blueprint..."}
+                                className={`flex-1 w-full bg-zinc-50/50 dark:bg-zinc-900/30 resize-none outline-none text-sm leading-relaxed p-8 rounded-md transition-all font-mono tracking-tight text-zinc-800 dark:text-zinc-200 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:bg-white dark:focus:bg-zinc-900/50`}
+                                disabled={isLocked}
+                                spellCheck={false}
+                            />
                         </div>
 
-                        {/* Footer Actions */}
+                        {/* Lab Footer / Manual Handoff Hints */}
                         {!isLocked && (
-                            <div className="border-t border-zinc-100 pt-4 mt-4 flex justify-between items-center">
-                                <button
-                                    onClick={() => handleAction(page, 'workshop')}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-industrial-accent transition-colors"
-                                >
-                                    <Sparkles size={12} />
-                                    Workshop with AI
-                                </button>
+                            <div className="mt-8 flex justify-between items-center opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                                <div className="flex items-center gap-4">
+                                    <div className="flex gap-1">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                                        ))}
+                                    </div>
+                                    <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
+                                        Creative Hub / Non-Destructive Drafting
+                                    </span>
+                                </div>
 
-                                <button
-                                    onClick={() => handleAction(page, 'brief')}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 px-3 py-2 rounded transition-colors"
-                                >
-                                    Create Brief <ArrowRight size={12} />
-                                </button>
+                                {index === pages.length - 1 && (
+                                    <button
+                                        onClick={handleAddPage}
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 hover:text-blue-500 py-2 transition-all"
+                                    >
+                                        <Plus size={12} /> Extend Blueprint
+                                    </button>
+                                )}
                             </div>
                         )}
 
-                        {/* Add Page Button - Rendered OUTSIDE content flow if possible, or at bottom */}
-                        {/* We put it inside but separate from text area */}
-                        {index === pages.length - 1 && !isLocked && !isPrinting && (
-                            <div className="mt-4 flex justify-center print:hidden">
-                                <button
-                                    onClick={handleAddPage}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 border border-dashed border-zinc-200 dark:border-zinc-800 hover:border-black px-4 py-2 rounded-sm transition-all"
-                                >
-                                    <Plus size={12} /> Add Page
-                                </button>
-                            </div>
-                        )}
+                        {/* Print Version */}
+                        <div className="hidden print:block text-sm leading-relaxed p-8 whitespace-pre-wrap font-mono text-black">
+                            {page.content || "—"}
+                        </div>
                     </div>
                 </DocumentLayout>
             ))}
-        </>
+        </div>
     );
 };
 
