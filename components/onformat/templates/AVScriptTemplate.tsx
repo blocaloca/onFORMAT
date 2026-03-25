@@ -79,7 +79,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         return `${hh}:${mm}:${ss}`;
     };
 
-    const ITEMS_PER_PAGE = 4;
+    const ITEMS_PER_PAGE = 6;
     const totalPages = Math.ceil(Math.max(rows.length, 1) / ITEMS_PER_PAGE);
     const pages = Array.from({ length: totalPages }, (_, i) => rows.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
 
@@ -100,7 +100,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
                             {/* Table Header */}
-                            <div className="grid grid-cols-[60px_80px_1fr_1fr_30px] gap-6 border-b border-black pb-2 items-end">
+                            <div className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 border-b border-black pb-2 items-end px-4">
                                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Scene</span>
                                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Duration</span>
                                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2"><Video size={10} /> Visual</span>
@@ -113,7 +113,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 {pageRows.map((row, localIdx) => {
                                     const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                     return (
-                                        <div key={row.id} className="grid grid-cols-[60px_80px_1fr_1fr_30px] gap-6 py-6 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                        <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                             {/* Scene */}
                                             <div className="contents">
@@ -193,6 +193,26 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
                                     )
                                 })}
+                                    {metadata?.importedBrief && rows.length === 0 && (
+                                        <div className="pt-4 flex justify-center">
+                                            <button
+                                                onClick={() => {
+                                                    const brief = metadata.importedBrief;
+                                                    if (confirm("Generate initial script rows from Brief? (Note: This is a structural breakdown, use AI Vision for full creative writing)")) {
+                                                        const newRows: AVRow[] = [
+                                                            { id: `row-${Date.now()}-1`, scene: '1', time: '00:00:05', visual: 'OPENING SHOT: ', audio: '(MUSIC SWELLS)' },
+                                                            { id: `row-${Date.now()}-2`, scene: '2', time: '00:00:10', visual: 'TEXT OVERLAY: ', audio: 'NARRATOR: ' }
+                                                        ];
+                                                        onUpdate({ rows: newRows });
+                                                    }
+                                                }}
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 hover:text-emerald-500 transition-colors"
+                                            >
+                                                <Sparkles size={12} className="animate-pulse" />
+                                                Generate from Brief
+                                            </button>
+                                        </div>
+                                    )}
                                 {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                     <div className="pt-2">
                                         <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DocumentLayout } from './DocumentLayout';
 import { ImageUploader } from '@/components/ui/ImageUploader';
-import { Trash2, Square, Grid3x3, Grid2x2, RectangleHorizontal, Monitor, Smartphone, Maximize, Crop, Type, Pin } from 'lucide-react';
+import { Trash2, Square, Grid3x3, Grid2x2, RectangleHorizontal, Monitor, Smartphone, Maximize, Crop, Type, Pin, Sparkles } from 'lucide-react';
 
 type AspectRatio = '16:9' | '9:16' | '1:1' | '4:5' | '5:4' | '3:2' | '2:3';
 type ItemSize = 'small' | 'medium' | 'large';
@@ -140,6 +140,44 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
         }
         setActivePinTargetId(null);
     };
+
+    const handleImportAVScript = () => {
+        if (!metadata?.importedAVScript?.rows) return;
+        if (confirm(`Generate ${metadata.importedAVScript.rows.length} frames from AV Script scenes?`)) {
+            const importedRows = metadata.importedAVScript.rows;
+            const newItems: StoryboardItem[] = importedRows.map((row: any, i: number) => ({
+                id: `sb-import-${Date.now()}-${i}`,
+                url: '',
+                caption: 'WIDE', // Default
+                notes: row.visual || '',
+                title: `SCENE ${row.scene}`,
+                imageNumber: (items.length + i + 1).toString().padStart(2, '0'),
+                aspectRatio: '3:2',
+                size: 'small',
+                sceneLink: row.scene || ''
+            }));
+            onUpdate({ items: [...items, ...newItems] });
+        }
+    };
+    const handleImportShotList = () => {
+        if (!metadata?.importedShotList?.shots) return;
+        if (confirm(`Generate ${metadata.importedShotList.shots.length} frames from Shot List?`)) {
+            const importedShots = metadata.importedShotList.shots;
+            const newItems: StoryboardItem[] = importedShots.map((shot: any, i: number) => ({
+                id: `sb-shot-import-${Date.now()}-${i}`,
+                url: '',
+                caption: `${shot.size || ''} ${shot.angle || ''}`.trim().toUpperCase() || 'WIDE',
+                notes: shot.description || '',
+                title: `SCENE ${shot.scene || '?'}`.toUpperCase(),
+                imageNumber: (items.length + i + 1).toString().padStart(2, '0'),
+                aspectRatio: '3:2',
+                size: 'small',
+                sceneLink: shot.scene || ''
+            }));
+            onUpdate({ items: [...items, ...newItems] });
+        }
+    };
+
 
     // Pagination Logic
     const getColSpan = (size: ItemSize = 'small') => {
@@ -383,13 +421,33 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
             ))}
 
             {!isLocked && (
-                <div className="py-8 flex justify-center print:hidden pb-20">
+                <div className="py-8 flex flex-col items-center gap-4 print:hidden pb-20">
                     <button
                         onClick={handleAddItem}
                         className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:text-zinc-100 dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-white dark:bg-zinc-950 px-8 py-3 transition-all rounded-full hover:shadow-lg shadow-sm"
                     >
                         <span>+ Add Frame</span>
                     </button>
+
+                    {metadata?.importedAVScript?.rows && (
+                        <button
+                            onClick={handleImportAVScript}
+                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 hover:text-emerald-500 transition-colors"
+                        >
+                            <Sparkles size={12} className="animate-pulse" />
+                            Breakdown from AV Script
+                        </button>
+                    )}
+
+                    {metadata?.importedShotList?.shots && (
+                        <button
+                            onClick={handleImportShotList}
+                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600 hover:text-blue-500 transition-colors"
+                        >
+                            <Sparkles size={12} className="animate-pulse text-blue-400" />
+                            Breakdown from Shot List
+                        </button>
+                    )}
                 </div>
             )}
         </>

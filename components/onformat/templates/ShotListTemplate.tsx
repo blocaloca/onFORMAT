@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, jsx-a11y/alt-text */
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
-import { Trash2, Plus, FileInput, Check } from 'lucide-react';
+import { Trash2, Plus, FileInput, Check, Sparkles } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
 interface Shot {
@@ -312,9 +312,10 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     {metadata?.importedAVScript?.rows && (
                                         <button
                                             onClick={handleImportAVScript}
-                                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-500 border border-emerald-500/20 hover:border-emerald-500 hover:bg-emerald-500/10 px-4 py-3 rounded-sm w-full mt-2 transition-colors"
+                                            className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 hover:text-emerald-500 transition-colors w-full mt-6"
                                         >
-                                            <FileInput size={10} className="mr-1" /> Import from AV Script
+                                            <Sparkles size={12} className="animate-pulse" />
+                                            Breakdown from AV Script
                                         </button>
                                     )}
                                 </div>

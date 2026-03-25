@@ -136,6 +136,16 @@ export const DraftEditor = ({
         } catch { }
     }
 
+    // Shot List Import Logic (for Storyboard Breakdown)
+    let importedShotList = null;
+    if (phases?.['PRE_PRODUCTION']?.drafts?.['shot-scene-book']) {
+        try {
+            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['shot-scene-book']);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0) importedShotList = arr[0];
+        } catch { }
+    }
+
     // --- Document Stack Logic ---
     const [activeVersionIndex, setActiveVersionIndex] = useState(0);
 
@@ -315,6 +325,7 @@ export const DraftEditor = ({
                             importedVision,
                             importedLookbook,
                             importedLocations,
+                            importedShotList,
                             projectId,
                             isOwner,
                             latestNotification
