@@ -305,23 +305,40 @@ export const ChatInterface = ({
 
                                 {/* Inline Actions Grid */}
                                 {inlineActions.length > 0 && (
-                                    <div className="mt-3 grid grid-cols-1 gap-2 pt-3 border-t border-zinc-100">
-                                        {inlineActions.map((action, actionIdx) => (
-                                            <button
-                                                key={actionIdx}
-                                                onClick={() => handleActionClick(action)}
-                                                className="text-left group flex items-center justify-between p-2 rounded-sm bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-zinc-300 transition-all"
-                                            >
-                                                <div className="flex flex-col">
-                                                    <span className="text-[11px] font-bold text-zinc-800">{action.label}</span>
-                                                    {action.type === 'draft_prefill' && <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Add to Draft</span>}
-                                                    {action.type === 'suggestion' && <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Suggestion</span>}
-                                                </div>
-                                                <div className="w-5 h-5 flex items-center justify-center rounded-full bg-white border border-zinc-200 text-zinc-400 group-hover:border-black group-hover:text-black transition-colors">
-                                                    <ArrowUp size={10} className="rotate-45" />
-                                                </div>
-                                            </button>
-                                        ))}
+                                    <div className={`mt-3 pt-3 border-t border-zinc-100 ${activeToolKey === 'project-vision' ? 'flex flex-col gap-2' : 'grid grid-cols-1 gap-2'}`}>
+                                        {inlineActions.map((action, actionIdx) => {
+                                            const isVision = activeToolKey === 'project-vision';
+
+                                            if (isVision) {
+                                                return (
+                                                    <button
+                                                        key={actionIdx}
+                                                        onClick={() => handleActionClick(action)}
+                                                        className="text-[11px] font-bold text-blue-500 hover:text-blue-700 hover:underline transition-all flex items-center gap-1.5 w-fit"
+                                                    >
+                                                        <span>{action.label}</span>
+                                                        <ArrowUp size={10} className="rotate-45" />
+                                                    </button>
+                                                );
+                                            }
+
+                                            return (
+                                                <button
+                                                    key={actionIdx}
+                                                    onClick={() => handleActionClick(action)}
+                                                    className="text-left group flex items-center justify-between p-2 rounded-sm bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 hover:border-zinc-300 transition-all"
+                                                >
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[11px] font-bold text-zinc-800">{action.label}</span>
+                                                        {action.type === 'draft_prefill' && <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Add to Draft</span>}
+                                                        {action.type === 'suggestion' && <span className="text-[9px] text-zinc-400 uppercase tracking-wider">Suggestion</span>}
+                                                    </div>
+                                                    <div className="w-5 h-5 flex items-center justify-center rounded-full bg-white border border-zinc-200 text-zinc-400 group-hover:border-black group-hover:text-black transition-colors">
+                                                        <ArrowUp size={10} className="rotate-45" />
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>
