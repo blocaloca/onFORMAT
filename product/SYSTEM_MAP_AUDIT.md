@@ -17,7 +17,7 @@
 
 **`profiles`**
 *   **Keys**: `id` (PK, UUID)
-*   **Columns**: `email`, `subscription_tier`, `role` (system role), `stripe_customer_id`.
+*   **Columns**: `email`, `subscription_tier`, `role`, `stripe_customer_id`, `ai_request_count` (New: Integer, tracked per user).
 
 **`project_versions` (Orphaned)**
 *   **Keys**: `project_id` (FK)
@@ -60,6 +60,7 @@ The application uses a Document-Store pattern inside SQL. Structure:
 *   **Fully Functional**:
     *   **Roll-Scoped Smart Carry-Over**: Camera Report template correctly auto-increments takes and carries over metadata (Roll, Scene, Lens, FPS) from the previous row.
     *   **Realtime Permissions & Login**: Mobile login works via Crew List email matching (Robust Fallback implemented). Status Light syncs to Desktop.
+    *   **AI VISION Lab**: Pure conceptual ideation workspace. Implements "Silent Scribe" manual-paste workflow. 
 
 *   **Partially Built**:
     *   **Group A/B/C Permissions**:
@@ -82,9 +83,10 @@ The application uses a Document-Store pattern inside SQL. Structure:
 
 **Data Flow: Script to Set**
 
-1.  **Strategy**: User creates `Creative Brief` (Stored: `projects.data.phases.STRATEGY.drafts['brief']`).
-2.  **Generative**: `WorkspaceEditor` (via AI) reads Brief -> Generates `AV Script` (text).
-3.  **Storage**: `AV Script` saved to `projects.data.phases.DEVELOPMENT.drafts['av-script']`.
+1.  **Ideation**: User engages with `AI VISION Lab` (`projects.data.phases.DEVELOPMENT.drafts['project-vision']`).
+2.  **Strategy**: User creates `Creative Brief` (Stored: `projects.data.phases.STRATEGY.drafts['brief']`).
+3.  **Generative**: `WorkspaceEditor` (via AI) reads Brief -> Generates `AV Script` (text).
+4.  **Storage**: `AV Script` saved to `projects.data.phases.DEVELOPMENT.drafts['av-script']`.
 4.  **Breakdown (Gap)**: User opens `Shot List`.
     *   *Current*: User types manually.
     *   *Target*: Shot List should read `drafts['av-script']` and populate rows.

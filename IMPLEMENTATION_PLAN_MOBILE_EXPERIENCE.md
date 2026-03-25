@@ -21,17 +21,18 @@ Eliminate "demo" artifacts and "empty" states from the mobile experience. Ensure
 Instead of forcing a tab selection, we will introduce a `LandingView` component that renders when `activeTab` is null/empty.
 
 **Design Specs**:
-*   **Background**: Deep black/zinc gradient (Subtle).
-*   **Branding**: Centered "onSET" logo (Opacity 20-30%).
+*   **Background**: Deep black/pure black (Zinc-950/Black).
+*   **Branding**: Centered "onSET" logo (Theme-aware: WT for Dark, BK for Light).
 *   **Project Name**: Displayed elegantly (e.g., `font-mono tracking-widest`).
 *   **Status Indicator**:
     *   If `availableKeys.length > 0`: "Select a tool below" (or auto-select first).
     *   If `availableKeys.length === 0`: "Standby. No active documents."
-*   **Decorations**: Remove the "Confidential" strip and "Watermark" from this specific view to reduce visual noise.
+*   **Document Aesthetic**: All document views (Script, Shot List, Call Sheet) must use white backgrounds with black text ("Paper" theme) regardless of system dark mode.
 
-### 3. Navigation Bar Refinement
-*   **Logic**: Only render buttons for `availableKeys`.
-*   **Empty State**: If `availableKeys` is empty, the Bottom Nav should either be hidden or show a "Syncing..." pulse.
+### 4. UI Standardization (The "Paper" Theme)
+*   **Objective**: Match OnSet Mobile's document aesthetic to the Desktop version's high-contrast professional standard.
+*   **Action**: Eliminate "dark grey on black" text and standardize on light-on-dark (for UI) and dark-on-light (for documents).
+*   **Result**: High-contrast, premium readability across all mobile views.
 
 ## Implementation Steps
 

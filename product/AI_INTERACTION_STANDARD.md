@@ -3,34 +3,24 @@
 This document defines the "Verified Perfect" logic for AI-User interaction within the Creative OS.
 **Status**: CANONICAL. Apply this pattern to all future document integrations.
 
-## Core Interaction Philosophy
-1.  **Scribe First**: The AI defaults to *action* over *conversation*. If the user provides content, paste it immediately.
-2.  **Auto-Paste**: Content updates happen in the *background* via the chat stream. The user sees a confirmation ("Notes added"), not a manual "Add" button.
-3.  **Implicit Navigation**: After an action, immediately offer the next logical step (e.g., "Describe Images" -> "Another Image" or "Write Notes").
-4.  **Clean UI**: Technical protocol strings (`**Header:**`) are used for state transmission but **masked** from the visual chat interface.
+6. ## Core Interaction Philosophy
+7. 1.  **Pure Chat Context**: The AI defaults to a natural, conversational partner ("Silent Scribe"). No multiple-choice grids or distracting panels.
+8. 2.  **Specific Snippets**: Payload is locked down to specific snippets of text rather than the entire project state to maximize focus and reduce token costs.
+9. 3.  **Manual Integration**: The system prioritizes the Producer's authority. The AI proposes, the user "Pastes" or copies content manually (using the blue "Paste to Vision" link).
+10. 4.  **Concise & Impactful**: Responses are intentionally brief, acting as a creative "punch up" rather than a verbose summary.
 
 ---
 
 ## 1. The AI Strategy (`app/api/onformat-v0/route.ts`)
 
-### Auto-Paste Response
-Instead of returning a `draft_prefill` action that requires a click, **embed the content directly in the message** using a Markdown protocol.
-
-**Pattern:**
-```json
-{
-  "thought": "User provided notes. Auto-adding.",
-  "message": "Notes added.\n\n**Notes:** {{User Input}}",
-  "actions": [
-     { "label": "Next Step", "type": "suggestion", "payload": "..." }
-  ]
-}
-```
+### Model & Payload Lockdown
+- **Model**: `openai/gpt-5-nano` (Optimized for cost/speed).
+- **Payload**: Restricted to TWO messages (System + User Prompt).
+- **System Persona**: Expert Creative Director Assistant focused on refinement and brainstorming.
 
 ### Action Handling
-- **Actions** must be provided in the `actions` JSON key.
-- **NEVER** output actions as text in the `message` body.
-- Use `suggestion` type for navigation (triggers the next prompt).
+- **Pure Chat Link**: Responses facilitate manual document insertion via a single blue inline link: `[Paste to Vision]`. 
+- **No Structured Actions**: Multi-step "Action Decks" and "Suggestion Grids" are deprecated in favor of a clean chat-only workflow.
 
 ---
 

@@ -13,7 +13,8 @@ interface Profile {
   id: string; // References auth.users
   email: string;
   subscription_status: 'active' | 'inactive' | 'trial';
-  subscription_tier: 'basic' | 'pro' | 'enterprise';
+  subscription_tier: 'scout' | 'pro' | 'studio';
+  ai_request_count: number; // Tracks API usage
   stripe_customer_id?: string;
 }
 ```
@@ -46,9 +47,9 @@ interface CrewMember {
 Subscriptions are managed via Stripe Checkout sessions and kept in sync using Webhooks.
 
 ### Tiers
-- **Basic**: Free / Trial?
-- **Pro**: Paid tier.
-- **Enterprise**: Custom.
+- **Scout / Trial**: Basic ideation. Limited AI requests.
+- **Pro**: Professional production toolset. Expanded AI limits.
+- **Studio**: Total access. Unlimited AI and enterprise features.
 
 ### Checkout Flow (`app/api/checkout/route.ts`)
 1. User requests upgrade.
@@ -94,7 +95,25 @@ export const hasAccess = (user: Profile, tier: string) => {
 
 ---
 
-## 4. OnSet Mobile Logic
+## 4. AI Usage Enforcement (`app/api/onformat-v0/route.ts`)
+
+The system implements a tiered "Pay-to-Play" model for AI usage to manage API costs (OpenRouter / gpt-5-nano).
+
+### AI Request Limits
+- **Scout / None / Trial**: Max **10** requests.
+- **Pro**: Max **50** requests.
+- **Studio**: **Unlimited** requests.
+
+### Enforcement Logic
+Before every OpenRouter call, the API:
+1. Verifies the authenticated `user_id`.
+2. Fetches `subscription_tier` and `ai_request_count` from `profiles`.
+3. Returns `403 Forbidden` if the limit for the user's tier has been reached.
+4. **On Success**: Increments `ai_request_count` by 1 in the database.
+
+---
+
+## 5. OnSet Mobile Logic
 
 The mobile experience (`onSET`) uses a bifurcated logic: **Identity** (Who are you?) and **Visibility** (What can you see?).
 
