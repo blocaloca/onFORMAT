@@ -105,13 +105,36 @@ export default function GlitchLab() {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
 
-        // Apply filters to canvas context
-        ctx.filter = `grayscale(1) contrast(2) brightness(1.5) hue-rotate(${intensity * 3.6}deg) ${vhsMode ? 'sepia(0.5) saturate(2)' : ''}`;
-        
-        // Draw video frame
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // Save context and clear
+        ctx.save();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Download
+        // 1. APPLY TRANSFORMS (MATCHING UI)
+        // Center for rotation/skew
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        
+        const skewAmount = (degradation > 60 || bentMode) ? ((degradation - 50) * Math.PI / 180) : 0;
+        const scaleAmount = 1 + (degradation / 200);
+        
+        ctx.transform(scaleAmount, 0, Math.tan(skewAmount), scaleAmount, 0, 0);
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+        // 2. APPLY FILTERS (MATCHING UI EXACTLY)
+        // Note: ctx.filter requires pixels/percent to match CSS exactly
+        const hue = intensity * 3.6;
+        const contrastVal = 100 + intensity;
+        const vhsFilter = vhsMode ? 'sepia(50%) saturate(200%)' : '';
+        
+        // Base UI filters: grayscale(1) contrast(200%) brightness(150%)
+        ctx.filter = `grayscale(100%) contrast(200%) brightness(150%) hue-rotate(${hue}deg) contrast(${contrastVal}%) ${vhsFilter}`;
+        
+        // 3. DRAW VIDEO
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // 4. RESTORE
+        ctx.restore();
+
+        // 5. TRIGGER DOWNLOAD
         const link = document.createElement('a');
         link.download = `onset_vision_${Date.now()}.png`;
         link.href = canvas.toDataURL('image/png');
