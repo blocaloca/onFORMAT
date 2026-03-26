@@ -50,6 +50,14 @@ const GlitchStyles = () => (
         .rgb-shift-heavy {
             filter: drop-shadow(var(--shift-x) 0 #f00) drop-shadow(calc(var(--shift-x) * -1) 0 #0ff) contrast(150%) brightness(120%);
         }
+        .pixelated {
+            image-rendering: pixelated;
+        }
+        .noise-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.15;
+            pointer-events: none;
+        }
     `}</style>
 );
 
@@ -59,6 +67,10 @@ export default function GlitchLab() {
     const [intensity, setIntensity] = useState(50);
     const [degradation, setDegradation] = useState(10);
     const [cameraActive, setCameraActive] = useState(false);
+    
+    // Mode states
+    const [vhsMode, setVhsMode] = useState(false);
+    const [bentMode, setBentMode] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -82,43 +94,62 @@ export default function GlitchLab() {
     };
 
     // Calculate dynamic styles for the glitch
-    const shiftX = `${(degradation / 5)}px`;
-    const skewX = degradation > 60 ? `${(degradation - 60)}deg` : '0';
-    const pixelate = degradation > 40 ? `blur(${(degradation - 40) / 10}px)` : 'none';
+    const shiftX = `${(degradation / (vhsMode ? 3 : 5))}px`;
+    const skewX = (degradation > 60 || bentMode) ? `${(degradation - 50)}deg` : '0';
+    
+    // Intensified Pixelation: Using a scale-down + scale-up trick + image-rendering
+    const pixelScale = degradation > 20 ? (1 / (1 + (degradation / 10))) : 1;
+    const pixelStyles = degradation > 20 ? {
+        transform: `scale(${1 / pixelScale}) skewX(${skewX})`,
+        width: `${pixelScale * 100}%`,
+        height: `${pixelScale * 100}%`,
+        left: `${(1 - pixelScale) * 50}%`,
+        top: `${(1 - pixelScale) * 50}%`,
+    } : { transform: `skewX(${skewX})` };
 
     return (
         <div className="min-h-screen bg-black text-emerald-500 font-mono p-4 overflow-hidden flex flex-col items-center justify-center selection:bg-emerald-500/30">
             <GlitchStyles />
             
-            <div className="w-full max-w-sm aspect-[3/4] border-2 border-emerald-900/50 rounded-2xl relative overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.1)] bg-zinc-950 flex flex-col">
+            <div className="w-full max-w-sm aspect-[3/4] border-2 border-emerald-900/50 rounded-2xl relative overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.1)] bg-zinc-950 flex flex-col transition-all duration-75">
                 
                 <div className="p-3 border-b border-emerald-900/30 flex items-center justify-between text-[10px] bg-zinc-900/50">
                     <div className="flex items-center gap-2">
-                        <Activity size={12} className="animate-pulse" />
-                        <span className="tracking-widest uppercase">{status}</span>
+                        <Activity size={12} className={vhsMode ? "animate-bounce" : "animate-pulse"} />
+                        <span className="tracking-widest uppercase">{bentMode ? "SYSTEM_FAILURE" : status}</span>
                     </div>
                 </div>
 
                 <div 
-                    className={`flex-1 relative flex items-center justify-center overflow-hidden bg-black ${degradation > 80 ? 'jitter' : ''}`}
+                    className={`flex-1 relative flex items-center justify-center overflow-hidden bg-black ${(degradation > 80 || bentMode) ? 'jitter' : ''}`}
                     style={{ '--shift-x': shiftX } as any}
                 >
+                    <div className="absolute inset-0 noise-overlay z-20 pointer-events-none opacity-20" />
+                    
                     <video 
                         ref={videoRef} 
                         autoPlay 
                         playsInline 
-                        className={`absolute inset-0 w-full h-full object-cover transition-all duration-75 ${cameraActive ? 'opacity-80' : 'opacity-0'} grayscale contrast-200 brightness-150 ${degradation > 20 ? 'rgb-shift-heavy' : ''}`}
+                        className={`absolute w-full h-full object-cover transition-all duration-75 ${cameraActive ? 'opacity-80' : 'opacity-0'} grayscale contrast-200 brightness-150 pixelated ${degradation > 20 ? 'rgb-shift-heavy' : ''}`}
                         style={{ 
-                            filter: `hue-rotate(${(intensity * 3.6)}deg) contrast(${100 + intensity}%) ${pixelate}`,
-                            transform: `skewX(${skewX}) scale(${1 + (degradation / 200)})`
-                        }}
+                            ...pixelStyles,
+                            filter: `hue-rotate(${(intensity * 3.6)}deg) contrast(${100 + intensity}%) ${vhsMode ? 'sepia(0.5) saturate(2)' : ''}`,
+                        } as any}
                     />
 
+                    {vhsMode && (
+                        <div className="absolute inset-0 z-30 pointer-events-none opacity-40">
+                            {[...Array(20)].map((_, i) => (
+                                <div key={i} className="h-px bg-white/20 w-full mb-2" />
+                            ))}
+                        </div>
+                    )}
+
                     <div className="absolute inset-x-0 h-4 bg-emerald-500/10 blur-sm pointer-events-none animate-[scanline_4s_linear_infinite]" />
-                    <div className={`absolute inset-0 crt-overlay pointer-events-none ${degradation > 50 ? 'opacity-80' : 'opacity-30'}`} />
+                    <div className={`absolute inset-0 crt-overlay pointer-events-none ${(degradation > 50 || vhsMode) ? 'opacity-80' : 'opacity-30'}`} />
 
                     {!cameraActive && (
-                        <div className="text-center space-y-4 z-10">
+                        <div className="text-center space-y-4 z-40">
                             <ShieldAlert size={48} className="mx-auto text-emerald-900 animate-pulse" />
                             <button onClick={startCamera} className="px-6 py-2 border border-emerald-500/30 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">
                                 INIT OPTICAL CAPTURE
@@ -145,13 +176,19 @@ export default function GlitchLab() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 pt-2">
-                        <button className="flex items-center justify-center gap-2 p-3 border border-emerald-900/30 rounded-xl hover:bg-emerald-500/10 transition-colors">
+                        <button 
+                            onClick={() => setVhsMode(!vhsMode)}
+                            className={`flex items-center justify-center gap-2 p-3 border rounded-xl transition-all ${vhsMode ? 'bg-white text-black border-white shadow-[0_0_15px_white]' : 'border-white/20 hover:bg-white/10'}`}
+                        >
                             <Monitor size={12} />
-                            <span className="text-[8px] font-black uppercase">VHS</span>
+                            <span className="text-[8px] font-black uppercase">VHS MODE</span>
                         </button>
-                        <button className="flex items-center justify-center gap-2 p-3 border border-emerald-900/30 rounded-xl hover:bg-emerald-500/10 transition-colors">
+                        <button 
+                            onClick={() => setBentMode(!bentMode)}
+                            className={`flex items-center justify-center gap-2 p-3 border rounded-xl transition-all ${bentMode ? 'bg-red-500 text-black border-red-500 shadow-[0_0_15px_red]' : 'border-red-500/20 hover:bg-red-500/10'}`}
+                        >
                             <FileWarning size={12} />
-                            <span className="text-[8px] font-black uppercase">Bent</span>
+                            <span className="text-[8px] font-black uppercase">BENT CIRCUIT</span>
                         </button>
                     </div>
                 </div>
