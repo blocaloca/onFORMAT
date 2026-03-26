@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check, Crown } from 'lucide-react';
+import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check, Crown, HelpCircle, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
 import { isFounder as checkIsFounder } from '@/lib/permissions';
@@ -538,6 +538,28 @@ export default function AccountPage() {
                             <button disabled className="relative z-20 w-full bg-zinc-200 text-zinc-500 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl cursor-not-allowed border border-zinc-300">
                                 COMING SOON
                             </button>
+                        </div>
+                    </div>
+                </section>
+
+                {/* SUPPORT SECTON */}
+                <section className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <BookOpen size={120} className="text-white" />
+                    </div>
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+                        <div className="p-4 bg-white/10 rounded-2xl">
+                            <HelpCircle size={32} className="text-white" />
+                        </div>
+                        <div className="flex-1 text-center md:text-left">
+                            <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Production Support Ecosystem</h2>
+                            <p className="text-zinc-400 text-sm max-w-xl leading-relaxed mb-6">Explore our newly expanded User Manual. Learn about role-based ABCD permissions, OnSet Mobile synchronization, and real-time Producer alerts.</p>
+                            <Link 
+                                href="/help"
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-zinc-900 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-100 transition-all active:scale-[0.95]"
+                            >
+                                <BookOpen size={14} /> View User Manual
+                            </Link>
                         </div>
                     </div>
                 </section>

@@ -103,3 +103,12 @@ This document tracks recurring issues related to Document Templates and PDF Gene
 
 3.  **High Contrast Colors:**
     - PDF generation can wash out subtle grays (`text-zinc-400`). Use `text-black` or `text-zinc-900` for primary text data to ensure legibility.
+
+## 5. Documentation & Support Ecosystem
+
+**Recent Milestone (v0.4.0):**
+- A premium **User Manual** (`app/help/page.tsx`) has been created to educate crew members on ABCD permissions, OnSet Mobile, and Producer Alerts.
+- Access is centralized via the **Account Control** dashboard (`app/account/page.tsx`) under the "Production Support Ecosystem" section.
+
+**Maintenance Tip:**
+- When adding new core features (e.g., a new document type), ensure the Help Page is updated to reflect its role within the ABCD permission bundles.
