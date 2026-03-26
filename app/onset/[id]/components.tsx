@@ -63,7 +63,7 @@ export const DOC_LABELS: Record<string, string> = {
 
 
 
-export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }: { data: any, liveUsers?: string[], onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, isReadOnly }: { data: any, liveUsers?: string[], onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const [search, setSearch] = useState('');
     const [isAdding, setIsAdding] = useState(false);
@@ -275,7 +275,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete }
                                             <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" title="Online now" />
                                         )}
                                         <p className="text-[17px] font-black tracking-tight text-zinc-900 dark:text-black leading-none">{m.name || 'Unnamed'}</p>
-                                        {isOwner && (
+                                        {isOwner && !isReadOnly && (
                                             <button onClick={() => handleStartEdit(m)} className="p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <Edit2 size={10} className="text-emerald-600" />
                                             </button>
@@ -456,7 +456,7 @@ export const ScriptView = ({ data }: { data: any }) => {
     );
 };
 
-export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (id: string, status: string, addToLog: boolean) => void }) => {
+export const ShotListView = ({ data, onCheckShot, isReadOnly }: { data: any, onCheckShot?: (id: string, status: string, addToLog: boolean) => void, isReadOnly?: boolean }) => {
     const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
     if (!data || !data.shots || data.shots.length === 0) return <EmptyState label="Shot List" />;
@@ -518,6 +518,7 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
                             <span className="text-[8px] text-zinc-500 dark:text-zinc-500 uppercase font-bold">DONE</span>
                             <button
                                 onClick={() => {
+                                    if (isReadOnly) return;
                                     if (isComplete) {
                                         onCheckShot && onCheckShot(shot.id, 'PENDING', false);
                                     } else {
@@ -538,9 +539,9 @@ export const ShotListView = ({ data, onCheckShot }: { data: any, onCheckShot?: (
 
 import { EditableInput } from '@/components/ui/EditableInput';
 
-export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manualIsEditable }: { data: any, scheduleData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manualIsEditable, isReadOnly }: { data: any, scheduleData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean, isReadOnly?: boolean }) => {
     const { canEditMobile, isOwner } = useProjectData();
-    const isEditable = manualIsEditable ?? canEditMobile;
+    const isEditable = isReadOnly ? false : (manualIsEditable ?? canEditMobile);
 
     if (!data) return <EmptyState label="Call Sheet" />;
 
@@ -725,7 +726,7 @@ export const CallSheetView = ({ data, scheduleData, onUpdate, isEditable: manual
 }
 
 
-export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], setMediaAlerts }: { data: any, onAdd?: (item: any) => void, projectId?: string, mediaAlerts?: any[], setMediaAlerts?: React.Dispatch<React.SetStateAction<any[]>> }) => {
+export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], setMediaAlerts, isReadOnly }: { data: any, onAdd?: (item: any) => void, projectId?: string, mediaAlerts?: any[], setMediaAlerts?: React.Dispatch<React.SetStateAction<any[]>>, isReadOnly?: boolean }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
@@ -1001,7 +1002,7 @@ export const MobileDITLogView = ({ data, onAdd, projectId, mediaAlerts = [], set
     )
 }
 
-export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, onAdd?: (item: any) => void, projectId?: string }) => {
+export const MobileCameraReportView = ({ data, onAdd, projectId, isReadOnly }: { data: any, onAdd?: (item: any) => void, projectId?: string, isReadOnly?: boolean }) => {
     const supabase = getClient();
     const [isAdding, setIsAdding] = useState(false);
     const [form, setForm] = useState({
@@ -1413,9 +1414,9 @@ export const MobileCameraReportView = ({ data, onAdd, projectId }: { data: any, 
     );
 }
 
-export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manualIsEditable }: { data: any, callSheetData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manualIsEditable, isReadOnly }: { data: any, callSheetData?: any, onUpdate?: (newData: any) => void, isEditable?: boolean, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
-    const isEditable = manualIsEditable ?? isOwner;
+    const isEditable = isReadOnly ? false : (manualIsEditable ?? isOwner);
 
     if (!data) return <EmptyState label="Schedule" />;
 
@@ -1585,7 +1586,7 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
     );
 };
 
-export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete, isReadOnly }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, isReadOnly?: boolean }) => {
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
@@ -1796,7 +1797,7 @@ export const MobileOnSetNotesView = ({ data, onAdd, onUpdate, onDelete }: { data
     );
 };
 
-export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.items || [];
 
@@ -1804,7 +1805,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
 
     return (
         <div className="space-y-6 pb-8">
-            {isOwner && onAdd && (
+            {isOwner && onAdd && !isReadOnly && (
                 <button
                     onClick={() => onAdd({ id: `loc-${Date.now()}`, name: 'New Location', address: '' })}
                     className="w-full bg-white dark:bg-white text-zinc-900 dark:text-black border border-black/[0.03] py-5 rounded-[20px] font-black uppercase text-[11px] tracking-[0.2em] shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-3 mb-8"
@@ -1814,7 +1815,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
             )}
             {items.map((loc: any, i: number) => (
                 <div key={loc.id || i} className="bg-white dark:bg-white rounded-[20px] overflow-hidden shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow group relative">
-                    {isOwner && onDelete && (
+                    {isOwner && onDelete && !isReadOnly && (
                         <button onClick={() => onDelete(loc.id)} className="absolute top-2 right-2 z-10 bg-black/50 p-2 rounded-full text-white dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X size={14} />
                         </button>
@@ -1833,7 +1834,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
                             <EditableInput
                                 value={loc.name || 'Unknown Location'}
                                 onSave={(val) => onUpdate?.({ ...loc, name: val })}
-                                isEditable={isOwner}
+                                isEditable={isOwner && !isReadOnly}
                                 className="text-xl font-black uppercase text-white dark:text-zinc-500 tracking-tight leading-none mb-1 p-0 bg-transparent border-none text-left"
                             />
                             {loc.address && (
@@ -1896,7 +1897,7 @@ export const MobileLocationsView = ({ data, onUpdate, onDelete, onAdd }: { data:
     );
 };
 
-export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (releases: any[]) => void }) => {
+export const MobileReleasesView = ({ data, onUpdate, isReadOnly }: { data: any, onUpdate?: (releases: any[]) => void, isReadOnly?: boolean }) => {
     const supabase = getClient();
     const [view, setView] = useState<'list' | 'detail' | 'create'>('list');
     const [activeId, setActiveId] = useState<string | null>(null);
@@ -2250,7 +2251,7 @@ export const MobileReleasesView = ({ data, onUpdate }: { data: any, onUpdate?: (
  * SCRIPT NOTES VIEW
  * -------------------------------------------------------------------------------- */
 
-export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelete, onSetItems }: any) => {
+export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelete, onSetItems, isReadOnly }: any) => {
     const items = data?.items || [];
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -2511,7 +2512,7 @@ export const MobileScriptNotesView = ({ data, avScript, onUpdate, onAdd, onDelet
  * SOUND REPORT VIEW
  * -------------------------------------------------------------------------------- */
 
-export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) => {
+export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete, isReadOnly }: any) => {
     const takes = data?.takes || [];
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -2756,9 +2757,9 @@ export const MobileSoundReportView = ({ data, onUpdate, onAdd, onDelete }: any) 
     );
 };
 
-export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean }) => {
+export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable, isReadOnly }: { data: any, onUpdate?: (newData: any) => void, isEditable?: boolean, isReadOnly?: boolean }) => {
     const { canEditMobile } = useProjectData();
-    const isEditable = manualIsEditable ?? canEditMobile;
+    const isEditable = isReadOnly ? false : (manualIsEditable ?? canEditMobile);
 
     if (!data) return <EmptyState label="Creative Brief" />;
 
@@ -2802,7 +2803,7 @@ export const MobileBriefView = ({ data, onUpdate, isEditable: manualIsEditable }
     );
 };
 
-export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const slides = data?.slides || [];
     if (slides.length === 0 && !isOwner) return <EmptyState label="Treatment" />;
@@ -2859,7 +2860,7 @@ export const MobileTreatmentView = ({ data, onUpdate, onDelete, onAdd }: { data:
     );
 };
 
-export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys, imageKey, onUpdate, onDelete, onAdd }: { data: any, titleKey: string, subtitleKey?: string, detailKeys?: string[], imageKey?: string, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys, imageKey, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, titleKey: string, subtitleKey?: string, detailKeys?: string[], imageKey?: string, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.items || data?.roles || data?.looks || [];
 
@@ -2941,7 +2942,7 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
     );
 };
 
-export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.items || [];
     if (items.length === 0 && !isOwner) return <EmptyState label="Lookbook" />;
@@ -2993,7 +2994,7 @@ export const MobileLookbookView = ({ data, onUpdate, onDelete, onAdd }: { data: 
     );
 };
 
-export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.looks || data?.items || [];
     if (items.length === 0 && !isOwner) return <EmptyState label="Wardrobe" />;
@@ -3062,7 +3063,7 @@ export const MobileWardrobeView = ({ data, onUpdate, onDelete, onAdd }: { data: 
     );
 };
 
-export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.roles || data?.items || [];
     if (items.length === 0 && !isOwner) return <EmptyState label="Casting" />;
@@ -3126,7 +3127,7 @@ export const MobileCastingView = ({ data, onUpdate, onDelete, onAdd }: { data: a
     );
 };
 
-export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.items || [];
     if (items.length === 0 && !isOwner) return <EmptyState label="Props" />;
@@ -3197,7 +3198,7 @@ export const MobilePropsView = ({ data, onUpdate, onDelete, onAdd }: { data: any
     );
 };
 
-export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void }) => {
+export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete, isReadOnly }: { data: any, onAdd?: (item: any) => void, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, isReadOnly?: boolean }) => {
     const { canEditMobile } = useProjectData();
     const [isAdding, setIsAdding] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -3423,7 +3424,8 @@ export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (to
     );
 };
 
-export const MobileVisionView = ({ data, onUpdate }: { data: any, onUpdate: (newData: any) => void }) => {
+export const MobileVisionView = ({ data, onUpdate, isReadOnly }: { data: any, onUpdate: (newData: any) => void, isReadOnly?: boolean }) => {
+    const isEditable = !isReadOnly;
     if (!data || !data.pages || data.pages.length === 0) return <EmptyState label="Project Vision" />;
 
     return (
@@ -3442,7 +3444,7 @@ export const MobileVisionView = ({ data, onUpdate }: { data: any, onUpdate: (new
     );
 };
 
-export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void }) => {
+export const MobileStoryboardView = ({ data, onUpdate, onDelete, onAdd, isReadOnly }: { data: any, onUpdate?: (item: any) => void, onDelete?: (id: string) => void, onAdd?: (item: any) => void, isReadOnly?: boolean }) => {
     const { isOwner } = useProjectData();
     const items = data?.items || [];
 
