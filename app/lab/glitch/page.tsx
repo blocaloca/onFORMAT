@@ -29,7 +29,7 @@ const GlitchStyles = () => (
         }
         .jitter { animation: noise 0.1s infinite; }
         .pixelated { image-rendering: pixelated; }
-        .glass-panel { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-panel { background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .text-glow { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
     `}</style>
 );
@@ -67,48 +67,70 @@ export default function GlitchLab() {
                 const video = videoRef.current;
                 const canvas = canvasRef.current;
                 const buffer = bufferCanvasRef.current;
-                const ctx = canvas.getContext('2d');
-                const bCtx = buffer.getContext('2d');
+                const ctx = canvas.getContext('2d', { alpha: false });
+                const bCtx = buffer.getContext('2d', { alpha: false });
 
-                // Safety check for dimensions and playback state
                 if (video.videoWidth > 0 && video.readyState >= 2 && ctx && bCtx) {
                     if (canvas.width !== video.videoWidth) {
                         canvas.width = video.videoWidth;
                         canvas.height = video.videoHeight;
                     }
 
-                    // Pixelation Logic
-                    const pScale = degradation > 20 ? (0.5 / (1 + (degradation / 6))) : 1;
-                    const bWidth = Math.max(1, canvas.width * pScale);
-                    const bHeight = Math.max(1, canvas.height * pScale);
+                    // 1. DOWNSAMPLE (PIXELATION)
+                    // We shrink it significantly more at high degradation
+                    const pScale = degradation > 20 ? (0.3 / (1 + (degradation / 5))) : 1;
+                    buffer.width = Math.max(1, canvas.width * pScale);
+                    buffer.height = Math.max(1, canvas.height * pScale);
                     
-                    if (buffer.width !== bWidth) buffer.width = bWidth;
-                    if (buffer.height !== bHeight) buffer.height = bHeight;
-
+                    bCtx.imageSmoothingEnabled = false;
                     bCtx.drawImage(video, 0, 0, buffer.width, buffer.height);
 
+                    // 2. MAIN CANVAS RENDER
                     ctx.save();
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    ctx.translate(canvas.width / 2, canvas.height / 2);
-                    const skew = (degradation > 60 || bentMode) ? ((degradation - 50) * Math.PI / 180) : 0;
-                    ctx.transform(1 + (degradation / 200), 0, Math.tan(skew), 1 + (degradation / 200), 0, 0);
-                    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+                    // A. Global Warp (Bent Circuit)
+                    if (bentMode || degradation > 60) {
+                        const skew = (degradation - 40) * 0.5 * (Math.PI / 180);
+                        ctx.setTransform(1.1, Math.sin(skew), Math.tan(skew), 1.1, 0, 0);
+                    }
 
+                    // B. Filters (AGGRESSIVE COLOR THRUST)
+                    // Match the 'example' images: inverted colors, solarization, neon hues
                     const hue = intensity * 3.6;
-                    const contrastVal = 100 + (intensity * 3);
-                    const saturationVal = 100 + (intensity * 4);
-                    const sepia = vhsMode ? 'sepia(80%) saturate(300%)' : '';
+                    const contrast = 100 + (intensity * 4);
+                    const saturate = 100 + (intensity * 5);
+                    const invert = bentMode ? `invert(100%)` : '';
+                    const brightness = 100 + (intensity * 0.5);
                     
-                    try {
-                        ctx.filter = `contrast(${contrastVal}%) saturate(${saturationVal}%) hue-rotate(${hue}deg) ${sepia}`.trim();
-                        if (!vhsMode && !bentMode && intensity < 20) {
-                            ctx.filter += " grayscale(100%)";
-                        }
-                    } catch (e) {}
-
+                    // The 'VHS' tracking lines jitter
+                    const vhsJitter = vhsMode ? (Math.random() - 0.5) * (degradation / 5) : 0;
+                    
+                    ctx.filter = `${invert} contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) brightness(${brightness}%)`;
+                    
+                    // C. DRAW (RGB SPLIT)
                     ctx.imageSmoothingEnabled = false;
-                    ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
+                    
+                    if (intensity > 70 || bentMode) {
+                        // Dramatic Red Shift
+                        ctx.globalAlpha = 0.5;
+                        ctx.drawImage(buffer, -10 + vhsJitter, 0, canvas.width, canvas.height);
+                        ctx.globalCompositeOperation = 'screen';
+                        // Dramatic Cyan Shift
+                        ctx.filter = `hue-rotate(${hue + 180}deg) saturate(300%)`;
+                        ctx.drawImage(buffer, 10 + vhsJitter, 0, canvas.width, canvas.height);
+                        ctx.globalCompositeOperation = 'source-over';
+                    } else {
+                        ctx.drawImage(buffer, vhsJitter, 0, canvas.width, canvas.height);
+                    }
+
+                    // D. VHS TRACKING LINE (Random white bar)
+                    if (vhsMode && Math.random() > 0.95) {
+                        ctx.fillStyle = 'white';
+                        ctx.globalAlpha = 0.3;
+                        ctx.fillRect(0, Math.random() * canvas.height, canvas.width, 2);
+                    }
+
                     ctx.restore();
                 }
             }
@@ -121,24 +143,21 @@ export default function GlitchLab() {
     const startCamera = async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } 
+                video: { facingMode: 'environment', width: { ideal: 1080 }, height: { ideal: 1080 } } 
             });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                // Explicitly call play to handle some mobile browser restrictions
                 videoRef.current.onloadedmetadata = async () => {
                     try {
                         await videoRef.current?.play();
                         setCameraActive(true);
                         setStatus('UPLINK_LIVE');
                     } catch (e) {
-                        console.error("Autoplay blocked", e);
-                        setStatus('CLICK_TO_ACTIVATE');
+                        setStatus('CLICK_ACTIVATE');
                     }
                 };
             }
         } catch (e) {
-            console.error("Camera access failed", e);
             setStatus('ACCESS_ERROR');
         }
     };
@@ -146,7 +165,7 @@ export default function GlitchLab() {
     const handleCapture = () => {
         if (!canvasRef.current || !cameraActive) return;
         const link = document.createElement('a');
-        link.download = `onSET_GLITCH_${Date.now()}.png`;
+        link.download = `VISION_BENT_${Date.now()}.png`;
         link.href = canvasRef.current.toDataURL('image/png');
         link.click();
     };
@@ -157,93 +176,88 @@ export default function GlitchLab() {
             <video ref={videoRef} autoPlay playsInline muted className="hidden" />
             <canvas ref={bufferCanvasRef} className="hidden" />
             
-            {/* VIEWPORT AREA */}
-            <div className={`absolute inset-0 transition-all ${degradation > 80 ? 'jitter' : ''}`}>
-                {cameraActive ? (
-                    <canvas ref={canvasRef} className="w-full h-full object-cover pixelated opacity-90" />
-                ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-black">
-                        {status === 'CLICK_TO_ACTIVATE' ? (
-                            <button onClick={startCamera} className="group flex flex-col items-center gap-6 p-12 border border-emerald-500/20 rounded-full hover:bg-emerald-500/5 transition-all">
-                                <Power size={48} className="text-emerald-500 animate-pulse" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.5em]">Authorize Optics</span>
-                            </button>
-                        ) : (
-                            <>
-                                <Activity size={32} className="animate-spin text-emerald-950 mb-4" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-950">{status}...</span>
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* VISUAL LAYERS */}
-                <div className="absolute inset-0 pointer-events-none crt-overlay opacity-30 z-20" />
-                <div className="absolute inset-x-0 h-[2px] bg-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.3)] animate-[scanline_10s_linear_infinite] pointer-events-none z-20 opacity-50" />
+            {/* VIEWPORT */}
+            <div className={`absolute inset-0 transition-opacity duration-1000 ${cameraActive ? 'opacity-100' : 'opacity-0'}`}>
+                <canvas ref={canvasRef} className="w-full h-full object-cover pixelated" />
                 
                 {/* HUD: TITLE BAR */}
-                <div className="absolute top-0 inset-x-0 p-8 flex items-center justify-between z-50 pointer-events-none">
+                <div className="absolute top-0 inset-x-0 p-6 flex items-center justify-between z-50 pointer-events-none">
                     <div className="space-y-1">
-                        <h1 className="text-[11px] font-black tracking-[0.4em] uppercase text-white text-glow">onSET GLITCH_CAM</h1>
-                        <div className="flex items-center gap-2 text-[8px] font-bold text-emerald-500/50 tracking-widest uppercase">
+                        <h1 className="text-[10px] font-black tracking-[0.4em] uppercase text-white/80">onSET GLITCH_CAM</h1>
+                        <div className="flex items-center gap-2 text-[7px] font-black text-emerald-500/40 tracking-[0.2em] uppercase">
                             <Activity size={10} className="animate-pulse" />
-                            Signal: {cameraActive ? 'Uplink Stable' : status}
+                            {bentMode ? 'SYSTEM_FAIL: CIRCUIT_BENT' : 'Optical Link: v0.1.2'}
                         </div>
                     </div>
-                    {cameraActive && (
-                        <div className="pointer-events-auto">
-                            <button onClick={() => setShowControls(!showControls)} className="p-3 bg-white/5 border border-white/10 rounded-full text-white/50 hover:bg-white/10 hover:text-white transition-all shadow-2xl">
-                                {showControls ? <X size={16} /> : <Command size={16} />}
-                            </button>
-                        </div>
-                    )}
                 </div>
+
+                {/* VISUAL OVERLAYS */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none z-30" />
+                <div className="absolute inset-0 pointer-events-none crt-overlay opacity-30 z-20" />
             </div>
 
-            {/* FLOATING CONTROL POD (MINIMAL & TRANSPARENT) */}
-            {cameraActive && (
-                <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 w-[85%] max-w-[300px] transition-all duration-700 ease-in-out transform z-[100] ${showControls ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-40 opacity-0 scale-90 pointer-events-none'}`}>
-                    <div className="glass-panel p-5 rounded-[2.5rem] space-y-5 shadow-2xl">
-                        
-                        <div className="space-y-4">
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-[7px] font-black uppercase text-emerald-500/40 tracking-widest pr-1">
-                                    <span>Color Thrust</span>
-                                    <span>{intensity}%</span>
-                                </div>
-                                <input type="range" min="0" max="100" value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))} className="w-full h-[3px] bg-emerald-900/20 rounded-full appearance-none accent-emerald-500 cursor-pointer" />
-                            </div>
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-[7px] font-black uppercase text-red-500/70 tracking-widest pr-1">
-                                    <span>Data Corruption</span>
-                                    <span>{degradation}%</span>
-                                </div>
-                                <input type="range" min="0" max="100" value={degradation} onChange={(e) => setDegradation(parseInt(e.target.value))} className="w-full h-[3px] bg-red-900/20 rounded-full appearance-none accent-red-500 cursor-pointer" />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <button onClick={() => setVhsMode(!vhsMode)} className={`flex items-center justify-center gap-1.5 py-2.5 border rounded-2xl transition-all ${vhsMode ? 'bg-white text-black border-white' : 'border-white/5 text-zinc-500 hover:bg-white/5'}`}>
-                                <Monitor size={12} />
-                                <span className="text-[7px] font-black uppercase">VHS</span>
-                            </button>
-                            <button onClick={() => setBentMode(!bentMode)} className={`flex items-center justify-center gap-1.5 py-2.5 border rounded-2xl transition-all ${bentMode ? 'bg-red-500 text-black border-red-500' : 'border-red-500/10 text-red-900/40 hover:bg-red-500/5'}`}>
-                                <FileWarning size={12} />
-                                <span className="text-[7px] font-black uppercase">BENT</span>
-                            </button>
-                        </div>
-
-                        <div className="flex gap-2">
-                            <button onClick={() => { setIntensity(50); setDegradation(10); setVhsMode(false); setBentMode(false); }} className="px-4 py-3 bg-zinc-900/50 text-zinc-700 rounded-2xl hover:text-zinc-500 transition-colors">
-                                <RotateCcw size={14} />
-                            </button>
-                            <button onClick={handleCapture} className="flex-1 flex items-center justify-center gap-3 py-3 bg-emerald-500 text-black rounded-3xl font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/10 hover:bg-emerald-400 active:scale-[0.95] transition-all">
-                                <Camera size={14} /> Capture
-                            </button>
-                        </div>
-                    </div>
+            {/* CLICK TO ACTIVATE FALLBACK */}
+            {!cameraActive && status === 'CLICK_ACTIVATE' && (
+                <div className="absolute inset-0 flex items-center justify-center z-[110] bg-black">
+                    <button onClick={startCamera} className="flex flex-col items-center gap-4 p-10 border border-emerald-500/20 rounded-full hover:bg-emerald-500/5 transition-all">
+                        <Power size={32} className="text-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em]">Initialize Optics</span>
+                    </button>
                 </div>
             )}
+
+            {/* HUD CONTROLS TOGGLE */}
+            {cameraActive && (
+                <button 
+                    onClick={() => setShowControls(!showControls)}
+                    className="absolute top-6 right-6 p-3 bg-black/40 backdrop-blur border border-white/5 rounded-full text-white/30 z-[120] hover:text-white transition-all shadow-2xl"
+                >
+                    {showControls ? <X size={16} /> : <Command size={16} />}
+                </button>
+            )}
+
+            {/* FLOATING MINIMALPOD */}
+            <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 w-[80%] max-w-[280px] transition-all duration-700 ease-in-out transform z-[100] ${showControls && cameraActive ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-32 opacity-0 scale-90 pointer-events-none'}`}>
+                <div className="glass-panel p-6 rounded-[2.5rem] space-y-5 shadow-2xl">
+                    
+                    <div className="space-y-4">
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-[7px] font-black uppercase text-emerald-500/40 tracking-widest pl-1">
+                                <span>Core Thrust</span>
+                                <span>{intensity}%</span>
+                            </div>
+                            <input type="range" min="0" max="100" value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))} className="w-full h-1 bg-white/5 rounded-full appearance-none accent-emerald-500 cursor-pointer" />
+                        </div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-[7px] font-black uppercase text-red-500/70 tracking-widest pl-1">
+                                <span>Wave Decay</span>
+                                <span>{degradation}%</span>
+                            </div>
+                            <input type="range" min="0" max="100" value={degradation} onChange={(e) => setDegradation(parseInt(e.target.value))} className="w-full h-1 bg-white/5 rounded-full appearance-none accent-red-500 cursor-pointer" />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                        <button onClick={() => setVhsMode(!vhsMode)} className={`flex items-center justify-center gap-1.5 py-2.5 border rounded-2xl transition-all ${vhsMode ? 'bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'border-white/5 text-zinc-600 hover:bg-white/5'}`}>
+                            <Monitor size={12} />
+                            <span className="text-[7px] font-black uppercase">VHS</span>
+                        </button>
+                        <button onClick={() => setBentMode(!bentMode)} className={`flex items-center justify-center gap-1.5 py-2.5 border rounded-2xl transition-all ${bentMode ? 'bg-red-500 text-black border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.2)]' : 'border-white/5 text-zinc-600 hover:bg-white/5'}`}>
+                            <FileWarning size={12} />
+                            <span className="text-[7px] font-black uppercase">BENT</span>
+                        </button>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <button onClick={() => { setIntensity(50); setDegradation(10); setVhsMode(false); setBentMode(false); }} className="p-3 bg-white/5 text-zinc-700 rounded-2xl hover:text-zinc-500 transition-colors">
+                            <RotateCcw size={14} />
+                        </button>
+                        <button onClick={handleCapture} className="flex-1 flex items-center justify-center gap-3 py-3 bg-emerald-500 text-black rounded-3xl font-black text-[9px] uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/10 hover:bg-emerald-400 active:scale-[0.95] transition-all">
+                            <Camera size={14} /> Snap Shot
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
