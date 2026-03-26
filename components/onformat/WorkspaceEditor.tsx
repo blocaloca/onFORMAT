@@ -387,77 +387,53 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     useEffect(() => {
         if (!projectId) return;
 
-        console.log("🔌 Subscribing to Realtime Changes for Project:", projectId);
+        console.log("🔌 Subscribing to Realtime Activity for Project:", projectId);
 
-        const channel = supabase
-            .channel(`project_updates:${projectId}`) // Jackson: Scoped channel name for project updates
+        // CHANNEL 1: DATABASE UPDATES
+        const dbChannel = supabase
+            .channel(`project_updates:${projectId}`)
             .on(
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (payload: any) => {
-                    console.log("⚡️ Realtime Update Received:", payload);
                     const newData = payload.new?.data;
                     if (!newData) return;
-
-                    // Check for DIT Log Updates (Check both possible phase keys)
-                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
-                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
-
-                    // Check for Camera Report Updates
-                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
-                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
 
                     const currentPhaseKey = stateRef.current.phases?.ON_SET ? 'ON_SET' : 'PRODUCTION';
                     const updatedDrafts = { ...stateRef.current.phases?.[currentPhaseKey]?.drafts };
                     let hasUpdates = false;
-                    let notifMsg = '';
 
+                    // Sync DIT Log
+                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
+                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
                     if (newDitLog && newDitLog !== currentDitLog) {
-                        console.log("🔔 DIT Log Change Detected!");
                         updatedDrafts['dit-log'] = newDitLog;
                         hasUpdates = true;
-                        notifMsg = 'New DIT Log Entry Received';
-
-                        // Parse for Issues
-                        try {
-                            const parsed = JSON.parse(newDitLog);
-                            const list = Array.isArray(parsed) ? parsed : (parsed.items || []);
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const hasIssue = list.some((i: any) => i.eventType === 'issue' && i.status !== 'complete');
-                            if (hasIssue) notifMsg = 'DIT ALERT: Issue Reported';
-                        } catch { }
                     }
 
-                    // Check for On-Set Notes Updates
-                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-
-                    if (newNotes && newNotes !== currentNotes) {
-                        console.log("🔔 On-Set Notes Change Detected!");
-                        updatedDrafts['on-set-notes'] = newNotes;
-                        hasUpdates = true;
-                        notifMsg = 'New On-Set Note Received';
-                        setNavAlerts(prev => ({ ...prev, 'on-set-notes': true }));
-                        setTimeout(() => setNavAlerts(prev => ({ ...prev, 'on-set-notes': false })), 10000);
-                    }
-
+                    // Sync Camera Report
+                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
+                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
                     if (newCameraReport && newCameraReport !== currentCameraReport) {
-                        console.log("🔔 Camera Report Change Detected!");
                         updatedDrafts['camera-report'] = newCameraReport;
                         hasUpdates = true;
-                        // No Notification for Camera Report
+                    }
+
+                    // Sync Notes
+                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
+                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
+                    if (newNotes && newNotes !== currentNotes) {
+                        updatedDrafts['on-set-notes'] = newNotes;
+                        hasUpdates = true;
                     }
 
                     if (hasUpdates) {
-                        if (notifMsg) setLatestNotification({ msg: notifMsg, time: Date.now() });
-
                         setState(prev => ({
                             ...prev,
                             phases: {
                                 ...prev.phases,
                                 ON_SET: {
-                                    ...(prev.phases?.[ 'ON_SET' ] || {}),
+                                    ...(prev.phases?.['ON_SET'] || {}),
                                     drafts: updatedDrafts
                                 }
                             },
@@ -465,12 +441,30 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     }
                 }
             )
-            .subscribe((status, err) => {
-                console.log("🔌 Subscription Status:", status, err);
-            });
+            .subscribe();
+
+        // CHANNEL 2: REAL-TIME PULSE BROADCASTS (PRODUCER ALERTS)
+        const pulseChannel = supabase.channel(`production_pulse:${projectId}`)
+            .on('broadcast', { event: 'DIT_ALERT' }, (payload) => {
+                setLatestNotification({ msg: payload.payload.msg, time: Date.now() });
+                setNavAlerts(prev => ({ ...prev, 'dit-log': true }));
+                setTimeout(() => setNavAlerts(prev => ({ ...prev, 'dit-log': false })), 10000);
+            })
+            .on('broadcast', { event: 'CAMERA_ALERT' }, (payload) => {
+                setLatestNotification({ msg: payload.payload.msg, time: Date.now() });
+                setNavAlerts(prev => ({ ...prev, 'camera-report': true, 'shot-scene-book': true }));
+                setTimeout(() => setNavAlerts(prev => ({ ...prev, 'camera-report': false, 'shot-scene-book': false })), 10000);
+            })
+            .on('broadcast', { event: 'NOTE_ALERT' }, (payload) => {
+                setLatestNotification({ msg: payload.payload.msg, time: Date.now() });
+                setNavAlerts(prev => ({ ...prev, 'on-set-notes': true }));
+                setTimeout(() => setNavAlerts(prev => ({ ...prev, 'on-set-notes': false })), 10000);
+            })
+            .subscribe();
 
         return () => {
-            supabase.removeChannel(channel);
+            supabase.removeChannel(dbChannel);
+            supabase.removeChannel(pulseChannel);
         };
     }, [projectId]);
 

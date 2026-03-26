@@ -494,6 +494,21 @@ export default function OnSetMobilePage() {
         fetchData(); // Retry fetch with identity
     };
 
+    const broadcastPulse = async (event: string, msg: string) => {
+        try {
+            const channel = supabase.channel(`production_pulse:${id}`);
+            channel.subscribe((status) => {
+                if (status === 'SUBSCRIBED') {
+                    channel.send({
+                        type: 'broadcast',
+                        event,
+                        payload: { projectId: id, msg, time: Date.now() }
+                    });
+                }
+            });
+        } catch (e) { console.error("Pulse failed", e); }
+    };
+
     const handleUpdateDIT = async (newItem: any) => {
         if (!data.project) return;
         try {
@@ -552,6 +567,7 @@ export default function OnSetMobilePage() {
 
             // 5. Reload local
             fetchData();
+            broadcastPulse('DIT_ALERT', `DIT Log: ${newItem.eventType || 'Activity'} logged`);
 
         } catch (e) { console.error(e); }
     };
@@ -601,20 +617,12 @@ export default function OnSetMobilePage() {
                                 iso: item.iso || '800'
                             }
                         });
-                        // Also signal pulse for Workspace Nav
-                        const pulse = supabase.channel(`production_pulse:${id}`);
-                        pulse.subscribe(() => {
-                            pulse.send({
-                                type: 'broadcast',
-                                event: 'DIT_ALERT',
-                                payload: { projectId: id, msg: `Roll ${item.roll} Pulled` }
-                            });
-                        });
                     }
                 });
             }
 
             fetchData();
+            broadcastPulse('CAMERA_ALERT', `Camera: ${item.roll ? 'New Roll ' + item.roll : 'Log Entry'}`);
         } catch (e) { console.error(e) }
     }
 
@@ -651,6 +659,7 @@ export default function OnSetMobilePage() {
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
             fetchData();
+            broadcastPulse('NOTE_ALERT', 'New On-Set Note published');
         } catch (e) { console.error(e) }
     }
 
@@ -679,6 +688,7 @@ export default function OnSetMobilePage() {
                 updatedPhases[logPhaseKey].drafts['on-set-notes'] = JSON.stringify([logDoc, ...history]);
                 await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
                 fetchData();
+                broadcastPulse('NOTE_ALERT', 'On-Set Note updated');
             }
         } catch (e) { console.error(e) }
     }
@@ -804,6 +814,7 @@ export default function OnSetMobilePage() {
 
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
             fetchData();
+            broadcastPulse('CAMERA_ALERT', `Shot ${shotId} marked ${status}`);
 
         } catch (e) { console.error(e); }
     };
