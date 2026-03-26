@@ -11,7 +11,8 @@ import {
     Settings,
     X,
     Maximize2,
-    RotateCcw
+    RotateCcw,
+    Power
 } from 'lucide-react';
 
 // STYLING COMPONENT
@@ -27,7 +28,7 @@ const GlitchStyles = () => (
         }
         .jitter { animation: noise 0.1s infinite; }
         .pixelated { image-rendering: pixelated; }
-        .glass-panel { background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-panel { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
     `}</style>
 );
 
@@ -43,7 +44,7 @@ export default function GlitchLab() {
     const [vhsMode, setVhsMode] = useState(false);
     const [bentMode, setBentMode] = useState(false);
     const [showControls, setShowControls] = useState(true);
-    const [status, setStatus] = useState('READY_SYSTEM');
+    const [status, setStatus] = useState('STANDBY');
 
     // Render Loop
     useEffect(() => {
@@ -57,40 +58,35 @@ export default function GlitchLab() {
                 const bCtx = buffer.getContext('2d');
 
                 if (ctx && bCtx) {
-                    // Match dimensions
                     if (canvas.width !== video.videoWidth) {
                         canvas.width = video.videoWidth;
                         canvas.height = video.videoHeight;
                     }
 
-                    // Pixelation Logic: Reduce buffer size
+                    // Pixelation Logic
                     const pScale = degradation > 20 ? (1 / (1 + (degradation / 8))) : 1;
                     buffer.width = canvas.width * pScale;
                     buffer.height = canvas.height * pScale;
 
-                    // 1. Draw video to buffer (downscaled)
                     bCtx.drawImage(video, 0, 0, buffer.width, buffer.height);
 
-                    // 2. Clear main
                     ctx.save();
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    // 3. Transformations
+                    // Transforms
                     ctx.translate(canvas.width / 2, canvas.height / 2);
                     const skew = (degradation > 60 || bentMode) ? ((degradation - 50) * Math.PI / 180) : 0;
                     ctx.transform(1 + (degradation / 200), 0, Math.tan(skew), 1 + (degradation / 200), 0, 0);
                     ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
-                    // 4. Filters (BAKED INTO CANVAS)
+                    // Filters
                     const hue = intensity * 3.6;
                     const contrast = 200 + intensity;
                     const sepia = vhsMode ? 'sepia(0.6) saturate(2.5)' : '';
                     ctx.filter = `grayscale(100%) contrast(${contrast}%) brightness(140%) hue-rotate(${hue}deg) ${sepia}`;
 
-                    // 5. Draw buffer to main (upscaled)
                     ctx.imageSmoothingEnabled = false;
                     ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
-
                     ctx.restore();
                 }
             }
@@ -106,7 +102,7 @@ export default function GlitchLab() {
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
                 setCameraActive(true);
-                setStatus('STREAMING_OPTICAL');
+                setStatus('OPTIMIZING_STREAM');
             }
         } catch (e) {
             setStatus('ACCESS_DENIED');
@@ -127,115 +123,113 @@ export default function GlitchLab() {
             <video ref={videoRef} autoPlay playsInline className="hidden" />
             <canvas ref={bufferCanvasRef} className="hidden" />
             
-            {/* FULLSCREEN VIEWPORT */}
-            <div className={`absolute inset-0 flex items-center justify-center bg-black transition-all ${degradation > 80 ? 'jitter' : ''}`}>
+            {/* VIEWPORT */}
+            <div className={`absolute inset-0 transition-all ${degradation > 80 ? 'jitter' : ''}`}>
                 {cameraActive ? (
                     <canvas 
                         ref={canvasRef} 
-                        className="w-full h-full object-cover pixelated opacity-80"
+                        className="w-full h-full object-cover pixelated opacity-90"
                     />
                 ) : (
-                    <div className="text-center space-y-8 z-10 px-12">
-                        <ShieldAlert size={64} className="mx-auto text-emerald-900 animate-pulse" />
-                        <div className="space-y-2">
-                            <h1 className="text-xs font-black tracking-[0.5em] uppercase text-emerald-900">Vision System Standby</h1>
-                            <p className="text-[10px] text-emerald-900/50 uppercase">Restricted access protocol enabled</p>
+                    <div className="w-full h-full flex flex-col items-center justify-center space-y-8 z-10 px-12">
+                        <div className="relative">
+                            <ShieldAlert size={80} className="text-emerald-950 animate-pulse" />
+                            <div className="absolute inset-0 bg-emerald-500/10 blur-3xl rounded-full" />
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h1 className="text-[10px] font-black tracking-[0.6em] uppercase text-emerald-900">Vision System Standby</h1>
+                            <p className="text-[8px] text-emerald-900/50 uppercase tracking-[0.2em]">Secure optical uplink required</p>
                         </div>
                         <button 
                             onClick={startCamera} 
-                            className="px-8 py-4 border-2 border-emerald-500/20 text-[11px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black hover:border-emerald-500 transition-all active:scale-[0.95]"
+                            className="group flex flex-col items-center gap-4 p-8 border border-emerald-500/20 rounded-full hover:border-emerald-500 hover:bg-emerald-500/5 transition-all active:scale-[0.95]"
                         >
-                            Establish Uplink
+                            <Power size={32} className="text-emerald-500 group-hover:animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500">Establish Uplink</span>
                         </button>
                     </div>
                 )}
 
-                {/* VISUAL OVERLAYS */}
-                <div className="absolute inset-0 pointer-events-none crt-overlay opacity-40" />
-                <div className="absolute inset-x-0 h-8 bg-emerald-500/5 blur-xl animate-[scanline_6s_linear_infinite] pointer-events-none" />
+                {/* OVERLAYS */}
+                <div className="absolute inset-0 pointer-events-none crt-overlay opacity-40 z-20" />
+                <div className="absolute inset-x-0 h-4 bg-emerald-500/5 blur-lg animate-[scanline_8s_linear_infinite] pointer-events-none z-20" />
                 
-                {/* HUD ELEMENTS */}
-                <div className="absolute top-6 left-6 flex flex-col gap-1 pointer-events-none opacity-60">
-                    <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
-                        <Activity size={14} className="animate-pulse" />
-                        {status}
+                {/* HUD */}
+                <div className="absolute top-10 left-10 flex flex-col gap-2 pointer-events-none z-30 opacity-70">
+                    <div className="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.3em]">
+                        <Activity size={16} className="animate-pulse" />
+                        {cameraActive ? status : 'IDLE_LINK'}
                     </div>
-                    <span className="text-[8px] opacity-50">FREQ // 24.97FPS</span>
                 </div>
 
-                <div className="absolute top-6 right-6 flex items-center gap-4">
-                    <button 
-                        onClick={() => setShowControls(!showControls)}
-                        className="p-3 bg-black/50 backdrop-blur border border-white/10 rounded-full text-white hover:bg-white hover:text-black transition-all"
-                    >
-                        {showControls ? <X size={18} /> : <Settings size={18} />}
-                    </button>
-                </div>
+                {cameraActive && (
+                    <div className="absolute top-10 right-10 z-50">
+                        <button 
+                            onClick={() => setShowControls(!showControls)}
+                            className="p-4 bg-black/80 backdrop-blur border border-white/10 rounded-full text-white shadow-2xl transition-all active:scale-[0.9]"
+                        >
+                            {showControls ? <X size={20} /> : <Settings size={20} />}
+                        </button>
+                    </div>
+                )}
             </div>
 
-            {/* FLOATING CONTROLS PANEL */}
-            <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-sm transition-all duration-500 transform ${showControls ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}>
-                <div className="glass-panel p-6 rounded-3xl space-y-6 shadow-2xl shadow-emerald-500/5">
-                    
-                    {/* SLIDERS */}
-                    <div className="space-y-5">
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-[9px] font-black uppercase text-emerald-500/60">
-                                <span>Signal Gain</span>
-                                <span>{intensity}%</span>
+            {/* FLOATING CONTROLS */}
+            {cameraActive && (
+                <div className={`absolute bottom-12 left-1/2 -translate-x-1/2 w-[90%] max-w-sm transition-all duration-700 ease-in-out transform z-[100] ${showControls ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-40 opacity-0 scale-90 pointer-events-none'}`}>
+                    <div className="glass-panel p-8 rounded-[40px] space-y-8 shadow-[0_0_80px_rgba(0,0,0,1)]">
+                        
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-[8px] font-black uppercase text-emerald-500/60 tracking-widest">
+                                    <span>Signal Gain</span>
+                                    <span>{intensity}%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))} className="w-full h-1 bg-emerald-900/30 rounded-full appearance-none accent-emerald-500 cursor-pointer" />
                             </div>
-                            <input type="range" min="0" max="100" value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))} className="w-full h-1 bg-emerald-900/30 rounded-full appearance-none accent-emerald-500 cursor-pointer" />
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-[9px] font-black uppercase text-red-500">
-                                <span>Wave Corruption</span>
-                                <span>{degradation}%</span>
+                            <div className="space-y-2">
+                                <div className="flex justify-between text-[8px] font-black uppercase text-red-500 tracking-widest">
+                                    <span>Wave Corruption</span>
+                                    <span>{degradation}%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value={degradation} onChange={(e) => setDegradation(parseInt(e.target.value))} className="w-full h-1 bg-red-900/30 rounded-full appearance-none accent-red-500 cursor-pointer" />
                             </div>
-                            <input type="range" min="0" max="100" value={degradation} onChange={(e) => setDegradation(parseInt(e.target.value))} className="w-full h-1 bg-red-900/30 rounded-full appearance-none accent-red-500 cursor-pointer" />
                         </div>
-                    </div>
 
-                    {/* MODES */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <button 
-                            onClick={() => setVhsMode(!vhsMode)}
-                            className={`flex flex-col items-center gap-1.5 p-3 border rounded-2xl transition-all ${vhsMode ? 'bg-white text-black border-white' : 'border-white/10 text-zinc-400 hover:bg-white/5'}`}
-                        >
-                            <Monitor size={16} />
-                            <span className="text-[8px] font-black uppercase">VHS TAPE</span>
-                        </button>
-                        <button 
-                            onClick={() => setBentMode(!bentMode)}
-                            className={`flex flex-col items-center gap-1.5 p-3 border rounded-2xl transition-all ${bentMode ? 'bg-red-500 text-black border-red-500' : 'border-red-500/20 text-red-900/60 hover:bg-red-500/10'}`}
-                        >
-                            <FileWarning size={16} />
-                            <span className="text-[8px] font-black uppercase">CIRCUIT BENT</span>
-                        </button>
-                    </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button 
+                                onClick={() => setVhsMode(!vhsMode)}
+                                className={`flex flex-col items-center gap-2 p-4 border rounded-3xl transition-all ${vhsMode ? 'bg-white text-black border-white' : 'border-white/10 text-zinc-500 hover:bg-white/5'}`}
+                            >
+                                <Monitor size={18} />
+                                <span className="text-[7px] font-black uppercase tracking-widest">VHS TAPE</span>
+                            </button>
+                            <button 
+                                onClick={() => setBentMode(!bentMode)}
+                                className={`flex flex-col items-center gap-2 p-4 border rounded-3xl transition-all ${bentMode ? 'bg-red-500 text-black border-red-500 shadow-lg shadow-red-500/20' : 'border-red-500/20 text-red-900/40 hover:bg-red-500/10'}`}
+                            >
+                                <FileWarning size={18} />
+                                <span className="text-[7px] font-black uppercase tracking-widest">BENT CIRCUIT</span>
+                            </button>
+                        </div>
 
-                    {/* CAPTURE */}
-                    <div className="flex gap-3">
-                        <button 
-                            onClick={() => { setIntensity(50); setDegradation(10); setVhsMode(false); setBentMode(false); }}
-                            className="p-4 bg-zinc-900 text-zinc-500 rounded-2xl hover:bg-zinc-800 transition-colors"
-                        >
-                            <RotateCcw size={18} />
-                        </button>
-                        <button 
-                            onClick={handleCapture}
-                            disabled={!cameraActive}
-                            className="flex-1 flex items-center justify-center gap-3 p-4 bg-emerald-500 text-black rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 active:scale-[0.98] disabled:opacity-20 transition-all"
-                        >
-                            <Camera size={16} /> Capture Vision
-                        </button>
+                        <div className="flex gap-4">
+                            <button 
+                                onClick={() => { setIntensity(50); setDegradation(10); setVhsMode(false); setBentMode(false); }}
+                                className="p-5 bg-zinc-900 text-zinc-600 rounded-3xl hover:bg-zinc-800 transition-colors"
+                            >
+                                <RotateCcw size={20} />
+                            </button>
+                            <button 
+                                onClick={handleCapture}
+                                className="flex-1 flex items-center justify-center gap-4 p-5 bg-emerald-500 text-black rounded-[28px] font-black text-[10px] uppercase tracking-[0.3em] shadow-xl shadow-emerald-500/20 hover:bg-emerald-400 active:scale-[0.98] transition-all"
+                            >
+                                <Camera size={20} /> Capture Shot
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            {/* SCANNING LINES HUD (DECORATIVE) */}
-            <div className="absolute bottom-6 left-6 pointer-events-none opacity-20">
-                <Scan size={32} />
-            </div>
+            )}
         </div>
     );
 }
