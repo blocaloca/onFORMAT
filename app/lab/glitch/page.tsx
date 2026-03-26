@@ -63,6 +63,7 @@ const GlitchStyles = () => (
 
 export default function GlitchLab() {
     const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [status, setStatus] = useState('UNAUTHORIZED_ACCESS');
     const [intensity, setIntensity] = useState(50);
     const [degradation, setDegradation] = useState(10);
@@ -93,6 +94,30 @@ export default function GlitchLab() {
         }
     };
 
+    const handleCapture = () => {
+        if (!videoRef.current || !canvasRef.current) return;
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Set canvas to video size
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Apply filters to canvas context
+        ctx.filter = `grayscale(1) contrast(2) brightness(1.5) hue-rotate(${intensity * 3.6}deg) ${vhsMode ? 'sepia(0.5) saturate(2)' : ''}`;
+        
+        // Draw video frame
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Download
+        const link = document.createElement('a');
+        link.download = `onset_vision_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    };
+
     // Calculate dynamic styles for the glitch
     const shiftX = `${(degradation / (vhsMode ? 3 : 5))}px`;
     const skewX = (degradation > 60 || bentMode) ? `${(degradation - 50)}deg` : '0';
@@ -110,6 +135,7 @@ export default function GlitchLab() {
     return (
         <div className="min-h-screen bg-black text-emerald-500 font-mono p-4 overflow-hidden flex flex-col items-center justify-center selection:bg-emerald-500/30">
             <GlitchStyles />
+            <canvas ref={canvasRef} className="hidden" />
             
             <div className="w-full max-w-sm aspect-[3/4] border-2 border-emerald-900/50 rounded-2xl relative overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.1)] bg-zinc-950 flex flex-col transition-all duration-75">
                 
@@ -158,9 +184,9 @@ export default function GlitchLab() {
                     )}
                 </div>
 
-                <div className="p-6 bg-zinc-900/50 border-t border-emerald-900/30 space-y-5">
+                <div className="p-6 bg-white dark:bg-zinc-900 border-t border-emerald-900/30 space-y-5">
                     <div className="space-y-2">
-                        <div className="flex justify-between text-[9px] font-black uppercase opacity-60">
+                        <div className="flex justify-between text-[9px] font-black uppercase opacity-60 text-zinc-400">
                             <span>Process Intensifier</span>
                             <span>{intensity}%</span>
                         </div>
@@ -178,19 +204,27 @@ export default function GlitchLab() {
                     <div className="grid grid-cols-2 gap-3 pt-2">
                         <button 
                             onClick={() => setVhsMode(!vhsMode)}
-                            className={`flex items-center justify-center gap-2 p-3 border rounded-xl transition-all ${vhsMode ? 'bg-white text-black border-white shadow-[0_0_15px_white]' : 'border-white/20 hover:bg-white/10'}`}
+                            className={`flex items-center justify-center gap-2 p-3 border rounded-xl transition-all ${vhsMode ? 'bg-zinc-900 text-white border-zinc-900 shadow-[0_0_15px_rgba(0,0,0,0.1)]' : 'border-zinc-200 hover:bg-zinc-100'}`}
                         >
                             <Monitor size={12} />
                             <span className="text-[8px] font-black uppercase">VHS MODE</span>
                         </button>
                         <button 
                             onClick={() => setBentMode(!bentMode)}
-                            className={`flex items-center justify-center gap-2 p-3 border rounded-xl transition-all ${bentMode ? 'bg-red-500 text-black border-red-500 shadow-[0_0_15px_red]' : 'border-red-500/20 hover:bg-red-500/10'}`}
+                            className={`flex items-center justify-center gap-2 p-3 border rounded-xl transition-all ${bentMode ? 'bg-red-500 text-white border-red-500 shadow-[0_0_15px_red]' : 'border-red-500/20 hover:bg-red-500/10'}`}
                         >
                             <FileWarning size={12} />
                             <span className="text-[8px] font-black uppercase">BENT CIRCUIT</span>
                         </button>
                     </div>
+
+                    <button 
+                        onClick={handleCapture}
+                        disabled={!cameraActive}
+                        className="w-full flex items-center justify-center gap-3 p-4 bg-emerald-500 text-black rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg hover:bg-emerald-400 active:scale-[0.95] disabled:opacity-30 disabled:grayscale transition-all"
+                    >
+                        <Camera size={14} /> Capture Vision Shot
+                    </button>
                 </div>
             </div>
 
