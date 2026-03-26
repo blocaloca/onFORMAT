@@ -29,7 +29,7 @@ const GlitchStyles = () => (
         }
         .jitter { animation: noise 0.1s infinite; }
         .pixelated { image-rendering: pixelated; }
-        .glass-panel { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-panel { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .text-glow { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
     `}</style>
 );
@@ -70,7 +70,8 @@ export default function GlitchLab() {
                 const ctx = canvas.getContext('2d');
                 const bCtx = buffer.getContext('2d');
 
-                if (video.videoWidth > 0 && ctx && bCtx) {
+                // Safety check for dimensions and playback state
+                if (video.videoWidth > 0 && video.readyState >= 2 && ctx && bCtx) {
                     if (canvas.width !== video.videoWidth) {
                         canvas.width = video.videoWidth;
                         canvas.height = video.videoHeight;
@@ -95,7 +96,6 @@ export default function GlitchLab() {
                     ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
                     const hue = intensity * 3.6;
-                    // AGGRESSIVE CONTRAST & SATURATION for 'process intensifier'
                     const contrastVal = 100 + (intensity * 3);
                     const saturationVal = 100 + (intensity * 4);
                     const sepia = vhsMode ? 'sepia(80%) saturate(300%)' : '';
@@ -125,12 +125,20 @@ export default function GlitchLab() {
             });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                videoRef.current.onloadedmetadata = () => {
-                    setCameraActive(true);
-                    setStatus('UPLINK_LIVE');
+                // Explicitly call play to handle some mobile browser restrictions
+                videoRef.current.onloadedmetadata = async () => {
+                    try {
+                        await videoRef.current?.play();
+                        setCameraActive(true);
+                        setStatus('UPLINK_LIVE');
+                    } catch (e) {
+                        console.error("Autoplay blocked", e);
+                        setStatus('CLICK_TO_ACTIVATE');
+                    }
                 };
             }
         } catch (e) {
+            console.error("Camera access failed", e);
             setStatus('ACCESS_ERROR');
         }
     };
@@ -155,8 +163,17 @@ export default function GlitchLab() {
                     <canvas ref={canvasRef} className="w-full h-full object-cover pixelated opacity-90" />
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-black">
-                        <Activity size={32} className="animate-spin text-emerald-950 mb-4" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-950">Initializing Optical Core...</span>
+                        {status === 'CLICK_TO_ACTIVATE' ? (
+                            <button onClick={startCamera} className="group flex flex-col items-center gap-6 p-12 border border-emerald-500/20 rounded-full hover:bg-emerald-500/5 transition-all">
+                                <Power size={48} className="text-emerald-500 animate-pulse" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.5em]">Authorize Optics</span>
+                            </button>
+                        ) : (
+                            <>
+                                <Activity size={32} className="animate-spin text-emerald-950 mb-4" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-950">{status}...</span>
+                            </>
+                        )}
                     </div>
                 )}
 
@@ -170,7 +187,7 @@ export default function GlitchLab() {
                         <h1 className="text-[11px] font-black tracking-[0.4em] uppercase text-white text-glow">onSET GLITCH_CAM</h1>
                         <div className="flex items-center gap-2 text-[8px] font-bold text-emerald-500/50 tracking-widest uppercase">
                             <Activity size={10} className="animate-pulse" />
-                            Signal: {cameraActive ? 'Uplink Stable' : 'Awaiting Data'}
+                            Signal: {cameraActive ? 'Uplink Stable' : status}
                         </div>
                     </div>
                     {cameraActive && (
