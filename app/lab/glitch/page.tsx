@@ -57,7 +57,8 @@ export default function GlitchLab() {
                 const ctx = canvas.getContext('2d');
                 const bCtx = buffer.getContext('2d');
 
-                if (ctx && bCtx) {
+                // Safety check for dimensions
+                if (video.videoWidth > 0 && ctx && bCtx) {
                     if (canvas.width !== video.videoWidth) {
                         canvas.width = video.videoWidth;
                         canvas.height = video.videoHeight;
@@ -65,26 +66,37 @@ export default function GlitchLab() {
 
                     // Pixelation Logic
                     const pScale = degradation > 20 ? (1 / (1 + (degradation / 8))) : 1;
-                    buffer.width = canvas.width * pScale;
-                    buffer.height = canvas.height * pScale;
+                    const bWidth = Math.max(1, canvas.width * pScale);
+                    const bHeight = Math.max(1, canvas.height * pScale);
+                    
+                    if (buffer.width !== bWidth) buffer.width = bWidth;
+                    if (buffer.height !== bHeight) buffer.height = bHeight;
 
+                    // 1. Draw video to buffer (downscaled)
                     bCtx.drawImage(video, 0, 0, buffer.width, buffer.height);
 
+                    // 2. Clear main
                     ctx.save();
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                    // Transforms
+                    // 3. Transformations
                     ctx.translate(canvas.width / 2, canvas.height / 2);
                     const skew = (degradation > 60 || bentMode) ? ((degradation - 50) * Math.PI / 180) : 0;
                     ctx.transform(1 + (degradation / 200), 0, Math.tan(skew), 1 + (degradation / 200), 0, 0);
                     ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
-                    // Filters
+                    // 4. Filters
                     const hue = intensity * 3.6;
                     const contrast = 200 + intensity;
-                    const sepia = vhsMode ? 'sepia(0.6) saturate(2.5)' : '';
-                    ctx.filter = `grayscale(100%) contrast(${contrast}%) brightness(140%) hue-rotate(${hue}deg) ${sepia}`;
+                    const sepia = vhsMode ? 'sepia(60%) saturate(250%)' : '';
+                    
+                    try {
+                        ctx.filter = `grayscale(100%) contrast(${contrast}%) brightness(140%) hue-rotate(${hue}deg) ${sepia}`.trim();
+                    } catch (e) {
+                        // Fallback if filter string fails
+                    }
 
+                    // 5. Draw buffer to main (upscaled)
                     ctx.imageSmoothingEnabled = false;
                     ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
                     ctx.restore();
@@ -97,12 +109,26 @@ export default function GlitchLab() {
     }, [cameraActive, intensity, degradation, vhsMode, bentMode]);
 
     const startCamera = async () => {
+        if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
+            setStatus('NOT_SUPPORTED');
+            return;
+        }
+
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            });
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                setCameraActive(true);
-                setStatus('OPTIMIZING_STREAM');
+                // Force video load
+                videoRef.current.onloadedmetadata = () => {
+                    setCameraActive(true);
+                    setStatus('UPLINK_STABLE');
+                };
             }
         } catch (e) {
             setStatus('ACCESS_DENIED');
@@ -110,17 +136,21 @@ export default function GlitchLab() {
     };
 
     const handleCapture = () => {
-        if (!canvasRef.current) return;
-        const link = document.createElement('a');
-        link.download = `onSET_GLITCH_${Date.now()}.png`;
-        link.href = canvasRef.current.toDataURL('image/png');
-        link.click();
+        if (!canvasRef.current || !cameraActive) return;
+        try {
+            const link = document.createElement('a');
+            link.download = `onSET_GLITCH_${Date.now()}.png`;
+            link.href = canvasRef.current.toDataURL('image/png');
+            link.click();
+        } catch (e) {
+            console.error("Capture failed", e);
+        }
     };
 
     return (
-        <div className="fixed inset-0 bg-black text-emerald-500 font-mono overflow-hidden">
+        <div className="fixed inset-0 bg-black text-emerald-500 font-mono overflow-hidden select-none touch-none">
             <GlitchStyles />
-            <video ref={videoRef} autoPlay playsInline className="hidden" />
+            <video ref={videoRef} autoPlay playsInline muted className="hidden" />
             <canvas ref={bufferCanvasRef} className="hidden" />
             
             {/* VIEWPORT */}
@@ -163,7 +193,7 @@ export default function GlitchLab() {
                 </div>
 
                 {cameraActive && (
-                    <div className="absolute top-10 right-10 z-50">
+                    <div className="absolute top-10 right-10 z-[110]">
                         <button 
                             onClick={() => setShowControls(!showControls)}
                             className="p-4 bg-black/80 backdrop-blur border border-white/10 rounded-full text-white shadow-2xl transition-all active:scale-[0.9]"
