@@ -44,23 +44,25 @@ const GlitchStyles = () => (
         .glitch-text {
             text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9;
         }
-        .rgb-shift {
-            filter: drop-shadow(2px 0 #f00) drop-shadow(-2px 0 #0ff);
+        .jitter {
+            animation: noise 0.2s infinite;
+        }
+        .rgb-shift-heavy {
+            filter: drop-shadow(var(--shift-x) 0 #f00) drop-shadow(calc(var(--shift-x) * -1) 0 #0ff) contrast(150%) brightness(120%);
         }
     `}</style>
 );
 
 export default function GlitchLab() {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [status, setStatus] = useState('UNAUTHORIZED_ACCESS');
     const [intensity, setIntensity] = useState(50);
-    const [noise, setNoise] = useState(20);
+    const [degradation, setDegradation] = useState(10);
     const [cameraActive, setCameraActive] = useState(false);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            const statuses = ['DECRYPTING...', 'SIGNAL_LOSS', 'BUFFERING...', 'onSET_LAB', 'DATA_CORRUPTION', 'UNAUTHORIZED_ACCESS'];
+            const statuses = ['SIGNAL_FAILURE', 'CIRCUIT_BENT', 'onSET_LAB', 'RAM_DUMP', 'UNAUTHORIZED_ACCESS'];
             setStatus(statuses[Math.floor(Math.random() * statuses.length)]);
         }, 3000);
         return () => clearInterval(interval);
@@ -79,99 +81,78 @@ export default function GlitchLab() {
         }
     };
 
+    // Calculate dynamic styles for the glitch
+    const shiftX = `${(degradation / 5)}px`;
+    const skewX = degradation > 60 ? `${(degradation - 60)}deg` : '0';
+    const pixelate = degradation > 40 ? `blur(${(degradation - 40) / 10}px)` : 'none';
+
     return (
         <div className="min-h-screen bg-black text-emerald-500 font-mono p-4 overflow-hidden flex flex-col items-center justify-center selection:bg-emerald-500/30">
             <GlitchStyles />
             
-            {/* CRT CONTAINER */}
             <div className="w-full max-w-sm aspect-[3/4] border-2 border-emerald-900/50 rounded-2xl relative overflow-hidden shadow-[0_0_50px_rgba(16,185,129,0.1)] bg-zinc-950 flex flex-col">
                 
-                {/* STATUS BAR */}
                 <div className="p-3 border-b border-emerald-900/30 flex items-center justify-between text-[10px] bg-zinc-900/50">
                     <div className="flex items-center gap-2">
                         <Activity size={12} className="animate-pulse" />
                         <span className="tracking-widest uppercase">{status}</span>
                     </div>
-                    <span className="opacity-50">LAT: 0.12ms</span>
                 </div>
 
-                {/* VIEWPORT */}
-                <div className="flex-1 relative flex items-center justify-center group overflow-hidden bg-black">
-                    {/* CAMERA FEED */}
+                <div 
+                    className={`flex-1 relative flex items-center justify-center overflow-hidden bg-black ${degradation > 80 ? 'jitter' : ''}`}
+                    style={{ '--shift-x': shiftX } as any}
+                >
                     <video 
                         ref={videoRef} 
                         autoPlay 
                         playsInline 
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${cameraActive ? 'opacity-80' : 'opacity-0'} grayscale sepia contrast-150 brightness-75`}
-                        style={{ filter: `hue-rotate(90deg) contrast(${100 + intensity}%)` }}
+                        className={`absolute inset-0 w-full h-full object-cover transition-all duration-75 ${cameraActive ? 'opacity-80' : 'opacity-0'} grayscale contrast-200 brightness-150 ${degradation > 20 ? 'rgb-shift-heavy' : ''}`}
+                        style={{ 
+                            filter: `hue-rotate(${(intensity * 3.6)}deg) contrast(${100 + intensity}%) ${pixelate}`,
+                            transform: `skewX(${skewX}) scale(${1 + (degradation / 200)})`
+                        }}
                     />
 
-                    {/* INTERACTIVE SCANLINES */}
                     <div className="absolute inset-x-0 h-4 bg-emerald-500/10 blur-sm pointer-events-none animate-[scanline_4s_linear_infinite]" />
-                    <div className="absolute inset-0 crt-overlay opacity-50 pointer-events-none" />
+                    <div className={`absolute inset-0 crt-overlay pointer-events-none ${degradation > 50 ? 'opacity-80' : 'opacity-30'}`} />
 
                     {!cameraActive && (
                         <div className="text-center space-y-4 z-10">
                             <ShieldAlert size={48} className="mx-auto text-emerald-900 animate-pulse" />
-                            <p className="text-[10px] tracking-[0.3em] font-black uppercase text-emerald-900">Encrypted Stream</p>
-                            <button 
-                                onClick={startCamera}
-                                className="px-6 py-2 border border-emerald-500/30 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all"
-                            >
-                                Init Optical Capture
+                            <button onClick={startCamera} className="px-6 py-2 border border-emerald-500/30 text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">
+                                INIT OPTICAL CAPTURE
                             </button>
                         </div>
                     )}
-
-                    {/* HUD OVERLAY */}
-                    <div className="absolute top-4 left-4 pointer-events-none">
-                        <div className="text-[10px] font-black border-l-2 border-emerald-500 pl-2">
-                            A-CAM // ISO 3200<br/>
-                            F-STOP // T2.8<br/>
-                            SHUTTER // 172.8
-                        </div>
-                    </div>
-                    
-                    <div className="absolute bottom-4 right-4 pointer-events-none opacity-30 text-right">
-                        <Scan size={32} />
-                        <div className="text-[8px] mt-1 font-black uppercase">Tracking Active</div>
-                    </div>
                 </div>
 
-                {/* CONTROLS */}
-                <div className="p-6 bg-zinc-900/50 border-t border-emerald-900/30 space-y-6">
-                    <div className="space-y-3">
-                        <div className="flex justify-between text-[9px] font-black uppercase">
-                            <span>Signal Intensity</span>
+                <div className="p-6 bg-zinc-900/50 border-t border-emerald-900/30 space-y-5">
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-[9px] font-black uppercase opacity-60">
+                            <span>Process Intensifier</span>
                             <span>{intensity}%</span>
                         </div>
-                        <input 
-                            type="range" 
-                            min="0" 
-                            max="100" 
-                            value={intensity}
-                            onChange={(e) => setIntensity(parseInt(e.target.value))}
-                            className="w-full accent-emerald-500 bg-emerald-900/20 h-1 rounded-full appearance-none cursor-pointer"
-                        />
+                        <input type="range" min="0" max="100" value={intensity} onChange={(e) => setIntensity(parseInt(e.target.value))} className="w-full accent-emerald-500 bg-emerald-900/20 h-1 rounded-full appearance-none cursor-pointer" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <button className="flex flex-col items-center gap-2 p-3 border border-emerald-900/50 rounded-xl hover:bg-emerald-500/10 transition-colors group">
-                            <Monitor size={16} className="group-hover:text-white" />
-                            <span className="text-[8px] font-black uppercase">VHS Mode</span>
-                        </button>
-                        <button className="flex flex-col items-center gap-2 p-3 border border-emerald-900/50 rounded-xl hover:bg-emerald-500/10 transition-colors group">
-                            <Terminal size={16} className="group-hover:text-white" />
-                            <span className="text-[8px] font-black uppercase">Data Leak</span>
-                        </button>
-                    </div>
-
-                    <div className="flex items-center justify-between pt-2 border-t border-emerald-900/10">
-                        <div className="flex items-center gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                            <span className="text-[8px] font-black uppercase opacity-60">Rec Active</span>
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-[9px] font-black uppercase text-red-500">
+                            <span>Signal Degradation</span>
+                            <span>{degradation}%</span>
                         </div>
-                        <Zap size={12} className="text-amber-500" />
+                        <input type="range" min="0" max="100" value={degradation} onChange={(e) => setDegradation(parseInt(e.target.value))} className="w-full accent-red-500 bg-red-900/20 h-1 rounded-full appearance-none cursor-pointer" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                        <button className="flex items-center justify-center gap-2 p-3 border border-emerald-900/30 rounded-xl hover:bg-emerald-500/10 transition-colors">
+                            <Monitor size={12} />
+                            <span className="text-[8px] font-black uppercase">VHS</span>
+                        </button>
+                        <button className="flex items-center justify-center gap-2 p-3 border border-emerald-900/30 rounded-xl hover:bg-emerald-500/10 transition-colors">
+                            <FileWarning size={12} />
+                            <span className="text-[8px] font-black uppercase">Bent</span>
+                        </button>
                     </div>
                 </div>
             </div>
