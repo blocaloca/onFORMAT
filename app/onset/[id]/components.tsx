@@ -1496,12 +1496,12 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
 
             {/* Timeline */}
             <div className="space-y-4 relative">
-                <div className="absolute left-[54px] top-2 bottom-2 w-0.5 bg-zinc-300"></div>
+                <div className="absolute left-[68px] top-2 bottom-2 w-0.5 bg-zinc-300"></div>
 
                 {(data.items || []).map((item: any, i: number) => (
                     <div key={item.id || i} className="relative flex gap-4 group">
                         {/* Time Column */}
-                        <div className="w-[46px] text-right pt-1 shrink-0">
+                        <div className="w-[60px] text-right pt-1 shrink-0">
                             <EditableInput
                                 value={item.time || '00:00'}
                                 onSave={(val) => updateItem(i, { time: val })}
@@ -1511,7 +1511,7 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
                         </div>
 
                         {/* Dot */}
-                        <div className="absolute left-[50px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-300 border-2 border-zinc-200 dark:border-zinc-800 z-10 group-hover:bg-emerald-500 transition-colors"></div>
+                        <div className="absolute left-[64px] top-2.5 w-2.5 h-2.5 rounded-full bg-zinc-300 border-2 border-zinc-200 dark:border-zinc-800 z-10 group-hover:bg-emerald-500 transition-colors"></div>
 
                         {/* Content Card */}
                         <div className="flex-1 bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative">
