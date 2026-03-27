@@ -80,6 +80,28 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
     const items = data.items || [];
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+    const handleDragStart = (idx: number) => {
+        setDraggedIndex(idx);
+    };
+
+    const handleDragOver = (idx: number) => {
+        if (draggedIndex === null || draggedIndex === idx) return;
+        setDragOverIndex(idx);
+    };
+
+    const handleDragEnd = () => {
+        if (draggedIndex !== null && dragOverIndex !== null) {
+            const reorderedItems = [...items];
+            const [movedItem] = reorderedItems.splice(draggedIndex, 1);
+            reorderedItems.splice(dragOverIndex, 0, movedItem);
+            onUpdate({ items: reorderedItems });
+        }
+        setDraggedIndex(null);
+        setDragOverIndex(null);
+    };
 
     // Handlers
     const handleAddItem = (isBreak: boolean | any = false) => {
@@ -252,7 +274,17 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 }
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div 
+                                        key={item.id} 
+                                        draggable={!isLocked}
+                                        onDragStart={() => handleDragStart(globalIdx)}
+                                        onDragOver={(e) => { e.preventDefault(); handleDragOver(globalIdx); }}
+                                        onDragEnd={handleDragEnd}
+                                        className={`grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-all group cursor-default relative
+                                            ${draggedIndex === globalIdx ? 'opacity-30' : ''}
+                                            ${dragOverIndex === globalIdx && draggedIndex !== globalIdx ? 'border-t-2 border-emerald-500' : 'border-t border-transparent'}
+                                        `}
+                                    >
 
                                         {/* Time */}
                                         <div>
@@ -346,17 +378,22 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             )}
                                         </div>
 
-                                        {/* Sort */}
-                                        <div className={`flex justify-center gap-1 pt-0.5 ${isPrinting ? 'hidden' : 'print:hidden'}`}>
+                                        {/* Drag Handle */}
+                                        <div className={`flex justify-center pt-1.5 ${isPrinting ? 'hidden' : 'print:hidden'}`}>
                                             {!isLocked && (
-                                                <>
-                                                    <button onClick={() => handleMoveItem(globalIdx, 'up')} disabled={globalIdx === 0} className="text-zinc-300 hover:text-black dark:hover:text-zinc-100 disabled:opacity-20 transition-colors">
-                                                        <ArrowUp size={12} />
-                                                    </button>
-                                                    <button onClick={() => handleMoveItem(globalIdx, 'down')} disabled={globalIdx === items.length - 1} className="text-zinc-300 hover:text-black dark:hover:text-zinc-100 disabled:opacity-20 transition-colors">
-                                                        <ArrowDown size={12} />
-                                                    </button>
-                                                </>
+                                                <div className="text-zinc-300 group-hover:text-emerald-500 transition-colors cursor-grab active:cursor-grabbing">
+                                                    <div className="flex flex-col gap-[2px]">
+                                                        <div className="flex gap-[2px]">
+                                                            {[1,2].map(i => <div key={i} className="w-[3px] h-[3px] rounded-full bg-current" />)}
+                                                        </div>
+                                                        <div className="flex gap-[2px]">
+                                                            {[1,2].map(i => <div key={i} className="w-[3px] h-[3px] rounded-full bg-current" />)}
+                                                        </div>
+                                                        <div className="flex gap-[2px]">
+                                                            {[1,2].map(i => <div key={i} className="w-[3px] h-[3px] rounded-full bg-current" />)}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             )}
                                         </div>
 
