@@ -1527,20 +1527,24 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
                         <div className="flex-1 bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative">
                             {isEditable && (
                                 <div className="absolute -right-2 -top-2 flex gap-1 z-20">
-                                    <button
-                                        onClick={() => handleMoveItem(i, 'up')}
-                                        disabled={i === 0}
-                                        className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-emerald-500 rounded-full flex items-center justify-center shadow-sm disabled:opacity-30"
-                                    >
-                                        <ArrowUp size={12} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleMoveItem(i, 'down')}
-                                        disabled={i === (data.items?.length || 0) - 1}
-                                        className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-emerald-500 rounded-full flex items-center justify-center shadow-sm disabled:opacity-30"
-                                    >
-                                        <ArrowDown size={12} />
-                                    </button>
+                                    {isOwner && (
+                                        <>
+                                            <button
+                                                onClick={() => handleMoveItem(i, 'up')}
+                                                disabled={i === 0}
+                                                className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-emerald-500 rounded-full flex items-center justify-center shadow-sm disabled:opacity-30 transition-shadow"
+                                            >
+                                                <ArrowUp size={12} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleMoveItem(i, 'down')}
+                                                disabled={i === (data.items?.length || 0) - 1}
+                                                className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-emerald-500 rounded-full flex items-center justify-center shadow-sm disabled:opacity-30 transition-shadow"
+                                            >
+                                                <ArrowDown size={12} />
+                                            </button>
+                                        </>
+                                    )}
                                     <button
                                         onClick={() => handleDeleteItem(item.id)}
                                         className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm"
