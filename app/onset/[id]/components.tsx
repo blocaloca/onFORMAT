@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin, FileText, Clock, Smartphone, Phone, Mail, Search } from 'lucide-react';
+import { Plus, X, Save, Check, HardDrive, AlertCircle, Trash2, Edit2, MapPin, FileText, Clock, Smartphone, Phone, Mail, Search, ArrowUp, ArrowDown } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
 import SignatureCanvas from 'react-signature-canvas';
 import { useProjectData } from '@/lib/useProjectData';
@@ -1441,6 +1441,16 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
         }
     };
 
+    const handleMoveItem = (index: number, direction: 'up' | 'down') => {
+        if (!onUpdate) return;
+        const items = [...(data.items || [])];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+        if (targetIndex < 0 || targetIndex >= items.length) return;
+
+        [items[index], items[targetIndex]] = [items[targetIndex], items[index]];
+        onUpdate({ ...data, items });
+    };
+
     const handleAddItem = () => {
         if (onUpdate) {
             const newItem = {
@@ -1516,12 +1526,28 @@ export const ScheduleView = ({ data, callSheetData, onUpdate, isEditable: manual
                         {/* Content Card */}
                         <div className="flex-1 bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow relative">
                             {isEditable && (
-                                <button
-                                    onClick={() => handleDeleteItem(item.id)}
-                                    className="absolute -right-2 -top-2 w-6 h-6 bg-white dark:bg-white border border-zinc-300 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20 shadow-sm"
-                                >
-                                    <Trash2 size={12} />
-                                </button>
+                                <div className="absolute -right-2 -top-2 flex gap-1 z-20">
+                                    <button
+                                        onClick={() => handleMoveItem(i, 'up')}
+                                        disabled={i === 0}
+                                        className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-emerald-500 rounded-full flex items-center justify-center shadow-sm disabled:opacity-30"
+                                    >
+                                        <ArrowUp size={12} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleMoveItem(i, 'down')}
+                                        disabled={i === (data.items?.length || 0) - 1}
+                                        className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-emerald-500 rounded-full flex items-center justify-center shadow-sm disabled:opacity-30"
+                                    >
+                                        <ArrowDown size={12} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDeleteItem(item.id)}
+                                        className="w-6 h-6 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-400 dark:text-zinc-500 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm"
+                                    >
+                                        <Trash2 size={12} />
+                                    </button>
+                                </div>
                             )}
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-2">
