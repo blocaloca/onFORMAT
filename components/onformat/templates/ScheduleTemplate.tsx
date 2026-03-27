@@ -204,7 +204,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         )}
 
                         {/* Table Header */}
-                        <div className="grid grid-cols-[60px_50px_160px_60px_1fr_60px_30px] gap-2 border-b-2 border-black pb-2 items-end">
+                        <div className="grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 border-b-2 border-black pb-2 items-end">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Time</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Scene</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Setting</span>
@@ -252,7 +252,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 }
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
 
                                         {/* Time */}
                                         <div>
