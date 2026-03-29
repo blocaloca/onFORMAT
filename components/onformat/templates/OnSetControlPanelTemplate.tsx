@@ -161,10 +161,10 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-8 xl:gap-12">
+            <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 overflow-hidden">
                 
                 {/* MATRIX SWITCHBOARD */}
-                <div className="flex-1 space-y-6">
+                <div className="flex-1 min-w-0 space-y-6">
                     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm overflow-hidden transition-colors">
                         
                         <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/30 dark:bg-zinc-800/20">
