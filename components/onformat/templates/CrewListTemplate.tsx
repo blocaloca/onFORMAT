@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
-import { Trash2, Plus, Smartphone, ChevronDown, UserCircle, Shield } from 'lucide-react';
+import { Trash2, Plus, Smartphone, ChevronDown, UserCircle } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
 
 const DEPARTMENTS: Record<string, string[]> = {
@@ -26,7 +26,6 @@ interface CrewMember {
     name: string;
     email: string;
     phone: string;
-    status?: 'online' | 'offline';
 }
 
 interface CrewListData {
@@ -48,7 +47,6 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const items = data.crew || [];
     const mobileRoles = metadata?.mobileRoles || [];
 
-    const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
     const deptOptions = Object.keys(DEPARTMENTS);
 
     const getRoleSuggestions = (dept: string) => {
@@ -64,8 +62,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             role: '',
             name: '',
             email: '',
-            phone: '',
-            status: 'offline'
+            phone: ''
         };
         onUpdate({ crew: [...items, newItem] });
     };
@@ -79,7 +76,6 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const handleDeleteItem = (index: number) => {
         const newItems = items.filter((_, i) => i !== index);
         onUpdate({ crew: newItems });
-        setDeleteConfirmIndex(null);
     };
 
     // --- Presence Check ---
@@ -99,127 +95,125 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     }, [metadata?.projectId]);
 
     return (
-        <>
-            <DocumentLayout
-                title="Crew List"
-                hideHeader={false}
-                plain={plain}
-                orientation={orientation}
-                metadata={metadata}
-            >
-                <div className="space-y-6 text-sm font-sans flex-1">
-                    
-                    {/* Simplified Header: Big Name, Small Role */}
-                    <div className="grid grid-cols-[100px_140px_1fr_180px_120px_40px_40px] gap-6 border-b-2 border-zinc-900 pb-3 items-end px-2">
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Dept</span>
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Role</span>
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Full Name</span>
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Email</span>
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Phone</span>
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400 text-center">Live</span>
-                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400"></span>
-                    </div>
-
-                    <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
-                        {items.map((item, idx) => {
-                            const isOnline = onlineUsers.has(item.email?.toLowerCase());
-                            const suggestions = getRoleSuggestions(item.department);
-                            
-                            return (
-                                <div key={item.id} className="grid grid-cols-[100px_140px_1fr_180px_120px_40px_40px] gap-6 py-5 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-colors px-2">
-                                    
-                                    {/* Dept */}
-                                    <select 
-                                        value={item.department}
-                                        onChange={(e) => handleUpdateItem(idx, { department: e.target.value })}
-                                        className="bg-transparent text-sm font-black uppercase tracking-tight text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white cursor-pointer"
-                                        disabled={isLocked || isPrinting}
-                                    >
-                                        {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                    </select>
-
-                                    {/* Small Role */}
-                                    <div className="relative">
-                                        <input 
-                                            value={item.role}
-                                            onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
-                                            placeholder="Assign Role..."
-                                            className="w-full bg-zinc-50 dark:bg-zinc-800/20 rounded-lg px-3 py-2 text-xs font-black uppercase tracking-tight outline-none focus:ring-1 focus:ring-zinc-400 text-zinc-600 dark:text-zinc-300 placeholder:text-zinc-300"
-                                            disabled={isLocked || isPrinting}
-                                            list={`roles-${idx}`}
-                                        />
-                                        <datalist id={`roles-${idx}`}>
-                                            {suggestions.map(opt => <option key={opt} value={opt} />)}
-                                        </datalist>
-                                    </div>
-
-                                    {/* MASSIVE NAME INPUT */}
-                                    <input 
-                                        value={item.name}
-                                        onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
-                                        placeholder="Enter Crew Name..."
-                                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-100 focus:border-emerald-500 text-sm font-black uppercase text-zinc-900 dark:text-white outline-none placeholder:text-zinc-200 py-1 transition-all"
-                                        disabled={isLocked || isPrinting}
-                                    />
-
-                                    {/* Email */}
-                                    <input 
-                                        value={item.email}
-                                        onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
-                                        placeholder="Email Address"
-                                        className="w-full bg-transparent text-xs text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white"
-                                        disabled={isLocked || isPrinting}
-                                    />
-
-                                    {/* Phone */}
-                                    <input 
-                                        value={item.phone}
-                                        onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
-                                        placeholder="Phone"
-                                        className="w-full bg-transparent text-xs text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white"
-                                        disabled={isLocked || isPrinting}
-                                    />
-
-                                    {/* Live Status LED */}
-                                    <div className="flex justify-center">
-                                        <div className={`w-3 h-3 rounded-full transition-all duration-500 ${isOnline ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
-                                    </div>
-
-                                    {/* Delete Icon */}
-                                    <div className="flex justify-end pr-2">
-                                        {!isLocked && (
-                                            <button 
-                                                onClick={() => handleDeleteItem(idx)} 
-                                                className="text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        )}
-                                    </div>
-
-                                </div>
-                            );
-                        })}
-
-                        {!isLocked && !isPrinting && (
-                            <button 
-                                onClick={handleAddItem}
-                                className="w-full py-6 mt-4 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-[2rem] flex items-center justify-center gap-3 text-sm font-black uppercase tracking-widest text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-all hover:text-zinc-900 dark:hover:text-white active:scale-95"
-                            >
-                                <Plus size={20} /> Add Crew Personnel
-                            </button>
-                        )}
-                    </div>
-
-                    {items.length === 0 && (
-                        <div className="flex-1 flex flex-col items-center justify-center py-20 bg-zinc-50/50 dark:bg-zinc-900/50 rounded-[3rem] border border-zinc-100 dark:border-zinc-800">
-                             <UserCircle size={48} className="text-zinc-100 mb-4" />
-                             <p className="text-sm font-black uppercase tracking-widest text-zinc-300">Your production ensemble is empty</p>
-                        </div>
-                    )}
-
+        <DocumentLayout
+            title="CREW LIST"
+            hideHeader={false}
+            plain={plain}
+            orientation={orientation}
+            metadata={metadata}
+        >
+            <div className="space-y-8 animate-in fade-in duration-500">
+                
+                {/* STYLE GUIDE COMPLIANT HEADER */}
+                <div className="grid grid-cols-[1fr_120px_100px_180px_120px_40px_30px] gap-4 border-b-2 border-zinc-900 pb-4 items-end px-3">
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Full Name</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Production Role</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Dept</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Email</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Phone</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400 text-center">Live</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400"></span>
                 </div>
-            </DocumentLayout>
-        </>
+
+                <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
+                    {items.map((item, idx) => {
+                        const isOnline = onlineUsers.has(item.email?.toLowerCase());
+                        const suggestions = getRoleSuggestions(item.department);
+                        
+                        return (
+                            <div key={item.id} className="grid grid-cols-[1fr_120px_100px_180px_120px_40px_30px] gap-4 py-6 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-colors px-3">
+                                
+                                {/* PRIMARY FIELD: NAME */}
+                                <input 
+                                    value={item.name}
+                                    onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
+                                    placeholder="ENTER FULL NAME"
+                                    className="w-full bg-transparent text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white outline-none placeholder:text-zinc-200 border-b border-transparent focus:border-emerald-500 transition-all"
+                                    disabled={isLocked || isPrinting}
+                                />
+
+                                {/* ROLE (Datalist Sync) */}
+                                <div className="relative">
+                                    <input 
+                                        value={item.role}
+                                        onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
+                                        placeholder="ROLE..."
+                                        className="w-full bg-zinc-50 dark:bg-zinc-800/20 rounded px-2 py-1.5 text-[11px] font-black uppercase tracking-tight text-zinc-500 dark:text-zinc-400 outline-none focus:ring-1 focus:ring-zinc-400"
+                                        disabled={isLocked || isPrinting}
+                                        list={`roles-${idx}`}
+                                    />
+                                    <datalist id={`roles-${idx}`}>
+                                        {suggestions.map(opt => <option key={opt} value={opt} />)}
+                                    </datalist>
+                                </div>
+
+                                {/* DEPT */}
+                                <select 
+                                    value={item.department}
+                                    onChange={(e) => handleUpdateItem(idx, { department: e.target.value })}
+                                    className="bg-transparent text-[10px] font-black uppercase tracking-widest text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white cursor-pointer"
+                                    disabled={isLocked || isPrinting}
+                                >
+                                    {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                </select>
+
+                                {/* EMAIL */}
+                                <input 
+                                    value={item.email}
+                                    onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
+                                    placeholder="EMAIL@DOMAIN.COM"
+                                    className="w-full bg-transparent text-[11px] font-medium text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white"
+                                    disabled={isLocked || isPrinting}
+                                />
+
+                                {/* PHONE */}
+                                <input 
+                                    value={item.phone}
+                                    onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
+                                    placeholder="PHONE"
+                                    className="w-full bg-transparent text-[11px] font-medium text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white"
+                                    disabled={isLocked || isPrinting}
+                                />
+
+                                {/* STATUS INDICATOR */}
+                                <div className="flex justify-center">
+                                    <div className={`w-2.5 h-2.5 rounded-full transition-all duration-700 ${isOnline ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.7)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
+                                </div>
+
+                                {/* DELETE ACTION */}
+                                <div className="flex justify-end">
+                                    {!isLocked && (
+                                        <button 
+                                            onClick={() => handleDeleteItem(idx)} 
+                                            className="text-zinc-200 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
+                                </div>
+
+                            </div>
+                        );
+                    })}
+
+                    {!isLocked && !isPrinting && (
+                        <button 
+                            onClick={handleAddItem}
+                            className="w-full py-8 mt-6 border-2 border-dashed border-zinc-100 dark:border-zinc-800/50 rounded-[2.5rem] flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-all hover:text-zinc-900 dark:hover:text-white hover:border-zinc-200"
+                        >
+                            <Plus size={20} /> ADD CREW PERSONNEL
+                        </button>
+                    )}
+                </div>
+
+                {items.length === 0 && (
+                    <div className="flex-1 flex flex-col items-center justify-center py-24 bg-zinc-50/20 dark:bg-zinc-900/10 rounded-[4rem] border border-zinc-50 dark:border-zinc-800/50">
+                            <UserCircle size={56} className="text-zinc-100 mb-6" />
+                            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-200">Production personnel empty</p>
+                    </div>
+                )}
+
+            </div>
+        </DocumentLayout>
     );
 };
