@@ -139,15 +139,18 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
         return (
             <div className="space-y-6 pb-20 animate-in slide-in-from-bottom-4 duration-300">
                 <div className="flex items-center justify-between mb-4 mt-2">
-                    <h3 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-black">{editingMember ? 'Edit Member' : 'Add Crew Member'}</h3>
-                    <button onClick={() => setIsAdding(false)} className="bg-zinc-50/50 dark:bg-zinc-50/50 p-2 rounded-full text-zinc-600 dark:text-zinc-500"><X size={18} /></button>
+                    <div className="flex flex-col">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mb-0.5 ml-1">Membership</span>
+                        <h3 className="text-2xl font-black uppercase tracking-tight text-zinc-900 dark:text-black leading-none">{editingMember ? 'Edit Member' : 'Add Crew'}</h3>
+                    </div>
+                    <button onClick={() => setIsAdding(false)} className="bg-zinc-100 dark:bg-zinc-100 p-2.5 rounded-full text-zinc-500 dark:text-zinc-500 hover:bg-zinc-200 transition-colors"><X size={18} /></button>
                 </div>
 
                 <div className="space-y-4">
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 ml-1">Full Name</label>
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 ml-1">Full Name</label>
                         <input
-                            className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 dark:text-black font-bold placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20"
+                            className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl shadow-sm py-4 px-5 text-zinc-900 dark:text-black font-bold placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 transition-all"
                             placeholder="NAME"
                             value={form.name}
                             onChange={e => setForm({ ...form, name: e.target.value })}
@@ -195,20 +198,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                         />
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 ml-1">ABCD Permissions</label>
-                        <div className="flex gap-4 items-center">
-                            {['A', 'B', 'C', 'D'].map(g => (
-                                <button
-                                    key={g}
-                                    onClick={() => toggleGroup(g)}
-                                    className={`w-12 h-12 rounded-full flex items-center justify-center font-black text-lg transition-all shadow-sm ${form.onSetGroups.includes(g) ? (g === 'A' ? 'bg-[#22C55E] text-white scale-110 shadow-emerald-500/20 shadow-lg border-none' : g === 'B' ? 'bg-[#3B82F6] text-white scale-110 shadow-blue-500/20 shadow-lg border-none' : g === 'C' ? 'bg-[#EAB308] text-white scale-110 shadow-yellow-500/20 shadow-lg border-none' : 'bg-[#EF4444] text-white scale-110 shadow-red-500/20 shadow-lg border-none') : 'bg-zinc-50 dark:bg-zinc-50 border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 hover:bg-zinc-100 dark:bg-zinc-50/50 opacity-100'}`}
-                                >
-                                    {g}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                    {/* ABCD REMOVED - NOW DRIVEN BY MATRIX */}
 
                     <div className="pt-6 flex flex-col gap-3">
                         <button
@@ -242,7 +232,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-zinc-500" size={14} />
                     <input
-                        className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 pl-10 pr-4 text-base text-zinc-900 dark:text-black placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500 outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 uppercase font-bold tracking-wide"
+                        className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl shadow-sm py-3.5 pl-11 pr-5 text-sm text-zinc-900 dark:text-black placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 uppercase font-bold tracking-widest transition-all"
                         placeholder="SEARCH CREW..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}

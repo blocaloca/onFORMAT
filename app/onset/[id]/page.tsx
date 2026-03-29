@@ -362,74 +362,32 @@ export default function OnSetMobilePage() {
                 return map[k] || k;
             };
 
-            // --- SMART RBAC SYSTEM (Role-Based Access Control) ---
-            const ROLE_DOC_MAPPING: Record<string, string[]> = {
-                'Owner': MOBILE_SUPPORTED,
-                'Founder': MOBILE_SUPPORTED,
-                'Producer': ['call-sheet', 'schedule', 'crew-list', 'budget', 'av-script'],
-                'Director': ['call-sheet', 'shot-scene-book', 'av-script', 'storyboard', 'treatment'],
-                '1st AD': ['call-sheet', 'schedule', 'shot-scene-book', 'crew-list'],
-                '2nd AD': ['call-sheet', 'schedule', 'crew-list'],
-                'Director of Photography': ['call-sheet', 'shot-scene-book', 'camera-report', 'lookbook', 'storyboard'],
-                'DIT': ['call-sheet', 'dit-log', 'camera-report'],
-                'Camera Operator': ['call-sheet', 'shot-scene-book', 'camera-report'],
-                '1st AC': ['call-sheet', 'camera-report'],
-                'Gaffer': ['call-sheet', 'shot-scene-book'],
-                'Key Grip': ['call-sheet', 'shot-scene-book'],
-                'Sound Mixer': ['call-sheet', 'sound-report'],
-                'Production Designer': ['call-sheet', 'lookbook', 'props-list'],
-                'Stylist': ['call-sheet', 'lookbook', 'wardrobe'],
-                'Makeup Artist': ['call-sheet', 'lookbook', 'wardrobe'],
-                'Script Sup.': ['call-sheet', 'av-script', 'script-notes', 'camera-report'],
-                'Location Manager': ['call-sheet', 'locations'],
-                'Prod. Assist (PA)': ['call-sheet', 'schedule'],
-            };
-
-            const BUNDLE_MAPPING: Record<string, string[]> = {
-                'A': ['creative-brief', 'treatment', 'lookbook', 'storyboard', 'av-script'], // CREATIVE BUNDLE
-                'B': ['call-sheet', 'crew-list', 'schedule', 'budget', 'equipment-list'],     // PRODUCTION BUNDLE
-                'C': ['dit-log', 'camera-report', 'sound-report', 'on-set-notes', 'releases', 'script-notes'], // CAPTURE BUNDLE
-            };
-
             const mobileControl = allDrafts['onset-mobile-control'];
+            const matrix = mobileControl?.matrix || {};
             const isLive = mobileControl?.isLive;
             const isOwner = role === 'Owner' || emailToUse?.toLowerCase() === 'casteelio@gmail.com';
 
-            // Find current user's groups
+            // Find current user's role in the specific Crew List draft
             const crewListDoc = allDrafts['crew-list'];
             const me = crewListDoc?.crew?.find((c: any) =>
                 c.email && c.email.toLowerCase() === emailToUse?.toLowerCase()
             );
-            const myGroups = me?.onSetGroups || [];
-            const canEdit = isOwner || myGroups.includes('D');
+            
+            const roleId = me?.mobileRoleId || role?.toLowerCase().replace(/\s+/g, '-');
+            const roleMatrix = matrix[roleId] || {};
+            const canEdit = !!isOwner || (!!activeTab && roleMatrix[activeTab] === 'edit');
 
             let availableKeys: string[] = [];
 
             if (mobileControl && !isLive && !isOwner) {
                 availableKeys = [];
             } else {
-                // 1. Role Defaults
-                const roleKeys = ROLE_DOC_MAPPING[role] || ['call-sheet'];
-                
-                // 2. Groups A/B/C Bundles
-                const bundleKeys = myGroups.flatMap((g: string) => BUNDLE_MAPPING[g] || []);
-
-                // 3. Manual Desktop Overrides (from Tool Groups)
-                const manualKeys = mobileControl?.toolGroups ? Object.entries(mobileControl.toolGroups)
-                    .filter(([_, allowedGroups]: any) => Array.isArray(allowedGroups) && allowedGroups.some((g: string) => myGroups.includes(g)))
-                    .map(([key]) => mapMobileKey(key)) : [];
-
-                // Combine and Unique
-                availableKeys = Array.from(new Set([...roleKeys, ...bundleKeys, ...manualKeys]))
-                    .filter(k => MOBILE_SUPPORTED.includes(k));
-
-                // Final Clean: If a tool was manually selected in 'selectedTools' (Legacy), ensure it's here
-                if (mobileControl?.selectedTools) {
-                    const legacy = mobileControl.selectedTools.map(mapMobileKey);
-                    // Intersection: only show if it's in legacy OR role/bundle
-                    // Actually, we want to be ADDITIVE for flexibility
-                    // availableKeys = Array.from(new Set([...availableKeys, ...legacy]));
-                }
+                // DYNAMIC MATRIX RESOLUTION
+                availableKeys = MOBILE_SUPPORTED.filter(k => {
+                    if (isOwner) return true;
+                    const permission = roleMatrix[k];
+                    return permission === 'view' || permission === 'edit';
+                });
             }
 
             const currentTab = activeTabRef.current;
@@ -446,7 +404,7 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
-            const finalData = { ...computedData, availableKeys, _canEdit: canEdit };
+            const finalData = { ...computedData, availableKeys, _canEdit: !!canEdit };
             setData(finalData);
 
             // CACHE FOR OFFLINE SAFETY NET (NOW INCLUDES AVAILABLE KEYS)
@@ -1281,25 +1239,9 @@ export default function OnSetMobilePage() {
 
                                     {/* Status */}
                                     <div className="space-y-2">
-                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-300 uppercase font-bold tracking-wider">
-                                            <span>Permissions</span>
-                                            {(() => {
-                                                const crew = data.docs['crew-list']?.crew || [];
-                                                const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                                                let units = me?.onSetGroups || [];
-                                                if (userRole === 'Owner') units = ['A', 'B', 'C', 'D'];
-
-                                                if (units.length === 0) return <span className="text-zinc-500 dark:text-zinc-300">None</span>;
-
-                                                return (
-                                                    <div className="flex items-center gap-1">
-                                                        {units.includes('A') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#22C55E] text-white dark:text-zinc-300 rounded-full shadow-sm shadow-[#22C55E]/20 w-4 h-4 flex items-center justify-center">A</span>}
-                                                        {units.includes('B') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#3B82F6] text-white dark:text-zinc-300 rounded-full shadow-sm shadow-[#3B82F6]/20 w-4 h-4 flex items-center justify-center">B</span>}
-                                                        {units.includes('C') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EAB308] text-white dark:text-zinc-300 rounded-full shadow-sm shadow-[#EAB308]/20 w-4 h-4 flex items-center justify-center">C</span>}
-                                                        {units.includes('D') && <span className="flex items-center justify-center w-4 h-4 text-[9px] font-black bg-[#EF4444] text-white dark:text-zinc-300 rounded-full shadow-sm shadow-[#EF4444]/20 w-4 h-4 flex items-center justify-center">D</span>}
-                                                    </div>
-                                                );
-                                            })()}
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-300 uppercase font-bold tracking-widest">
+                                            <span>Production Role</span>
+                                            <span className="text-emerald-500 font-black">{userRole || 'Crew'}</span>
                                         </div>
                                         <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-300 uppercase font-bold tracking-wider mt-4">
                                             <span>Sync Status</span>
@@ -1590,13 +1532,13 @@ export default function OnSetMobilePage() {
                                     <button
                                         key={key}
                                         onClick={() => setActiveTab(key)}
-                                        className={`flex-shrink-0 px-4 py-2 rounded-lg text-[10px] font-sans font-inter font-bold uppercase tracking-widest transition-transform tactile active:scale-[0.96] active:bg-zinc-100 dark:active:bg-zinc-800 relative ${
+                                        className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-[10px] font-sans font-black uppercase tracking-[0.2em] transition-all duration-300 tactile active:scale-95 relative ${
                                             activeTab === key 
-                                            ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-md border border-zinc-800 dark:border-zinc-200' 
-                                            : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800' 
+                                            ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl border border-white/10 dark:border-zinc-200' 
+                                            : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-500 border border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800' 
                                         }`}
                                     >
-                                        {DOC_LABELS[key] || key}
+                                        {DOC_LABELS[key] || key.replace(/-/g, ' ')}
                                     </button>
                                 );
                             });
