@@ -125,6 +125,17 @@ export const DraftEditor = ({
     // --- Nav Mode Logic ---
 
 
+    // Mobile Role Extraction (for Crew List assignment)
+    let mobileRoles = [];
+    const mobileControlRaw = phases?.['ON_SET']?.drafts?.['onset-mobile-control'] || phases?.['PRODUCTION']?.drafts?.['onset-mobile-control'];
+    if (mobileControlRaw) {
+        try {
+            const raw = JSON.parse(mobileControlRaw);
+            const arr = Array.isArray(raw) ? raw : [raw];
+            if (arr.length > 0 && arr[0].roles) mobileRoles = arr[0].roles;
+        } catch { }
+    }
+
     // Locations Import Logic (for Call Sheet Sync)
     let importedLocations = null;
     const locationsDraft = phases?.['PRE_PRODUCTION']?.drafts?.['locations-sets'] || phases?.['ON_SET']?.drafts?.['locations-sets'];
@@ -328,7 +339,8 @@ export const DraftEditor = ({
                             importedShotList,
                             projectId,
                             isOwner,
-                            latestNotification
+                            latestNotification,
+                            mobileRoles
                         }}
 
                         onGenerateFromVision={onGenerateFromVision}

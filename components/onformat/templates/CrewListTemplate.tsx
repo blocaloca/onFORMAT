@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, jsx-a11y/alt-text */
+'use client';
 import React, { useEffect, useState } from 'react';
 import { DocumentLayout } from './DocumentLayout';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, Smartphone, ChevronDown, UserCircle } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
 
 const DEPARTMENTS: Record<string, string[]> = {
@@ -14,7 +15,8 @@ const DEPARTMENTS: Record<string, string[]> = {
     'Art': ['Production Designer', 'Art Director', 'Prop Master', 'Set Dresser', 'Constr. Coord'],
     'Wardrobe/HMU': ['Stylist', 'Assistant Stylist', 'Makeup Artist', 'Hair Stylist'],
     'Locations': ['Location Manager', 'Scout', 'Site Rep', 'Security'],
-    'Post': ['Editor', 'Assistant Editor', 'Colorist', 'Sound Design', 'VFX Supervisor']
+    'Post': ['Editor', 'Assistant Editor', 'Colorist', 'Sound Design', 'VFX Supervisor'],
+    'Other': ['BTS Camera', 'Agency', 'Client Representative', 'Publicist']
 };
 
 interface CrewMember {
@@ -22,18 +24,14 @@ interface CrewMember {
     department: string;
     role: string;
     name: string;
-    onSetGroups?: string[]; // Groups A, B, C, D
+    mobileRole?: string; // Replaces onSetGroups (ABCD)
     email: string;
     phone: string;
-    status?: 'online' | 'offline'; // Replaces rates
-    permissions?: {
-        canEditMobile: boolean;
-    };
+    status?: 'online' | 'offline';
 }
 
 interface CrewListData {
     crew: CrewMember[];
-    currency?: string;
 }
 
 interface CrewListTemplateProps {
@@ -42,51 +40,28 @@ interface CrewListTemplateProps {
     isLocked?: boolean;
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
-    metadata?: any & { onlineUsers?: Set<string> };
+    metadata?: any;
     isPrinting?: boolean;
 }
 
 export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: CrewListTemplateProps) => {
-    const supabase = getClient()
-
-    // Initialize/Migrate Data
-    useEffect(() => {
-        const items = data.crew || [];
-        let hasChanges = false;
-        const newItems = items.map((item, idx) => {
-            const anyItem = item as any;
-            if (!anyItem.id || typeof anyItem.status === 'undefined') {
-                hasChanges = true;
-                return {
-                    id: anyItem.id || `crew-${Date.now()}-${idx}`,
-                    department: anyItem.department || 'Production',
-                    role: anyItem.role || '',
-                    name: anyItem.name || '',
-                    email: anyItem.email || '',
-                    phone: anyItem.phone || '',
-                    status: anyItem.status || 'offline',
-                    onSetGroups: anyItem.onSetGroups || []
-                } as CrewMember;
-            }
-            return item;
-        });
-
-        if (hasChanges) {
-            onUpdate({ crew: newItems as CrewMember[] });
-        }
-    }, [data.crew]);
-
+    const supabase = getClient();
     const items = data.crew || [];
+    const mobileRoles = metadata?.mobileRoles || [];
+
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
     const deptOptions = Object.keys(DEPARTMENTS);
+
+    // Filtered roles based on selected department (for suggestions)
+    const getRoleSuggestions = (dept: string) => DEPARTMENTS[dept] || [];
 
     const handleAddItem = () => {
         const newItem: CrewMember = {
             id: `crew-${Date.now()}`,
             department: 'Production',
-            role: 'Prod. Assist (PA)',
+            role: '',
             name: '',
-            onSetGroups: [],
+            mobileRole: 'crew', // Default
             email: '',
             phone: '',
             status: 'offline'
@@ -96,172 +71,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
     const handleUpdateItem = (index: number, updates: Partial<CrewMember>) => {
         const newItems = [...items];
-        if (updates.department && updates.department !== newItems[index].department) {
-            updates.role = DEPARTMENTS[updates.department][0] || '';
-        }
         newItems[index] = { ...newItems[index], ...updates };
         onUpdate({ crew: newItems });
-    };
-
-    // Status is updated automatically by onSet Mobile presence
-
-    // --- REALTIME PRESENCE LISTENER ---
-    // --- REALTIME PRESENCE LISTENER ---
-    const [presenceMap, setPresenceMap] = useState<Record<string, { isOnline: boolean, lastSeen: string }>>({});
-    const [onlineUsers, setOnlineUsers] = useState<any>({});
-
-    useEffect(() => {
-        if (!metadata?.projectId) return;
-        const channel = supabase.channel(`production_presence:${metadata.projectId}`);
-        channel.on('presence', { event: 'sync' }, () => {
-            const state = channel.presenceState();
-            setOnlineUsers(state);
-        }).subscribe();
-        return () => { channel.unsubscribe(); };
-    }, [metadata?.projectId]);
-
-    useEffect(() => {
-        if (!metadata?.projectId) return;
-
-        // 1. Initial Fetch of Statuses
-        const fetchStatuses = async () => {
-            const { data } = await supabase
-                .from('crew_membership')
-                .select('user_email, status, is_online, last_seen_at')
-                .eq('project_id', metadata.projectId);
-
-            if (data) {
-                const map: any = {};
-                data.forEach((row: any) => {
-                    map[row.user_email.toLowerCase()] = {
-                        isOnline: row.is_online,
-                        lastSeen: row.last_seen_at
-                    };
-                });
-                setPresenceMap(map);
-            }
-        };
-        fetchStatuses();
-
-        // 2. Realtime Listener
-        const channel = supabase.channel(`crew-presence-${metadata.projectId}`)
-            .on(
-                'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'crew_membership', filter: `project_id=eq.${metadata.projectId}` },
-                (payload: any) => {
-                    if (payload.new) {
-                        setPresenceMap(prev => ({
-                            ...prev,
-                            [payload.new.user_email.toLowerCase()]: {
-                                isOnline: payload.new.is_online,
-                                lastSeen: payload.new.last_seen_at
-                            }
-                        }));
-                        console.log(`DEBUG: Received update for ${payload.new.user_email} - is_online: ${payload.new.is_online}`);
-                    }
-                }
-            )
-            .subscribe();
-
-        // 3. Polling Fallback (Every 10s)
-        const pollInterval = setInterval(fetchStatuses, 10000);
-
-        return () => {
-            supabase.removeChannel(channel);
-            clearInterval(pollInterval);
-        };
-    }, [metadata?.projectId]);
-
-    // --- IMPROVED PRESENCE TRACKING ---
-    const [activeUsers, setActiveUsers] = useState<Set<string>>(new Set());
-
-    useEffect(() => {
-        // 3. Presence Multi-Channel Listener
-        // Combines 'production_presence' (legacy/onSet) and 'production_pulse' (Workspace/Mobile)
-        if (!metadata?.projectId) return;
-
-        const projectChannel = supabase.channel(`production_presence:${metadata.projectId}`);
-        const pulseChannel = supabase.channel(`production_pulse:${metadata.projectId}`);
-
-        const handleSync = () => {
-            const projectState = projectChannel.presenceState();
-            const pulseState = pulseChannel.presenceState();
-
-            const onlineSet = new Set<string>();
-
-            // 1. From Project Channel (Direct Match)
-            Object.values(projectState).flat().forEach((u: any) => {
-                if (u.user_email) onlineSet.add(u.user_email.toLowerCase());
-            });
-
-            // 2. From Pulse Channel (Already Scoped now)
-            Object.values(pulseState).flat().forEach((u: any) => {
-                if (u.user_email) {
-                    onlineSet.add(u.user_email.toLowerCase());
-                }
-            });
-
-            setActiveUsers(onlineSet);
-        };
-
-        projectChannel.on('presence', { event: 'sync' }, handleSync).subscribe();
-        pulseChannel.on('presence', { event: 'sync' }, handleSync).subscribe();
-
-        return () => {
-            supabase.removeChannel(projectChannel);
-            supabase.removeChannel(pulseChannel);
-        };
-    }, [metadata?.projectId]);
-
-    // 3. Heartbeat Check (Every 5s, calc who is timed out)
-    const [now, setNow] = useState(Date.now());
-    useEffect(() => {
-        const i = setInterval(() => setNow(Date.now()), 5000);
-        return () => clearInterval(i);
-    }, []);
-
-    const isMemberOnline = (email: string) => {
-        if (!email) return false;
-        const lower = email.toLowerCase().trim();
-
-        // 1. Check Consolidated Realtime (activeUsers)
-        if (activeUsers.has(lower)) return true;
-
-        // 2. Check Database Polling (secondary fallback)
-        const p = presenceMap[lower];
-        if (p && p.isOnline) {
-            // 60s Timeout Check
-            if (p.lastSeen) {
-                const diff = now - new Date(p.lastSeen).getTime();
-                if (diff < 60000) return true;
-            } else {
-                return true; // Trusted if no timestamp but says online
-            }
-        }
-
-        return false;
-    };
-
-
-    const toggleGroup = (idx: number, group: string) => {
-        const member = items[idx];
-        const current = member.onSetGroups || [];
-        const isAlreadySelected = current.includes(group);
-        const updatedGroups = isAlreadySelected
-            ? current.filter(g => g !== group)
-            : [...current, group];
-
-        const updates: Partial<CrewMember> = { onSetGroups: updatedGroups };
-
-        // State Logic: If 'D' is toggled, update canEditMobile permission
-        if (group === 'D') {
-            updates.permissions = {
-                ...member.permissions,
-                canEditMobile: !isAlreadySelected
-            };
-        }
-
-        handleUpdateItem(idx, updates);
     };
 
     const handleDeleteItem = (index: number) => {
@@ -270,218 +81,168 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         setDeleteConfirmIndex(null);
     };
 
-    const ITEMS_PER_PAGE = isPrinting
-        ? (orientation === 'landscape' ? 9 : 12)
-        : 9999;
-    const totalPages = Math.ceil(Math.max(items.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => items.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // --- Presence Check ---
+    const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+    useEffect(() => {
+        if (!metadata?.projectId) return;
+        const pulseChannel = supabase.channel(`production_pulse:${metadata.projectId}`);
+        pulseChannel.on('presence', { event: 'sync' }, () => {
+            const state = pulseChannel.presenceState();
+            const set = new Set<string>();
+            Object.values(state).flat().forEach((u: any) => {
+                if (u.user_email) set.add(u.user_email.toLowerCase());
+            });
+            setOnlineUsers(set);
+        }).subscribe();
+        return () => { supabase.removeChannel(pulseChannel); };
+    }, [metadata?.projectId]);
 
     return (
         <>
-            {pages.map((pageItems, pageIndex) => (
-                <DocumentLayout
-                    key={pageIndex}
-                    title="Crew List"
-                    hideHeader={false}
-                    plain={plain}
-                    subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
-                    orientation={orientation}
-                    metadata={metadata}
-                >
-                    <div className="space-y-6 text-sm font-sans h-full flex flex-col">
+            <DocumentLayout
+                title="Crew List & Perimeter Assignment"
+                hideHeader={false}
+                plain={plain}
+                orientation={orientation}
+                metadata={metadata}
+            >
+                <div className="space-y-6 text-sm font-sans flex-1">
+                    
+                    {/* Header Table */}
+                    <div className="grid grid-cols-[100px_110px_1fr_120px_140px_100px_40px_30px] gap-2 border-b-2 border-zinc-900 pb-2 items-end">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Department</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Production Role</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Full Name</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 px-2 text-center bg-zinc-100 dark:bg-zinc-800 rounded py-1">Security Perimeter</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Email</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Phone</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 text-center">Status</span>
+                        <span className="text-[9px] uppercase tracking-widest text-zinc-300"></span>
+                    </div>
 
-                        {/* Legend for Status */}
-                        {pageIndex === 0 && (
-                            <div className="flex justify-end pb-2 gap-4 items-center">
-                                <span className="text-[9px] uppercase font-bold tracking-widest text-zinc-400">Status:</span>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_4px_rgba(34,197,94,0.5)]"></div>
-                                    <span className="text-[10px] font-bold text-zinc-500">Online</span>
-                                </div>
-                                <div className="flex items-center gap-1.5">
-                                    <div className="w-2 h-2 rounded-full bg-zinc-200"></div>
-                                    <span className="text-[10px] font-bold text-zinc-400">Offline</span>
-                                </div>
-                            </div>
-                        )}
+                    <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
+                        {items.map((item, idx) => {
+                            const isOnline = onlineUsers.has(item.email?.toLowerCase());
+                            const suggestions = getRoleSuggestions(item.department);
+                            
+                            return (
+                                <div key={item.id} className="grid grid-cols-[100px_110px_1fr_120px_140px_100px_40px_30px] gap-2 py-3 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/20 transition-colors">
+                                    
+                                    {/* Dept */}
+                                    <select 
+                                        value={item.department}
+                                        onChange={(e) => handleUpdateItem(idx, { department: e.target.value })}
+                                        className="bg-transparent text-[11px] font-black uppercase tracking-tight text-zinc-500 outline-none focus:text-zinc-900 dark:focus:text-white"
+                                        disabled={isLocked || isPrinting}
+                                    >
+                                        {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                    </select>
 
-                        {/* Table Header */}
-                        <div className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 border-b border-black pb-2 items-end">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Dept</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Role</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Name</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">onSET</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Email</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Phone</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Status</span>
-                        </div>
+                                    {/* Role (Fillable Custom) */}
+                                    <div className="relative group/role">
+                                        <input 
+                                            value={item.role}
+                                            onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
+                                            placeholder="Role..."
+                                            className="w-full bg-zinc-100/50 dark:bg-zinc-800/50 rounded px-2 py-1.5 text-[11px] font-medium outline-none focus:ring-1 focus:ring-zinc-400 text-zinc-900 dark:text-zinc-100"
+                                            disabled={isLocked || isPrinting}
+                                            list={`roles-${idx}`}
+                                        />
+                                        <datalist id={`roles-${idx}`}>
+                                            {suggestions.map(opt => <option key={opt} value={opt} />)}
+                                        </datalist>
+                                    </div>
 
-                        {/* Rows */}
-                        <div className="space-y-0 divide-y divide-zinc-100 flex-1">
-                            {pageItems.map((item, localIdx) => {
-                                const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
-                                const roles = DEPARTMENTS[item.department] || [];
-                                const groups = item.onSetGroups || [];
-                                const isOnline = isMemberOnline(item.email) || item.email?.toLowerCase() === 'casteelio@gmail.com';
+                                    {/* Name */}
+                                    <input 
+                                        value={item.name}
+                                        onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
+                                        placeholder="Crew Name..."
+                                        className="w-full bg-transparent text-[11px] font-black uppercase text-zinc-900 dark:text-white outline-none placeholder:text-zinc-300"
+                                        disabled={isLocked || isPrinting}
+                                    />
 
-                                return (
-                                    <div key={item.id} className="grid grid-cols-[90px_110px_1fr_100px_110px_100px_50px_30px] gap-2 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
-                                        {/* Dept */}
-                                        <div className="relative">
-                                            <select
-                                                value={item.department}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { department: e.target.value })}
-                                                className={`w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden text-zinc-900 print:hidden`}
-                                                disabled={isLocked}
+                                    {/* ONSET SECURITY ROLE (Dynamic from Mobile Control) */}
+                                    <div className="relative">
+                                        <div className="flex items-center gap-1.5 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-2.5 py-1.5">
+                                            <Smartphone size={10} className="text-emerald-500" />
+                                            <select 
+                                                value={item.mobileRole}
+                                                onChange={(e) => handleUpdateItem(idx, { mobileRole: e.target.value })}
+                                                className="w-full bg-transparent text-[9px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 outline-none appearance-none pr-3"
+                                                disabled={isLocked || isPrinting}
                                             >
-                                                {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                {mobileRoles.length > 0 ? (
+                                                    mobileRoles.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)
+                                                ) : (
+                                                    <>
+                                                        <option value="crew">General Crew</option>
+                                                        <option value="producer">Producer</option>
+                                                        <option value="dit">DIT</option>
+                                                        <option value="dp">DP</option>
+                                                        <option value="client">Client</option>
+                                                    </>
+                                                )}
                                             </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[9px] uppercase font-bold tracking-wider px-2 py-1.5 text-ellipsis overflow-hidden text-black`}>{item.department}</div>
-                                        </div>
-                                        {/* Role */}
-                                        <div className="relative">
-                                            <select
-                                                value={item.role}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { role: e.target.value })}
-                                                className={`w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm font-medium px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden text-zinc-900 print:hidden`}
-                                                disabled={isLocked}
-                                            >
-                                                {roles.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                            </select>
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] font-medium px-1 py-1.5 text-ellipsis overflow-hidden text-black`}>{item.role}</div>
-                                        </div>
-                                        {/* Name */}
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={item.name}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { name: e.target.value })}
-                                                className={`w-full bg-zinc-50 border border-zinc-200 text-sm font-bold focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 outline-none text-zinc-900 placeholder:text-zinc-400 print:hidden`}
-                                                placeholder="Name..."
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold px-1 py-1 text-black`}>{item.name || "—"}</div>
-                                        </div>
-
-                                        {/* onSET Groups */}
-                                        <div className="flex justify-center gap-1">
-                                            {['A', 'B', 'C', 'D'].map(g => {
-                                                const isActive = groups.includes(g);
-                                                const activeClass = g === 'A' ? 'bg-emerald-500 text-black border-emerald-500'
-                                                    : g === 'B' ? 'bg-blue-500 text-white border-blue-500'
-                                                        : g === 'C' ? 'bg-amber-500 text-black border-amber-500'
-                                                            : 'bg-red-500 text-white border-red-500';
-
-                                                if (isPrinting) {
-                                                    return isActive ? (
-                                                        <span key={g} className="text-[10px] font-black text-black mx-1">
-                                                            {g}
-                                                        </span>
-                                                    ) : null;
-                                                }
-
-                                                return (
-                                                    <button
-                                                        key={g}
-                                                        onClick={() => toggleGroup(globalIdx, g)}
-                                                        disabled={isLocked}
-                                                        className={`w-6 h-6 rounded flex items-center justify-center text-[9px] font-black leading-none border transition-all ${isActive ? activeClass : 'bg-transparent border-zinc-200 text-zinc-300 hover:border-zinc-400 hover:text-zinc-500'
-                                                            }`}
-                                                    >
-                                                        <span className="mt-[1px]">{g}</span>
-                                                    </button>
-                                                )
-                                            })}
-                                        </div>
-
-                                        {/* Email */}
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={item.email}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { email: e.target.value })}
-                                                className={`w-full bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 outline-none placeholder:text-zinc-400 print:hidden`}
-                                                placeholder="Email"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] text-zinc-600 px-1 py-1`}>{item.email || "—"}</div>
-                                        </div>
-                                        {/* Phone */}
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={item.phone}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { phone: e.target.value })}
-                                                className={`w-full bg-zinc-50 border border-zinc-200 text-sm text-zinc-900 focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 outline-none placeholder:text-zinc-400 print:hidden`}
-                                                placeholder="Phone"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] text-zinc-600 px-1 py-1`}>{item.phone || "—"}</div>
-                                        </div>
-
-                                        {/* Status (Green Light) */}
-                                        <div className="flex justify-center items-center">
-                                            <div
-                                                className={`w-2.5 h-2.5 rounded-full transition-all ${isOnline
-                                                    ? 'bg-[#22C55E] shadow-[0_0_6px_rgba(34,197,94,0.6)]'
-                                                    : 'bg-zinc-200'
-                                                    }`}
-                                                title={isOnline ? 'Online via onSet Mobile' : 'Offline'}
-                                            />
-                                        </div>
-
-                                        {/* Delete Button */}
-                                        <div className={`flex justify-end ${isPrinting ? 'hidden' : 'print:hidden'}`}>
-                                            {!isLocked && (
-                                                <div className="relative">
-                                                    <button
-                                                        onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === globalIdx ? null : globalIdx)}
-                                                        className={`hover:text-red-500 transition-opacity flex justify-center w-full ${deleteConfirmIndex === globalIdx ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100 text-zinc-300'}`}
-                                                    >
-                                                        <Trash2 size={12} />
-                                                    </button>
-                                                    {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
-                                                            <button
-                                                                onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
-                                                            >
-                                                                Delete
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                    {deleteConfirmIndex === globalIdx && (
-                                                        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setDeleteConfirmIndex(null)} />
-                                                    )}
-                                                </div>
-                                            )}
+                                            <ChevronDown size={8} className="absolute right-2 text-emerald-300 pointer-events-none" />
                                         </div>
                                     </div>
-                                );
-                            })}
-                            {/* Add Button - Last Page */}
-                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
-                                <div className="pt-2 print-hidden">
-                                    <button
-                                        onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full"
-                                    >
-                                        <Plus size={10} className="mr-1" /> Add Crew Member
-                                    </button>
-                                </div>
-                            )}
-                        </div>
 
-                        {/* Empty State */}
-                        {items.length === 0 && (
-                            <div className="text-center py-12 text-zinc-300">
-                                <p className="text-xs font-bold uppercase tracking-widest">No crew members added</p>
-                            </div>
+                                    {/* Email */}
+                                    <input 
+                                        value={item.email}
+                                        onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
+                                        placeholder="email@field.com"
+                                        className="w-full bg-transparent text-[11px] text-zinc-500 outline-none"
+                                        disabled={isLocked || isPrinting}
+                                    />
+
+                                    {/* Phone */}
+                                    <input 
+                                        value={item.phone}
+                                        onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
+                                        placeholder="Phone"
+                                        className="w-full bg-transparent text-[11px] text-zinc-500 outline-none"
+                                        disabled={isLocked || isPrinting}
+                                    />
+
+                                    {/* Presence Status */}
+                                    <div className="flex justify-center">
+                                        <div className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]' : 'bg-zinc-200 dark:bg-zinc-800'}`} />
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {!isLocked && (
+                                            <button onClick={() => handleDeleteItem(idx)} className="text-zinc-300 hover:text-red-500">
+                                                <Trash2 size={14} />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                </div>
+                            );
+                        })}
+
+                        {!isLocked && !isPrinting && (
+                            <button 
+                                onClick={handleAddItem}
+                                className="w-full py-4 mt-4 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:bg-zinc-50 transition-colors"
+                            >
+                                <Plus size={14} /> Add Crew To Production
+                            </button>
                         )}
                     </div>
-                </DocumentLayout>
-            ))}
+
+                    {items.length === 0 && (
+                        <div className="flex-1 flex flex-col items-center justify-center py-20 bg-zinc-50/50 dark:bg-zinc-900/50 rounded-[3rem] border border-zinc-100 dark:border-zinc-800">
+                             <UserCircle size={40} className="text-zinc-200 mb-4" />
+                             <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Your production ensemble is empty</p>
+                        </div>
+                    )}
+
+                </div>
+            </DocumentLayout>
         </>
     );
 };
