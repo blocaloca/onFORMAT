@@ -10,10 +10,9 @@ import {
     Lock,
     Activity,
     Copy,
-    Check,
-    LockIcon
+    Check
 } from 'lucide-react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG as QRCode } from 'qrcode.react';
 
 // --- DATA DEFINITIONS ---
 const DOCUMENT_TYPES = [
@@ -37,9 +36,9 @@ const INITIAL_ROLES = [
 ];
 
 export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }: any) => {
-    // Migration Logic: If no matrix exists, seed it with defaults
-    const roles = data.roles || INITIAL_ROLES;
-    const matrix = data.matrix || {
+    const safeData = (data && typeof data === 'object') ? data : {};
+    const roles = safeData.roles || INITIAL_ROLES;
+    const matrix = safeData.matrix || {
         producer: { schedule: 'edit', call_sheet: 'edit', dit_log: 'edit', shot_list: 'edit', script_notes: 'edit', client_selects: 'edit', lookbook: 'edit', budget: 'edit' },
         dit: { schedule: 'view', call_sheet: 'view', dit_log: 'edit', shot_list: 'view' },
         scripty: { schedule: 'view', call_sheet: 'view', script_notes: 'edit' },
@@ -145,7 +144,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                                         <span className="text-sm font-black uppercase tracking-tight block">{doc.name}</span>
                                                         {doc.isSensitive && (
                                                             <div className="flex items-center gap-1 mt-0.5">
-                                                                <LockIcon size={8} className="text-amber-500" />
+                                                                <Lock size={8} className="text-amber-500" />
                                                                 <span className="text-[8px] font-black uppercase text-amber-500/70 tracking-widest font-mono">Sens-T1 Security</span>
                                                             </div>
                                                         )}
@@ -213,7 +212,6 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                 value={mobileUrl}
                                 size={180}
                                 level="H"
-                                renderAs="svg"
                             />
                         </div>
 
