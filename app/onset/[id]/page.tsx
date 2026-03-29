@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, usePathname } from 'next/navigation';
 import { getClient } from '@/lib/supabase';
-import { Menu, LayoutGrid } from 'lucide-react';
+import { Menu, LayoutGrid, FileText, Edit3, Eye, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { ProjectDataProvider } from '@/lib/useProjectData';
 
@@ -43,17 +43,88 @@ import { useTheme } from '@/components/ThemeProvider';
 /* --------------------------------------------------------------------------------
  * COMPONENTS
  * -------------------------------------------------------------------------------- */
-const MobileLanding = ({ projectName, status }: any) => (
-    <div className="flex flex-col items-center justify-center h-[80vh] text-center p-8 animate-in fade-in duration-700">
-        <h1 className="text-xl font-bold uppercase tracking-widest text-white dark:text-zinc-300 mb-2">
-            {projectName}
-        </h1>
-        <div className="h-px w-12 bg-zinc-800 my-4 mx-auto" />
-        <p className="text-[10px] font-mono uppercase text-zinc-500 dark:text-zinc-300 tracking-wider">
-            {status}
-        </p>
-    </div>
-);
+const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelectTab }: any) => {
+    const ROLE_ICONS: Record<string, string> = {
+        'producer': '👑',
+        'dit': '💾',
+        'dp': '🎥',
+        'scripty': '✍️',
+        'client': '💼',
+        'crew': '👤',
+        'owner': '👑'
+    };
+
+    const ROLE_NAMES: Record<string, string> = {
+        'producer': 'Producer',
+        'dit': 'DIT',
+        'dp': 'Director of Photography',
+        'scripty': 'Script Supervisor',
+        'client': 'Client / Agency',
+        'crew': 'Crew Member',
+        'owner': 'Director / Owner'
+    };
+
+    const displayRole = ROLE_NAMES[roleId] || roleId.toUpperCase();
+    const displayIcon = ROLE_ICONS[roleId] || '👤';
+
+    return (
+        <div className="flex flex-col space-y-10 animate-in fade-in duration-500 pt-2 pb-12">
+            {/* Tactical Status */}
+            <div className="flex justify-between items-center bg-zinc-900/40 p-3 rounded-xl border border-white/5">
+                <div className="flex items-center gap-2">
+                    <Activity size={14} className="text-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Uplink 5G_Secure</span>
+                </div>
+                <span className="text-[10px] font-mono text-zinc-500">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+            </div>
+
+            {/* Session Header */}
+            <div className="space-y-4">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Simulated Session</label>
+                <div className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 p-6 rounded-2xl shadow-xl">
+                    <div className="w-14 h-14 bg-zinc-800 rounded-xl flex items-center justify-center text-3xl shadow-inner border border-white/5">
+                        {displayIcon}
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-black uppercase tracking-tight text-white leading-none mb-1">{displayRole}</h2>
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500">Active Perimeter</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Authorized Silos */}
+            <div className="space-y-4">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Authorized Silos</label>
+                <div className="grid grid-cols-2 gap-4">
+                    {availableKeys.map((key: string) => {
+                        const permission = roleMatrix[key]; // 'view' or 'edit'
+                        const isEdit = permission === 'edit';
+                        
+                        return (
+                            <button
+                                key={key}
+                                onClick={() => onSelectTab(key)}
+                                className="relative bg-zinc-900 border border-zinc-800 p-5 rounded-2xl text-left transition-all active:scale-95 active:bg-black hover:border-zinc-700 shadow-lg group overflow-hidden"
+                            >
+                                <div className="absolute top-3 right-3 opacity-60">
+                                    {isEdit ? <Edit3 size={14} className="text-emerald-500" /> : <Eye size={14} className="text-blue-500" />}
+                                </div>
+
+                                <div className="mb-4">
+                                    <FileText size={24} className={isEdit ? "text-amber-500" : "text-zinc-500"} />
+                                </div>
+
+                                <div className="space-y-0.5">
+                                    <h3 className="text-[11px] font-black uppercase tracking-widest text-white">{DOC_LABELS[key] || key.replace(/-/g, ' ')}</h3>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
+};
 
 const safeParse = (json: string) => {
     if (!json) return null;
@@ -1362,18 +1433,23 @@ export default function OnSetMobilePage() {
                     <div className="w-full mx-auto py-8">
                         {/* BACK BUTTON REMOVED */}
 
-                        {activeTab === '' ? (
-                            <MobileLanding
-                                projectName={data.project?.name}
-                                // Determine status message based on whether there ARE keys but none selected, or NO keys
-                                status={(() => {
-                                    // Re-run small check or assume 'availableKeys' from context? 
-                                    // We don't have availableKeys in scope here easily without re-calc.
-                                    // But if activeTab is empty, likely we are in landing mode.
-                                    return "Production Standby";
-                                })()}
-                            />
-                        ) : (
+                        {activeTab === '' ? (() => {
+                            const controlDoc = data.docs['onset-mobile-control'];
+                            const matrixObj = controlDoc?.matrix || {};
+                            const crewList = data.docs['crew-list']?.crew || [];
+                            const meObj = crewList.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
+                            const rId = meObj?.mobileRoleId || userRole?.toLowerCase().replace(/\s+/g, '-');
+
+                            return (
+                                <MobileLanding
+                                    projectName={data.project?.name}
+                                    roleId={rId}
+                                    roleMatrix={matrixObj[rId] || {}}
+                                    availableKeys={data.availableKeys || []}
+                                    onSelectTab={(key: string) => setActiveTab(key)}
+                                />
+                            );
+                        })() : (
                             <>
                                 <div className="w-full flex justify-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
                                     <h2 className={`text-[10px] uppercase font-black tracking-[0.2em] leading-none px-4 py-2 rounded-full border shadow-sm ${data.docs['onset-mobile-control']?.isLive !== false ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/10' : 'text-amber-500 bg-amber-500/10 border-amber-500/20 shadow-amber-500/10'}`}>
