@@ -26,6 +26,7 @@ interface CrewMember {
     name: string;
     email: string;
     phone: string;
+    mobileRoleId?: string; // Tying custom role to mobile control matrix
 }
 
 interface CrewListData {
@@ -49,11 +50,9 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
     const deptOptions = Object.keys(DEPARTMENTS);
 
-    const getRoleSuggestions = (dept: string) => {
-        const matrixRoles = mobileRoles.map((r: any) => r.name);
-        const deptRoles = DEPARTMENTS[dept] || [];
-        return Array.from(new Set([...matrixRoles, ...deptRoles]));
-    };
+    // Typography Standards from BriefTemplate
+    const inputStyle = "w-full bg-zinc-50 border border-zinc-200 rounded-md p-2.5 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all font-sans text-zinc-900 placeholder:text-zinc-300";
+    const labelStyle = "font-bold text-zinc-500 text-[10px] uppercase tracking-widest";
 
     const handleAddItem = () => {
         const newItem: CrewMember = {
@@ -62,7 +61,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             role: '',
             name: '',
             email: '',
-            phone: ''
+            phone: '',
+            mobileRoleId: 'crew'
         };
         onUpdate({ crew: [...items, newItem] });
     };
@@ -70,6 +70,15 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const handleUpdateItem = (index: number, updates: Partial<CrewMember>) => {
         const newItems = [...items];
         newItems[index] = { ...newItems[index], ...updates };
+        
+        // Auto-tie custom role to mobile control ID if a match is found
+        if (updates.role) {
+            const roleMatch = mobileRoles.find((r: any) => r.name.toLowerCase() === updates.role?.toLowerCase());
+            if (roleMatch) {
+                newItems[index].mobileRoleId = roleMatch.id;
+            }
+        }
+
         onUpdate({ crew: newItems });
     };
 
@@ -102,67 +111,74 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             orientation={orientation}
             metadata={metadata}
         >
-            <div className="space-y-8 animate-in fade-in duration-500">
+            <div className="space-y-6 pt-4 animate-in fade-in duration-700">
                 
-                {/* STYLE GUIDE COMPLIANT HEADER */}
-                <div className="grid grid-cols-[1fr_120px_100px_180px_120px_40px_30px] gap-4 border-b-2 border-zinc-900 pb-4 items-end px-3">
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Full Name</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Production Role</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Dept</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Email</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400">Phone</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400 text-center">Live</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-400"></span>
+                {/* HEADERS: Matching OnFormat Style Guide */}
+                <div className="grid grid-cols-[1fr_120px_140px_180px_120px_40px_30px] gap-4 border-b-2 border-zinc-900 pb-3 items-end px-1">
+                    <span className={labelStyle}>Full Name</span>
+                    <span className={labelStyle}>Dept</span>
+                    <span className={labelStyle}>Production Role</span>
+                    <span className={labelStyle}>Email</span>
+                    <span className={labelStyle}>Phone</span>
+                    <span className={`${labelStyle} text-center`}>St.</span>
+                    <span className={labelStyle}></span>
                 </div>
 
-                <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
+                <div className="space-y-1 divide-y divide-zinc-100 dark:divide-zinc-800">
                     {items.map((item, idx) => {
                         const isOnline = onlineUsers.has(item.email?.toLowerCase());
-                        const suggestions = getRoleSuggestions(item.department);
+                        const suggestions = DEPARTMENTS[item.department] || [];
+                        const currentRoleMatch = mobileRoles.find((r: any) => r.id === item.mobileRoleId);
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[1fr_120px_100px_180px_120px_40px_30px] gap-4 py-6 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-colors px-3">
+                            <div key={item.id} className="grid grid-cols-[1fr_120px_140px_180px_120px_40px_30px] gap-4 py-4 items-center group hover:bg-zinc-50/50 dark:hover:bg-zinc-800/5 transition-colors px-1">
                                 
-                                {/* PRIMARY FIELD: NAME */}
+                                {/* NAME */}
                                 <input 
                                     value={item.name}
                                     onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
-                                    placeholder="ENTER FULL NAME"
-                                    className="w-full bg-transparent text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white outline-none placeholder:text-zinc-200 border-b border-transparent focus:border-emerald-500 transition-all"
+                                    placeholder="ENTER NAME..."
+                                    className={`${inputStyle} font-bold border-transparent bg-transparent hover:bg-zinc-50 focus:bg-white text-base`}
                                     disabled={isLocked || isPrinting}
                                 />
-
-                                {/* ROLE (Datalist Sync) */}
-                                <div className="relative">
-                                    <input 
-                                        value={item.role}
-                                        onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
-                                        placeholder="ROLE..."
-                                        className="w-full bg-zinc-50 dark:bg-zinc-800/20 rounded px-2 py-1.5 text-[11px] font-black uppercase tracking-tight text-zinc-500 dark:text-zinc-400 outline-none focus:ring-1 focus:ring-zinc-400"
-                                        disabled={isLocked || isPrinting}
-                                        list={`roles-${idx}`}
-                                    />
-                                    <datalist id={`roles-${idx}`}>
-                                        {suggestions.map(opt => <option key={opt} value={opt} />)}
-                                    </datalist>
-                                </div>
 
                                 {/* DEPT */}
                                 <select 
                                     value={item.department}
                                     onChange={(e) => handleUpdateItem(idx, { department: e.target.value })}
-                                    className="bg-transparent text-[10px] font-black uppercase tracking-widest text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white cursor-pointer"
+                                    className="bg-transparent text-[11px] font-bold uppercase tracking-widest text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white cursor-pointer"
                                     disabled={isLocked || isPrinting}
                                 >
                                     {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                                 </select>
+
+                                {/* ROLE (CUSTOM + MOBILE SYNC) */}
+                                <div className="relative">
+                                    <input 
+                                        value={item.role}
+                                        onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
+                                        placeholder="ROLE..."
+                                        className={`${inputStyle} text-[11px] py-2 bg-zinc-100/30 border-none font-bold uppercase tracking-tight`}
+                                        disabled={isLocked || isPrinting}
+                                        list={`roles-${idx}`}
+                                    />
+                                    <datalist id={`roles-${idx}`}>
+                                        {mobileRoles.map((r: any) => <option key={r.id} value={r.name} />)}
+                                        {suggestions.map(opt => <option key={opt} value={opt} />)}
+                                    </datalist>
+                                    {currentRoleMatch && (
+                                        <div className="mt-1 flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter text-emerald-500/60">
+                                            <Shield size={8} /> Matrix Linked: {currentRoleMatch.id}
+                                        </div>
+                                    )}
+                                </div>
 
                                 {/* EMAIL */}
                                 <input 
                                     value={item.email}
                                     onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
                                     placeholder="EMAIL@DOMAIN.COM"
-                                    className="w-full bg-transparent text-[11px] font-medium text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white"
+                                    className={`${inputStyle} text-xs border-none bg-transparent hover:bg-zinc-50 focus:bg-white`}
                                     disabled={isLocked || isPrinting}
                                 />
 
@@ -171,16 +187,16 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     value={item.phone}
                                     onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
                                     placeholder="PHONE"
-                                    className="w-full bg-transparent text-[11px] font-medium text-zinc-400 outline-none focus:text-zinc-900 dark:focus:text-white"
+                                    className={`${inputStyle} text-xs border-none bg-transparent hover:bg-zinc-50 focus:bg-white`}
                                     disabled={isLocked || isPrinting}
                                 />
 
-                                {/* STATUS INDICATOR */}
+                                {/* STATUS */}
                                 <div className="flex justify-center">
-                                    <div className={`w-2.5 h-2.5 rounded-full transition-all duration-700 ${isOnline ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.7)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
+                                    <div className={`w-2.5 h-2.5 rounded-full transition-all duration-700 ${isOnline ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
                                 </div>
 
-                                {/* DELETE ACTION */}
+                                {/* DELETE */}
                                 <div className="flex justify-end">
                                     {!isLocked && (
                                         <button 
@@ -199,7 +215,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     {!isLocked && !isPrinting && (
                         <button 
                             onClick={handleAddItem}
-                            className="w-full py-8 mt-6 border-2 border-dashed border-zinc-100 dark:border-zinc-800/50 rounded-[2.5rem] flex items-center justify-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-all hover:text-zinc-900 dark:hover:text-white hover:border-zinc-200"
+                            className="w-full py-8 mt-6 border-2 border-dashed border-zinc-100 dark:border-zinc-800/50 rounded-3xl flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-[0.4em] text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-all hover:text-zinc-600 dark:hover:text-white"
                         >
                             <Plus size={20} /> ADD CREW PERSONNEL
                         </button>
@@ -207,9 +223,9 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                 </div>
 
                 {items.length === 0 && (
-                    <div className="flex-1 flex flex-col items-center justify-center py-24 bg-zinc-50/20 dark:bg-zinc-900/10 rounded-[4rem] border border-zinc-50 dark:border-zinc-800/50">
-                            <UserCircle size={56} className="text-zinc-100 mb-6" />
-                            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-200">Production personnel empty</p>
+                    <div className="flex-1 flex flex-col items-center justify-center py-24 bg-zinc-50/10 dark:bg-zinc-900/5 rounded-[3rem] border border-zinc-50/50 dark:border-zinc-800/20">
+                            <UserCircle size={48} className="text-zinc-100 mb-4" />
+                            <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-zinc-200">Production personnel empty</p>
                     </div>
                 )}
 
