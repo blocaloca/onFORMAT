@@ -135,11 +135,11 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                         <Radio size={24} className={isLive ? 'animate-pulse' : ''} />
                     </div>
                     <div>
-                        <h1 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
+                        <h1 className="text-2xl font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
                             OnSet Mobile Control
-                            {isLive && <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />}
+                            {isLive && <span className="flex h-2 w-3 rounded-full bg-emerald-500 animate-ping" />}
                         </h1>
-                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">
+                        <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest mt-1">
                             {isLive ? 'Uplink Broadcast Active' : 'Uplink Offline'}
                         </p>
                     </div>
@@ -149,15 +149,15 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                     <button 
                         onClick={toggleLive}
                         disabled={!metadata?.isOwner || isLocked}
-                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all
+                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-10 py-5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
                             ${isLive 
                                 ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 active:bg-emerald-600' 
                                 : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95'}`}
                     >
-                        <Zap size={14} className={isLive ? 'fill-current' : ''} />
-                        {isLive ? 'Live' : 'Go Live'}
+                        <Zap size={16} className={isLive ? 'fill-current' : ''} />
+                        {isLive ? 'Active' : 'Go Live'}
                     </button>
-                    {isLocked && <div className="text-[10px] text-zinc-400 font-black uppercase"><Lock size={12} /></div>}
+                    {isLocked && <div className="text-xs text-zinc-400 font-black uppercase"><Lock size={14} /></div>}
                 </div>
             </div>
 
@@ -169,16 +169,16 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                         
                         <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/30 dark:bg-zinc-800/20">
                             <div>
-                                <h2 className="text-lg font-black uppercase tracking-tight text-zinc-900 dark:text-white">Access Control Matrix</h2>
-                                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">Tap cells to define mobile silos</p>
+                                <h2 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-white">Access Control Matrix</h2>
+                                <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest mt-1">Tap cells to define mobile silos</p>
                             </div>
-                            <div className="flex gap-4">
-                                <div className="flex items-center gap-2 text-[9px] font-black uppercase text-blue-500">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <div className="flex gap-6">
+                                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-blue-500">
+                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
                                     View
                                 </div>
-                                <div className="flex items-center gap-2 text-[9px] font-black uppercase text-emerald-500">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20" />
+                                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-emerald-500">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20" />
                                     Edit
                                 </div>
                             </div>
@@ -189,13 +189,13 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                 <thead>
                                     <tr className="bg-zinc-50/50 dark:bg-zinc-800/10">
                                         <th className="p-6 text-left border-b border-zinc-100 dark:border-zinc-800 sticky left-0 bg-zinc-50 dark:bg-zinc-900 z-10">
-                                            <span className="text-[10px] font-black uppercase text-zinc-400 tracking-widest">Document Silo</span>
+                                            <span className="text-xs font-black uppercase text-zinc-400 tracking-widest">Document Silo</span>
                                         </th>
                                         {roles.map((role: any) => (
                                             <th key={role.id} className="p-6 text-center border-b border-zinc-100 dark:border-zinc-800 min-w-[110px]">
-                                                <div className="flex flex-col items-center gap-1">
-                                                    <span className="text-lg mb-1">{role.icon}</span>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 leading-tight">{role.name}</span>
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <span className="text-2xl mb-1">{role.icon}</span>
+                                                    <span className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 leading-tight">{role.name}</span>
                                                 </div>
                                             </th>
                                         ))}
@@ -205,8 +205,8 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                     {TOOLS_BY_PHASE.map(phase => (
                                         <React.Fragment key={phase.label}>
                                             <tr className="bg-zinc-100/30 dark:bg-zinc-800/30">
-                                                <td colSpan={roles.length + 1} className="px-6 py-2 border-b border-zinc-100 dark:border-zinc-800">
-                                                    <span className="text-[9px] font-black uppercase text-zinc-400 tracking-[0.2em]">{phase.label}</span>
+                                                <td colSpan={roles.length + 1} className="px-6 py-3 border-b border-zinc-100 dark:border-zinc-800">
+                                                    <span className="text-xs font-black uppercase text-zinc-400 tracking-[0.2em]">{phase.label}</span>
                                                 </td>
                                             </tr>
                                             {phase.tools.map(doc => (

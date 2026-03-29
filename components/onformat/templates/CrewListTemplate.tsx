@@ -109,16 +109,17 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                 <div className="space-y-6 text-sm font-sans flex-1">
                     
                     {/* Header Table */}
-                    <div className="grid grid-cols-[100px_110px_1fr_120px_140px_100px_40px_30px] gap-2 border-b-2 border-zinc-900 pb-2 items-end">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Department</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Production Role</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Full Name</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 px-2 text-center bg-zinc-100 dark:bg-zinc-800 rounded py-1">Security Perimeter</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Email</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Phone</span>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 text-center">Status</span>
-                        <span className="text-[9px] uppercase tracking-widest text-zinc-300"></span>
+                    <div className="grid grid-cols-[100px_110px_1fr_130px_160px_120px_50px_30px] gap-3 border-b-2 border-zinc-900 pb-3 items-end">
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Department</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Production Role</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Full Name</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400 px-3 text-center bg-zinc-100 dark:bg-zinc-800 rounded py-1.5">Security Perimeter</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Email</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400">Phone</span>
+                        <span className="text-xs font-black uppercase tracking-widest text-zinc-400 text-center">Status</span>
+                        <span className="text-xs uppercase tracking-widest text-zinc-300"></span>
                     </div>
+
 
                     <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
                         {items.map((item, idx) => {
@@ -126,13 +127,13 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             const suggestions = getRoleSuggestions(item.department);
                             
                             return (
-                                <div key={item.id} className="grid grid-cols-[100px_110px_1fr_120px_140px_100px_40px_30px] gap-2 py-3 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/20 transition-colors">
+                                <div key={item.id} className="grid grid-cols-[100px_110px_1fr_130px_160px_120px_50px_30px] gap-3 py-4 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/20 transition-colors">
                                     
                                     {/* Dept */}
                                     <select 
                                         value={item.department}
                                         onChange={(e) => handleUpdateItem(idx, { department: e.target.value })}
-                                        className="bg-transparent text-[11px] font-black uppercase tracking-tight text-zinc-500 outline-none focus:text-zinc-900 dark:focus:text-white"
+                                        className="bg-transparent text-sm font-black uppercase tracking-tight text-zinc-500 outline-none focus:text-zinc-900 dark:focus:text-white"
                                         disabled={isLocked || isPrinting}
                                     >
                                         {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -144,7 +145,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             value={item.role}
                                             onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
                                             placeholder="Role..."
-                                            className="w-full bg-zinc-100/50 dark:bg-zinc-800/50 rounded px-2 py-1.5 text-[11px] font-medium outline-none focus:ring-1 focus:ring-zinc-400 text-zinc-900 dark:text-zinc-100"
+                                            className="w-full bg-zinc-100/50 dark:bg-zinc-800/50 rounded px-2 py-2 text-sm font-medium outline-none focus:ring-1 focus:ring-zinc-400 text-zinc-900 dark:text-zinc-100"
                                             disabled={isLocked || isPrinting}
                                             list={`roles-${idx}`}
                                         />
@@ -158,18 +159,18 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         value={item.name}
                                         onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
                                         placeholder="Crew Name..."
-                                        className="w-full bg-transparent text-[11px] font-black uppercase text-zinc-900 dark:text-white outline-none placeholder:text-zinc-300"
+                                        className="w-full bg-transparent text-sm font-black uppercase text-zinc-900 dark:text-white outline-none placeholder:text-zinc-300"
                                         disabled={isLocked || isPrinting}
                                     />
 
                                     {/* ONSET SECURITY ROLE (Dynamic from Mobile Control) */}
                                     <div className="relative">
-                                        <div className="flex items-center gap-1.5 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-2.5 py-1.5">
-                                            <Smartphone size={10} className="text-emerald-500" />
+                                        <div className="flex items-center gap-1.5 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2">
+                                            <Smartphone size={12} className="text-emerald-500" />
                                             <select 
                                                 value={item.mobileRole}
                                                 onChange={(e) => handleUpdateItem(idx, { mobileRole: e.target.value })}
-                                                className="w-full bg-transparent text-[9px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 outline-none appearance-none pr-3"
+                                                className="w-full bg-transparent text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 outline-none appearance-none pr-3"
                                                 disabled={isLocked || isPrinting}
                                             >
                                                 {mobileRoles.length > 0 ? (
@@ -184,7 +185,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     </>
                                                 )}
                                             </select>
-                                            <ChevronDown size={8} className="absolute right-2 text-emerald-300 pointer-events-none" />
+                                            <ChevronDown size={10} className="absolute right-3 text-emerald-300 pointer-events-none" />
                                         </div>
                                     </div>
 
@@ -193,7 +194,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         value={item.email}
                                         onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
                                         placeholder="email@field.com"
-                                        className="w-full bg-transparent text-[11px] text-zinc-500 outline-none"
+                                        className="w-full bg-transparent text-sm text-zinc-500 outline-none"
                                         disabled={isLocked || isPrinting}
                                     />
 
@@ -202,7 +203,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         value={item.phone}
                                         onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
                                         placeholder="Phone"
-                                        className="w-full bg-transparent text-[11px] text-zinc-500 outline-none"
+                                        className="w-full bg-transparent text-sm text-zinc-500 outline-none"
                                         disabled={isLocked || isPrinting}
                                     />
 
