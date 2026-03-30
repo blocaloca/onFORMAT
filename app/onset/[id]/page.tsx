@@ -505,6 +505,11 @@ export default function OnSetMobilePage() {
             const me = crewListDoc?.crew?.find((c: any) =>
                 c.email && c.email.toLowerCase() === emailToUse?.toLowerCase()
             );
+
+            // SYNC UI: Prioritize the explicit Crew List role name for the display label
+            if (me?.role) {
+                setUserRole(me.role);
+            }
             
             // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
             let roleId = me?.mobileRoleId;
