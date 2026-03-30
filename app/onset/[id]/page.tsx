@@ -463,13 +463,10 @@ export default function OnSetMobilePage() {
 
             const currentTab = activeTabRef.current;
 
-            if (availableKeys.length > 0 && !currentTab) {
-                // Default Priority
-                const priority = ['call-sheet', 'shot-scene-book', 'av-script', 'dit-log'];
-                const bestStart = priority.find(k => availableKeys.includes(k)) || availableKeys[0];
-                setActiveTab(bestStart);
-
-            } else if (availableKeys.length > 0 && availableKeys.includes(currentTab) === false) {
+            // --- DASHBOARD BY DEFAULT ---
+            // We no longer auto-select a tab if currentTab is empty. 
+            // This allows the MobileLanding (Authorized Silos) to show.
+            if (availableKeys.length > 0 && availableKeys.includes(currentTab) === false && currentTab !== '') {
                 setActiveTab(availableKeys[0]);
             } else if (availableKeys.length === 0) {
                 setActiveTab('');
@@ -1603,7 +1600,7 @@ export default function OnSetMobilePage() {
                             const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
 
 
-                            return mappedKeys.map((key: string) => {
+                            const navButtons = mappedKeys.map((key: string) => {
                                 return (
                                     <button
                                         key={key}
@@ -1618,6 +1615,24 @@ export default function OnSetMobilePage() {
                                     </button>
                                 );
                             });
+
+                            return (
+                                <>
+                                    <button
+                                        key="dashboard-nav"
+                                        onClick={() => setActiveTab('')}
+                                        className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-[10px] font-sans font-black uppercase tracking-[0.2em] transition-all duration-300 tactile active:scale-95 relative flex items-center gap-2 ${
+                                            activeTab === '' 
+                                            ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl border border-white/10 dark:border-zinc-200' 
+                                            : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-500 border border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800' 
+                                        }`}
+                                    >
+                                        <LayoutGrid size={14} strokeWidth={3} />
+                                        <span>Dashboard</span>
+                                    </button>
+                                    {navButtons}
+                                </>
+                            );
                         })()}
                     </div>
                 </nav>

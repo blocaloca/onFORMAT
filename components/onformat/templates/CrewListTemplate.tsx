@@ -90,7 +90,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
     useEffect(() => {
         if (!metadata?.projectId) return;
-        const pulseChannel = supabase.channel(`production_pulse:${metadata.projectId}`);
+        const pulseChannel = supabase.channel(`production_presence:${metadata.projectId}`);
         pulseChannel.on('presence', { event: 'sync' }, () => {
             const state = pulseChannel.presenceState();
             const set = new Set<string>();
