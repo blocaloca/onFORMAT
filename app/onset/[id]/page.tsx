@@ -499,7 +499,7 @@ export default function OnSetMobilePage() {
             } else {
                 // DYNAMIC MATRIX RESOLUTION
                 availableKeys = MOBILE_SUPPORTED.filter(k => {
-                    if (isMasterOwner) return true;
+                    if (roleId === 'owner') return true;
                     const permission = roleMatrix[k];
                     return permission === 'view' || permission === 'edit';
                 });
