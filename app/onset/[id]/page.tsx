@@ -516,7 +516,7 @@ export default function OnSetMobilePage() {
             setLastSyncTime(nowTime);
             localStorage.setItem(`onset_cache_time_${id}`, nowTime);
             setIsOffline(false);
-
+            setUserRole(role || '');
             setLoading(false);
         } catch (err) {
             console.error("Fetch Data Error (Potentially Offline):", err);
