@@ -166,7 +166,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
                                     </datalist>
                                     {roleSynced && !isPrinting && (
-                                        <div className="absolute -top-1 -right-1 bg-emerald-500 rounded-full p-0.5 text-white shadow-sm ring-1 ring-white">
+                                        <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-0.5 text-white shadow-sm ring-1 ring-white">
                                             <ShieldCheck size={7} />
                                         </div>
                                     )}
