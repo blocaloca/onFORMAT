@@ -41,6 +41,25 @@ import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
 import { useTheme } from '@/components/ThemeProvider';
 
 /* --------------------------------------------------------------------------------
+ * UTILS
+ * -------------------------------------------------------------------------------- */
+const mapMobileKey = (k: string) => {
+    const map: Record<string, string> = {
+        'shot-log': 'camera-report',
+        'locations-sets': 'locations',
+        'casting-talent': 'casting',
+        'wardrobe-styling': 'wardrobe',
+        'budget-actual': 'budget',
+        'brief': 'creative-brief',
+        'directors-treatment': 'treatment',
+        'creative-direction': 'lookbook',
+        'deliverables-licensing': 'deliverables',
+        'archive-log': 'archive'
+    };
+    return map[k] || k;
+};
+
+/* --------------------------------------------------------------------------------
  * COMPONENTS
  * -------------------------------------------------------------------------------- */
 const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelectTab, isMasterOwner }: any) => {
@@ -127,7 +146,11 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
                 <div className="grid grid-cols-2 gap-4">
                     {availableKeys.map((key: string) => {
                         const IconComp = SILO_ICONS[key] || FileText;
-                        const permission = roleMatrix[key]; // 'view' or 'edit'
+                        const permission = roleMatrix[key] || (() => {
+                            const legacyKey = Object.keys(roleMatrix).find(mk => mapMobileKey(mk) === key);
+                            return legacyKey ? roleMatrix[legacyKey] : 'none';
+                        })();
+                        
                         const isEdit = permission === 'edit' || isMasterOwner; // Corrected Master Access bypass
                         
                         return (
@@ -455,21 +478,6 @@ export default function OnSetMobilePage() {
                 'client-selects', 'deliverables', 'archive'
             ];
 
-            const mapMobileKey = (k: string) => {
-                const map: Record<string, string> = {
-                    'shot-log': 'camera-report',
-                    'locations-sets': 'locations',
-                    'casting-talent': 'casting',
-                    'wardrobe-styling': 'wardrobe',
-                    'budget-actual': 'budget',
-                    'brief': 'creative-brief',
-                    'directors-treatment': 'treatment',
-                    'creative-direction': 'lookbook',
-                    'deliverables-licensing': 'deliverables',
-                    'archive-log': 'archive'
-                };
-                return map[k] || k;
-            };
 
             const mobileControl = allDrafts['onset-mobile-control'];
             const matrix = mobileControl?.matrix || {};
@@ -500,7 +508,13 @@ export default function OnSetMobilePage() {
                 // DYNAMIC MATRIX RESOLUTION
                 availableKeys = MOBILE_SUPPORTED.filter(k => {
                     if (roleId === 'owner') return true;
-                    const permission = roleMatrix[k];
+                    
+                    // Robust lookup: check exact key OR map legacy aliases to confirm permission
+                    const permission = roleMatrix[k] || (() => {
+                        const legacyKey = Object.keys(roleMatrix).find(mk => mapMobileKey(mk) === k);
+                        return legacyKey ? roleMatrix[legacyKey] : 'none';
+                    })();
+
                     return permission === 'view' || permission === 'edit';
                 });
             }

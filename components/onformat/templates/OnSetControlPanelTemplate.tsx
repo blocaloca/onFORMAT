@@ -23,9 +23,9 @@ const TOOLS_BY_PHASE = [
         label: 'Development',
         tools: [
             { id: 'project-vision', name: 'Project Vision' },
-            { id: 'brief', name: 'Creative Brief' },
+            { id: 'creative-brief', name: 'Creative Brief' },
             { id: 'av-script', name: 'AV Script' },
-            { id: 'directors-treatment', name: 'Treatment' },
+            { id: 'treatment', name: 'Treatment' },
             { id: 'storyboard', name: 'Storyboard' },
             { id: 'lookbook', name: 'Lookbook' }
         ]
@@ -37,10 +37,10 @@ const TOOLS_BY_PHASE = [
             { id: 'budget', name: 'Budget' },
             { id: 'crew-list', name: 'Crew List' },
             { id: 'talent-release', name: 'Talent Release' },
-            { id: 'casting-talent', name: 'Talent' },
-            { id: 'locations-sets', name: 'Locations' },
+            { id: 'casting', name: 'Talent' },
+            { id: 'locations', name: 'Locations' },
             { id: 'equipment-list', name: 'Equipment List' },
-            { id: 'wardrobe-styling', name: 'Wardrobe' },
+            { id: 'wardrobe', name: 'Wardrobe' },
             { id: 'props-list', name: 'Props' }
         ]
     },
@@ -59,10 +59,10 @@ const TOOLS_BY_PHASE = [
     {
         label: 'Post / Wrap',
         tools: [
-            { id: 'budget-actual', name: 'Actuals' },
+            { id: 'budget', name: 'Actuals' },
             { id: 'client-selects', name: 'Client Selects', isSensitive: true },
-            { id: 'deliverables-licensing', name: 'Deliverables' },
-            { id: 'archive-log', name: 'Archive Log' }
+            { id: 'deliverables', name: 'Deliverables' },
+            { id: 'archive', name: 'Archive Log' }
         ]
     }
 ];

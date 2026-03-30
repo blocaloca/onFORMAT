@@ -19,6 +19,15 @@ const DEPARTMENTS: Record<string, string[]> = {
     'Other': ['BTS Camera', 'Agency', 'Client Representative', 'Publicist']
 };
 
+const FALLBACK_MOBILE_ROLES = [
+    { id: 'producer', name: 'Producer' },
+    { id: 'dit', name: 'DIT' },
+    { id: 'scripty', name: 'Script Supervisor' },
+    { id: 'dp', name: 'Director of Photo' },
+    { id: 'client', name: 'Client / Agency' },
+    { id: 'crew', name: 'General Crew' }
+];
+
 interface CrewMember {
     id: string;
     department: string;
@@ -46,7 +55,7 @@ interface CrewListTemplateProps {
 export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: CrewListTemplateProps) => {
     const supabase = getClient();
     const items = data.crew || [];
-    const mobileRoles = metadata?.mobileRoles || [];
+    const mobileRoles = (metadata?.mobileRoles && metadata.mobileRoles.length > 0) ? metadata.mobileRoles : FALLBACK_MOBILE_ROLES;
 
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
     const deptOptions = Object.keys(DEPARTMENTS);
