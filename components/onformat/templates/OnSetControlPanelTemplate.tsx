@@ -11,74 +11,61 @@ import {
     Activity,
     Copy,
     Check,
-    LockIcon,
-    Radio,
-    Zap
+    Users,
+    ChevronDown,
+    Zap,
+    Radio
 } from 'lucide-react';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
 
-// --- FULL ONFORMAT TOOLSET ---
-const TOOLS_BY_PHASE = [
-    {
-        label: 'Development',
-        tools: [
-            { id: 'project-vision', name: 'Project Vision' },
-            { id: 'creative-brief', name: 'Creative Brief' },
-            { id: 'av-script', name: 'AV Script' },
-            { id: 'treatment', name: 'Treatment' },
-            { id: 'storyboard', name: 'Storyboard' },
-            { id: 'lookbook', name: 'Lookbook' }
-        ]
-    },
-    {
-        label: 'Pre-Production',
-        tools: [
-            { id: 'shot-scene-book', name: 'Shot List' },
-            { id: 'budget', name: 'Budget' },
-            { id: 'crew-list', name: 'Crew List' },
-            { id: 'talent-release', name: 'Talent Release' },
-            { id: 'casting', name: 'Talent' },
-            { id: 'locations', name: 'Locations' },
-            { id: 'equipment-list', name: 'Equipment List' },
-            { id: 'wardrobe', name: 'Wardrobe' },
-            { id: 'props-list', name: 'Props' }
-        ]
-    },
-    {
-        label: 'On-Set',
-        tools: [
-            { id: 'schedule', name: 'Schedule' },
-            { id: 'call-sheet', name: 'Call Sheet' },
-            { id: 'on-set-notes', name: 'On-Set Notes' },
-            { id: 'camera-report', name: 'Camera Report' },
-            { id: 'script-notes', name: 'Script Notes' },
-            { id: 'sound-report', name: 'Sound Report' },
-            { id: 'dit-log', name: 'DIT Log', isSensitive: true }
-        ]
-    },
-    {
-        label: 'Post / Wrap',
-        tools: [
-            { id: 'budget', name: 'Actuals' },
-            { id: 'client-selects', name: 'Client Selects', isSensitive: true },
-            { id: 'deliverables', name: 'Deliverables' },
-            { id: 'archive', name: 'Archive Log' }
-        ]
-    }
+interface OnSetControlPanelTemplateProps {
+    data: any;
+    onUpdate: (data: any) => void;
+    isLocked?: boolean;
+    metadata?: any;
+}
+
+const PRODUCTION_ROLES = [
+    'Producer', 'Director', 'Director of Photography', '1st AD', '2nd AD',
+    'UPM / Line Producer', 'Production Coordinator', 'Script Supervisor',
+    'Gaffer', 'Key Grip', 'Sound Mixer', 'DIT', 'Media Manager',
+    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'Makeup Artist',
+    'Editor', 'Location Manager', 'PA (Production Assistant)',
+    'General Crew', 'Other'
 ];
 
-const INITIAL_ROLES = [
-    { id: 'producer', name: 'Producer', icon: '👑', color: 'emerald' },
-    { id: 'dit', name: 'DIT', icon: '💾', color: 'blue' },
-    { id: 'scripty', name: 'Script Supervisor', icon: '✍️', color: 'pink' },
-    { id: 'dp', name: 'Director of Photo', icon: '🎥', color: 'amber' },
-    { id: 'client', name: 'Client / Agency', icon: '💼', color: 'zinc' },
-    { id: 'crew', name: 'General Crew', icon: '👤', color: 'zinc' }
+// Combine all tools into a single flat list as requested (no phase labels)
+const DOCUMENT_TYPES = [
+    { id: 'project-vision', name: 'Project Vision' },
+    { id: 'creative-brief', name: 'Creative Brief' },
+    { id: 'av-script', name: 'A/V Script' },
+    { id: 'treatment', name: 'Director\'s Treatment' },
+    { id: 'storyboard', name: 'Storyboard' },
+    { id: 'lookbook', name: 'Lookbook' },
+    { id: 'shot-scene-book', name: 'Shot / Scene Book' },
+    { id: 'budget', name: 'Budget / Actuals', isSensitive: true },
+    { id: 'crew-list', name: 'Crew List' },
+    { id: 'releases', name: 'Releases' },
+    { id: 'casting', name: 'Casting / Talent' },
+    { id: 'locations', name: 'Locations / Sets' },
+    { id: 'equipment-list', name: 'Equipment List' },
+    { id: 'wardrobe', name: 'Wardrobe / Styling' },
+    { id: 'props-list', name: 'Props List' },
+    { id: 'schedule', name: 'Schedule' },
+    { id: 'call-sheet', name: 'Call Sheet' },
+    { id: 'on-set-notes', name: 'On-Set Notes' },
+    { id: 'camera-report', name: 'Camera Report' },
+    { id: 'script-notes', name: 'Script Notes' },
+    { id: 'sound-report', name: 'Sound Report' },
+    { id: 'dit-log', name: 'DIT Log', isSensitive: true },
+    { id: 'client-selects', name: 'Client Selects', isSensitive: true },
+    { id: 'deliverables', name: 'Deliverables' },
+    { id: 'archive', name: 'Archive Log' }
 ];
 
 export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }: any) => {
     const safeData = (data && typeof data === 'object') ? data : {};
-    const roles = safeData.roles || INITIAL_ROLES;
+    const roles = safeData.roles || [];
     const matrix = safeData.matrix || {};
     const isLive = safeData.isLive || false;
 
@@ -111,10 +98,44 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
 
     const addRole = () => {
         if (!newRoleName || isLocked || !metadata?.isOwner) return;
-        const id = newRoleName.toLowerCase().replace(/\s+/g, '_');
-        const newRoles = [...roles, { id, name: newRoleName, icon: '👤', color: 'zinc' }];
+        
+        // --- TACTICAL HOOKS: Sync ROLE ID with OnSet Identity Engine ---
+        let id = newRoleName.toLowerCase().replace(/\s+/g, '-');
+        const r = newRoleName.toLowerCase();
+        
+        if (r === 'dit' || r.includes('media')) id = 'dit';
+        else if (r.includes('producer') || r.includes('coordinator')) id = 'producer';
+        else if (r === 'director') id = 'director';
+        else if (r.includes('supervisor') || r === 'scripty') id = 'scripty';
+        else if (r.includes('photography') || r === 'dp') id = 'dp';
+        else if (r.includes('ad') || r.includes('assistant director')) id = 'ad';
+        else if (r.includes('gaffer') || r.includes('electric')) id = 'electric';
+        else if (r.includes('grip')) id = 'grip';
+        else if (r.includes('sound') || r.includes('mixer')) id = 'sound';
+        else if (r.includes('art') || r.includes('designer') || r.includes('prop')) id = 'art';
+        else if (r.includes('stylist') || r.includes('wardrobe')) id = 'wardrobe';
+        else if (r.includes('makeup') || r.includes('hmu')) id = 'hmu';
+        else if (r.includes('editor')) id = 'editor';
+        else if (r.includes('location')) id = 'locations';
+        else if (r.includes('client') || r.includes('agency')) id = 'client';
+        else if (r.includes('crew') || r === 'pa') id = 'crew';
+
+        if (roles.find((role: any) => role.id === id)) {
+            setNewRoleName('');
+            return;
+        }
+
+        const newRoles = [...roles, { id, name: newRoleName, color: 'zinc' }];
         onUpdate({ ...safeData, roles: newRoles });
         setNewRoleName('');
+    };
+
+    const removeRole = (roleId: string) => {
+        if (isLocked || !metadata?.isOwner) return;
+        const newRoles = roles.filter((r: any) => r.id !== roleId);
+        const newMatrix = { ...matrix };
+        delete newMatrix[roleId];
+        onUpdate({ ...safeData, roles: newRoles, matrix: newMatrix });
     };
 
     const copyToClipboard = () => {
@@ -126,59 +147,83 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
     const getDocAccess = (roleId: string, docId: string) => (matrix[roleId] && matrix[roleId][docId]) || 'none';
 
     return (
-        <div className="space-y-10 animate-in fade-in">
+        <div className="space-y-8 animate-in fade-in">
             
-            {/* TOP STATUS BAR */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 bg-white dark:bg-zinc-900 p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
+            {/* COMPACT STATUS BAR */}
+            <div className="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-zinc-900 px-6 py-4 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
                 <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${isLive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'}`}>
-                        <Radio size={24} className={isLive ? 'animate-pulse' : ''} />
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isLive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/10' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'}`}>
+                        <Radio size={20} className={isLive ? 'animate-pulse' : ''} />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
+                        <h1 className="text-lg font-black uppercase tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
                             OnSet Mobile Control
-                            {isLive && <span className="flex h-2 w-3 rounded-full bg-emerald-500 animate-ping" />}
                         </h1>
-                        <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest mt-1">
-                            {isLive ? 'Uplink Broadcast Active' : 'Uplink Offline'}
+                        <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">
+                            {isLive ? 'Broadcasting Permissions' : 'Broadcasting Offline'}
                         </p>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 w-full sm:w-auto">
-                    <button 
-                        onClick={toggleLive}
-                        disabled={!metadata?.isOwner || isLocked}
-                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-10 py-5 rounded-2xl text-xs font-black uppercase tracking-widest transition-all
-                            ${isLive 
-                                ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 active:bg-emerald-600' 
-                                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95'}`}
-                    >
-                        <Zap size={16} className={isLive ? 'fill-current' : ''} />
-                        {isLive ? 'Active' : 'Go Live'}
-                    </button>
-                    {isLocked && <div className="text-xs text-zinc-400 font-black uppercase"><Lock size={14} /></div>}
-                </div>
+                <button 
+                    onClick={toggleLive}
+                    disabled={!metadata?.isOwner || isLocked}
+                    className={`flex items-center justify-center gap-2 px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all
+                        ${isLive 
+                            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/10 active:bg-emerald-600' 
+                            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95'}`}
+                >
+                    <Zap size={14} className={isLive ? 'fill-current' : ''} />
+                    {isLive ? 'Active' : 'Go Live'}
+                </button>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-8 xl:gap-12 overflow-hidden">
+            <div className="flex flex-col lg:flex-row gap-8">
                 
                 {/* MATRIX SWITCHBOARD */}
                 <div className="flex-1 min-w-0 space-y-6">
+                    
+                    {/* ADD ROLE AT THE TOP */}
+                    {metadata?.isOwner && (
+                        <div className="bg-white dark:bg-zinc-800/50 p-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+                            <div className="flex items-center gap-3 flex-1 pl-3">
+                                <Users size={16} className="text-zinc-400" />
+                                <div className="relative flex-1">
+                                    <input 
+                                        value={newRoleName}
+                                        onChange={(e) => setNewRoleName(e.target.value)}
+                                        placeholder="Authorize Production Role..."
+                                        className="w-full bg-transparent outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-300 dark:text-white"
+                                        list="control-roles-list"
+                                    />
+                                    <datalist id="control-roles-list">
+                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
+                                    </datalist>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={addRole}
+                                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors"
+                            >
+                                Add Role
+                            </button>
+                        </div>
+                    )}
+
                     <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm overflow-hidden transition-colors">
                         
-                        <div className="p-8 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/30 dark:bg-zinc-800/20">
+                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-800/20">
                             <div>
-                                <h2 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-white">Access Control Matrix</h2>
-                                <p className="text-xs text-zinc-400 font-bold uppercase tracking-widest mt-1">Tap cells to define mobile silos</p>
+                                <h2 className="text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white">Access Permissions Matrix</h2>
+                                <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Define mobile silos for crew</p>
                             </div>
-                            <div className="flex gap-6">
-                                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-blue-500">
-                                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                            <div className="flex gap-4">
+                                <div className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-blue-500">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                                     View
                                 </div>
-                                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-emerald-500">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20" />
+                                <div className="flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest text-emerald-500">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/10" />
                                     Edit
                                 </div>
                             </div>
@@ -187,125 +232,98 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                         <div className="overflow-x-auto scrollbar-hide">
                             <table className="w-full border-collapse">
                                 <thead>
-                                    <tr className="bg-zinc-50/50 dark:bg-zinc-800/10">
-                                        <th className="p-6 text-left border-b border-zinc-100 dark:border-zinc-800 sticky left-0 bg-zinc-50 dark:bg-zinc-900 z-10">
-                                            <span className="text-xs font-black uppercase text-zinc-400 tracking-widest">Document Silo</span>
+                                    <tr className="bg-zinc-50/80 dark:bg-zinc-900/80 border-b border-zinc-100 dark:border-zinc-700">
+                                        <th className="py-3 px-6 text-left w-[220px]">
+                                            <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Document Permissions</span>
                                         </th>
                                         {roles.map((role: any) => (
-                                            <th key={role.id} className="p-6 text-center border-b border-zinc-100 dark:border-zinc-800 min-w-[110px]">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <span className="text-2xl mb-1">{role.icon}</span>
-                                                    <span className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100 leading-tight">{role.name}</span>
+                                            <th key={role.id} className="py-3 px-2 text-center group min-w-[80px]">
+                                                <div className="flex flex-col items-center">
+                                                    <span className="text-[9px] font-black uppercase tracking-widest leading-tight mb-1 dark:text-zinc-100">{role.name}</span>
+                                                    <button 
+                                                        onClick={() => removeRole(role.id)}
+                                                        className="opacity-0 group-hover:opacity-100 text-[8px] font-bold text-red-500 uppercase tracking-tighter transition-opacity"
+                                                    >
+                                                        [Remove]
+                                                    </button>
                                                 </div>
                                             </th>
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    {TOOLS_BY_PHASE.map(phase => (
-                                        <React.Fragment key={phase.label}>
-                                            <tr className="bg-zinc-100/30 dark:bg-zinc-800/30">
-                                                <td colSpan={roles.length + 1} className="px-6 py-3 border-b border-zinc-100 dark:border-zinc-800">
-                                                    <span className="text-xs font-black uppercase text-zinc-400 tracking-[0.2em]">{phase.label}</span>
-                                                </td>
-                                            </tr>
-                                            {phase.tools.map(doc => (
-                                                <tr key={doc.id} className="group hover:bg-emerald-500/[0.02] transition-colors">
-                                                    <td className="p-6 border-b border-zinc-50 dark:border-zinc-800/50 text-zinc-900 dark:text-zinc-100 sticky left-0 bg-white dark:bg-zinc-900 z-10 group-hover:bg-[#FCFEFC] dark:group-hover:bg-zinc-800/50">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className={`p-2 rounded-lg ${doc.isSensitive ? 'text-amber-500 bg-amber-500/10' : 'text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800'}`}>
-                                                                <FileText size={16} />
-                                                            </div>
-                                                            <div>
-                                                                <span className="text-xs font-black uppercase tracking-tight block">{doc.name}</span>
-                                                                {doc.isSensitive && (
-                                                                    <div className="flex items-center gap-1 mt-0.5">
-                                                                        <Lock size={8} className="text-amber-500" />
-                                                                        <span className="text-[8px] font-black uppercase text-amber-500/70 tracking-widest font-mono">Sensitive</span>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
+                                <tbody className="divide-y divide-zinc-50 dark:divide-zinc-800/30">
+                                    {DOCUMENT_TYPES.map(doc => (
+                                        <tr key={doc.id} className="group hover:bg-blue-500/[0.02] dark:hover:bg-blue-500/[0.05] transition-colors">
+                                            <td className="py-2.5 px-6">
+                                                <div className="flex items-center gap-2.5">
+                                                    <span className="text-[10px] font-black uppercase tracking-tight text-zinc-600 dark:text-zinc-300">{doc.name}</span>
+                                                    {doc.isSensitive && (
+                                                        <Lock size={8} className="text-amber-500" />
+                                                    )}
+                                                </div>
+                                            </td>
+                                            {roles.map((role: any) => {
+                                                const access = getDocAccess(role.id, doc.id);
+                                                return (
+                                                    <td key={role.id} className="py-2 px-2 text-center">
+                                                        <button 
+                                                            disabled={!metadata?.isOwner}
+                                                            onClick={() => toggleAccess(role.id, doc.id)}
+                                                            className={`w-9 h-6 mx-auto rounded-lg flex items-center justify-center transition-all active:scale-95 border
+                                                                ${access === 'edit' ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm' : 
+                                                                  access === 'view' ? 'bg-blue-500 border-blue-500 text-white shadow-sm' : 
+                                                                  'bg-zinc-100 dark:bg-zinc-800 border-transparent text-zinc-300 dark:text-zinc-600'}`}
+                                                        >
+                                                            {access === 'edit' ? <Edit3 size={10} strokeWidth={4} /> : access === 'view' ? <Eye size={10} strokeWidth={4} /> : <div className="w-1 h-1 rounded-full bg-current opacity-20" />}
+                                                        </button>
                                                     </td>
-                                                    {roles.map((role: any) => {
-                                                        const access = getDocAccess(role.id, doc.id);
-                                                        return (
-                                                            <td key={role.id} className="p-2 border-b border-zinc-50 dark:border-zinc-800/50 text-center">
-                                                                <button 
-                                                                    disabled={!metadata?.isOwner}
-                                                                    onClick={() => toggleAccess(role.id, doc.id)}
-                                                                    className={`w-14 h-9 mx-auto rounded-xl flex items-center justify-center transition-all active:scale-95 border-2
-                                                                        ${access === 'edit' ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 
-                                                                          access === 'view' ? 'bg-white dark:bg-zinc-900 border-blue-500/40 text-blue-500 shadow-sm' : 
-                                                                          'bg-zinc-50 dark:bg-zinc-800/40 border-transparent text-zinc-300 dark:text-zinc-600'}`}
-                                                                >
-                                                                    {access === 'edit' ? <Edit3 size={15} strokeWidth={3} /> : access === 'view' ? <Eye size={15} strokeWidth={3} /> : <div className="w-1.5 h-1.5 rounded-full bg-current opacity-20" />}
-                                                                </button>
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            ))}
-                                        </React.Fragment>
+                                                );
+                                            })}
+                                        </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
-                    {metadata?.isOwner && (
-                        <div className="flex items-center gap-4 bg-zinc-100 dark:bg-zinc-900/40 p-4 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800">
-                            <Plus size={20} className="text-zinc-400 ml-4" />
-                            <input 
-                                value={newRoleName}
-                                onChange={(e) => setNewRoleName(e.target.value)}
-                                placeholder="Add Role (e.g. BTS Camera)..."
-                                className="flex-1 bg-transparent border-none outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-400 text-zinc-900 dark:text-white"
-                            />
-                            <button 
-                                onClick={addRole}
-                                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 dark:hover:bg-emerald-500 transition-colors"
-                            >
-                                Create Role
-                            </button>
-                        </div>
-                    )}
                 </div>
 
                 {/* MOBILE UPLINK GATEWAY */}
-                <div className="w-full lg:w-[320px] shrink-0 space-y-6">
-                    <div className="bg-white dark:bg-zinc-900 p-8 rounded-[2.5rem] border border-zinc-200 dark:border-zinc-800 shadow-xl flex flex-col items-center text-center transition-colors sticky top-4">
-                        <div className="mb-8">
-                            <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 mx-auto mb-4">
-                                <Smartphone size={24} />
-                            </div>
-                            <h3 className="text-xl font-black uppercase tracking-tight text-zinc-900 dark:text-white">Mobile Uplink</h3>
-                            <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">Crew Gateway QR</p>
+                <div className="w-full lg:w-[280px] shrink-0 space-y-6">
+                    <div className="bg-white dark:bg-zinc-900 p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col items-center text-center transition-colors">
+                        <div className="mb-6">
+                            <h3 className="text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white">Mobile Uplink</h3>
+                            <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Crew Gateway QR</p>
                         </div>
 
-                        <div className="bg-white p-4 rounded-3xl shadow-inner border border-zinc-100 mb-8 overflow-hidden">
+                        <div className="bg-white p-3 rounded-2xl shadow-inner border border-zinc-100 mb-6 overflow-hidden">
                             <QRCode 
                                 value={mobileUrl}
-                                size={180}
+                                size={140}
                                 level="H"
                             />
                         </div>
 
-                        <p className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 leading-relaxed px-2 mb-8 uppercase tracking-tight">
-                            Scan to launch <span className="text-zinc-900 dark:text-white font-black">OnSet Mobile</span> on your device.
-                        </p>
-
                         <div className="w-full space-y-3">
                             <button 
                                 onClick={copyToClipboard}
-                                className="w-full flex items-center justify-center gap-3 bg-zinc-100 dark:bg-zinc-800 py-4 rounded-2xl transition-all hover:bg-emerald-500/10 group active:scale-95"
+                                className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-900 py-3 rounded-xl transition-all hover:bg-emerald-500/10 active:scale-95"
                             >
-                                {copied ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} className="text-zinc-400 transition-colors group-hover:text-emerald-500" />}
-                                <span className={`text-[10px] font-black uppercase tracking-widest ${copied ? 'text-emerald-500' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                                {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-zinc-400" />}
+                                <span className={`text-[9px] font-black uppercase tracking-widest ${copied ? 'text-emerald-500' : 'text-zinc-500 dark:text-zinc-400'}`}>
                                     {copied ? 'Link Copied' : 'Copy Mobile Link'}
                                 </span>
                             </button>
                         </div>
+                    </div>
+
+                    <div className="bg-blue-500/5 dark:bg-blue-500/10 p-5 rounded-[1.5rem] border border-blue-500/10 space-y-3">
+                        <div className="flex items-center gap-2.5">
+                            <ShieldCheck size={14} className="text-blue-500" />
+                            <h4 className="text-[10px] font-black uppercase text-blue-600 dark:text-blue-400">Tactical Security</h4>
+                        </div>
+                        <p className="text-[9px] text-zinc-500 dark:text-zinc-400 font-bold uppercase tracking-tight leading-normal">
+                            All mobile traffic is role-locked. Permissions update instantly upon toggle.
+                        </p>
                     </div>
                 </div>
                 
