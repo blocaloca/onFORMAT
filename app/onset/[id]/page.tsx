@@ -178,6 +178,12 @@ export default function OnSetMobilePage() {
     useEffect(() => {
         if (!id) return;
 
+        const resetFlag = localStorage.getItem(`onset_v2_reset_${id}`);
+        if (!resetFlag) {
+            localStorage.removeItem(`onset_active_tab_${id}`);
+            localStorage.setItem(`onset_v2_reset_${id}`, 'true');
+        }
+
         const savedTab = localStorage.getItem(`onset_active_tab_${id}`);
         if (savedTab) {
             setActiveTab(savedTab as Tab);
@@ -1317,6 +1323,8 @@ export default function OnSetMobilePage() {
                                                 {data.docs['onset-mobile-control']?.isLive !== false ? 'Live' : 'Standby'}
                                             </span>
                                         </div>
+
+                                        {/* Appearance */}
                                         <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-300 uppercase font-bold tracking-wider mt-4">
                                             <span>Appearance</span>
                                             <button 
@@ -1327,6 +1335,20 @@ export default function OnSetMobilePage() {
                                                 <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
                                             </button>
                                         </div>
+                                    </div>
+
+                                    {/* System Links */}
+                                    <div className="space-y-1 pt-6 border-t border-zinc-100 dark:border-zinc-800">
+                                        <button 
+                                            onClick={() => {
+                                                setActiveTab('');
+                                                setShowMenu(false);
+                                            }}
+                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === '' ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-lg' : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+                                        >
+                                            <LayoutGrid size={18} />
+                                            <span className="text-xs font-bold uppercase tracking-widest text-[10px]">Production Dashboard</span>
+                                        </button>
                                     </div>
                                 </div>
 
