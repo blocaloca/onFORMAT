@@ -117,18 +117,8 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
 
     return (
         <div className="flex flex-col space-y-10 animate-in fade-in duration-500 pt-2 pb-12">
-            {/* Tactical Status */}
-            <div className="flex justify-between items-center bg-zinc-900/40 p-3 rounded-xl border border-white/5">
-                <div className="flex items-center gap-2">
-                    <Activity size={14} className="text-emerald-500 animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">Uplink 5G_Secure</span>
-                </div>
-                <span className="text-[10px] font-mono text-zinc-500">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
-            </div>
-
             {/* Session Header */}
             <div className="space-y-4">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Simulated Session</label>
                 <div className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 p-6 rounded-2xl shadow-xl">
                     <div className="w-14 h-14 bg-zinc-800 rounded-xl flex items-center justify-center text-3xl shadow-inner border border-white/5">
                         {displayIcon}
@@ -1344,38 +1334,41 @@ export default function OnSetMobilePage() {
 
                 {/* TOP ROW: Header & Alerts */}
                 <div className="flex flex-col z-50 shrink-0">
-                    {/* HEADER */}
-                    <header className="bg-zinc-100/90 dark:bg-black/95 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 pt-safe transition-all w-full relative">
-                        <div className="h-16 md:h-18 flex items-center justify-between px-6">
-                            <div className="flex flex-col items-start mt-2 shrink-0">
-                                <span className="font-sans font-inter font-bold text-xl leading-none tracking-tight text-zinc-900 dark:text-white">ONSET</span>
-                                <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 dark:text-zinc-400 leading-none mt-1">by onFORMAT</span>
+                    {/* TACTICAL HEAD-UP DISPLAY (HUD) HEADER */}
+                    <header className="bg-zinc-100/95 dark:bg-black/95 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800 pt-safe transition-all w-full relative">
+                        <div className="h-16 flex items-center justify-between px-6">
+                            
+                            {/* Role Label */}
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 leading-none mb-1">Role</span>
+                                <span className="text-xs font-black uppercase text-zinc-900 dark:text-white truncate">{userRole || 'Crew'}</span>
                             </div>
-                            <div className="h-4 w-[1px] bg-zinc-300 mx-3 shrink-0"></div>
-                            <div className="flex flex-col flex-1 min-w-0">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100 leading-none mb-0.5 truncate">{data.project.name}</span>
-                                <div className="flex items-center gap-2 mt-0.5">
-                                    <div className="flex items-center gap-1.5">
-                                        <span
-                                            className={`w-[10px] h-[10px] rounded-full shadow-sm ${!isOffline && data.docs['onset-mobile-control']?.isLive !== false ? 'animate-pulse' : ''}`}
-                                            style={{ backgroundColor: isOffline ? '#F59E0B' : (data.docs['onset-mobile-control']?.isLive === false ? '#EF4444' : '#22C55E') }}
-                                        ></span>
-                                        <span className={`text-[9px] font-mono uppercase leading-none font-bold ${isOffline ? 'text-[#F59E0B]' : (data.docs['onset-mobile-control']?.isLive === false ? 'text-[#EF4444]' : 'text-emerald-500')}`}>
-                                            {isOffline ? 'OFFLINE' : (data.docs['onset-mobile-control']?.isLive !== false ? 'LIVE' : 'STANDBY')}
-                                        </span>
-                                        {isOffline && lastSyncTime && (
-                                            <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-300 ml-1 leading-none">{lastSyncTime}</span>
-                                        )}
-                                    </div>
 
-                                </div>
+                            <div className="h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
+
+                            {/* Active Document Label */}
+                            <div className="flex-1 min-w-0">
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 leading-none mb-1 text-center block">Accessing</span>
+                                <span className="text-[11px] font-black uppercase text-emerald-500 text-center block truncate">
+                                    {activeTab === '' ? 'Tactical Dashboard' : (DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' '))}
+                                </span>
                             </div>
-                            <div className="flex items-center gap-3 shrink-0 ml-2">
-                                <BetaFeedbackTrigger variant="icon" />
+
+                            <div className="h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
+
+                            {/* Dashboard / System Toggle */}
+                            <div className="flex items-center gap-2">
+                                <button 
+                                    onClick={() => setActiveTab('')}
+                                    className={`p-2.5 rounded-xl transition-all active:scale-95 ${activeTab === '' ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg' : 'bg-transparent text-zinc-400 dark:text-zinc-600'}`}
+                                >
+                                    <LayoutGrid size={18} strokeWidth={3} />
+                                </button>
+                                
                                 <button
                                     onClick={() => setShowMenu(true)}
-                                    className="w-11 h-11 rounded-full bg-zinc-100 dark:bg-zinc-900/50 flex items-center justify-center text-zinc-600 dark:text-zinc-300 md:hover:text-zinc-900 dark:text-zinc-100 transition-colors border border-transparent md:hover:border-zinc-300 dark:border-zinc-700 shrink-0">
-                                    <Menu size={18} />
+                                    className="p-2.5 rounded-xl bg-transparent text-zinc-400 dark:text-zinc-600 transition-colors">
+                                    <Menu size={18} strokeWidth={3} />
                                 </button>
                             </div>
                         </div>
@@ -1445,8 +1438,9 @@ export default function OnSetMobilePage() {
                                             </span>
                                         </div>
 
-                                        {/* Appearance */}
-                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-300 uppercase font-bold tracking-wider mt-4">
+                                    {/* Appearance */}
+                                    <div className="space-y-3 pt-4">
+                                        <div className="flex items-center justify-between text-[10px] text-zinc-600 dark:text-zinc-300 uppercase font-bold tracking-wider">
                                             <span>Appearance</span>
                                             <button 
                                                 onClick={toggleTheme}
@@ -1456,20 +1450,6 @@ export default function OnSetMobilePage() {
                                                 <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
                                             </button>
                                         </div>
-                                    </div>
-
-                                    {/* System Links */}
-                                    <div className="space-y-1 pt-6 border-t border-zinc-100 dark:border-zinc-800">
-                                        <button 
-                                            onClick={() => {
-                                                setActiveTab('');
-                                                setShowMenu(false);
-                                            }}
-                                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === '' ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-lg' : 'text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
-                                        >
-                                            <LayoutGrid size={18} />
-                                            <span className="text-xs font-bold uppercase tracking-widest text-[10px]">Production Dashboard</span>
-                                        </button>
                                     </div>
                                 </div>
 
@@ -1489,26 +1469,6 @@ export default function OnSetMobilePage() {
                                     </div>
                                 )}
 
-                                 <div className="border-t border-zinc-100 dark:border-zinc-800 mt-6 pt-6 space-y-3">
-                                    {data._isMasterOwner && (
-                                        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-orange-50/5 border border-orange-500/10 mb-4 animate-in fade-in slide-in-from-top-2">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-500 leading-none">Simulate Role</span>
-                                                <span className="text-[8px] text-zinc-500 leading-tight mt-1 max-w-[120px]">Hides Owner bypass for testing matrix</span>
-                                            </div>
-                                            <button
-                                                onClick={() => {
-                                                    const newVal = !isTestMode;
-                                                    setIsTestMode(newVal);
-                                                    localStorage.setItem('onset_test_mode', String(newVal));
-                                                    fetchData(); // Refresh permissions immediately
-                                                }}
-                                                className={`w-10 h-6 p-1 rounded-full transition-colors flex items-center shadow-inner ${isTestMode ? 'bg-orange-500' : 'bg-zinc-200 dark:bg-zinc-800'}`}
-                                            >
-                                                <div className={`w-4 h-4 bg-white rounded-full shadow-lg transform transition-transform duration-200 ${isTestMode ? 'translate-x-4 scale-110' : 'translate-x-0'}`} />
-                                            </button>
-                                        </div>
-                                    )}
 
                                     <button
                                         onClick={async () => {
@@ -1720,86 +1680,6 @@ export default function OnSetMobilePage() {
                     </div>
                 </main>
 
-                {/* BOTTOM NAV ROWS */}
-                <nav className="shrink-0 w-full min-w-0 bg-white dark:bg-black border-t border-zinc-200 dark:border-zinc-800 z-[100] pb-[env(safe-area-inset-bottom)] transition-all pl-safe pr-safe">
-                    <div className="flex items-center h-16 w-full overflow-x-auto px-4 gap-3 no-scrollbar md:justify-center">
-                        {(() => {
-                            const availableKeys = data.availableKeys || [];
-                            if (availableKeys.length === 0) return null;
-
-                            const mappedKeys = Array.from(new Set(availableKeys.map((k: string) => {
-                                if (k === 'shot-log') return 'camera-report';
-                                if (k === 'locations-sets') return 'locations';
-                                if (k === 'casting-talent') return 'casting';
-                                if (k === 'wardrobe-styling') return 'wardrobe';
-                                // if (k === 'project-vision') return 'storyboard';
-                                if (k === 'budget-actual') return 'budget';
-                                if (k === 'brief') return 'creative-brief';
-                                if (k === 'directors-treatment') return 'treatment';
-                                if (k === 'creative-direction') return 'lookbook';
-                                return k;
-                            })));
-
-                            // DOCUMENT ORDER ALIGNMENT: Sort to match Desktop Site order
-                            const NAV_ORDER = [
-                                'project-vision', 'storyboard', 'creative-brief', 'av-script', 'treatment', 'lookbook',
-                                'shot-scene-book', 'budget', 'crew-list', 'releases', 'casting',
-                                'locations', 'equipment-list', 'wardrobe', 'props-list',
-                                'schedule', 'call-sheet', 'on-set-notes', 'camera-report',
-                                'script-notes', 'sound-report', 'dit-log',
-                                'client-selects', 'deliverables', 'archive'
-                            ];
-
-                            mappedKeys.sort((a, b) => {
-                                const idxA = NAV_ORDER.indexOf(a);
-                                const idxB = NAV_ORDER.indexOf(b);
-                                if (idxA === -1 && idxB === -1) return 0;
-                                if (idxA === -1) return 1;
-                                if (idxB === -1) return -1;
-                                return idxA - idxB;
-                            });
-
-                            const crew = data.docs['crew-list']?.crew || [];
-                            const me = crew.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                            const isDelegate = me?.onSetGroups?.includes('D') || userRole === 'Owner';
-
-
-                            const navButtons = mappedKeys.map((key: string) => {
-                                return (
-                                    <button
-                                        key={key}
-                                        onClick={() => setActiveTab(key)}
-                                        className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-[10px] font-sans font-black uppercase tracking-[0.2em] transition-all duration-300 tactile active:scale-95 relative ${
-                                            activeTab === key 
-                                            ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl border border-white/10 dark:border-zinc-200' 
-                                            : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-500 border border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800' 
-                                        }`}
-                                    >
-                                        {DOC_LABELS[key] || key.replace(/-/g, ' ')}
-                                    </button>
-                                );
-                            });
-
-                            return (
-                                <>
-                                    <button
-                                        key="dashboard-nav"
-                                        onClick={() => setActiveTab('')}
-                                        className={`flex-shrink-0 px-5 py-2.5 rounded-xl text-[10px] font-sans font-black uppercase tracking-[0.2em] transition-all duration-300 tactile active:scale-95 relative flex items-center gap-2 ${
-                                            activeTab === '' 
-                                            ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl border border-white/10 dark:border-zinc-200' 
-                                            : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-400 dark:text-zinc-500 border border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800' 
-                                        }`}
-                                    >
-                                        <LayoutGrid size={14} strokeWidth={3} />
-                                        <span>Dashboard</span>
-                                    </button>
-                                    {navButtons}
-                                </>
-                            );
-                        })()}
-                    </div>
-                </nav>
             </div>
         </ProjectDataProvider>
     );
