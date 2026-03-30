@@ -506,6 +506,9 @@ export default function OnSetMobilePage() {
                 c.email && c.email.toLowerCase() === emailToUse?.toLowerCase()
             );
 
+            // --- RELIABILITY FIX: Read fresh simulation status directly from source of truth ---
+            const effectiveTestMode = (typeof window !== 'undefined') && localStorage.getItem('onset_test_mode') === 'true';
+
             // SYNC UI: Prioritize the explicit Crew List role name for the display label
             if (me?.role) {
                 setUserRole(me.role);
@@ -542,16 +545,16 @@ export default function OnSetMobilePage() {
             const roleMatrix = matrix[roleId!] || {};
             
             // canEdit handles the per-tab write access
-            const canEdit = (!!isMasterOwner && !isTestMode) || (!!activeTab && roleMatrix[activeTab] === 'edit');
+            const canEdit = (!!isMasterOwner && !effectiveTestMode) || (!!activeTab && roleMatrix[activeTab] === 'edit');
 
             let availableKeys: string[] = [];
 
-            if (mobileControl && !isLive && (!isMasterOwner || isTestMode)) {
+            if (mobileControl && !isLive && (!isMasterOwner || effectiveTestMode)) {
                 availableKeys = [];
             } else {
                 // DYNAMIC MATRIX RESOLUTION
                 availableKeys = MOBILE_SUPPORTED.filter(k => {
-                    if (roleId === 'owner' || (isMasterOwner && !isTestMode)) return true;
+                    if (roleId === 'owner' || (isMasterOwner && !effectiveTestMode)) return true;
                     
                     // Robust lookup: check exact key OR map legacy aliases to confirm permission
                     const permission = roleMatrix[k] || (() => {
@@ -579,13 +582,13 @@ export default function OnSetMobilePage() {
                 availableKeys, 
                 _canEdit: !!canEdit, 
                 _isMasterOwner: !!isMasterOwner, 
-                _isTestMode: !!isTestMode,
+                _isTestMode: !!effectiveTestMode,
                 _roleId: roleId
             };
             setData(finalData);
 
             // AUTO CLEAR TEST MODE IF NOT OWNER (SAFETY)
-            if (!isMasterOwner && isTestMode) {
+            if (!isMasterOwner && effectiveTestMode) {
                 localStorage.removeItem('onset_test_mode');
                 setIsTestMode(false);
             }
