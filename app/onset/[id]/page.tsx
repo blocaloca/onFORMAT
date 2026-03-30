@@ -530,13 +530,22 @@ export default function OnSetMobilePage() {
             // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
             let roleId = me?.mobileRoleId;
             if (!roleId && me?.role) {
-                // FORCE HYDRATION: Map common production roles to their tactical matrix IDs
+                // --- TACTICAL HOOKS: Unified Role-to-ID Hydration ---
                 const r = me.role.toLowerCase();
-                if (r === 'dit') roleId = 'dit';
-                else if (r.includes('producer')) roleId = 'producer';
+                if (r === 'dit' || r.includes('media')) roleId = 'dit';
+                else if (r.includes('producer') || r.includes('coordinator')) roleId = 'producer';
                 else if (r === 'director') roleId = 'director';
                 else if (r.includes('supervisor') || r === 'scripty') roleId = 'scripty';
-                else if (r.includes('photo') || r === 'dp') roleId = 'dp';
+                else if (r.includes('photography') || r === 'dp') roleId = 'dp';
+                else if (r.includes('ad') || r.includes('assistant director')) roleId = 'ad';
+                else if (r.includes('gaffer') || r.includes('electric')) roleId = 'electric';
+                else if (r.includes('grip')) roleId = 'grip';
+                else if (r.includes('sound') || r.includes('mixer')) roleId = 'sound';
+                else if (r.includes('art') || r.includes('designer') || r.includes('prop')) roleId = 'art';
+                else if (r.includes('stylist') || r.includes('wardrobe')) roleId = 'wardrobe';
+                else if (r.includes('makeup') || r.includes('hmu')) roleId = 'hmu';
+                else if (r.includes('editor')) roleId = 'editor';
+                else if (r.includes('location')) roleId = 'locations';
                 else if (r.includes('client') || r.includes('agency')) roleId = 'client';
                 else roleId = r.replace(/\s+/g, '-');
             }

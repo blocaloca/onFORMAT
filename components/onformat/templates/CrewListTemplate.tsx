@@ -74,13 +74,22 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             if (roleMatch) {
                 newItems[index].mobileRoleId = roleMatch.id;
             } else {
-                // Tactical Auto-Hydration for standardized roles if mobileRoleId is missing
+                // --- TACTICAL HOOKS: Map every PRODUCTION_ROLE to a predictable Mobile ID ---
                 const r = updates.role.toLowerCase();
-                if (r === 'dit') newItems[index].mobileRoleId = 'dit';
-                else if (r.includes('producer')) newItems[index].mobileRoleId = 'producer';
+                if (r === 'dit' || r.includes('media')) newItems[index].mobileRoleId = 'dit';
+                else if (r.includes('producer') || r.includes('coordinator')) newItems[index].mobileRoleId = 'producer';
                 else if (r === 'director') newItems[index].mobileRoleId = 'director';
                 else if (r.includes('supervisor') || r === 'scripty') newItems[index].mobileRoleId = 'scripty';
-                else if (r.includes('photo') || r === 'dp') newItems[index].mobileRoleId = 'dp';
+                else if (r.includes('photography') || r === 'dp') newItems[index].mobileRoleId = 'dp';
+                else if (r.includes('ad') || r.includes('assistant director')) newItems[index].mobileRoleId = 'ad';
+                else if (r.includes('gaffer') || r.includes('electric')) newItems[index].mobileRoleId = 'electric';
+                else if (r.includes('grip')) newItems[index].mobileRoleId = 'grip';
+                else if (r.includes('sound') || r.includes('mixer')) newItems[index].mobileRoleId = 'sound';
+                else if (r.includes('art') || r.includes('designer') || r.includes('prop')) newItems[index].mobileRoleId = 'art';
+                else if (r.includes('stylist') || r.includes('wardrobe')) newItems[index].mobileRoleId = 'wardrobe';
+                else if (r.includes('makeup') || r.includes('hmu')) newItems[index].mobileRoleId = 'hmu';
+                else if (r.includes('editor')) newItems[index].mobileRoleId = 'editor';
+                else if (r.includes('location')) newItems[index].mobileRoleId = 'locations';
                 else if (r.includes('client') || r.includes('agency')) newItems[index].mobileRoleId = 'client';
                 else newItems[index].mobileRoleId = 'crew'; 
             }
