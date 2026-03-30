@@ -509,6 +509,19 @@ export default function OnSetMobilePage() {
             // SYNC UI: Prioritize the explicit Crew List role name for the display label
             if (me?.role) {
                 setUserRole(me.role);
+
+                // --- SQL BRIDGE: Auto-Sync JSON identity to SQL Membership table ---
+                // This ensures Supabase RLS and tactical permissions are always aligned.
+                if (role !== me.role) {
+                    console.log(`[OnsetMobile] Logic Sync: JSON [${me.role}] vs SQL [${role}]. Bridging...`);
+                    await supabase.from('crew_membership')
+                        .upsert({
+                            project_id: id,
+                            user_email: emailToUse,
+                            role: me.role,
+                            is_online: true
+                        }, { onConflict: 'project_id, user_email' });
+                }
             }
             
             // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
