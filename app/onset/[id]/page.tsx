@@ -43,7 +43,7 @@ import { useTheme } from '@/components/ThemeProvider';
 /* --------------------------------------------------------------------------------
  * COMPONENTS
  * -------------------------------------------------------------------------------- */
-const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelectTab }: any) => {
+const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelectTab, isMasterOwner }: any) => {
     const ROLE_ICONS: Record<string, string> = {
         'producer': '👑',
         'dit': '💾',
@@ -128,7 +128,7 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
                     {availableKeys.map((key: string) => {
                         const IconComp = SILO_ICONS[key] || FileText;
                         const permission = roleMatrix[key]; // 'view' or 'edit'
-                        const isEdit = permission === 'edit' || roleId === 'owner'; // Owner master access
+                        const isEdit = permission === 'edit' || isMasterOwner; // Corrected Master Access bypass
                         
                         return (
                             <button
@@ -171,6 +171,7 @@ interface MobileState {
     docs: Record<string, any>;
     availableKeys?: string[];
     _canEdit?: boolean;
+    _isMasterOwner?: boolean;
 }
 
 /* --------------------------------------------------------------------------------
@@ -369,24 +370,26 @@ export default function OnSetMobilePage() {
                 throw new Error("Project not found or network offline");
             }
 
-            // 2. Fetch Role if email exists
+            // 2. Fetch Role Identity from Crew Membership if email exists
             let role = 'Crew';
             if (emailToUse) {
-                // Identity Alignment: the explicit project Owner skips Crew table checks
                 const { data: { session } } = await supabase.auth.getSession();
                 const isOwnerDataMatch = session?.user && (projectData.user_id === session.user.id);
-                const isFounderMatch = emailToUse.toLowerCase() === 'casteelio@gmail.com';
+                
+                // FIRST: Consult the explicit Production Crew Membership
+                const { data: crew } = await supabase.from('crew_membership')
+                    .select('role')
+                    .eq('project_id', id)
+                    .ilike('user_email', emailToUse)
+                    .maybeSingle();
 
-                if (isOwnerDataMatch || isFounderMatch) {
+                if (crew) {
+                    role = crew.role;
+                } else if (isOwnerDataMatch) {
+                    // SECOND: Default to Owner identity if not in the Crew List
                     role = 'Owner';
-                } else {
-                    const { data: crew } = await supabase.from('crew_membership')
-                        .select('role')
-                        .eq('project_id', id)
-                        .ilike('user_email', emailToUse)
-                        .maybeSingle();
-                    if (crew) role = crew.role;
                 }
+
                 setUserRole(role);
             }
 
@@ -471,26 +474,32 @@ export default function OnSetMobilePage() {
             const mobileControl = allDrafts['onset-mobile-control'];
             const matrix = mobileControl?.matrix || {};
             const isLive = mobileControl?.isLive;
-            const isOwner = role === 'Owner' || emailToUse?.toLowerCase() === 'casteelio@gmail.com';
 
-            // Find current user's role in the specific Crew List draft
+            // PERMISSIONS: Confirm if the user is the project's true administrative owner
+            const { data: { session } } = await supabase.auth.getSession();
+            const isMasterOwner = session?.user && (projectData.user_id === session.user.id);
+            
+            // Find current user's role in the specific Crew List draft for IDENTITY
             const crewListDoc = allDrafts['crew-list'];
             const me = crewListDoc?.crew?.find((c: any) =>
                 c.email && c.email.toLowerCase() === emailToUse?.toLowerCase()
             );
             
+            // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
             const roleId = me?.mobileRoleId || role?.toLowerCase().replace(/\s+/g, '-');
             const roleMatrix = matrix[roleId] || {};
-            const canEdit = !!isOwner || (!!activeTab && roleMatrix[activeTab] === 'edit');
+            
+            // canEdit handles the per-tab write access
+            const canEdit = !!isMasterOwner || (!!activeTab && roleMatrix[activeTab] === 'edit');
 
             let availableKeys: string[] = [];
 
-            if (mobileControl && !isLive && !isOwner) {
+            if (mobileControl && !isLive && !isMasterOwner) {
                 availableKeys = [];
             } else {
                 // DYNAMIC MATRIX RESOLUTION
                 availableKeys = MOBILE_SUPPORTED.filter(k => {
-                    if (isOwner) return true;
+                    if (isMasterOwner) return true;
                     const permission = roleMatrix[k];
                     return permission === 'view' || permission === 'edit';
                 });
@@ -507,7 +516,7 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
-            const finalData = { ...computedData, availableKeys, _canEdit: !!canEdit };
+            const finalData = { ...computedData, availableKeys, _canEdit: !!canEdit, _isMasterOwner: !!isMasterOwner };
             setData(finalData);
 
             // CACHE FOR OFFLINE SAFETY NET (NOW INCLUDES AVAILABLE KEYS)
@@ -1495,6 +1504,7 @@ export default function OnSetMobilePage() {
                                     roleMatrix={matrixObj[rId] || {}}
                                     availableKeys={data.availableKeys || []}
                                     onSelectTab={(key: string) => setActiveTab(key)}
+                                    isMasterOwner={data._isMasterOwner}
                                 />
                             );
                         })() : (
