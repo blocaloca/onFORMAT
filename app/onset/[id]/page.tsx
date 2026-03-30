@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, usePathname } from 'next/navigation';
 import { getClient } from '@/lib/supabase';
-import { Menu, LayoutGrid, FileText, Edit3, Eye, Activity } from 'lucide-react';
+import { Menu, LayoutGrid, FileText, Edit3, Eye, Activity, Video, HardDrive, Users, MapPin, Calendar, Sparkles, Film, Smartphone, History, Globe, PieChart, Box, Check, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { ProjectDataProvider } from '@/lib/useProjectData';
 
@@ -36,7 +36,7 @@ import {
     MobileVisionView,
     MobileStoryboardView
 } from './components';
-import { LogOut, Wifi, UserCircle, AlertCircle, HardDrive, RefreshCw, ChevronLeft, Save, Moon, Sun } from 'lucide-react';
+import { LogOut, Wifi, UserCircle, AlertCircle, RefreshCw, ChevronLeft, Save, Moon, Sun } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
 import { useTheme } from '@/components/ThemeProvider';
 
@@ -48,16 +48,45 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
         'producer': '👑',
         'dit': '💾',
         'dp': '🎥',
+        'director': '🎬',
         'scripty': '✍️',
         'client': '💼',
         'crew': '👤',
         'owner': '👑'
     };
 
+    const SILO_ICONS: Record<string, any> = {
+        'av-script': Sparkles,
+        'shot-scene-book': Video,
+        'call-sheet': FileText,
+        'schedule': Calendar,
+        'dit-log': HardDrive,
+        'camera-report': History,
+        'on-set-notes': Edit3,
+        'locations': MapPin,
+        'crew-list': Users,
+        'releases': Globe,
+        'script-notes': FileText,
+        'sound-report': Activity,
+        'budget': PieChart,
+        'equipment-list': Box,
+        'casting': Users,
+        'wardrobe': Sparkles,
+        'props-list': Box,
+        'storyboard': Film,
+        'project-vision': Sparkles,
+        'treatment': Film,
+        'lookbook': Eye,
+        'deliverables': Smartphone,
+        'archive': History,
+        'client-selects': Eye
+    };
+
     const ROLE_NAMES: Record<string, string> = {
         'producer': 'Producer',
         'dit': 'DIT',
         'dp': 'Director of Photography',
+        'director': 'Director',
         'scripty': 'Script Supervisor',
         'client': 'Client / Agency',
         'crew': 'Crew Member',
@@ -97,25 +126,26 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
                 <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Authorized Silos</label>
                 <div className="grid grid-cols-2 gap-4">
                     {availableKeys.map((key: string) => {
+                        const IconComp = SILO_ICONS[key] || FileText;
                         const permission = roleMatrix[key]; // 'view' or 'edit'
-                        const isEdit = permission === 'edit';
+                        const isEdit = permission === 'edit' || roleId === 'owner'; // Owner master access
                         
                         return (
                             <button
                                 key={key}
                                 onClick={() => onSelectTab(key)}
-                                className="relative bg-zinc-900 border border-zinc-800 p-5 rounded-2xl text-left transition-all active:scale-95 active:bg-black hover:border-zinc-700 shadow-lg group overflow-hidden"
+                                className="relative bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 p-5 rounded-2xl text-left transition-all active:scale-95 active:bg-black hover:border-zinc-700 shadow-xl group overflow-hidden"
                             >
                                 <div className="absolute top-3 right-3 opacity-60">
-                                    {isEdit ? <Edit3 size={14} className="text-emerald-500" /> : <Eye size={14} className="text-blue-500" />}
+                                    {isEdit ? <Edit3 size={11} className="text-emerald-500" /> : <Eye size={11} className="text-blue-500" />}
                                 </div>
 
                                 <div className="mb-4">
-                                    <FileText size={24} className={isEdit ? "text-amber-500" : "text-zinc-500"} />
+                                    <IconComp size={22} className={isEdit ? "text-amber-500" : "text-zinc-500"} />
                                 </div>
 
                                 <div className="space-y-0.5">
-                                    <h3 className="text-[11px] font-black uppercase tracking-widest text-white">{DOC_LABELS[key] || key.replace(/-/g, ' ')}</h3>
+                                    <h3 className="text-[11px] font-black uppercase tracking-widest text-white leading-tight">{DOC_LABELS[key] || key.replace(/-/g, ' ')}</h3>
                                 </div>
                             </button>
                         );
@@ -416,11 +446,10 @@ export default function OnSetMobilePage() {
             }
 
             const MOBILE_SUPPORTED = [
-                'av-script', 'shot-scene-book', 'call-sheet', 'schedule', 'dit-log',
-                'camera-report', 'on-set-notes', 'locations', 'crew-list', 'releases',
-                'script-notes', 'sound-report',
-                'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard',
-                'creative-brief', 'treatment', 'client-selects', 'deliverables', 'lookbook', 'archive'
+                'project-vision', 'creative-brief', 'av-script', 'treatment', 'storyboard', 'lookbook',
+                'shot-scene-book', 'budget', 'crew-list', 'releases', 'casting', 'locations', 'equipment-list', 'wardrobe', 'props-list',
+                'schedule', 'call-sheet', 'on-set-notes', 'camera-report', 'script-notes', 'sound-report', 'dit-log',
+                'client-selects', 'deliverables', 'archive'
             ];
 
             const mapMobileKey = (k: string) => {
