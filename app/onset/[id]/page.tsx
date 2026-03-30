@@ -196,6 +196,7 @@ interface MobileState {
     _canEdit?: boolean;
     _isMasterOwner?: boolean;
     _isTestMode?: boolean;
+    _roleId?: string;
 }
 
 /* --------------------------------------------------------------------------------
@@ -506,8 +507,21 @@ export default function OnSetMobilePage() {
             );
             
             // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
-            const roleId = me?.mobileRoleId || role?.toLowerCase().replace(/\s+/g, '-');
-            const roleMatrix = matrix[roleId] || {};
+            let roleId = me?.mobileRoleId;
+            if (!roleId && me?.role) {
+                // FORCE HYDRATION: Map common production roles to their tactical matrix IDs
+                const r = me.role.toLowerCase();
+                if (r === 'dit') roleId = 'dit';
+                else if (r.includes('producer')) roleId = 'producer';
+                else if (r === 'director') roleId = 'director';
+                else if (r.includes('supervisor') || r === 'scripty') roleId = 'scripty';
+                else if (r.includes('photo') || r === 'dp') roleId = 'dp';
+                else if (r.includes('client') || r.includes('agency')) roleId = 'client';
+                else roleId = r.replace(/\s+/g, '-');
+            }
+            if (!roleId) roleId = role?.toLowerCase().replace(/\s+/g, '-');
+
+            const roleMatrix = matrix[roleId!] || {};
             
             // canEdit handles the per-tab write access
             const canEdit = (!!isMasterOwner && !isTestMode) || (!!activeTab && roleMatrix[activeTab] === 'edit');
@@ -542,7 +556,14 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
-            const finalData = { ...computedData, availableKeys, _canEdit: !!canEdit, _isMasterOwner: !!isMasterOwner, _isTestMode: !!isTestMode };
+            const finalData = { 
+                ...computedData, 
+                availableKeys, 
+                _canEdit: !!canEdit, 
+                _isMasterOwner: !!isMasterOwner, 
+                _isTestMode: !!isTestMode,
+                _roleId: roleId
+            };
             setData(finalData);
 
             // AUTO CLEAR TEST MODE IF NOT OWNER (SAFETY)
@@ -1547,9 +1568,7 @@ export default function OnSetMobilePage() {
                         {activeTab === '' ? (() => {
                             const controlDoc = data.docs['onset-mobile-control'];
                             const matrixObj = controlDoc?.matrix || {};
-                            const crewList = data.docs['crew-list']?.crew || [];
-                            const meObj = crewList.find((c: any) => c.email?.toLowerCase() === userEmail?.toLowerCase());
-                            const rId = meObj?.mobileRoleId || userRole?.toLowerCase().replace(/\s+/g, '-');
+                            const rId = data._roleId || 'crew';
 
                             return (
                                 <MobileLanding
