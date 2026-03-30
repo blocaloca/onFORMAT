@@ -195,6 +195,7 @@ interface MobileState {
     availableKeys?: string[];
     _canEdit?: boolean;
     _isMasterOwner?: boolean;
+    _isTestMode?: boolean;
 }
 
 /* --------------------------------------------------------------------------------
@@ -219,7 +220,18 @@ export default function OnSetMobilePage() {
     const [isOffline, setIsOffline] = useState(false);
     const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
     const [myProjects, setMyProjects] = useState<any[]>([]);
+    const [isTestMode, setIsTestMode] = useState(false);
     const [liveUsers, setLiveUsers] = useState<string[]>([]);
+
+    // --------------------------------------------------------------------------------
+    // RECOVERY: Load test mode on mount
+    // --------------------------------------------------------------------------------
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedTestMode = localStorage.getItem('onset_test_mode') === 'true';
+            setIsTestMode(storedTestMode);
+        }
+    }, []);
 
     const activeTabRef = useRef(activeTab);
     useEffect(() => {
@@ -361,14 +373,14 @@ export default function OnSetMobilePage() {
             const storedEmail = localStorage.getItem('onset_user_email');
             let emailToUse = storedEmail;
 
-            // Try to get from Auth if not in local storage
-            if (!emailToUse) {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session?.user) {
-                    emailToUse = session.user.email!;
-                    localStorage.setItem('onset_user_email', emailToUse);
-                }
-            }
+            // Try to get from Auth if not in local storage - REMOVED FOR IDENTITY RECOVERY
+            // if (!emailToUse) {
+            //     const { data: { session } } = await supabase.auth.getSession();
+            //     if (session?.user) {
+            //         emailToUse = session.user.email!;
+            //         localStorage.setItem('onset_user_email', emailToUse);
+            //     }
+            // }
 
             if (!emailToUse) {
                 setShowLogin(true);
@@ -498,16 +510,16 @@ export default function OnSetMobilePage() {
             const roleMatrix = matrix[roleId] || {};
             
             // canEdit handles the per-tab write access
-            const canEdit = !!isMasterOwner || (!!activeTab && roleMatrix[activeTab] === 'edit');
+            const canEdit = (!!isMasterOwner && !isTestMode) || (!!activeTab && roleMatrix[activeTab] === 'edit');
 
             let availableKeys: string[] = [];
 
-            if (mobileControl && !isLive && !isMasterOwner) {
+            if (mobileControl && !isLive && (!isMasterOwner || isTestMode)) {
                 availableKeys = [];
             } else {
                 // DYNAMIC MATRIX RESOLUTION
                 availableKeys = MOBILE_SUPPORTED.filter(k => {
-                    if (roleId === 'owner') return true;
+                    if (roleId === 'owner' || (isMasterOwner && !isTestMode)) return true;
                     
                     // Robust lookup: check exact key OR map legacy aliases to confirm permission
                     const permission = roleMatrix[k] || (() => {
@@ -530,8 +542,14 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
-            const finalData = { ...computedData, availableKeys, _canEdit: !!canEdit, _isMasterOwner: !!isMasterOwner };
+            const finalData = { ...computedData, availableKeys, _canEdit: !!canEdit, _isMasterOwner: !!isMasterOwner, _isTestMode: !!isTestMode };
             setData(finalData);
+
+            // AUTO CLEAR TEST MODE IF NOT OWNER (SAFETY)
+            if (!isMasterOwner && isTestMode) {
+                localStorage.removeItem('onset_test_mode');
+                setIsTestMode(false);
+            }
 
             // CACHE FOR OFFLINE SAFETY NET (NOW INCLUDES AVAILABLE KEYS)
             localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(finalData));
@@ -1420,7 +1438,27 @@ export default function OnSetMobilePage() {
                                     </div>
                                 )}
 
-                                <div className="border-t border-zinc-100 dark:border-zinc-800 mt-6 pt-6 space-y-3">
+                                 <div className="border-t border-zinc-100 dark:border-zinc-800 mt-6 pt-6 space-y-3">
+                                    {data._isMasterOwner && (
+                                        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-orange-50/5 border border-orange-500/10 mb-4 animate-in fade-in slide-in-from-top-2">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-500 leading-none">Simulate Role</span>
+                                                <span className="text-[8px] text-zinc-500 leading-tight mt-1 max-w-[120px]">Hides Owner bypass for testing matrix</span>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    const newVal = !isTestMode;
+                                                    setIsTestMode(newVal);
+                                                    localStorage.setItem('onset_test_mode', String(newVal));
+                                                    fetchData(); // Refresh permissions immediately
+                                                }}
+                                                className={`w-10 h-6 p-1 rounded-full transition-colors flex items-center shadow-inner ${isTestMode ? 'bg-orange-500' : 'bg-zinc-200 dark:bg-zinc-800'}`}
+                                            >
+                                                <div className={`w-4 h-4 bg-white rounded-full shadow-lg transform transition-transform duration-200 ${isTestMode ? 'translate-x-4 scale-110' : 'translate-x-0'}`} />
+                                            </button>
+                                        </div>
+                                    )}
+
                                     <button
                                         onClick={async () => {
                                             // Explicit Presence Cleanup for Mobile
@@ -1440,6 +1478,7 @@ export default function OnSetMobilePage() {
                                             }
 
                                             localStorage.removeItem('onset_user_email');
+                                            localStorage.removeItem('onset_test_mode');
                                             window.location.reload();
                                         }}
                                         className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 dark:bg-zinc-900/50 transition-colors">
@@ -1462,6 +1501,7 @@ export default function OnSetMobilePage() {
                                                 await supabase.removeAllChannels();
                                             }
                                             localStorage.removeItem('onset_user_email');
+                                            localStorage.removeItem('onset_test_mode');
                                             await supabase.auth.signOut();
                                             localStorage.clear();
                                             window.location.href = '/api/auth/logout';
