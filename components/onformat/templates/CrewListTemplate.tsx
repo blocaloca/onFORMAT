@@ -5,32 +5,26 @@ import { DocumentLayout } from './DocumentLayout';
 import { Trash2, Plus, ShieldCheck } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
 
-const DEPARTMENTS: Record<string, string[]> = {
-    'Production': ['Producer', 'UPM', 'Coordinator', 'Prod. Assist (PA)', 'Script Sup.'],
-    'Director': ['Director', '1st AD', '2nd AD'],
-    'Camera': ['Director of Photography', 'Camera Operator', '1st AC', '2nd AC', 'DIT', 'Steadicam', 'Media Manager'],
-    'Lighting': ['Gaffer', 'Best Boy Electric', 'Electrician', 'Board Op', 'Generator Op'],
-    'Grip': ['Key Grip', 'Best Boy Grip', 'Grip', 'Dolly Grip'],
-    'Sound': ['Sound Mixer', 'Boom Operator', 'Utility'],
-    'Art': ['Production Designer', 'Art Director', 'Prop Master', 'Set Dresser', 'Constr. Coord'],
-    'Wardrobe/HMU': ['Stylist', 'Assistant Stylist', 'Makeup Artist', 'Hair Stylist'],
-    'Locations': ['Location Manager', 'Scout', 'Site Rep', 'Security'],
-    'Post': ['Editor', 'Assistant Editor', 'Colorist', 'Sound Design', 'VFX Supervisor'],
-    'Other': ['BTS Camera', 'Agency', 'Client Representative', 'Publicist']
-};
+const PRODUCTION_ROLES = [
+    'Producer', 'Director', 'Director of Photography', '1st AD', '2nd AD',
+    'UPM / Line Producer', 'Production Coordinator', 'Script Supervisor',
+    'Gaffer', 'Key Grip', 'Sound Mixer', 'DIT', 'Media Manager',
+    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'Makeup Artist',
+    'Editor', 'Location Manager', 'PA (Production Assistant)',
+    'General Crew', 'Other'
+];
 
 const FALLBACK_MOBILE_ROLES = [
     { id: 'producer', name: 'Producer' },
     { id: 'dit', name: 'DIT' },
     { id: 'scripty', name: 'Script Supervisor' },
-    { id: 'dp', name: 'Director of Photo' },
+    { id: 'dp', name: 'Director of Photography' },
     { id: 'client', name: 'Client / Agency' },
     { id: 'crew', name: 'General Crew' }
 ];
 
 interface CrewMember {
     id: string;
-    department: string;
     role: string;
     name: string;
     email: string;
@@ -58,12 +52,10 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     const mobileRoles = (metadata?.mobileRoles && metadata.mobileRoles.length > 0) ? metadata.mobileRoles : FALLBACK_MOBILE_ROLES;
 
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
-    const deptOptions = Object.keys(DEPARTMENTS);
 
     const handleAddItem = () => {
         const newItem: CrewMember = {
             id: `crew-${Math.random().toString(36).substr(2, 9)}`,
-            department: 'Production',
             role: '',
             name: '',
             email: '',
@@ -82,7 +74,15 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             if (roleMatch) {
                 newItems[index].mobileRoleId = roleMatch.id;
             } else {
-                newItems[index].mobileRoleId = 'crew'; 
+                // Tactical Auto-Hydration for standardized roles if mobileRoleId is missing
+                const r = updates.role.toLowerCase();
+                if (r === 'dit') newItems[index].mobileRoleId = 'dit';
+                else if (r.includes('producer')) newItems[index].mobileRoleId = 'producer';
+                else if (r === 'director') newItems[index].mobileRoleId = 'director';
+                else if (r.includes('supervisor') || r === 'scripty') newItems[index].mobileRoleId = 'scripty';
+                else if (r.includes('photo') || r === 'dp') newItems[index].mobileRoleId = 'dp';
+                else if (r.includes('client') || r.includes('agency')) newItems[index].mobileRoleId = 'client';
+                else newItems[index].mobileRoleId = 'crew'; 
             }
         }
 
@@ -112,7 +112,6 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     }, [metadata?.projectId]);
 
     const headerLabelStyle = "text-[10px] font-bold uppercase tracking-widest text-zinc-400";
-    const pillSelectStyle = "appearance-none bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm rounded-sm px-2 font-black text-[10px] uppercase cursor-pointer outline-none text-zinc-900 dark:text-zinc-100";
     const inputStyle = "font-medium text-sm bg-zinc-50 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm px-3 py-1.5 outline-none focus:bg-white dark:focus:bg-zinc-800 placeholder:text-zinc-200 w-full text-zinc-900 dark:text-zinc-100";
 
     return (
@@ -125,11 +124,9 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         >
             <div className="space-y-6 text-sm font-sans flex-1">
                 
-                {/* Reorganized Layout Grid */}
-                {/* [DEPT 80] [ROLE 120] [NAME 1FR] [EMAIL 160] [PHONE 120] [STATUS 50] [ACTIONS 30] */}
-                <div className="grid grid-cols-[80px_120px_1fr_160px_120px_50px_30px] gap-4 border-b border-black pb-2 items-end">
-                    <span className={headerLabelStyle}>Dept</span>
-                    <span className={headerLabelStyle}>Role</span>
+                {/* Reorganized Layout Grid: role(160) name(1fr) email(180) phone(140) status(50) actions(30) */}
+                <div className="grid grid-cols-[160px_1fr_180px_140px_50px_30px] gap-4 border-b border-black pb-2 items-end">
+                    <span className={headerLabelStyle}>Production Role</span>
                     <span className={headerLabelStyle}>Full Name</span>
                     <span className={headerLabelStyle}>Email</span>
                     <span className={headerLabelStyle}>Phone</span>
@@ -140,37 +137,24 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                 <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
                     {items.map((item, idx) => {
                         const isOnline = onlineUsers.has(item.email?.toLowerCase());
-                        const suggestions = DEPARTMENTS[item.department] || [];
-                        const roleSynced = mobileRoles.some((r: any) => r.id === item.mobileRoleId && r.id !== 'crew');
+                        const roleSynced = mobileRoles.some((r: any) => r.id === item.mobileRoleId && r.id !== 'crew') || 
+                                          ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[80px_120px_1fr_160px_120px_50px_30px] gap-4 py-2.5 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-colors">
+                            <div key={item.id} className="grid grid-cols-[160px_1fr_180px_140px_50px_30px] gap-4 py-2.5 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-colors">
                                 
-                                {/* 1. Dept Select */}
-                                <div className="relative">
-                                    <select 
-                                        value={item.department}
-                                        onChange={(e) => handleUpdateItem(idx, { department: e.target.value })}
-                                        className={pillSelectStyle}
-                                        disabled={isLocked || isPrinting}
-                                    >
-                                        {deptOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                                    </select>
-                                </div>
-
-                                {/* 2. Production Role (Moved Left) */}
+                                {/* 1. Simplified Production Role Selector */}
                                 <div className="relative group/role">
                                     <input 
                                         value={item.role}
                                         onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
-                                        placeholder="Role..."
-                                        className="font-black text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm rounded-sm px-2 py-1 outline-none focus:bg-white dark:focus:bg-zinc-800 uppercase w-full text-zinc-900 dark:text-zinc-100"
+                                        placeholder="Select Role..."
+                                        className="font-black text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm rounded-sm px-2 py-1.5 outline-none focus:bg-white dark:focus:bg-zinc-800 uppercase w-full text-zinc-900 dark:text-zinc-100"
                                         disabled={isLocked || isPrinting}
                                         list={`roles-${idx}`}
                                     />
                                     <datalist id={`roles-${idx}`}>
-                                        {mobileRoles.map((r: any) => <option key={r.id} value={r.name} />)}
-                                        {suggestions.map(opt => <option key={opt} value={opt} />)}
+                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
                                     </datalist>
                                     {roleSynced && !isPrinting && (
                                         <div className="absolute -top-1 -right-1 bg-emerald-500 rounded-full p-0.5 text-white shadow-sm ring-1 ring-white">
@@ -179,7 +163,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     )}
                                 </div>
 
-                                {/* 3. Full Name (MAXIMIZED 1FR) */}
+                                {/* 2. Full Name (MAXIMIZED 1FR) */}
                                 <input 
                                     value={item.name}
                                     onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
@@ -188,7 +172,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     disabled={isLocked || isPrinting}
                                 />
 
-                                {/* 4. Email (Shortened) */}
+                                {/* 3. Email (Expanded) */}
                                 <input 
                                     value={item.email}
                                     onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
@@ -197,7 +181,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     disabled={isLocked || isPrinting}
                                 />
 
-                                {/* 5. Phone (Shortened) */}
+                                {/* 4. Phone */}
                                 <input 
                                     value={item.phone}
                                     onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
@@ -206,12 +190,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     disabled={isLocked || isPrinting}
                                 />
 
-                                {/* 6. Status LED (Pushed Right) */}
+                                {/* 5. Status LED */}
                                 <div className="flex justify-end">
                                     <div className={`w-2.5 h-2.5 rounded-full transition-all duration-700 ${isOnline ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
                                 </div>
 
-                                {/* 7. Actions */}
+                                {/* 6. Actions */}
                                 <div className="relative flex justify-center w-full">
                                     {!isLocked && (
                                         <>
