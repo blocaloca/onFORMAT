@@ -378,31 +378,31 @@ export const EmailEntryGate = ({ onJoin, projectName }: any) => {
     }
 
     return (
-        <div className="h-screen bg-zinc-50/50 dark:bg-zinc-50/50 text-zinc-900 dark:text-black flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-screen bg-zinc-50 dark:bg-black text-zinc-900 dark:text-white flex flex-col items-center justify-center p-6 text-center">
             <h1 className="text-2xl font-black uppercase tracking-tighter mb-2">Welcome to Set</h1>
-            <p className="text-xs text-zinc-500 dark:text-zinc-500 mb-8 uppercase font-bold tracking-widest">Please identify yourself</p>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-8 uppercase font-bold tracking-widest">Please identify yourself</p>
 
             <input
                 type="email"
                 placeholder="Enter your email..."
                 value={val}
                 onChange={e => setVal(e.target.value)}
-                className="w-[90%] max-w-[340px] bg-zinc-100 dark:bg-zinc-50/50 border border-zinc-300 dark:border-zinc-700 p-3 rounded text-center text-sm mb-4 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-500 dark:text-zinc-500 font-mono"
+                className="w-[90%] max-w-[340px] bg-white dark:bg-zinc-900/50 border border-zinc-300 dark:border-zinc-800 p-3 rounded-xl text-center text-sm mb-4 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-600 text-zinc-900 dark:text-white font-mono shadow-sm"
             />
 
             <button
                 onClick={() => onJoin(val)}
                 disabled={!val}
-                className="w-[90%] max-w-[340px] bg-zinc-900 text-white dark:text-zinc-500 shadow-lg shadow-zinc-900/10 font-bold uppercase py-3 rounded tracking-widest hover:bg-emerald-400 disabled:opacity-50 mb-8"
+                className="w-[90%] max-w-[340px] bg-zinc-900 dark:bg-white text-white dark:text-black shadow-xl font-bold uppercase py-3 rounded-xl tracking-widest hover:bg-emerald-500 dark:hover:bg-emerald-400 disabled:opacity-50 mb-8 transition-colors"
             >
                 Enter
             </button>
 
-            <div className="text-[10px] text-zinc-600 dark:text-zinc-500 max-w-[280px] leading-relaxed text-center space-y-4">
+            <div className="text-[10px] text-zinc-600 dark:text-zinc-400 max-w-[280px] leading-relaxed text-center space-y-4">
                 <p>
-                    By joining this project, you agree to the <button onClick={() => setViewDoc('privacy')} className="underline hover:text-zinc-500 dark:text-zinc-500 transition-colors">onFORMAT Terms of Service</button>. We use your email to secure your access to project documents and to keep you updated on platform features and industry tools. You can opt-out of marketing communications at any time via your account settings.
+                    By joining this project, you agree to the <button onClick={() => setViewDoc('privacy')} className="underline hover:text-black dark:hover:text-white transition-colors">onFORMAT Terms of Service</button>. We use your email to secure your access to project documents and to keep you updated on platform features and industry tools. You can opt-out of marketing communications at any time via your account settings.
                 </p>
-                <button onClick={() => setViewDoc('nda')} className="text-zinc-500 dark:text-zinc-500 font-bold underline uppercase tracking-wider block mx-auto hover:text-emerald-600 transition-colors">
+                <button onClick={() => setViewDoc('nda')} className="text-zinc-700 dark:text-zinc-300 font-bold underline uppercase tracking-wider block mx-auto hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
                     Read Production NDA
                 </button>
             </div>
