@@ -139,58 +139,57 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     <div className="space-y-4 h-full flex flex-col">
 
                         {/* Table Header */}
-                        <div className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px_30px] gap-2 border-b-2 pb-2 items-end border-black`}>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest text-center text-zinc-400`}>#</span>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest text-zinc-400`}>Scene</span>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest text-zinc-400`}>Size</span>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest text-zinc-400`}>Angle</span>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest text-zinc-400`}>Movement</span>
-                            <span className={`text-[10px] font-bold uppercase tracking-widest text-zinc-400`}>Description</span>
-                            <span className="text-center"><Check size={12} className={'text-zinc-300 mx-auto'} /></span>
-                            <span className="px-1"></span>
+                        <div className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 border-b border-black pb-1.5 items-end mb-1`}>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-center text-zinc-400`}>#</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-zinc-400`}>Sc</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-zinc-400`}>Size</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-zinc-400`}>Angle</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-zinc-400`}>Move</span>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-zinc-400 pl-2`}>Description</span>
+                            <span className="text-center font-black text-[9px] text-zinc-400 uppercase tracking-widest">St</span>
                         </div>
 
                         {/* Rows */}
-                        <div className="space-y-0 divide-y divide-zinc-100/10 flex-1">
+                        <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800/30 flex-1">
                             {pageShots.map((shot, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                                 return (
-                                    <div key={shot.id} className={`grid grid-cols-[30px_60px_100px_100px_100px_1fr_30px_30px] gap-2 py-2 items-start transition-colors group ${isComplete
-                                        ? (darkMode ? 'bg-emerald-900/10' : 'bg-emerald-50/50')
-                                        : (darkMode ? 'hover:bg-zinc-800/30' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50')
+                                    <div key={shot.id} className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 py-1 items-start transition-colors group ${isComplete
+                                        ? (darkMode ? 'bg-emerald-500/5' : 'bg-emerald-50/30')
+                                        : (darkMode ? 'hover:bg-zinc-800/40' : 'hover:bg-zinc-50/50')
                                         }`}>
 
                                         {/* Number */}
-                                        <div className="flex items-start justify-center pt-1.5">
-                                            <span className={`font-mono text-xs text-zinc-400`}>{(globalIdx + 1).toString().padStart(2, '0')}</span>
+                                        <div className="flex items-start justify-center pt-2">
+                                            <span className={`font-mono text-[10px] font-bold text-zinc-400`}>{(globalIdx + 1).toString().padStart(2, '0')}</span>
                                         </div>
 
                                         {/* Scene */}
-                                        <div>
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className={`w-full text-sm font-medium px-2 py-2 block text-black`}>{shot.scene}</div>
+                                                <div className={`w-full text-xs font-black px-1 py-1 block text-black truncate`}>{shot.scene}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={shot.scene}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { scene: e.target.value })}
-                                                    className={`w-full text-sm font-medium focus:outline-none border px-2 py-2 rounded-sm transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300`}
-                                                    placeholder="Sc #"
+                                                    className={`w-full text-[11px] font-black focus:outline-none border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-1 py-1 transition-all bg-transparent text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300`}
+                                                    placeholder="Sc"
                                                     disabled={isLocked}
                                                 />
                                             )}
                                         </div>
 
                                         {/* Size Dropdown */}
-                                        <div className="relative">
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 block text-black`}>{shot.size}</div>
+                                                <div className={`w-full text-[9px] uppercase font-bold tracking-tight px-1 py-1 block text-black`}>{shot.size}</div>
                                             ) : (
                                                 <select
                                                     value={shot.size}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { size: e.target.value })}
-                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700 dark:text-zinc-300`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_SIZES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -199,14 +198,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
 
                                         {/* Angle Dropdown */}
-                                        <div className="relative">
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 block text-black`}>{shot.angle}</div>
+                                                <div className={`w-full text-[9px] uppercase font-bold tracking-tight px-1 py-1 block text-black`}>{shot.angle}</div>
                                             ) : (
                                                 <select
                                                     value={shot.angle}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { angle: e.target.value })}
-                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700 dark:text-zinc-300`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_ANGLES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -215,14 +214,14 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
 
                                         {/* Movement Dropdown */}
-                                        <div className="relative">
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className={`w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 block text-black`}>{shot.movement}</div>
+                                                <div className={`w-full text-[9px] uppercase font-bold tracking-tight px-1 py-1 block text-black`}>{shot.movement}</div>
                                             ) : (
                                                 <select
                                                     value={shot.movement}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { movement: e.target.value })}
-                                                    className={`w-full appearance-none text-[11px] uppercase font-bold tracking-wider px-2 py-2 rounded-sm cursor-pointer focus:outline-none border transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white hover:bg-zinc-50`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700 dark:text-zinc-300`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_MOVEMENTS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -231,82 +230,73 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
 
                                         {/* Description */}
-                                        <div>
+                                        <div className="pt-0.5 relative group/desc">
                                             {isPrinting ? (
-                                                <div className={`w-full text-sm leading-relaxed px-2 py-2 whitespace-pre-wrap block text-black`}>{shot.description}</div>
+                                                <div className={`w-full text-[11px] leading-tight px-2 py-1 whitespace-pre-wrap block text-black`}>{shot.description}</div>
                                             ) : (
-                                                <textarea
-                                                    data-index={globalIdx}
-                                                    value={shot.description}
-                                                    onChange={autoResize}
-                                                    rows={1}
-                                                    className={`w-full text-sm leading-relaxed focus:outline-none border rounded-sm px-2 py-2 resize-none overflow-hidden min-h-[34px] transition-colors bg-white border-zinc-200 text-black focus:border-zinc-400 focus:bg-white placeholder:text-zinc-300`}
-                                                    placeholder="Describe the action..."
-                                                    disabled={isLocked}
-                                                    style={{ height: 'auto' }} // Initial reset
-                                                />
+                                                <div className="flex items-start gap-2">
+                                                    <textarea
+                                                        data-index={globalIdx}
+                                                        value={shot.description}
+                                                        onChange={autoResize}
+                                                        rows={1}
+                                                        className={`flex-1 text-[11px] leading-tight focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-2 py-1 resize-none overflow-hidden min-h-[24px] transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300`}
+                                                        placeholder="Describe action..."
+                                                        disabled={isLocked}
+                                                        style={{ height: 'auto' }}
+                                                    />
+                                                    
+                                                    {/* Delete Button - Only in Hover */}
+                                                    {!isLocked && (
+                                                        <button
+                                                            onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === globalIdx ? null : globalIdx)}
+                                                            className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 mt-0.5 ${deleteConfirmIndex === globalIdx ? 'text-red-500 opacity-100' : 'text-zinc-300 hover:text-red-400'}`}
+                                                        >
+                                                            <Trash2 size={10} />
+                                                        </button>
+                                                    )}
+
+                                                    {deleteConfirmIndex === globalIdx && (
+                                                        <div className={`absolute right-0 top-8 z-50 shadow-xl border p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100 ${darkMode ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-zinc-200'}`}>
+                                                            <button
+                                                                onClick={() => handleDeleteShot(globalIdx)}
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[9px] font-black py-1.5 px-2 rounded-md uppercase w-full transition-colors tracking-widest"
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
 
                                         {/* Status Toggle Checkbox */}
-                                        <div className="flex justify-center pt-2 w-full">
+                                        <div className="flex justify-center pt-1.5 w-full">
                                             <button
                                                 onClick={() => handleUpdateShot(globalIdx, { status: isComplete ? 'PENDING' : 'COMPLETE' })}
                                                 disabled={isLocked}
-                                                className={`w-[14px] h-[14px] rounded-sm border transition-colors flex items-center justify-center ${isComplete
-                                                        ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
-                                                        : (darkMode ? 'border-zinc-700 hover:border-zinc-500 bg-black' : 'border-zinc-300 hover:border-zinc-400 bg-white')
+                                                className={`w-3.5 h-3.5 rounded flex items-center justify-center transition-all ${isComplete
+                                                        ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20'
+                                                        : (darkMode ? 'bg-zinc-800 text-zinc-600 border border-zinc-700' : 'bg-zinc-100 text-zinc-300 border border-zinc-200')
                                                     } ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                             >
-                                                {isComplete && <Check size={10} strokeWidth={3} />}
+                                                {isComplete && <Check size={10} strokeWidth={4} />}
                                             </button>
                                         </div>
-
-                                        {/* Delete Button with Confirmation Popover */}
-                                        {!isLocked && !isPrinting && (
-                                            <div className="relative flex justify-center w-full pt-1">
-                                                <button
-                                                    onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === globalIdx ? null : globalIdx)}
-                                                    className={`hover:text-red-500 transition-opacity flex justify-center w-full ${deleteConfirmIndex === globalIdx ? 'opacity-100 text-red-500' : `opacity-0 group-hover:opacity-100 ${darkMode ? 'text-zinc-600' : 'text-zinc-300'}`}`}
-                                                >
-                                                    <Trash2 size={12} />
-                                                </button>
-
-                                                {deleteConfirmIndex === globalIdx && (
-                                                    <div className={`absolute right-0 top-6 z-50 shadow-xl border p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100 ${darkMode ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-zinc-200'}`}>
-                                                        <span className={`text-[10px] font-bold text-center uppercase tracking-widest ${darkMode ? 'text-zinc-300' : 'text-black'}`}>Remove?</span>
-                                                        <button
-                                                            onClick={() => handleDeleteShot(globalIdx)}
-                                                            className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </div>
-                                                )}
-
-                                                {/* Backdrop to close when clicking outside (transparent) */}
-                                                {deleteConfirmIndex === globalIdx && (
-                                                    <div
-                                                        className="fixed inset-0 z-40 bg-transparent"
-                                                        onClick={() => setDeleteConfirmIndex(null)}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
                                     </div>
                                 )
                             })}
 
                             {/* Add Shot Button */}
                             {!isLocked && !isPrinting && (
-                                <div className="pt-4 print-hidden">
+                                <div className="pt-3 print-hidden">
                                     <button
                                         onClick={handleAddShot}
-                                        className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest px-4 py-3 rounded-sm w-full transition-colors border ${darkMode
-                                            ? 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:bg-zinc-700 hover:text-white hover:border-zinc-600'
-                                            : 'bg-zinc-50 dark:bg-zinc-900/50 border-zinc-200 text-zinc-500 hover:bg-white hover:text-black dark:hover:text-zinc-100 hover:border-zinc-300'}`}
+                                        className={`flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2.5 rounded-xl w-[120px] transition-all border ${darkMode
+                                            ? 'bg-zinc-900/40 border-zinc-800 text-zinc-500 hover:bg-zinc-800 hover:text-white'
+                                            : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:bg-white hover:text-zinc-900 hover:border-zinc-300'}`}
                                     >
-                                        <Plus size={10} className="mr-1" /> Add Shot
+                                        <Plus size={10} /> Add Shot
                                     </button>
 
                                     {metadata?.importedAVScript?.rows && (

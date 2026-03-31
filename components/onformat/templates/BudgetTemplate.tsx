@@ -151,36 +151,36 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                         )}
 
                         {/* Table Header */}
-                        <div className="grid grid-cols-[110px_110px_1fr_60px_80px_60px_90px_30px] gap-3 border-b border-black pb-2 items-end">
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Category</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Role/Item</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Description</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Unit</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Rate</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Qty/Days</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Total</span>
+                        <div className="grid grid-cols-[100px_100px_1fr_50px_80px_60px_90px_30px] gap-2 border-b border-black pb-1.5 items-end mb-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Category</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Line Item</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 pl-2">Description</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 text-center">Unit</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 text-right">Rate</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 text-right">Qty</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400 text-right">Total</span>
                             <span className="px-1"></span>
                         </div>
 
                         {/* Rows */}
-                        <div className="flex-1 space-y-0 divide-y divide-zinc-100">
+                        <div className="flex-1 space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800/30">
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const subCats = CATEGORIES[item.category] || [];
                                 const lineTotal = item.rate * item.quantity;
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[110px_110px_1fr_60px_80px_60px_90px_30px] gap-3 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[100px_100px_1fr_50px_80px_60px_90px_30px] gap-2 py-1 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/40 dark:bg-zinc-900/40 transition-colors group">
 
                                         {/* Category */}
-                                        <div className="relative">
+                                        <div className="relative pt-0.5">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-2 py-2 text-ellipsis overflow-hidden whitespace-nowrap block text-zinc-900">{item.category}</div>
+                                                <div className="w-full text-[9px] uppercase font-black tracking-tight px-1 py-1 text-ellipsis overflow-hidden whitespace-nowrap block text-black">{item.category}</div>
                                             ) : (
                                                 <select
                                                     value={item.category}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { category: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900"
+                                                    className="w-full appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:outline-none focus:border-zinc-400 text-[10px] font-black uppercase tracking-tight px-1 py-1 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900 dark:text-zinc-100"
                                                     disabled={isLocked}
                                                 >
                                                     {categoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -189,14 +189,14 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         </div>
 
                                         {/* SubCategory */}
-                                        <div className="relative">
+                                        <div className="relative pt-0.5">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] font-medium px-2 py-2 text-ellipsis overflow-hidden whitespace-nowrap block text-zinc-900">{item.subCategory}</div>
+                                                <div className="w-full text-[10px] font-bold px-1 py-1 text-ellipsis overflow-hidden whitespace-nowrap block text-black">{item.subCategory}</div>
                                             ) : (
                                                 <select
                                                     value={item.subCategory}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { subCategory: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm font-medium px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900"
+                                                    className="w-full appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:outline-none focus:border-zinc-400 text-[10px] font-bold px-1 py-1 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap text-zinc-900 dark:text-zinc-100"
                                                     disabled={isLocked}
                                                 >
                                                     {subCats.length > 0 ? (
@@ -207,15 +207,15 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         </div>
 
                                         {/* Description */}
-                                        <div>
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-normal px-1 py-1.5 block text-zinc-800 leading-relaxed">{item.description || "—"}</div>
+                                                <div className="w-full text-[11px] font-normal px-1 py-1 block text-zinc-900 leading-tight">{item.description || "—"}</div>
                                             ) : (
                                                 <input
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-zinc-50 border border-zinc-200 text-sm font-normal focus:outline-none focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 text-zinc-900 placeholder:text-zinc-400"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 focus:outline-none focus:border-emerald-500/50 rounded-none px-2 py-1 text-[11px] text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 transition-all font-medium"
                                                     placeholder="Details..."
                                                     disabled={isLocked}
                                                 />
@@ -223,14 +223,14 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         </div>
 
                                         {/* Rate Type */}
-                                        <div className="relative">
+                                        <div className="relative pt-0.5 text-center">
                                             {isPrinting ? (
-                                                <div className="w-full text-[10px] uppercase font-bold tracking-wider px-1 py-2 text-center block text-zinc-900">{item.rateType}</div>
+                                                <div className="w-full text-[9px] uppercase font-black tracking-tight px-1 py-1 block text-black">{item.rateType}</div>
                                             ) : (
                                                 <select
                                                     value={item.rateType}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { rateType: e.target.value })}
-                                                    className="w-full appearance-none bg-zinc-50 border border-zinc-200 text-sm uppercase font-bold tracking-wider px-2 py-1.5 rounded cursor-pointer focus:outline-none focus:ring-1 focus:ring-zinc-400 text-center text-zinc-900"
+                                                    className="w-full appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:outline-none focus:border-zinc-400 text-[10px] uppercase font-black tracking-tight px-1 py-1 rounded cursor-pointer text-center text-zinc-700 dark:text-zinc-300"
                                                     disabled={isLocked}
                                                 >
                                                     {RATE_TYPES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -239,15 +239,15 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         </div>
 
                                         {/* Rate */}
-                                        <div>
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-mono text-right px-1 py-1.5 block text-black">{formatter.format(item.rate)}</div>
+                                                <div className="w-full text-[11px] font-mono font-bold text-right px-1 py-1 block text-black">{formatter.format(item.rate)}</div>
                                             ) : (
                                                 <input
                                                     type="number"
                                                     value={item.rate || ''}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { rate: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-zinc-50 border border-zinc-200 text-sm font-mono text-right focus:outline-none focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 text-zinc-900 placeholder:text-zinc-400"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 focus:outline-none focus:border-emerald-500/50 text-[11px] font-mono text-right rounded-none px-1 py-1 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 transition-all"
                                                     placeholder="0.00"
                                                     disabled={isLocked}
                                                 />
@@ -255,15 +255,15 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         </div>
 
                                         {/* Quantity */}
-                                        <div>
+                                        <div className="pt-0.5">
                                             {isPrinting ? (
-                                                <div className="w-full text-sm font-mono text-center px-1 py-1.5 block text-black">{item.quantity}</div>
+                                                <div className="w-full text-[11px] font-mono font-bold text-center px-1 py-1 block text-black">{item.quantity}</div>
                                             ) : (
                                                 <input
                                                     type="number"
                                                     value={item.quantity || ''}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { quantity: parseFloat(e.target.value) || 0 })}
-                                                    className="w-full bg-zinc-50 border border-zinc-200 text-sm font-mono text-center focus:outline-none focus:ring-1 focus:ring-zinc-400/10 rounded px-2 py-1 text-zinc-900 placeholder:text-zinc-400"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 focus:outline-none focus:border-emerald-500/50 text-[11px] font-mono text-center rounded-none px-1 py-1 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 transition-all"
                                                     placeholder="1"
                                                     disabled={isLocked}
                                                 />
@@ -271,8 +271,8 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         </div>
 
                                         {/* Line Total */}
-                                        <div className="text-right pt-1">
-                                            <span className="text-sm font-mono font-bold text-black">{formatter.format(lineTotal)}</span>
+                                        <div className="text-right pt-1.5 px-1">
+                                            <span className="text-[11px] font-mono font-black text-black dark:text-white">{formatter.format(lineTotal)}</span>
                                         </div>
 
                                         {/* Delete Button with Confirmation Popover */}
@@ -281,17 +281,16 @@ export const BudgetTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                                 <div className="relative">
                                                     <button
                                                         onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === globalIdx ? null : globalIdx)}
-                                                        className={`hover:text-red-500 transition-opacity flex justify-center w-full ${deleteConfirmIndex === globalIdx ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100 text-zinc-300'}`}
+                                                        className={`hover:text-red-500 transition-opacity flex justify-center w-full p-1 ${deleteConfirmIndex === globalIdx ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100 text-zinc-300'}`}
                                                     >
-                                                        <Trash2 size={12} />
+                                                        <Trash2 size={10} />
                                                     </button>
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                            <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                        <div className="absolute right-0 top-8 z-50 bg-white dark:bg-zinc-900 shadow-xl border border-zinc-200 dark:border-zinc-700 p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100">
                                                             <button
                                                                 onClick={() => handleDeleteItem(globalIdx)}
-                                                                className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                                className="bg-red-500 hover:bg-red-600 text-white text-[9px] font-black py-1.5 px-2 rounded-md uppercase w-full transition-colors tracking-widest"
                                                             >
                                                                 Delete
                                                             </button>

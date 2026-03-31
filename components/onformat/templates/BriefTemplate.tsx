@@ -54,12 +54,14 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         const textVal = (val as string) || '';
         return (
             <div className="relative group/field">
-                <textarea
-                    className={`${inputStyle} ${minHeight} print:hidden`}
-                    value={textVal}
-                    onChange={(e) => handleChange(key, e.target.value)}
-                    placeholder={placeholder}
-                />
+                {!isPrinting && (
+                    <textarea
+                        className={`${inputStyle} ${minHeight} print:hidden`}
+                        value={textVal}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        placeholder={placeholder}
+                    />
+                )}
                 <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3`}>
                     {textVal || "—"}
                 </div>
@@ -69,7 +71,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
 
     const pages = [
         {
-            title: "Creative Brief: Strategy",
+            title: "Creative Brief",
             sections: [
                 { label: 'Vision', field: 'product', placeholder: 'Vision Summary...', minHeight: 'min-h-[80px]' },
                 { label: 'Objective', field: 'objective', placeholder: 'Primary goal...', minHeight: 'min-h-[60px]' },
@@ -79,7 +81,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
             ]
         },
         {
-            title: "Creative Brief: Execution",
+            title: "Creative Brief",
             sections: [
                 { label: 'Narrative / Creative Approach', field: 'narrative', placeholder: 'Describe the story in detail...', minHeight: 'min-h-[220px]' },
                 { label: 'Talent / Casting', field: 'talent', placeholder: 'Key roles, demographic...', minHeight: 'min-h-[100px]' },
@@ -129,7 +131,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
             {pages.map((page, idx) => {
                 const isExecutionPage = idx === 1;
                 const narrativeText = data.narrative || '';
-                const CHAR_LIMIT = 2000;
+                const CHAR_LIMIT = 1800;
 
                 // Only split narrative if it's the execution page and text is long
                 if (isExecutionPage && narrativeText.length > CHAR_LIMIT) {
@@ -156,7 +158,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                             plain={plain}
                             orientation={orientation}
                             isPrinting={isPrinting}
-                            subtitle={chunkIdx > 0 ? `Execution (Cont. ${chunkIdx})` : `Execution`}
+                            subtitle={chunkIdx > 0 ? `(Cont. ${chunkIdx})` : ``}
                         >
                             <div className="space-y-6 h-full flex flex-col">
                                 <div className="space-y-6">
@@ -206,7 +208,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                         plain={plain}
                         orientation={orientation}
                         isPrinting={isPrinting}
-                        subtitle={idx > 0 ? `Execution` : `Strategy`}
+                        subtitle={""}
                     >
                         <div className="space-y-6 h-full flex flex-col">
                             <div className="space-y-6">

@@ -120,8 +120,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         return () => { supabase.removeChannel(pulseChannel); };
     }, [metadata?.projectId]);
 
-    const headerLabelStyle = "text-[10px] font-bold uppercase tracking-widest text-zinc-400";
-    const inputStyle = "font-medium text-sm bg-zinc-50 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm px-3 py-1.5 outline-none focus:bg-white dark:focus:bg-zinc-800 placeholder:text-zinc-200 w-full text-zinc-900 dark:text-zinc-100";
+    const headerLabelStyle = "text-[9px] font-black uppercase tracking-widest text-zinc-400";
+    const inputStyle = "text-[11px] font-medium bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-2 py-1 outline-none transition-all w-full text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300";
 
     return (
         <DocumentLayout
@@ -131,96 +131,117 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             orientation={orientation}
             metadata={metadata}
         >
-            <div className="space-y-6 text-sm font-sans flex-1">
+            <div className="space-y-4 text-sm font-sans flex-1">
                 
-                {/* Reorganized Layout Grid: role(160) name(1fr) email(180) phone(140) status(50) actions(30) */}
-                <div className="grid grid-cols-[160px_1fr_180px_140px_50px_30px] gap-4 border-b border-black pb-2 items-end">
+                {/* Tactical Grid Header: role(180) name(1fr) email(180) phone(140) status(50) actions(30) */}
+                <div className="grid grid-cols-[180px_1fr_180px_140px_50px_30px] gap-3 border-b border-black pb-1.5 items-end mb-1">
                     <span className={headerLabelStyle}>Production Role</span>
-                    <span className={headerLabelStyle}>Full Name</span>
+                    <span className={`${headerLabelStyle} pl-2`}>Full Name</span>
                     <span className={headerLabelStyle}>Email</span>
                     <span className={headerLabelStyle}>Phone</span>
-                    <span className={`${headerLabelStyle} text-right`}>Status</span>
+                    <span className={`${headerLabelStyle} text-right`}>Sync</span>
                     <span className="w-full"></span>
                 </div>
 
-                <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800">
+                <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800/30 flex-1">
                     {items.map((item, idx) => {
                         const isOnline = onlineUsers.has(item.email?.toLowerCase());
                         const roleSynced = mobileRoles.some((r: any) => r.id === item.mobileRoleId && r.id !== 'crew') || 
                                           ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[160px_1fr_180px_140px_50px_30px] gap-4 py-2.5 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/10 transition-colors">
+                            <div key={item.id} className="grid grid-cols-[180px_1fr_180px_140px_50px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
                                 
-                                {/* 1. Simplified Production Role Selector */}
-                                <div className="relative group/role">
-                                    <input 
-                                        value={item.role}
-                                        onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
-                                        placeholder="Select Role..."
-                                        className="font-black text-[10px] bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-sm rounded-sm px-2 py-1.5 outline-none focus:bg-white dark:focus:bg-zinc-800 uppercase w-full text-zinc-900 dark:text-zinc-100"
-                                        disabled={isLocked || isPrinting}
-                                        list={`roles-${idx}`}
-                                    />
-                                    <datalist id={`roles-${idx}`}>
-                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
-                                    </datalist>
-                                    {roleSynced && !isPrinting && (
-                                        <div className="absolute -top-1 -right-1 bg-blue-500 rounded-full p-0.5 text-white shadow-sm ring-1 ring-white">
-                                            <ShieldCheck size={7} />
+                                {/* 1. Role Selector with Sync Badge */}
+                                <div className="relative pt-0.5">
+                                    {isPrinting ? (
+                                        <div className="w-full text-[10px] uppercase font-black tracking-tight px-1 py-1 block text-black truncate">{item.role}</div>
+                                    ) : (
+                                        <div className="relative flex items-center">
+                                            {roleSynced && (
+                                                <div className="absolute left-0 w-1 h-3 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.5)]" title="Tactical Sync Active" />
+                                            )}
+                                            <input 
+                                                value={item.role}
+                                                onChange={(e) => handleUpdateItem(idx, { role: e.target.value })}
+                                                placeholder="Role..."
+                                                className={`text-[10px] font-black uppercase tracking-tight bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-zinc-400 px-2 py-1 outline-none w-full text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 ${roleSynced ? 'pl-3' : 'pl-1'}`}
+                                                disabled={isLocked}
+                                                list={`roles-${idx}`}
+                                            />
+                                            <datalist id={`roles-${idx}`}>
+                                                {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
+                                            </datalist>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* 2. Full Name (MAXIMIZED 1FR) */}
-                                <input 
-                                    value={item.name}
-                                    onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
-                                    placeholder="Enter Name..."
-                                    className={`${inputStyle} font-bold`}
-                                    disabled={isLocked || isPrinting}
-                                />
+                                {/* 2. Full Name */}
+                                <div className="pt-0.5">
+                                    {isPrinting ? (
+                                        <div className="w-full text-[11px] font-black px-2 py-1 block text-black truncate">{item.name}</div>
+                                    ) : (
+                                        <input 
+                                            value={item.name}
+                                            onChange={(e) => handleUpdateItem(idx, { name: e.target.value })}
+                                            placeholder="Full Name"
+                                            className={`${inputStyle} font-black uppercase tracking-tight`}
+                                            disabled={isLocked}
+                                        />
+                                    )}
+                                </div>
 
-                                {/* 3. Email (Expanded) */}
-                                <input 
-                                    value={item.email}
-                                    onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
-                                    placeholder="Email Address"
-                                    className="text-[11px] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm px-2 py-1.5 outline-none focus:bg-white dark:focus:bg-zinc-800 placeholder:text-zinc-200 w-full text-zinc-900 dark:text-zinc-100"
-                                    disabled={isLocked || isPrinting}
-                                />
+                                {/* 3. Email */}
+                                <div className="pt-0.5">
+                                    {isPrinting ? (
+                                        <div className="w-full text-xs px-2 py-1 block text-zinc-900 truncate font-mono">{item.email}</div>
+                                    ) : (
+                                        <input 
+                                            value={item.email}
+                                            onChange={(e) => handleUpdateItem(idx, { email: e.target.value })}
+                                            placeholder="email@production.com"
+                                            className={`${inputStyle} text-[10px] font-mono`}
+                                            disabled={isLocked}
+                                        />
+                                    )}
+                                </div>
 
                                 {/* 4. Phone */}
-                                <input 
-                                    value={item.phone}
-                                    onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
-                                    placeholder="Phone"
-                                    className="text-[11px] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 shadow-sm rounded-sm px-2 py-1.5 outline-none focus:bg-white dark:focus:bg-zinc-800 placeholder:text-zinc-200 w-full text-zinc-900 dark:text-zinc-100"
-                                    disabled={isLocked || isPrinting}
-                                />
+                                <div className="pt-0.5">
+                                    {isPrinting ? (
+                                        <div className="w-full text-xs px-2 py-1 block text-zinc-900 truncate font-mono">{item.phone}</div>
+                                    ) : (
+                                        <input 
+                                            value={item.phone}
+                                            onChange={(e) => handleUpdateItem(idx, { phone: e.target.value })}
+                                            placeholder="Phone"
+                                            className={`${inputStyle} text-[10px] font-mono`}
+                                            disabled={isLocked}
+                                        />
+                                    )}
+                                </div>
 
                                 {/* 5. Status LED */}
-                                <div className="flex justify-end">
-                                    <div className={`w-2.5 h-2.5 rounded-full transition-all duration-700 ${isOnline ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
+                                <div className="flex justify-end pr-1">
+                                    <div className={`w-2 h-2 rounded-full transition-all duration-700 ${isOnline ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-zinc-100 dark:bg-zinc-800'}`} />
                                 </div>
 
                                 {/* 6. Actions */}
                                 <div className="relative flex justify-center w-full">
-                                    {!isLocked && (
+                                    {!isLocked && !isPrinting && (
                                         <>
                                             <button 
                                                 onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === idx ? null : idx)}
-                                                className={`hover:text-red-500 transition-opacity flex justify-center w-full ${deleteConfirmIndex === idx ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100 text-zinc-300'}`}
+                                                className={`hover:text-red-500 transition-opacity flex justify-center w-full p-1 ${deleteConfirmIndex === idx ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100 text-zinc-300'}`}
                                             >
-                                                <Trash2 size={12} />
+                                                <Trash2 size={10} />
                                             </button>
 
                                             {deleteConfirmIndex === idx && (
-                                                <div className="absolute right-0 top-6 z-50 bg-white shadow-xl border border-zinc-200 p-3 rounded-md w-[140px] flex flex-col gap-3 animate-in fade-in zoom-in-95 duration-100">
-                                                    <span className="text-[10px] font-bold text-center uppercase tracking-widest text-black">Remove?</span>
+                                                <div className="absolute right-0 top-8 z-50 bg-white dark:bg-zinc-900 shadow-xl border border-zinc-200 dark:border-zinc-700 p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100">
                                                     <button
                                                         onClick={() => handleDeleteItem(idx)}
-                                                        className="bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold py-2 px-2 rounded-sm uppercase w-full transition-colors tracking-wider"
+                                                        className="bg-red-500 hover:bg-red-600 text-white text-[9px] font-black py-1.5 px-2 rounded-md uppercase w-full transition-colors tracking-widest"
                                                     >
                                                         Delete
                                                     </button>
@@ -235,12 +256,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     })}
 
                     {!isLocked && !isPrinting && (
-                        <div className="pt-4">
+                        <div className="pt-3">
                             <button 
                                 onClick={handleAddItem}
-                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800/10 px-3 py-3 rounded-md w-full transition-all print-hidden"
+                                className="flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-black dark:hover:text-white transition-all px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 w-[160px]"
                             >
-                                <Plus size={12} /> Add Crew Personnel
+                                <Plus size={10} /> Add Personnel
                             </button>
                         </div>
                     )}
