@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { getClient } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check, Crown, HelpCircle, BookOpen } from 'lucide-react';
+import { ArrowLeft, User, CreditCard, Loader2, Lock, Eye, EyeOff, Megaphone, Upload, Check, Crown, HelpCircle, BookOpen, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
 import { isFounder as checkIsFounder } from '@/lib/permissions';
@@ -562,6 +562,23 @@ export default function AccountPage() {
                             </Link>
                         </div>
                     </div>
+                </section>
+
+                {/* LEGAL & POLICIES SECTION */}
+                <section className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 group">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 bg-zinc-50 border border-zinc-200 rounded-[20px] flex items-center justify-center group-hover:bg-emerald-50 transition-colors">
+                            <Shield className="text-zinc-900 group-hover:text-emerald-600 transition-colors" size={24} />
+                        </div>
+                        <div className="text-center md:text-left">
+                            <h2 className="text-xs font-black uppercase tracking-widest mb-1 text-zinc-900">Legal & Policies</h2>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Terms of Service, Privacy Policies & NDAs</p>
+                        </div>
+                    </div>
+                    
+                    <Link href="/terms" className="w-full md:w-auto px-8 py-4 bg-zinc-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-all text-center">
+                        View Terms
+                    </Link>
                 </section>
             </div>
 
