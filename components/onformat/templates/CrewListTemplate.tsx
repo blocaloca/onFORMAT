@@ -134,8 +134,22 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         >
             <div className="space-y-4 text-sm font-sans flex-1">
                 
-                {/* Tactical Grid Header: role(180) name(1fr) email(180) phone(140) status(90) actions(30) */}
-                <div className="grid grid-cols-[180px_1fr_180px_140px_90px_30px] gap-3 border-b border-black pb-1.5 items-end mb-1">
+                {/* Operator Status Legend */}
+                {!isPrinting && (
+                    <div className="flex justify-end gap-5 h-2 -mb-2 pr-[40px]">
+                        <div className="flex items-center gap-1.5 opacity-70" title="User is mapped to OnSet Mobile">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.6)]" />
+                            <span className={headerLabelStyle}>Auth Standby</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 opacity-70" title="User is currently live on the app">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.6)]" />
+                            <span className={headerLabelStyle}>Live Online</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Tactical Grid Header: role(140) name(1fr) email(180) phone(110) status(90) actions(30) */}
+                <div className="grid grid-cols-[140px_1fr_180px_110px_90px_30px] gap-3 border-b border-black pb-1.5 items-end mb-1">
                     <span className={headerLabelStyle}>Production Role</span>
                     <span className={`${headerLabelStyle} pl-2`}>Full Name</span>
                     <span className={headerLabelStyle}>Email</span>
@@ -151,7 +165,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                           ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[180px_1fr_180px_140px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
+                            <div key={item.id} className="grid grid-cols-[140px_1fr_180px_110px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
                                 
                                 {/* 1. Role Selector */}
                                 <div className="relative pt-0.5">
