@@ -30,7 +30,7 @@ export default function HelpPage() {
                         <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-800" />
                         <h1 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
                             <BookOpen size={16} className="text-blue-500" />
-                            User Manual <span className="text-[10px] text-zinc-400 font-mono font-normal ml-2">v0.4.0</span>
+                            User Manual <span className="text-[10px] text-zinc-400 font-mono font-normal ml-2">v1.0.0</span>
                         </h1>
                     </div>
                 </div>
@@ -88,39 +88,37 @@ export default function HelpPage() {
                         </div>
                     </section>
 
-                    {/* SECTION: ABCD PERMISSIONS */}
+                    {/* SECTION: CUSTOM ROLE MATRIX */}
                     <section id="permissions" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg">
                                 <ShieldCheck size={24} />
                             </div>
-                            <h3 className="text-2xl font-black uppercase tracking-tight">ABCD Access Governance</h3>
+                            <h3 className="text-2xl font-black uppercase tracking-tight">Custom Role Matrix</h3>
                         </div>
 
-                        <p className="text-zinc-500 mb-12 max-w-3xl">
-                            Our unique 4-tier permission system ensures that crew members only see what they need, keeping your production assets secure and clutter-free.
+                        <p className="text-zinc-500 dark:text-zinc-400 mb-10 max-w-3xl leading-relaxed">
+                            We've replaced the legacy "ABCD" system with a granular, 1-to-1 <strong>Role-Based Access Control (RBAC) Matrix</strong>. You now have total, real-time authority over exactly what each department can view or edit while out on set.
                         </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            {[
-                                { group: 'A', label: 'CREATIVE', tools: 'Treatment, Storyboard, Brief', color: 'bg-indigo-500' },
-                                { group: 'B', label: 'LOGISTICS', tools: 'Call Sheets, Crew, Schedule', color: 'bg-emerald-500' },
-                                { group: 'C', label: 'CAPTURE', tools: 'DIT Log, Camera Report', color: 'bg-orange-500' },
-                                { group: 'D', label: 'EDIT/DELEGATE', tools: 'Full Write/Delete Access', color: 'bg-red-500' }
-                            ].map(item => (
-                                <div key={item.group} className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl flex flex-col items-center text-center group hover:border-zinc-400 dark:hover:border-zinc-600 transition-all">
-                                    <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center text-white font-black mb-4 shadow-lg`}>
-                                        {item.group}
-                                    </div>
-                                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white mb-2">{item.label}</h4>
-                                    <p className="text-[11px] text-zinc-400 leading-snug">{item.tools}</p>
-                                </div>
-                            ))}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 mb-3">1. Define Roles</h4>
+                                <p className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">Add custom roles like "DIT", "Stunt Coord", or "Client" directly in your Mobile Control center. Roles are synchronized instantly across the platform.</p>
+                            </div>
+                            <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500 mb-3">2. Toggle Access</h4>
+                                <p className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">Switch individual documents between <span className="font-mono text-[10px] bg-red-100 dark:bg-red-500/20 text-red-600 px-1 rounded">NONE</span>, <span className="font-mono text-[10px] bg-blue-100 dark:bg-blue-500/20 text-blue-600 px-1 rounded">VIEW</span>, and <span className="font-mono text-[10px] bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 px-1 rounded">EDIT</span> across all roles using the visual grid matrix.</p>
+                            </div>
+                            <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
+                                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-3">3. Assign Crew</h4>
+                                <p className="text-[13px] text-zinc-600 dark:text-zinc-400 leading-relaxed">When adding crew via the Crew List, map them to their configured role. Upon login, their mobile HUD locks precisely to your specifications.</p>
+                            </div>
                         </div>
 
-                        <div className="mt-8 p-6 bg-zinc-900 text-zinc-400 rounded-2xl border border-zinc-800 text-sm font-mono leading-relaxed">
-                            <span className="text-white font-bold uppercase tracking-widest text-[10px] block mb-2">Technical Note</span>
-                            Group D acts as a "Secondary Owner". Assigning Group D to a DIT or Production Coordinator allows them to add entries, delete shots, and manage the live set list.
+                        <div className="p-6 bg-zinc-900 text-zinc-400 rounded-2xl border border-zinc-800 text-[13px] font-mono leading-relaxed shadow-lg">
+                            <span className="text-white font-black uppercase tracking-widest text-[10px] block mb-2">Live Sync & Presence Protocol</span>
+                            Changes to the custom matrix propagate across all active devices in milliseconds. If you revoke a user's access to a document while they are actively viewing it, they are instantly booted back to the secure dashboard. Additionally, look for the glowing <span className="text-emerald-500">Emerald LED indicators</span> on your Crew List to see exactly who is currently online and connected to Set.
                         </div>
                     </section>
 
