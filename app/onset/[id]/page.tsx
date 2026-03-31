@@ -6,6 +6,7 @@ import { getClient } from '@/lib/supabase';
 import { Menu, LayoutGrid, FileText, Edit3, Eye, Activity, Video, HardDrive, Users, MapPin, Calendar, Sparkles, Film, Smartphone, History, Globe, PieChart, Box, Check, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { ProjectDataProvider } from '@/lib/useProjectData';
+import { deriveMobileRoleId } from '@/lib/roleUtils';
 
 // Import Views
 import {
@@ -493,7 +494,7 @@ export default function OnSetMobilePage() {
             // Find current user's role in the specific Crew List draft for IDENTITY
             const crewListDoc = allDrafts['crew-list'];
             const me = crewListDoc?.crew?.find((c: any) =>
-                c.email && c.email.toLowerCase() === emailToUse?.toLowerCase()
+                c.email && c.email.trim().toLowerCase() === emailToUse?.trim().toLowerCase()
             );
 
             // --- RELIABILITY FIX: Read fresh simulation status directly from source of truth ---
@@ -521,25 +522,9 @@ export default function OnSetMobilePage() {
             let roleId = me?.mobileRoleId;
             if (!roleId && me?.role) {
                 // --- TACTICAL HOOKS: Unified Role-to-ID Hydration ---
-                const r = me.role.toLowerCase();
-                if (r === 'dit' || r.includes('media')) roleId = 'dit';
-                else if (r.includes('producer') || r.includes('coordinator')) roleId = 'producer';
-                else if (r === 'director') roleId = 'director';
-                else if (r.includes('supervisor') || r === 'scripty') roleId = 'scripty';
-                else if (r.includes('photography') || r === 'dp') roleId = 'dp';
-                else if (r.includes('ad') || r.includes('assistant director')) roleId = 'ad';
-                else if (r.includes('gaffer') || r.includes('electric')) roleId = 'electric';
-                else if (r.includes('grip')) roleId = 'grip';
-                else if (r.includes('sound') || r.includes('mixer')) roleId = 'sound';
-                else if (r.includes('art') || r.includes('designer') || r.includes('prop')) roleId = 'art';
-                else if (r.includes('stylist') || r.includes('wardrobe')) roleId = 'wardrobe';
-                else if (r.includes('makeup') || r.includes('hmu')) roleId = 'hmu';
-                else if (r.includes('editor')) roleId = 'editor';
-                else if (r.includes('location')) roleId = 'locations';
-                else if (r.includes('client') || r.includes('agency')) roleId = 'client';
-                else roleId = r.replace(/\s+/g, '-');
+                roleId = deriveMobileRoleId(me.role);
             }
-            if (!roleId) roleId = role?.toLowerCase().replace(/\s+/g, '-');
+            if (!roleId) roleId = role?.trim().toLowerCase().replace(/\s+/g, '-');
 
             const roleMatrix = matrix[roleId!] || {};
             
