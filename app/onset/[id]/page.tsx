@@ -135,18 +135,18 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
                             <button
                                 key={key}
                                 onClick={() => onSelectTab(key)}
-                                className="relative bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 p-5 rounded-2xl text-left transition-all active:scale-95 active:bg-black hover:border-zinc-700 shadow-xl group overflow-hidden"
+                                className="relative bg-white dark:bg-zinc-900/60 backdrop-blur-sm border border-zinc-200 dark:border-zinc-800 p-5 rounded-2xl text-left transition-all active:scale-95 active:bg-zinc-50 dark:active:bg-black hover:border-zinc-300 dark:hover:border-zinc-700 shadow-xl group overflow-hidden"
                             >
                                 <div className="absolute top-3 right-3 opacity-60">
-                                    {isEdit ? <Edit3 size={11} className="text-emerald-500" /> : <Eye size={11} className="text-blue-500" />}
+                                    {isEdit ? <Edit3 size={11} className="text-emerald-600 dark:text-emerald-500" /> : <Eye size={11} className="text-blue-600 dark:text-blue-500" />}
                                 </div>
 
                                 <div className="mb-4">
-                                    <IconComp size={22} className={isEdit ? "text-amber-500" : "text-zinc-500"} />
+                                    <IconComp size={22} className={isEdit ? "text-amber-500" : "text-zinc-400 dark:text-zinc-500"} />
                                 </div>
 
                                 <div className="space-y-0.5">
-                                    <h3 className="text-[11px] font-black uppercase tracking-widest text-white leading-tight">{DOC_LABELS[key] || key.replace(/-/g, ' ')}</h3>
+                                    <h3 className="text-[11px] font-black uppercase tracking-widest text-zinc-900 dark:text-white leading-tight">{DOC_LABELS[key] || key.replace(/-/g, ' ')}</h3>
                                 </div>
                             </button>
                         );
@@ -1310,22 +1310,17 @@ export default function OnSetMobilePage() {
                     <header className="bg-zinc-100/95 dark:bg-black/95 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800 pt-safe transition-all w-full relative">
                         <div className="h-16 flex items-center justify-between px-6">
                             
-                            {/* Role Label */}
-                            <div className="flex flex-col min-w-0">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 leading-none mb-1">Role</span>
-                                <span className="text-xs font-black uppercase text-zinc-900 dark:text-white truncate">{userRole || 'Crew'}</span>
+                            {/* ONSET Platform Identity */}
+                            <div className="flex flex-col min-w-[70px]">
+                                <span className="text-xl font-black uppercase tracking-widest text-zinc-900 dark:text-white leading-none">ON<span className="text-emerald-500">SET</span></span>
                             </div>
 
-                            <div className="h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
-
-                            {/* Active Document Label */}
-                            <div className="flex-1 min-w-0 flex items-center justify-center px-1">
-                                <span className="text-xs font-black uppercase tracking-[0.05em] text-emerald-500 truncate text-center">
-                                    {activeTab === '' ? 'Tactical Dashboard' : (DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' '))}
+                            {/* Center: Dynamic Role / Document Name */}
+                            <div className="flex-1 min-w-0 flex items-center justify-center px-4">
+                                <span className="text-[11px] md:text-[12px] font-black uppercase tracking-[0.1em] text-emerald-600 dark:text-emerald-500 truncate text-center">
+                                    {activeTab === '' ? (userRole || 'Crew') : (DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' '))}
                                 </span>
                             </div>
-
-                            <div className="h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
 
                             {/* Dashboard / System Toggle */}
                             <div className="flex items-center gap-2">
