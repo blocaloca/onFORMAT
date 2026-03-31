@@ -118,22 +118,9 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
 
     return (
         <div className="flex flex-col space-y-10 animate-in fade-in duration-500 pt-2 pb-12">
-            {/* Session Header */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-4 bg-zinc-900 border border-zinc-800 p-6 rounded-2xl shadow-xl">
-                    <div className="w-14 h-14 bg-zinc-800 rounded-xl flex items-center justify-center text-3xl shadow-inner border border-white/5">
-                        {displayIcon}
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white leading-none mb-1">{displayRole}</h2>
-                        <span className="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-500">Active Perimeter</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Authorized Silos */}
-            <div className="space-y-4">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Authorized Silos</label>
+            {/* Authorized Documents */}
+            <div className="space-y-4 pt-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 ml-1">Authorized Documents</label>
                 <div className="grid grid-cols-2 gap-4">
                     {availableKeys.map((key: string) => {
                         const IconComp = SILO_ICONS[key] || FileText;
@@ -1332,9 +1319,8 @@ export default function OnSetMobilePage() {
                             <div className="h-6 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-4"></div>
 
                             {/* Active Document Label */}
-                            <div className="flex-1 min-w-0">
-                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 dark:text-zinc-500 leading-none mb-1 text-center block">Accessing</span>
-                                <span className="text-[11px] font-black uppercase text-emerald-500 text-center block truncate">
+                            <div className="flex-1 min-w-0 flex items-center justify-center px-1">
+                                <span className="text-xs font-black uppercase tracking-[0.05em] text-emerald-500 truncate text-center">
                                     {activeTab === '' ? 'Tactical Dashboard' : (DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' '))}
                                 </span>
                             </div>
@@ -1456,25 +1442,18 @@ export default function OnSetMobilePage() {
 
 
                                     <button
-                                        onClick={async () => {
-                                            // Explicit Presence Cleanup for Mobile
-                                            if (userEmail && id) {
-                                                const { error } = await supabase
-                                                    .from('crew_membership')
-                                                    .update({ is_online: false })
-                                                    .eq('project_id', id)
-                                                    .eq('user_email', userEmail);
-
-                                                // Untrack from all channels
-                                                const channels = supabase.getChannels();
-                                                for (const channel of channels) {
-                                                    await channel.untrack();
-                                                }
-                                                await supabase.removeAllChannels();
-                                            }
-
+                                        onClick={() => {
+                                            // Execute visual navigation / logout instantly
                                             localStorage.removeItem('onset_user_email');
                                             localStorage.removeItem('onset_test_mode');
+                                            
+                                            // Fire and forget database presence updates so UI doesn't hang
+                                            if (userEmail && id) {
+                                                supabase.from('crew_membership').update({ is_online: false })
+                                                          .eq('project_id', id).eq('user_email', userEmail).then();
+                                                supabase.removeAllChannels().then();
+                                            }
+
                                             window.location.reload();
                                         }}
                                         className="w-full bg-zinc-50/50 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-zinc-50/50 dark:bg-zinc-900/50 transition-colors">
@@ -1482,24 +1461,19 @@ export default function OnSetMobilePage() {
                                     </button>
 
                                     <button
-                                        onClick={async () => {
-                                            // Explicit Presence Cleanup for Mobile
-                                            if (userEmail && id) {
-                                                await supabase
-                                                    .from('crew_membership')
-                                                    .update({ is_online: false })
-                                                    .eq('project_id', id)
-                                                    .eq('user_email', userEmail);
-                                                const channels = supabase.getChannels();
-                                                for (const channel of channels) {
-                                                    await channel.untrack();
-                                                }
-                                                await supabase.removeAllChannels();
-                                            }
+                                        onClick={() => {
                                             localStorage.removeItem('onset_user_email');
                                             localStorage.removeItem('onset_test_mode');
-                                            await supabase.auth.signOut();
                                             localStorage.clear();
+
+                                            // Fire and forget
+                                            if (userEmail && id) {
+                                                supabase.from('crew_membership').update({ is_online: false })
+                                                          .eq('project_id', id).eq('user_email', userEmail).then();
+                                                supabase.removeAllChannels().then();
+                                            }
+                                            
+                                            // Trigger fast redirection
                                             window.location.href = '/api/auth/logout';
                                         }}
                                         className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
@@ -1557,11 +1531,6 @@ export default function OnSetMobilePage() {
                             );
                         })() : (
                             <>
-                                <div className="w-full flex justify-center mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
-                                    <h2 className={`text-[10px] uppercase font-black tracking-[0.2em] leading-none px-4 py-2 rounded-full border shadow-sm ${data.docs['onset-mobile-control']?.isLive !== false ? 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20 shadow-emerald-500/10' : 'text-amber-500 bg-amber-500/10 border-amber-500/20 shadow-amber-500/10'}`}>
-                                        {DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' ')}
-                                    </h2>
-                                </div>
                                 {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
                                 {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} isReadOnly={!data._canEdit} />}
                                 {activeTab === 'call-sheet' && (
