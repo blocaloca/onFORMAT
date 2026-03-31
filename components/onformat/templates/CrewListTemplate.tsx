@@ -148,8 +148,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     </div>
                 )}
 
-                {/* Tactical Grid Header: role(140) name(1fr) email(180) phone(110) status(90) actions(30) */}
-                <div className="grid grid-cols-[140px_1fr_180px_110px_90px_30px] gap-3 border-b border-black pb-1.5 items-end mb-1">
+                {/* Tactical Grid Header: role(150) name(1fr) email(180) phone(100) status(90) actions(30) */}
+                <div className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 border-b border-black pb-1.5 items-end mb-1">
                     <span className={headerLabelStyle}>Production Role</span>
                     <span className={`${headerLabelStyle} pl-2`}>Full Name</span>
                     <span className={headerLabelStyle}>Email</span>
@@ -165,7 +165,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                           ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[140px_1fr_180px_110px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
+                            <div key={item.id} className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
                                 
                                 {/* 1. Role Selector */}
                                 <div className="relative pt-0.5">
