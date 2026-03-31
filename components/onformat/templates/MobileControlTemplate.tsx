@@ -23,14 +23,8 @@ interface MobileControlTemplateProps {
     metadata?: any;
 }
 
-const PRODUCTION_ROLES = [
-    'Producer', 'Director', 'Director of Photography', '1st AD', '2nd AD',
-    'UPM / Line Producer', 'Production Coordinator', 'Script Supervisor',
-    'Gaffer', 'Key Grip', 'Sound Mixer', 'DIT', 'Media Manager',
-    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'Makeup Artist',
-    'Editor', 'Location Manager', 'PA (Production Assistant)',
-    'General Crew', 'Other'
-];
+import { PRODUCTION_ROLES, deriveMobileRoleId } from '@/lib/roleUtils';
+
 
 const DOCUMENT_TYPES = [
     { id: 'project-vision', name: 'Project Vision' },
@@ -91,25 +85,14 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
         if (!newRoleName || isLocked || !metadata?.isOwner) return;
         
         // --- TACTICAL HOOKS: Sync ROLE ID with OnSet Identity Engine ---
-        let id = newRoleName.toLowerCase().replace(/\s+/g, '-');
         const r = newRoleName.toLowerCase();
+        let id = deriveMobileRoleId(newRoleName);
         
-        if (r === 'dit' || r.includes('media')) id = 'dit';
-        else if (r.includes('producer') || r.includes('coordinator')) id = 'producer';
-        else if (r === 'director') id = 'director';
-        else if (r.includes('supervisor') || r === 'scripty') id = 'scripty';
-        else if (r.includes('photography') || r === 'dp') id = 'dp';
-        else if (r.includes('ad') || r.includes('assistant director')) id = 'ad';
-        else if (r.includes('gaffer') || r.includes('electric')) id = 'electric';
-        else if (r.includes('grip')) id = 'grip';
-        else if (r.includes('sound') || r.includes('mixer')) id = 'sound';
-        else if (r.includes('art') || r.includes('designer') || r.includes('prop')) id = 'art';
-        else if (r.includes('stylist') || r.includes('wardrobe')) id = 'wardrobe';
-        else if (r.includes('makeup') || r.includes('hmu')) id = 'hmu';
-        else if (r.includes('editor')) id = 'editor';
-        else if (r.includes('location')) id = 'locations';
-        else if (r.includes('client') || r.includes('agency')) id = 'client';
-        else if (r.includes('crew') || r === 'pa') id = 'crew';
+        // If deriveMobileRoleId defaults to 'crew' but they explicitly defined something custom,
+        // we should create a safe custom ID so it doesn't collide with literal 'General Crew'
+        if (id === 'crew' && !r.includes('crew') && r !== 'pa') {
+            id = newRoleName.toLowerCase().trim().replace(/\s+/g, '-');
+        }
 
         if (roles.find((role: any) => role.id === id)) {
             setNewRoleName('');

@@ -64,10 +64,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         newItems[index] = { ...newItems[index], ...updates };
         
         if (updates.role) {
+            // First check if this exact role name exists in the custom mobileRoles matrix
             const roleMatch = mobileRoles.find((r: any) => r.name.toLowerCase() === updates.role?.toLowerCase());
             if (roleMatch) {
                 newItems[index].mobileRoleId = roleMatch.id;
             } else {
+                // Otherwise derive it canonically
                 newItems[index].mobileRoleId = deriveMobileRoleId(updates.role);
             }
         }
@@ -157,7 +159,8 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         <div className="w-full text-[10px] uppercase font-black tracking-tight px-1 py-1 block text-black truncate">{item.role}</div>
                                     ) : (
                                         <div className="relative flex flex-col justify-center w-full">
-                                            {(!PRODUCTION_ROLES.includes(item.role) && item.role !== '') ? (
+                                            {(!PRODUCTION_ROLES.includes(item.role) && !mobileRoles?.some((mr:any) => mr.name === item.role) && item.role !== '') ? (
+
                                                 <div className="flex w-full items-center">
                                                     <input 
                                                         value={item.role}
@@ -183,6 +186,11 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 >
                                                     <option value="" disabled>Select Role...</option>
                                                     {PRODUCTION_ROLES.map(role => <option key={role} value={role}>{role}</option>)}
+                                                    {/* Inject custom MobileControlTemplate roles if not already present */}
+                                                    {mobileRoles.map((mr: any) => {
+                                                        if (PRODUCTION_ROLES.some(pr => pr.toLowerCase() === mr.name.toLowerCase())) return null;
+                                                        return <option key={`custom-${mr.id}`} value={mr.name}>{mr.name}</option>;
+                                                    })}
                                                 </select>
                                             )}
                                         </div>
