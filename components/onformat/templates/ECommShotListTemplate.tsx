@@ -525,14 +525,12 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 </p>
                                             </div>
                                             
-                                            {!isLocked && (
                                                 <button
                                                     onClick={() => markComplete(activeShot._id)}
                                                     className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest"
                                                 >
                                                     Complete
                                                 </button>
-                                            )}
                                         </div>
 
                                         {/* Metadata Cards Format (Like Call Sheet) */}
@@ -557,17 +555,15 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <div className="mb-6">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-2">Reference Thumbnail</label>
                                             <div className="w-full h-32 bg-zinc-50 dark:bg-zinc-50 border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
-                                                {!isLocked && (
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        capture="environment"
-                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                                        onChange={(e) => {
-                                                            if (e.target.files?.[0]) handleThumbnailUpload(activeShot._id, e.target.files[0]);
-                                                        }}
-                                                    />
-                                                )}
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    capture="environment"
+                                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                    onChange={(e) => {
+                                                        if (e.target.files?.[0]) handleThumbnailUpload(activeShot._id, e.target.files[0]);
+                                                    }}
+                                                />
                                                 {activeShot._thumbnail ? (
                                                     <img src={activeShot._thumbnail} alt="" className="w-full h-full object-cover" />
                                                 ) : (
@@ -589,18 +585,16 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                     className="w-full bg-transparent border-0 border-b-2 border-zinc-200 px-1 py-1 text-lg font-black text-zinc-900 dark:text-black focus:outline-none focus:border-zinc-900 transition-colors placeholder:text-zinc-300"
                                                     value={activeShot._selects}
                                                     onChange={(e) => updateRowState(activeShot._id, { _selects: e.target.value })}
-                                                    disabled={isLocked}
                                                 />
                                             </div>
                                             <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Retouching Notes</label>
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Notes</label>
                                                 <textarea
                                                     placeholder="Add detail notes..."
                                                     rows={2}
                                                     className="w-full bg-transparent border-0 px-0 text-sm font-medium text-zinc-700 dark:text-zinc-800 focus:outline-none resize-none placeholder:text-zinc-400"
                                                     value={activeShot._notes}
                                                     onChange={(e) => updateRowState(activeShot._id, { _notes: e.target.value })}
-                                                    disabled={isLocked}
                                                 />
                                             </div>
                                         </div>
