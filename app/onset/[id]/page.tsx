@@ -1340,7 +1340,7 @@ export default function OnSetMobilePage() {
                             
                             {/* ONSET Platform Identity */}
                             <div className="flex flex-col min-w-[70px]">
-                                <span className="text-xl font-black uppercase tracking-widest text-zinc-900 dark:text-white leading-none">ON<span className="text-emerald-500">SET</span></span>
+                                <img src="/onset-logo.png" alt="ONSET" className="h-[28px] w-auto object-contain" />
                             </div>
 
                             {/* Center: Dynamic Role / Document Name */}
@@ -1415,6 +1415,20 @@ export default function OnSetMobilePage() {
                                             <div>
                                                 <p className="text-xs font-bold text-zinc-900 dark:text-white">{userRole || 'Crew Member'}</p>
                                                 <p className="text-[10px] font-mono text-zinc-500 dark:text-zinc-400 break-all">{userEmail}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Production Details */}
+                                    <div className="bg-emerald-500/5 dark:bg-emerald-500/5 p-4 rounded-xl border border-emerald-500/20">
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-400 mb-1 block">Production</label>
+                                                <p className="text-xs font-black text-zinc-900 dark:text-white uppercase truncate">{data.project?.name || 'Untitled Project'}</p>
+                                            </div>
+                                            <div>
+                                                <label className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-600 dark:text-emerald-400 mb-1 block">Producer</label>
+                                                <p className="text-xs font-bold text-zinc-800 dark:text-zinc-200">{data.project?.data?.producer || 'TBD'}</p>
                                             </div>
                                         </div>
                                     </div>
