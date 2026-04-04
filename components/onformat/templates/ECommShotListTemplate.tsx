@@ -295,27 +295,35 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 {/* Editable dynamic columns */}
                                                 {columns.map((col) => (
                                                     <div key={col} className="w-32 shrink-0">
-                                                        <input
-                                                            type="text"
-                                                            className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs dark:text-slate-300 text-slate-700 font-medium focus:outline-none dark:focus:bg-slate-950 focus:bg-white dark:focus:border-slate-700 focus:border-slate-300 dark:hover:border-slate-800 hover:border-slate-200 transition-colors"
-                                                            value={row[col]}
-                                                            onChange={(e) => updateRowState(row._id, { [col]: e.target.value })}
-                                                            placeholder={col}
-                                                            disabled={isWrapped || isLocked || isPrinting}
-                                                        />
+                                                        {isPrinting ? (
+                                                            <div className="px-1.5 py-1 text-xs text-slate-800 font-medium whitespace-normal">{row[col]}</div>
+                                                        ) : (
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs dark:text-slate-300 text-slate-700 font-medium focus:outline-none dark:focus:bg-slate-950 focus:bg-white dark:focus:border-slate-700 focus:border-slate-300 dark:hover:border-slate-800 hover:border-slate-200 transition-colors"
+                                                                value={row[col]}
+                                                                onChange={(e) => updateRowState(row._id, { [col]: e.target.value })}
+                                                                placeholder={col}
+                                                                disabled={isWrapped || isLocked}
+                                                            />
+                                                        )}
                                                     </div>
                                                 ))}
 
                                                 {/* Location Input (Editable) */}
                                                 <div className="w-32 shrink-0">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Ex: Set A"
-                                                        className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs dark:text-slate-300 text-slate-700 focus:outline-none dark:focus:bg-slate-950 focus:bg-white dark:focus:border-slate-700 focus:border-slate-300 dark:hover:border-slate-800 hover:border-slate-200 transition-colors"
-                                                        value={row._location}
-                                                        onChange={(e) => updateRowState(row._id, { _location: e.target.value })}
-                                                        disabled={isWrapped || isLocked || isPrinting}
-                                                    />
+                                                    {isPrinting ? (
+                                                        <div className="px-1.5 py-1 text-xs text-slate-800 font-medium whitespace-normal">{row._location}</div>
+                                                    ) : (
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Ex: Set A"
+                                                            className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs dark:text-slate-300 text-slate-700 focus:outline-none dark:focus:bg-slate-950 focus:bg-white dark:focus:border-slate-700 focus:border-slate-300 dark:hover:border-slate-800 hover:border-slate-200 transition-colors"
+                                                            value={row._location}
+                                                            onChange={(e) => updateRowState(row._id, { _location: e.target.value })}
+                                                            disabled={isWrapped || isLocked}
+                                                        />
+                                                    )}
                                                 </div>
 
                                                 {/* Deliverables Pulldown */}

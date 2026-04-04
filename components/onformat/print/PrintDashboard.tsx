@@ -34,6 +34,7 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
 
     // Pre-Production
     'shot-scene-book': { label: 'Shot List', defaultOrient: 'landscape' },
+    'ecomm-shot-list': { label: 'eComm Shot List', defaultOrient: 'landscape' },
     'budget': { label: 'Budget', defaultOrient: 'landscape' },
     'schedule': { label: 'Production Schedule', defaultOrient: 'landscape' },
     'crew-list': { label: 'Crew List', defaultOrient: 'portrait' },
@@ -60,7 +61,7 @@ const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'l
 const PHASE_GROUPS: Record<string, string[]> = {
     'Development': ['project-vision', 'brief', 'directors-treatment', 'lookbook', 'storyboard', 'av-script'],
     'Pre-Production': ['shot-scene-book', 'budget', 'schedule', 'crew-list', 'locations-sets', 'casting-talent', 'wardrobe-styling', 'props-list'],
-    'Production': ['call-sheet', 'dit-log', 'sound-report', 'camera-report', 'on-set-notes', 'script-notes'],
+    'Production': ['call-sheet', 'ecomm-shot-list', 'dit-log', 'sound-report', 'camera-report', 'on-set-notes', 'script-notes'],
     'Post-Production': ['budget-actual', 'deliverables-licensing', 'client-selects', 'archive-log']
 };
 
