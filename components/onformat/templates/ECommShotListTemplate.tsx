@@ -507,113 +507,105 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                     {/* Mobile Tactical View */}
                     {rows.length > 0 && viewMode === 'mobile' && !isPrinting && (
-                        <div className="max-w-sm mx-auto relative pb-24 font-sans dark bg-slate-950 p-4 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden mt-4">
+                        <div className="w-full mx-auto pb-24 font-sans space-y-4 pt-2">
                             {!activeShot ? (
-                                <div className="text-center p-12 text-emerald-400 font-medium">✨ All shots wrapped!</div>
+                                <div className="text-center p-12 text-emerald-500 font-medium bg-white dark:bg-white rounded-[24px] shadow-sm border border-zinc-100">✨ All shots wrapped!</div>
                             ) : (
                                 <div className="space-y-4">
-                                    <div className="text-center">
-                                        <span className="text-[10px] uppercase tracking-wider text-orange-400 font-bold bg-orange-400/10 px-3 py-1 rounded-full border border-orange-400/20 shadow-sm">
-                                            Live On Set
-                                        </span>
-                                    </div>
-
-                                    <div className="p-5 border border-slate-800 shadow-2xl relative overflow-hidden group bg-slate-900 rounded-2xl">
-                                        <div className="absolute inset-0 bg-gradient-to-br from-slate-800/50 to-slate-900/50 z-0"></div>
-
-                                        <div className="relative z-10 space-y-5">
-                                            {/* Primary Identifier */}
-                                            <div className="border-b border-slate-700/50 pb-4 flex justify-between items-start">
-                                                <div>
-                                                    <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-0.5">Current</p>
-                                                    <h3 className="text-2xl font-black text-white tracking-tight leading-tight">
-                                                        {activeShot[columns[0]] || 'New Shot'}
-                                                    </h3>
-                                                    <p className="text-slate-300 mt-0.5 text-sm font-medium">
-                                                        {columns.length > 1 ? activeShot[columns[1]] : ''}
-                                                    </p>
-                                                </div>
-
-                                                {/* Mobile Thumbnail Render */}
-                                                <div className="w-16 h-16 bg-slate-950 rounded-lg border border-slate-700 flex items-center justify-center overflow-hidden shrink-0 relative shadow-inner">
-                                                    {!isLocked && (
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            capture="environment"
-                                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                                            onChange={(e) => {
-                                                                if (e.target.files?.[0]) handleThumbnailUpload(activeShot._id, e.target.files[0]);
-                                                            }}
-                                                        />
-                                                    )}
-                                                    {activeShot._thumbnail ? (
-                                                        <img src={activeShot._thumbnail} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="text-slate-500 flex flex-col items-center">
-                                                            <ImageIcon size={18} />
-                                                            <span className="text-[8px] uppercase mt-1 font-bold tracking-wider">Snap</span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                    <div className="bg-white dark:bg-white rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden">
+                                        
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div>
+                                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-1">Current Shot</span>
+                                                <h3 className="text-3xl font-black uppercase tracking-tight text-zinc-900 dark:text-black leading-none">
+                                                    {activeShot[columns[0]] || 'New'}
+                                                </h3>
+                                                <p className="text-zinc-500 font-bold mt-1 ml-1 text-xs">
+                                                    {columns.length > 1 ? activeShot[columns[1]] : ''}
+                                                </p>
                                             </div>
+                                            
+                                            {!isLocked && (
+                                                <button
+                                                    onClick={() => markComplete(activeShot._id)}
+                                                    className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors px-3 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest"
+                                                >
+                                                    Complete
+                                                </button>
+                                            )}
+                                        </div>
 
-                                            {/* Metadata Grid */}
-                                            <div className="grid grid-cols-2 gap-3 text-xs">
-                                                {columns.slice(2, 4).map(col => (
-                                                    <div key={col} className="bg-slate-950/50 p-2 rounded border border-slate-800/50">
-                                                        <p className="text-slate-500 text-[9px] uppercase tracking-wider mb-0.5">{col}</p>
-                                                        <p className="text-slate-200 font-semibold truncate">{activeShot[col] || '-'}</p>
-                                                    </div>
-                                                ))}
-                                                <div className="bg-slate-950/50 p-2 rounded border border-slate-800/50">
-                                                    <p className="text-slate-500 text-[9px] uppercase tracking-wider mb-0.5">Location</p>
-                                                    <p className="text-slate-200 font-semibold truncate">{activeShot._location}</p>
+                                        {/* Metadata Cards Format (Like Call Sheet) */}
+                                        <div className="grid grid-cols-2 gap-3 mb-6">
+                                            {columns.slice(2, 4).map(col => (
+                                                <div key={col} className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">{col}</p>
+                                                    <p className="text-zinc-900 dark:text-black font-bold text-sm truncate">{activeShot[col] || '-'}</p>
                                                 </div>
-                                                <div className="bg-slate-950/50 p-2 rounded border border-slate-800/50">
-                                                    <p className="text-slate-500 text-[9px] uppercase tracking-wider mb-0.5">Deliver</p>
-                                                    <p className="text-indigo-300 font-semibold truncate">{activeShot._deliverables}</p>
-                                                </div>
+                                            ))}
+                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Location</p>
+                                                <p className="text-zinc-900 dark:text-black font-bold text-sm truncate">{activeShot._location}</p>
                                             </div>
-
-                                            {/* Inputs */}
-                                            <div className="space-y-3 pt-3 border-t border-slate-700/50">
-                                                <div>
-                                                    <label className="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1 block">Quick Selects Logs</label>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="e.g. 1024, 1027"
-                                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-base text-white focus:outline-none focus:border-orange-500 transition-colors placeholder:text-slate-600 shadow-inner"
-                                                        value={activeShot._selects}
-                                                        onChange={(e) => updateRowState(activeShot._id, { _selects: e.target.value })}
-                                                        disabled={isLocked}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="text-slate-400 text-[10px] uppercase font-bold tracking-wider mb-1 block">Retouching Notes</label>
-                                                    <textarea
-                                                        placeholder="Add detail notes..."
-                                                        rows={2}
-                                                        className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-orange-500 transition-colors placeholder:text-slate-600 resize-none shadow-inner"
-                                                        value={activeShot._notes}
-                                                        onChange={(e) => updateRowState(activeShot._id, { _notes: e.target.value })}
-                                                        disabled={isLocked}
-                                                    />
-                                                </div>
+                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                                <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Deliver</p>
+                                                <p className="text-blue-600 dark:text-blue-600 font-bold text-sm truncate">{activeShot._deliverables}</p>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Big Complete Button */}
-                                    {!isLocked && (
-                                        <button
-                                            onClick={() => markComplete(activeShot._id)}
-                                            className="w-full bg-emerald-500 hover:bg-emerald-400 text-emerald-950 font-black text-sm py-4 rounded-xl shadow-[0_0_30px_-5px_rgba(16,185,129,0.4)] active:scale-95 transition-all flex items-center justify-center gap-2 tracking-widest uppercase mt-4"
-                                        >
-                                            <CheckCircle2 size={18} />
-                                            Complete Shot
-                                        </button>
-                                    )}
+                                        {/* Mobile Thumbnail Render */}
+                                        <div className="mb-6">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-2">Reference Thumbnail</label>
+                                            <div className="w-full h-32 bg-zinc-50 dark:bg-zinc-50 border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
+                                                {!isLocked && (
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        capture="environment"
+                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                                        onChange={(e) => {
+                                                            if (e.target.files?.[0]) handleThumbnailUpload(activeShot._id, e.target.files[0]);
+                                                        }}
+                                                    />
+                                                )}
+                                                {activeShot._thumbnail ? (
+                                                    <img src={activeShot._thumbnail} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="text-zinc-300 flex flex-col items-center">
+                                                        <ImageIcon size={24} />
+                                                        <span className="text-[9px] uppercase mt-2 font-black tracking-widest text-zinc-400">Tap to Snap</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Inputs */}
+                                        <div className="space-y-4">
+                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Quick Selects Logs</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="e.g. 1024, 1027"
+                                                    className="w-full bg-transparent border-0 border-b-2 border-zinc-200 px-1 py-1 text-lg font-black text-zinc-900 dark:text-black focus:outline-none focus:border-zinc-900 transition-colors placeholder:text-zinc-300"
+                                                    value={activeShot._selects}
+                                                    onChange={(e) => updateRowState(activeShot._id, { _selects: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            </div>
+                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Retouching Notes</label>
+                                                <textarea
+                                                    placeholder="Add detail notes..."
+                                                    rows={2}
+                                                    className="w-full bg-transparent border-0 px-0 text-sm font-medium text-zinc-700 dark:text-zinc-800 focus:outline-none resize-none placeholder:text-zinc-400"
+                                                    value={activeShot._notes}
+                                                    onChange={(e) => updateRowState(activeShot._id, { _notes: e.target.value })}
+                                                    disabled={isLocked}
+                                                />
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
                             )}
                         </div>
