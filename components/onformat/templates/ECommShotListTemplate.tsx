@@ -577,8 +577,22 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             </div>
                                         </div>
 
+                                        {/* First Notes Field (Read Only) */}
+                                        {columns.length > 4 && (() => {
+                                            const noteCol = columns.find(c => c.toLowerCase().includes('note') || c.toLowerCase().includes('direction')) || columns[4];
+                                            if (activeShot[noteCol] && activeShot[noteCol].trim() !== '') {
+                                                return (
+                                                    <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100 mb-6">
+                                                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">{noteCol}</label>
+                                                        <p className="text-zinc-900 dark:text-black font-semibold text-sm whitespace-pre-wrap">{activeShot[noteCol]}</p>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+
                                         {/* Mobile Thumbnail Render */}
-                                        <div className="mb-6">
+                                        <div className="mb-2">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-2">Reference Thumbnail</label>
                                             <div className="w-full h-32 bg-zinc-50 dark:bg-zinc-50 border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
                                                 <input
@@ -598,30 +612,6 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <span className="text-[9px] uppercase mt-2 font-black tracking-widest text-zinc-400">Tap to Snap</span>
                                                     </div>
                                                 )}
-                                            </div>
-                                        </div>
-
-                                        {/* Inputs */}
-                                        <div className="space-y-4">
-                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Quick Selects Logs</label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="e.g. 1024, 1027"
-                                                    className="w-full bg-transparent border-0 border-b-2 border-zinc-200 px-1 py-1 text-lg font-black text-zinc-900 dark:text-black focus:outline-none focus:border-zinc-900 transition-colors placeholder:text-zinc-300"
-                                                    value={activeShot._selects}
-                                                    onChange={(e) => updateRowState(activeShot._id, { _selects: e.target.value })}
-                                                />
-                                            </div>
-                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
-                                                <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">Notes</label>
-                                                <textarea
-                                                    placeholder="Add detail notes..."
-                                                    rows={2}
-                                                    className="w-full bg-transparent border-0 px-0 text-sm font-medium text-zinc-700 dark:text-zinc-800 focus:outline-none resize-none placeholder:text-zinc-400"
-                                                    value={activeShot._notes}
-                                                    onChange={(e) => updateRowState(activeShot._id, { _notes: e.target.value })}
-                                                />
                                             </div>
                                         </div>
 
