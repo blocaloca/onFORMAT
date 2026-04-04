@@ -401,33 +401,27 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     const newData = payload.new?.data;
                     if (!newData) return;
 
-                    const currentPhaseKey = stateRef.current.phases?.ON_SET ? 'ON_SET' : 'PRODUCTION';
-                    const updatedDrafts = { ...stateRef.current.phases?.[currentPhaseKey]?.drafts };
                     let hasUpdates = false;
 
                     // Sync DIT Log
                     const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
                     const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
-                    if (newDitLog && newDitLog !== currentDitLog) {
-                        updatedDrafts['dit-log'] = newDitLog;
-                        hasUpdates = true;
-                    }
+                    if (newDitLog && newDitLog !== currentDitLog) hasUpdates = true;
 
                     // Sync Camera Report
                     const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
                     const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
-                    if (newCameraReport && newCameraReport !== currentCameraReport) {
-                        updatedDrafts['camera-report'] = newCameraReport;
-                        hasUpdates = true;
-                    }
+                    if (newCameraReport && newCameraReport !== currentCameraReport) hasUpdates = true;
 
                     // Sync Notes
                     const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
                     const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-                    if (newNotes && newNotes !== currentNotes) {
-                        updatedDrafts['on-set-notes'] = newNotes;
-                        hasUpdates = true;
-                    }
+                    if (newNotes && newNotes !== currentNotes) hasUpdates = true;
+
+                    // Sync EComm Shot List
+                    const newEcomm = newData.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
+                    const currentEcomm = stateRef.current.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
+                    if (newEcomm && newEcomm !== currentEcomm) hasUpdates = true;
 
                     if (hasUpdates) {
                         setState(prev => ({
@@ -436,7 +430,19 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                 ...prev.phases,
                                 ON_SET: {
                                     ...(prev.phases?.['ON_SET'] || {}),
-                                    drafts: updatedDrafts
+                                    drafts: {
+                                        ...(prev.phases?.['ON_SET']?.drafts || {}),
+                                        ...(newDitLog && newDitLog !== currentDitLog ? { 'dit-log': newDitLog } : {}),
+                                        ...(newCameraReport && newCameraReport !== currentCameraReport ? { 'camera-report': newCameraReport } : {}),
+                                        ...(newNotes && newNotes !== currentNotes ? { 'on-set-notes': newNotes } : {})
+                                    }
+                                },
+                                PRODUCTION: {
+                                    ...(prev.phases?.['PRODUCTION'] || {}),
+                                    drafts: {
+                                        ...(prev.phases?.['PRODUCTION']?.drafts || {}),
+                                        ...(newEcomm && newEcomm !== currentEcomm ? { 'ecomm-shot-list': newEcomm } : {})
+                                    }
                                 }
                             },
                         }));
