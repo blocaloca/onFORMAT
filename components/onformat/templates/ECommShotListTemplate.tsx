@@ -123,13 +123,13 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
     };
 
     const updateRowState = (id: string, updates: Partial<ProductRow>) => {
-        if (isLocked) return;
+        if (isLocked && !hideControls) return;
         const newRows = rows.map((r) => r._id === id ? { ...r, ...updates } : r);
         onUpdate({ columns, rows: newRows });
     };
 
     const markComplete = (id: string) => {
-        if (isLocked) return;
+        if (isLocked && !hideControls) return;
         const updated = rows.map((r) => (r._id === id ? { ...r, _status: 'Wrapped' as const } : r));
         const incomplete = updated.filter((r) => r._status !== 'Wrapped');
         const wrapped = updated.filter((r) => r._status === 'Wrapped');
@@ -137,7 +137,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
     };
 
     const markRedo = (id: string) => {
-        if (isLocked) return;
+        if (isLocked && !hideControls) return;
         const updated = rows.map((r) => (r._id === id ? { ...r, _status: 'Prep' as const } : r));
         const incomplete = updated.filter((r) => r._status !== 'Wrapped');
         const wrapped = updated.filter((r) => r._status === 'Wrapped');
@@ -151,7 +151,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
     };
 
     const handleThumbnailUpload = (id: string, file: File) => {
-        if (isLocked) return;
+        if (isLocked && !hideControls) return;
         const reader = new FileReader();
         reader.onload = (event) => {
             updateRowState(id, { _thumbnail: event.target?.result as string });
