@@ -39,6 +39,7 @@ export const DOC_LABELS: Record<string, string> = {
     // Existing
     'av-script': 'AV Script',
     'shot-scene-book': 'Shot List',
+    'ecomm-shot-list': 'eComm Shot List',
     'call-sheet': 'Call Sheet',
     'schedule': 'Schedule',
     'dit-log': 'DIT Log',

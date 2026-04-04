@@ -5,6 +5,7 @@ import { DirectorsTreatmentTemplate } from '@/components/onformat/templates/Dire
 import { MoodBoardTemplate } from '@/components/onformat/templates/MoodBoardTemplate'
 import { LookbookTemplate } from '@/components/onformat/templates/LookbookTemplate'
 import { ShotListTemplate } from '@/components/onformat/templates/ShotListTemplate'
+import { ECommShotListTemplate } from '@/components/onformat/templates/ECommShotListTemplate'
 import { CameraReportTemplate } from '@/components/onformat/templates/CameraReportTemplate'
 import { BudgetTemplate } from '@/components/onformat/templates/BudgetTemplate'
 import { ScheduleTemplate } from '@/components/onformat/templates/ScheduleTemplate'
@@ -64,6 +65,7 @@ export const TEMPLATE_REGISTRY: Record<string, React.ComponentType<any>> = {
     'lookbook': LookbookTemplate,
     'creative-direction': MoodBoardTemplate,
     'shot-scene-book': ShotListTemplate,
+    'ecomm-shot-list': ECommShotListTemplate,
     'budget': BudgetTemplate,
     'schedule': ScheduleTemplate,
     'locations-sets': LocationsTemplate,

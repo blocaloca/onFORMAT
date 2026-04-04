@@ -46,6 +46,7 @@ type ToolKey =
     | 'talent-release'
     | 'project-export'
     | 'project-overview'
+    | 'ecomm-shot-list'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
@@ -75,6 +76,7 @@ const TOOLS_BY_PHASE: Record<Phase, { key: ToolKey; label: string }[]> = {
     ON_SET: [
         { key: 'schedule', label: 'Schedule' },
         { key: 'call-sheet', label: 'Call Sheet' },
+        { key: 'ecomm-shot-list', label: 'eComm Shot List' },
         { key: 'on-set-notes', label: 'On-Set Notes' },
         { key: 'camera-report', label: 'Camera Report' },
         { key: 'script-notes', label: 'Script Notes' },

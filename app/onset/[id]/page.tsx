@@ -37,6 +37,7 @@ import {
     MobileVisionView,
     MobileStoryboardView
 } from './components';
+import { ECommShotListTemplate } from '@/components/onformat/templates/ECommShotListTemplate';
 import { LogOut, Wifi, UserCircle, AlertCircle, RefreshCw, ChevronLeft, Save, Moon, Sun } from 'lucide-react';
 import { BetaFeedbackTrigger } from '@/components/feedback/BetaFeedbackTrigger';
 import { useTheme } from '@/components/ThemeProvider';
@@ -78,6 +79,7 @@ const MobileLanding = ({ projectName, roleId, roleMatrix, availableKeys, onSelec
     const SILO_ICONS: Record<string, any> = {
         'av-script': Sparkles,
         'shot-scene-book': Video,
+        'ecomm-shot-list': Box,
         'call-sheet': FileText,
         'schedule': Calendar,
         'dit-log': HardDrive,
@@ -464,7 +466,7 @@ export default function OnSetMobilePage() {
 
             const MOBILE_SUPPORTED = [
                 'project-vision', 'creative-brief', 'av-script', 'treatment', 'storyboard', 'lookbook',
-                'shot-scene-book', 'budget', 'crew-list', 'releases', 'casting', 'locations', 'equipment-list', 'wardrobe', 'props-list',
+                'shot-scene-book', 'ecomm-shot-list', 'budget', 'crew-list', 'releases', 'casting', 'locations', 'equipment-list', 'wardrobe', 'props-list',
                 'schedule', 'call-sheet', 'on-set-notes', 'camera-report', 'script-notes', 'sound-report', 'dit-log',
                 'client-selects', 'deliverables', 'archive'
             ];
@@ -1614,6 +1616,14 @@ export default function OnSetMobilePage() {
                                         isReadOnly={!data._canEdit}
                                     />
                                 )}
+                                {activeTab === 'ecomm-shot-list' && (
+                                    <ECommShotListTemplate
+                                        data={data.docs['ecomm-shot-list'] || {}}
+                                        onUpdate={(newData) => handleUpdateDraft('ecomm-shot-list', newData)}
+                                        isLocked={!data._canEdit}
+                                        plain={true}
+                                    />
+                                )}
                                 {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} onAdd={(m) => handleUpdateList('treatment', 'add', m, 'slides')} onUpdate={(m) => handleUpdateList('treatment', 'update', m, 'slides')} onDelete={(id) => handleUpdateList('treatment', 'delete', id, 'slides')} isReadOnly={!data._canEdit} />}
                                 {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} onAdd={(m) => handleUpdateList('lookbook', 'add', m)} onUpdate={(m) => handleUpdateList('lookbook', 'update', m)} onDelete={(id) => handleUpdateList('lookbook', 'delete', id)} isReadOnly={!data._canEdit} />}
                                 {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} onAdd={(m) => handleUpdateList('wardrobe', 'add', m)} onUpdate={(m) => handleUpdateList('wardrobe', 'update', m)} onDelete={(id) => handleUpdateList('wardrobe', 'delete', id)} isReadOnly={!data._canEdit} />}
@@ -1621,7 +1631,7 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} onAdd={(m) => handleUpdateList('props-list', 'add', m)} onUpdate={(m) => handleUpdateList('props-list', 'update', m)} onDelete={(id) => handleUpdateList('props-list', 'delete', id)} isReadOnly={!data._canEdit} />}
 
                                 {/* Fallback for other docs */}
-                                {!['av-script', 'shot-scene-book', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'project-vision', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
+                                {!['av-script', 'shot-scene-book', 'ecomm-shot-list', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'project-vision', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
                                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                                 )}
                             </>
