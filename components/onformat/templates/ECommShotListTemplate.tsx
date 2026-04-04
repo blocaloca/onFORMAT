@@ -28,17 +28,19 @@ interface ECommShotListTemplateProps {
     orientation?: 'portrait' | 'landscape';
     metadata?: any;
     isPrinting?: boolean;
+    defaultViewMode?: 'desktop' | 'mobile';
+    hideControls?: boolean;
 }
 
 const DEFAULT_COLUMNS = ['Shot Number', 'SKU', 'Product Name', 'Variant'];
 const DELIVERABLE_OPTIONS = ['Stills', 'Video', 'Stills + Video', '360 Spin', 'Social'];
 
-export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting }: ECommShotListTemplateProps) => {
+export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting, defaultViewMode = 'desktop', hideControls = false }: ECommShotListTemplateProps) => {
 
     const columns = data.columns || [];
     const rows = data.rows || [];
 
-    const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
+    const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>(defaultViewMode);
     const [draggedRowIndex, setDraggedRowIndex] = useState<number | null>(null);
 
     // Initialization Effect
@@ -198,7 +200,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
             <div className="min-h-[80vh] w-full dark:bg-slate-950 dark:text-slate-200 bg-white text-slate-800 p-2 md:p-4 rounded-lg font-sans">
                 <div className="w-full space-y-6">
                     {/* Controls & Dashboard vs Mobile View switch */}
-                    {!isPrinting && (
+                    {!isPrinting && !hideControls && (
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
                             <div className="flex dark:bg-slate-900 bg-slate-100 border border-slate-200 dark:border-slate-800 rounded-lg p-1 ml-auto">
                                 <button

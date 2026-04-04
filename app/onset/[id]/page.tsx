@@ -1622,6 +1622,8 @@ export default function OnSetMobilePage() {
                                         onUpdate={(newData) => handleUpdateDraft('ecomm-shot-list', newData)}
                                         isLocked={!data._canEdit}
                                         plain={true}
+                                        defaultViewMode="mobile"
+                                        hideControls={true}
                                     />
                                 )}
                                 {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} onAdd={(m) => handleUpdateList('treatment', 'add', m, 'slides')} onUpdate={(m) => handleUpdateList('treatment', 'update', m, 'slides')} onDelete={(id) => handleUpdateList('treatment', 'delete', id, 'slides')} isReadOnly={!data._canEdit} />}
