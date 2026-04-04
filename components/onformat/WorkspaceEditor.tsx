@@ -197,6 +197,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     const [navAlerts, setNavAlerts] = useState<Record<string, boolean>>({});
 
     const stateRef = React.useRef(state);
+    const [syncTick, setSyncTick] = useState(0); // Forcing re-renders on external sync
 
     useEffect(() => {
         stateRef.current = state;
@@ -218,21 +219,26 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     useEffect(() => {
         if (!projectId) return;
 
+        console.log("📡 [OnFormat Sync] Initiating real-time connection for:", projectId);
+
         const channel = supabase.channel(`project-updates-${projectId}`)
             .on(
                 'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
+                { event: '*', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
                 (payload: any) => {
-                    const newData = payload.new.data;
-                    if (!newData || !newData.phases) return;
+                    const newData = payload.new?.data;
+                    if (!newData || !newData.phases) {
+                        console.warn("⚠️ [OnFormat Realtime] Event received, but data is missing or partial.");
+                        return;
+                    }
 
-                    console.log("🔄 [Realtime] Received Project Update:", projectId);
+                    console.log("🔄 [OnFormat Realtime] Project Updated:", payload.new.id);
 
                     setState(current => {
                         let hasChanges = false;
                         const nextPhases = { ...current.phases };
 
-                        // 1. Check Crew List (Special Merging)
+                        // 1. Crew List Sync
                         const newCrewDraft = newData?.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
                         const currentCrewDraft = current.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
                         if (newCrewDraft && newCrewDraft !== currentCrewDraft) {
@@ -267,7 +273,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             }
                         }
 
-                        // 2. Sync Tactical Tools (DIT, Camera, Notes, EComm) across ON_SET and PRODUCTION
+                        // 2. Tactical Tool Hard-Sync (EComm, DIT, Camera, Notes)
                         const tacticalTools: ToolKey[] = ['dit-log', 'camera-report', 'on-set-notes', 'ecomm-shot-list', 'schedule', 'call-sheet', 'script-notes', 'sound-report'];
                         
                         tacticalTools.forEach(tool => {
@@ -275,31 +281,34 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             const localVal = current.phases?.ON_SET?.drafts?.[tool] || current.phases?.PRODUCTION?.drafts?.[tool];
 
                             if (remoteVal && remoteVal !== localVal) {
-                                // Force synchronization into ON_SET as it's the primary phase for these tools on desktop
-                                nextPhases.ON_SET = {
-                                    ...(nextPhases.ON_SET || { locked: false, drafts: {} }),
+                                console.log(`⚡ [Realtime Sync] Merging updated draft for: ${tool}`);
+                                // Ensure it goes into the current phase or default to ON_SET
+                                const targetPhase = (current.activePhase === 'PRODUCTION' || current.activePhase === 'ON_SET') ? current.activePhase : 'ON_SET';
+
+                                nextPhases[targetPhase] = {
+                                    ...(nextPhases[targetPhase] || { locked: false, drafts: {} }),
                                     drafts: {
-                                        ...(nextPhases.ON_SET?.drafts || {}),
+                                        ...(nextPhases[targetPhase]?.drafts || {}),
                                         [tool]: remoteVal
                                     }
                                 };
                                 hasChanges = true;
-                                console.log(`⚡ [Sync] Updated tactical tool: ${tool}`);
                             }
                         });
 
                         if (!hasChanges) return current;
+
+                        setSyncTick(t => t + 1);
                         return { ...current, phases: nextPhases };
                     });
                 }
             )
             .subscribe((status) => {
-                if (status === 'SUBSCRIBED') console.log("📡 [Realtime] Subscription Active for Project:", projectId);
+                if (status === 'SUBSCRIBED') console.log("📡 [OnFormat Sync] Real-time channel established:", projectId);
+                if (status === 'CHANNEL_ERROR') console.error("❌ [OnFormat Sync] Real-time channel failed to connect.");
             });
 
-        return () => { 
-            supabase.removeChannel(channel); 
-        }
+        return () => { supabase.removeChannel(channel); }
     }, [projectId]);
 
     // Placeholder for global side effects if any (formerly Rollcall)
@@ -1042,6 +1051,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     <Header
                         projectName={state.projectName}
                         activeToolLabel={activeToolLabel}
+                        syncStatus={syncTick}
                     />
 
                     {isReadOnly && (
