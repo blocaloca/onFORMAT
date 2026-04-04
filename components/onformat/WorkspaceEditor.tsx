@@ -219,96 +219,85 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     useEffect(() => {
         if (!projectId) return;
 
-        console.log("📡 [OnFormat Sync] Initiating real-time connection for:", projectId);
+        console.log("📡 [OnFormat Sync] Establishing Pulse and Broadcast channels:", projectId);
 
-        const channel = supabase.channel(`project-updates-${projectId}`)
+        // CHANNEL 1: BROADCAST SYNC (High-Speed)
+        // Shorter path than postgres_changes: Mobile writes to DB -> Broadcasts Ping -> Desktop fetches fresh rows.
+        const syncChannel = supabase.channel(`project_sync:${projectId}`)
+            .on('broadcast', { event: 'SYNC_TRIGGER' }, async (payload) => {
+                console.log(`🚀 [OnFormat Sync] High-speed broadcast received for: ${payload.payload.tool}`);
+                
+                // Fetch the absolute latest from DB immediately
+                const { data: freshProject, error } = await supabase.from('projects').select('data').eq('id', projectId).single();
+                if (!error && freshProject?.data) {
+                    setState(current => {
+                        console.log("⚡ [OnFormat Sync] Applying broadcasted data update.");
+                        setSyncTick(t => t + 1);
+                        return { ...current, phases: freshProject.data.phases };
+                    });
+                }
+            })
+            .subscribe();
+
+        // CHANNEL 2: POSTGRES CHANGES (Backup/Deep Sync)
+        const dbChannel = supabase.channel(`project-db-updates-${projectId}`)
             .on(
                 'postgres_changes',
                 { event: '*', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
                 (payload: any) => {
                     const newData = payload.new?.data;
-                    if (!newData || !newData.phases) {
-                        console.warn("⚠️ [OnFormat Realtime] Event received, but data is missing or partial.");
-                        return;
-                    }
+                    if (!newData || !newData.phases) return;
 
-                    console.log("🔄 [OnFormat Realtime] Project Updated:", payload.new.id);
+                    console.log("📂 [OnFormat Sync] DB Snapshot synchronized:", payload.new.id);
 
                     setState(current => {
                         let hasChanges = false;
                         const nextPhases = { ...current.phases };
 
-                        // 1. Crew List Sync
+                        // Crew List sync remains deep-merge based
                         const newCrewDraft = newData?.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
                         const currentCrewDraft = current.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
                         if (newCrewDraft && newCrewDraft !== currentCrewDraft) {
                             try {
                                 const localData = JSON.parse(currentCrewDraft || '{}');
                                 const remoteData = JSON.parse(newCrewDraft || '{}');
-
                                 if (localData.crew && Array.isArray(localData.crew) && remoteData.crew && Array.isArray(remoteData.crew)) {
                                     const mergedCrew = localData.crew.map((localItem: any) => {
                                         let remoteItem = remoteData.crew.find((r: any) => r.id === localItem.id);
-                                        if (!remoteItem && localItem.email) {
-                                            const localEmail = localItem.email.toLowerCase().trim();
-                                            remoteItem = remoteData.crew.find((r: any) => r.email?.toLowerCase().trim() === localEmail);
-                                        }
                                         if (remoteItem) return { ...localItem, status: remoteItem.status };
                                         return localItem;
                                     });
                                     const newRows = remoteData.crew.filter((r: any) => !localData.crew.find((l: any) => l.id === r.id));
-                                    const mergedDraft = JSON.stringify({ ...localData, crew: [...mergedCrew, ...newRows] });
-                                    
-                                    if (mergedDraft !== currentCrewDraft) {
-                                        nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': mergedDraft } };
-                                        hasChanges = true;
-                                    }
-                                } else {
-                                    nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': newCrewDraft } };
+                                    nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': JSON.stringify({ ...localData, crew: [...mergedCrew, ...newRows] }) } };
                                     hasChanges = true;
                                 }
-                            } catch (e) {
-                                nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': newCrewDraft } };
-                                hasChanges = true;
-                            }
+                            } catch { }
                         }
 
-                        // 2. Tactical Tool Hard-Sync (EComm, DIT, Camera, Notes)
-                        const tacticalTools: ToolKey[] = ['dit-log', 'camera-report', 'on-set-notes', 'ecomm-shot-list', 'schedule', 'call-sheet', 'script-notes', 'sound-report'];
-                        
+                        // Tactical tools (EComm etc) use the latest from payload
+                        const tacticalTools: ToolKey[] = ['dit-log', 'camera-report', 'on-set-notes', 'ecomm-shot-list'];
                         tacticalTools.forEach(tool => {
                             const remoteVal = newData.phases?.ON_SET?.drafts?.[tool] || newData.phases?.PRODUCTION?.drafts?.[tool];
                             const localVal = current.phases?.ON_SET?.drafts?.[tool] || current.phases?.PRODUCTION?.drafts?.[tool];
-
                             if (remoteVal && remoteVal !== localVal) {
-                                console.log(`⚡ [Realtime Sync] Merging updated draft for: ${tool}`);
-                                // Ensure it goes into the current phase or default to ON_SET
-                                const targetPhase = (current.activePhase === 'PRODUCTION' || current.activePhase === 'ON_SET') ? current.activePhase : 'ON_SET';
-
-                                nextPhases[targetPhase] = {
-                                    ...(nextPhases[targetPhase] || { locked: false, drafts: {} }),
-                                    drafts: {
-                                        ...(nextPhases[targetPhase]?.drafts || {}),
-                                        [tool]: remoteVal
-                                    }
-                                };
                                 hasChanges = true;
+                                const targetPhase = (current.activePhase === 'PRODUCTION' || current.activePhase === 'ON_SET') ? current.activePhase : 'ON_SET';
+                                nextPhases[targetPhase] = { ...(nextPhases[targetPhase] || { locked: false, drafts: {} }), drafts: { ...(nextPhases[targetPhase]?.drafts || {}), [tool]: remoteVal } };
                             }
                         });
 
                         if (!hasChanges) return current;
-
                         setSyncTick(t => t + 1);
                         return { ...current, phases: nextPhases };
                     });
                 }
             )
-            .subscribe((status) => {
-                if (status === 'SUBSCRIBED') console.log("📡 [OnFormat Sync] Real-time channel established:", projectId);
-                if (status === 'CHANNEL_ERROR') console.error("❌ [OnFormat Sync] Real-time channel failed to connect.");
-            });
+            .subscribe();
 
-        return () => { supabase.removeChannel(channel); }
+        return () => { 
+            supabase.removeChannel(syncChannel); 
+            supabase.removeChannel(dbChannel); 
+        }
     }, [projectId]);
 
     // Placeholder for global side effects if any (formerly Rollcall)

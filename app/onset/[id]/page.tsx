@@ -1062,6 +1062,20 @@ export default function OnSetMobilePage() {
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+
+            // SYNC BROADCAST: Trigger immediate desktop re-fetch
+            const syncChannel = supabase.channel(`project_sync:${id}`)
+            syncChannel.subscribe(async (status) => {
+                if (status === 'SUBSCRIBED') {
+                    await syncChannel.send({
+                        type: 'broadcast',
+                        event: 'SYNC_TRIGGER',
+                        payload: { tool: originalKey, timestamp: Date.now() }
+                    });
+                    supabase.removeChannel(syncChannel);
+                }
+            });
+
             fetchData();
         } catch (e) { console.error(e) }
     }
