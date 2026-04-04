@@ -193,6 +193,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
             plain={plain}
             orientation={orientation}
             metadata={metadata}
+            isPrinting={isPrinting}
         >
             <div className="min-h-[80vh] w-full dark:bg-slate-950 dark:text-slate-200 bg-white text-slate-800 p-2 md:p-4 rounded-lg font-sans">
                 <div className="w-full space-y-6">
