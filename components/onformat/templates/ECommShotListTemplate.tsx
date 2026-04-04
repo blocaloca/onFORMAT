@@ -188,17 +188,9 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
     const activeShot = rows.find((r) => r._status !== 'Wrapped');
 
-    return (
-        <DocumentLayout
-            title="eComm Shot List"
-            hideHeader={false}
-            plain={plain}
-            orientation={orientation}
-            metadata={metadata}
-            isPrinting={isPrinting}
-        >
-            <div className="min-h-[80vh] w-full dark:bg-slate-950 dark:text-slate-200 bg-white text-slate-800 p-2 md:p-4 rounded-lg font-sans">
-                <div className="w-full space-y-6">
+    const innerContent = (
+        <div className={`w-full font-sans ${hideControls ? 'pb-24 pt-4' : 'min-h-[80vh] dark:bg-slate-950 dark:text-slate-200 bg-white text-slate-800 p-2 md:p-4 rounded-lg'}`}>
+            <div className="w-full space-y-6">
                     {/* Controls & Dashboard vs Mobile View switch */}
                     {!isPrinting && !hideControls && (
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
@@ -628,6 +620,22 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                     )}
                 </div>
             </div>
+    );
+
+    if (hideControls) {
+        return innerContent;
+    }
+
+    return (
+        <DocumentLayout
+            title="eComm Shot List"
+            hideHeader={false}
+            plain={plain}
+            orientation={orientation}
+            metadata={metadata}
+            isPrinting={isPrinting}
+        >
+            {innerContent}
         </DocumentLayout>
     );
 };
