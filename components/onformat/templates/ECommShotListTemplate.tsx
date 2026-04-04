@@ -42,6 +42,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
     const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>(defaultViewMode);
     const [draggedRowIndex, setDraggedRowIndex] = useState<number | null>(null);
+    const [completingId, setCompletingId] = useState<string | null>(null);
 
     // Initialization Effect
     useEffect(() => {
@@ -130,10 +131,23 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
     const markComplete = (id: string) => {
         if (isLocked && !hideControls) return;
-        const updated = rows.map((r) => (r._id === id ? { ...r, _status: 'Wrapped' as const } : r));
-        const incomplete = updated.filter((r) => r._status !== 'Wrapped');
-        const wrapped = updated.filter((r) => r._status === 'Wrapped');
-        onUpdate({ columns, rows: [...incomplete, ...wrapped] });
+        
+        // If in mobile mode, animate it before sinking
+        if (hideControls) {
+            setCompletingId(id);
+            setTimeout(() => {
+                const updated = rows.map((r) => (r._id === id ? { ...r, _status: 'Wrapped' as const } : r));
+                const incomplete = updated.filter((r) => r._status !== 'Wrapped');
+                const wrapped = updated.filter((r) => r._status === 'Wrapped');
+                onUpdate({ columns, rows: [...incomplete, ...wrapped] });
+                setCompletingId(null);
+            }, 500);
+        } else {
+            const updated = rows.map((r) => (r._id === id ? { ...r, _status: 'Wrapped' as const } : r));
+            const incomplete = updated.filter((r) => r._status !== 'Wrapped');
+            const wrapped = updated.filter((r) => r._status === 'Wrapped');
+            onUpdate({ columns, rows: [...incomplete, ...wrapped] });
+        }
     };
 
     const markRedo = (id: string) => {
@@ -152,9 +166,39 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
     const handleThumbnailUpload = (id: string, file: File) => {
         if (isLocked && !hideControls) return;
+        
+        // Use an image compressor to prevent JSON/Postgres payload overflow from iPhone 10MB raw captures
         const reader = new FileReader();
         reader.onload = (event) => {
-            updateRowState(id, { _thumbnail: event.target?.result as string });
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+                const MAX_DIMENSION = 600; // Resize to max 600px safely
+
+                if (width > height) {
+                    if (width > MAX_DIMENSION) {
+                        height *= MAX_DIMENSION / width;
+                        width = MAX_DIMENSION;
+                    }
+                } else {
+                    if (height > MAX_DIMENSION) {
+                        width *= MAX_DIMENSION / height;
+                        height = MAX_DIMENSION;
+                    }
+                }
+
+                canvas.width = Math.max(1, Math.floor(width));
+                canvas.height = Math.max(1, Math.floor(height));
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+                    updateRowState(id, { _thumbnail: compressedBase64 });
+                }
+            };
+            img.src = event.target?.result as string;
         };
         reader.readAsDataURL(file);
     };
@@ -512,7 +556,9 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 <div className="text-center p-12 text-emerald-500 font-medium bg-white dark:bg-white rounded-[24px] shadow-sm border border-zinc-100">✨ All shots wrapped!</div>
                             ) : (
                                 <div className="space-y-4">
-                                    <div className="bg-white dark:bg-white rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden">
+                                    <div className={`bg-white dark:bg-white rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden transform transition-all duration-500 origin-top
+                                        ${completingId === activeShot._id ? 'opacity-0 scale-95 translate-y-12' : 'opacity-100 scale-100 translate-y-0'}
+                                    `}>
                                         
                                         <div className="flex justify-between items-start mb-6">
                                             <div>
