@@ -213,7 +213,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                 setState(stored)
             }
         }
-    }, [initialState, projectId])
+    }, [initialState, projectId]);
 
     useEffect(() => {
         if (!projectId) return;
@@ -222,137 +222,88 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             .on(
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (payload: any) => {
                     const newData = payload.new.data;
-                    const newCrewDraft = newData?.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
+                    if (!newData || !newData.phases) return;
 
-                    if (newCrewDraft) {
-                        // NOTIFICATION LOGIC (Signal)
+                    console.log("🔄 [Realtime] Received Project Update:", projectId);
 
+                    setState(current => {
+                        let hasChanges = false;
+                        const nextPhases = { ...current.phases };
 
+                        // 1. Check Crew List (Special Merging)
+                        const newCrewDraft = newData?.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
+                        const currentCrewDraft = current.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
+                        if (newCrewDraft && newCrewDraft !== currentCrewDraft) {
+                            try {
+                                const localData = JSON.parse(currentCrewDraft || '{}');
+                                const remoteData = JSON.parse(newCrewDraft || '{}');
 
-                        setState(current => {
-                            const currentDraft = current.phases?.PRE_PRODUCTION?.drafts?.['crew-list'];
-                            if (newCrewDraft !== currentDraft) {
-                                // Smart Merging to prevent 'erratic' behavior while typing.
-                                // We preserve local text modifications (Name, Email, etc.) but accept Remote 'Status' updates.
-                                try {
-                                    const localData = JSON.parse(currentDraft || '{}');
-                                    const remoteData = JSON.parse(newCrewDraft || '{}');
-
-                                    if (localData.crew && Array.isArray(localData.crew) && remoteData.crew && Array.isArray(remoteData.crew)) {
-                                        // 1. Update existing locals with remote status
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        const mergedCrew = localData.crew.map((localItem: any) => {
-                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                            let remoteItem = remoteData.crew.find((r: any) => r.id === localItem.id);
-
-                                            // Fallback: Match by Email for robust Status Sync (even if IDs drifted)
-                                            if (!remoteItem && localItem.email) {
-                                                const localEmail = localItem.email.toLowerCase().trim();
-                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                                remoteItem = remoteData.crew.find((r: any) => r.email?.toLowerCase().trim() === localEmail);
-                                            }
-
-                                            if (remoteItem) {
-                                                return {
-                                                    ...localItem,
-                                                    status: remoteItem.status
-                                                };
-                                            }
-                                            return localItem;
-                                        });
-
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                        const newRows = remoteData.crew.filter((r: any) => !localData.crew.find((l: any) => l.id === r.id));
-
-                                        const finalCrew = [...mergedCrew, ...newRows];
-                                        const mergedDraft = JSON.stringify({ ...localData, crew: finalCrew });
-
-                                        return {
-                                            ...current,
-                                            phases: {
-                                                ...current.phases,
-                                                PRE_PRODUCTION: {
-                                                    ...(current.phases?.[ 'PRE_PRODUCTION' ] || {}),
-                                                    drafts: {
-                                                        ...(current.phases?.[ 'PRE_PRODUCTION' ]?.drafts || {}),
-                                                        'crew-list': mergedDraft
-                                                    }
-                                                }
-                                            }
-                                        };
-                                    }
-                                } catch (e) { console.warn('Merge failed', e); }
-
-                                // Fallback: simple overwrite
-                                return {
-                                    ...current,
-                                    phases: {
-                                        ...current.phases,
-                                        PRE_PRODUCTION: {
-                                            ...(current.phases?.[ 'PRE_PRODUCTION' ] || {}),
-                                            drafts: {
-                                                ...(current.phases?.[ 'PRE_PRODUCTION' ]?.drafts || {}),
-                                                'crew-list': newCrewDraft
-                                            }
+                                if (localData.crew && Array.isArray(localData.crew) && remoteData.crew && Array.isArray(remoteData.crew)) {
+                                    const mergedCrew = localData.crew.map((localItem: any) => {
+                                        let remoteItem = remoteData.crew.find((r: any) => r.id === localItem.id);
+                                        if (!remoteItem && localItem.email) {
+                                            const localEmail = localItem.email.toLowerCase().trim();
+                                            remoteItem = remoteData.crew.find((r: any) => r.email?.toLowerCase().trim() === localEmail);
                                         }
+                                        if (remoteItem) return { ...localItem, status: remoteItem.status };
+                                        return localItem;
+                                    });
+                                    const newRows = remoteData.crew.filter((r: any) => !localData.crew.find((l: any) => l.id === r.id));
+                                    const mergedDraft = JSON.stringify({ ...localData, crew: [...mergedCrew, ...newRows] });
+                                    
+                                    if (mergedDraft !== currentCrewDraft) {
+                                        nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': mergedDraft } };
+                                        hasChanges = true;
+                                    }
+                                } else {
+                                    nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': newCrewDraft } };
+                                    hasChanges = true;
+                                }
+                            } catch (e) {
+                                nextPhases.PRE_PRODUCTION = { ...nextPhases.PRE_PRODUCTION, drafts: { ...nextPhases.PRE_PRODUCTION?.drafts, 'crew-list': newCrewDraft } };
+                                hasChanges = true;
+                            }
+                        }
+
+                        // 2. Sync Tactical Tools (DIT, Camera, Notes, EComm) across ON_SET and PRODUCTION
+                        const tacticalTools: ToolKey[] = ['dit-log', 'camera-report', 'on-set-notes', 'ecomm-shot-list', 'schedule', 'call-sheet', 'script-notes', 'sound-report'];
+                        
+                        tacticalTools.forEach(tool => {
+                            const remoteVal = newData.phases?.ON_SET?.drafts?.[tool] || newData.phases?.PRODUCTION?.drafts?.[tool];
+                            const localVal = current.phases?.ON_SET?.drafts?.[tool] || current.phases?.PRODUCTION?.drafts?.[tool];
+
+                            if (remoteVal && remoteVal !== localVal) {
+                                // Force synchronization into ON_SET as it's the primary phase for these tools on desktop
+                                nextPhases.ON_SET = {
+                                    ...(nextPhases.ON_SET || { locked: false, drafts: {} }),
+                                    drafts: {
+                                        ...(nextPhases.ON_SET?.drafts || {}),
+                                        [tool]: remoteVal
                                     }
                                 };
+                                hasChanges = true;
+                                console.log(`⚡ [Sync] Updated tactical tool: ${tool}`);
                             }
-                            return current;
                         });
-                    }
 
-                    // Consolidated Tactical ON_SET Realtime Listeners
-                    let hasOnSetUpdates = false;
-                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
-                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
-                    if (newDitLog && newDitLog !== currentDitLog) hasOnSetUpdates = true;
-
-                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
-                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
-                    if (newCameraReport && newCameraReport !== currentCameraReport) hasOnSetUpdates = true;
-
-                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-                    if (newNotes && newNotes !== currentNotes) hasOnSetUpdates = true;
-
-                    const newEcomm = newData.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || newData.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
-                    const currentEcomm = stateRef.current.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || stateRef.current.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
-                    if (newEcomm && newEcomm !== currentEcomm) hasOnSetUpdates = true;
-
-                    if (hasOnSetUpdates) {
-                        setState(prev => ({
-                            ...prev,
-                            phases: {
-                                ...prev.phases,
-                                ON_SET: {
-                                    ...(prev.phases?.['ON_SET'] || {}),
-                                    drafts: {
-                                        ...(prev.phases?.['ON_SET']?.drafts || {}),
-                                        ...(newDitLog && newDitLog !== currentDitLog ? { 'dit-log': newDitLog } : {}),
-                                        ...(newCameraReport && newCameraReport !== currentCameraReport ? { 'camera-report': newCameraReport } : {}),
-                                        ...(newNotes && newNotes !== currentNotes ? { 'on-set-notes': newNotes } : {}),
-                                        ...(newEcomm && newEcomm !== currentEcomm ? { 'ecomm-shot-list': newEcomm } : {})
-                                    }
-                                }
-                            },
-                        }));
-                    }
+                        if (!hasChanges) return current;
+                        return { ...current, phases: nextPhases };
+                    });
                 }
             )
-            .subscribe();
+            .subscribe((status) => {
+                if (status === 'SUBSCRIBED') console.log("📡 [Realtime] Subscription Active for Project:", projectId);
+            });
 
-        return () => { supabase.removeChannel(channel); }
+        return () => { 
+            supabase.removeChannel(channel); 
+        }
     }, [projectId]);
 
-    // --- ROLLCALL ALERTS (REMOVED) ---
-    // The CrewListTemplate handles the Status Light visualization.
-    // Global Key-Value Ref is no longer needed here as we use direct DB subscription in CrewList.
-    useEffect(() => {
-    }, []);
+    // Placeholder for global side effects if any (formerly Rollcall)
+    useEffect(() => { }, []);
 
     const [input, setInput] = useState('')
     const [isSending, setIsSending] = useState(false)
@@ -378,11 +329,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         return () => clearTimeout(timeoutId);
     }, [state, onSave, projectId])
 
-    // --- Realtime Subscriptions ---
-
-
     // Mobile Control Integration
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [mobileControlDoc, setMobileControlDoc] = useState<any>(null)
 
 
