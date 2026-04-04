@@ -304,6 +304,43 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             return current;
                         });
                     }
+
+                    // Consolidated Tactical ON_SET Realtime Listeners
+                    let hasOnSetUpdates = false;
+                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
+                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
+                    if (newDitLog && newDitLog !== currentDitLog) hasOnSetUpdates = true;
+
+                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
+                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
+                    if (newCameraReport && newCameraReport !== currentCameraReport) hasOnSetUpdates = true;
+
+                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
+                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
+                    if (newNotes && newNotes !== currentNotes) hasOnSetUpdates = true;
+
+                    const newEcomm = newData.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || newData.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
+                    const currentEcomm = stateRef.current.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || stateRef.current.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
+                    if (newEcomm && newEcomm !== currentEcomm) hasOnSetUpdates = true;
+
+                    if (hasOnSetUpdates) {
+                        setState(prev => ({
+                            ...prev,
+                            phases: {
+                                ...prev.phases,
+                                ON_SET: {
+                                    ...(prev.phases?.['ON_SET'] || {}),
+                                    drafts: {
+                                        ...(prev.phases?.['ON_SET']?.drafts || {}),
+                                        ...(newDitLog && newDitLog !== currentDitLog ? { 'dit-log': newDitLog } : {}),
+                                        ...(newCameraReport && newCameraReport !== currentCameraReport ? { 'camera-report': newCameraReport } : {}),
+                                        ...(newNotes && newNotes !== currentNotes ? { 'on-set-notes': newNotes } : {}),
+                                        ...(newEcomm && newEcomm !== currentEcomm ? { 'ecomm-shot-list': newEcomm } : {})
+                                    }
+                                }
+                            },
+                        }));
+                    }
                 }
             )
             .subscribe();
@@ -381,69 +418,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
 
 
-
-
-
-
-
     useEffect(() => {
         if (!projectId) return;
-
-        console.log("🔌 Subscribing to Realtime Activity for Project:", projectId);
-
-        // CHANNEL 1: DATABASE UPDATES
-        const dbChannel = supabase
-            .channel(`project_updates:${projectId}`)
-            .on(
-                'postgres_changes',
-                { event: 'UPDATE', schema: 'public', table: 'projects', filter: `id=eq.${projectId}` },
-                (payload: any) => {
-                    const newData = payload.new?.data;
-                    if (!newData) return;
-
-                    let hasUpdates = false;
-
-                    // Sync DIT Log
-                    const newDitLog = newData.phases?.ON_SET?.drafts?.['dit-log'] || newData.phases?.PRODUCTION?.drafts?.['dit-log'];
-                    const currentDitLog = stateRef.current.phases?.ON_SET?.drafts?.['dit-log'] || stateRef.current.phases?.PRODUCTION?.drafts?.['dit-log'];
-                    if (newDitLog && newDitLog !== currentDitLog) hasUpdates = true;
-
-                    // Sync Camera Report
-                    const newCameraReport = newData.phases?.ON_SET?.drafts?.['camera-report'] || newData.phases?.PRODUCTION?.drafts?.['camera-report'];
-                    const currentCameraReport = stateRef.current.phases?.ON_SET?.drafts?.['camera-report'] || stateRef.current.phases?.PRODUCTION?.drafts?.['camera-report'];
-                    if (newCameraReport && newCameraReport !== currentCameraReport) hasUpdates = true;
-
-                    // Sync Notes
-                    const newNotes = newData.phases?.ON_SET?.drafts?.['on-set-notes'] || newData.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-                    const currentNotes = stateRef.current.phases?.ON_SET?.drafts?.['on-set-notes'] || stateRef.current.phases?.PRODUCTION?.drafts?.['on-set-notes'];
-                    if (newNotes && newNotes !== currentNotes) hasUpdates = true;
-
-                    // Sync EComm Shot List
-                    const newEcomm = newData.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || newData.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
-                    const currentEcomm = stateRef.current.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || stateRef.current.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
-                    if (newEcomm && newEcomm !== currentEcomm) hasUpdates = true;
-
-                    if (hasUpdates) {
-                        setState(prev => ({
-                            ...prev,
-                            phases: {
-                                ...prev.phases,
-                                ON_SET: {
-                                    ...(prev.phases?.['ON_SET'] || {}),
-                                    drafts: {
-                                        ...(prev.phases?.['ON_SET']?.drafts || {}),
-                                        ...(newDitLog && newDitLog !== currentDitLog ? { 'dit-log': newDitLog } : {}),
-                                        ...(newCameraReport && newCameraReport !== currentCameraReport ? { 'camera-report': newCameraReport } : {}),
-                                        ...(newNotes && newNotes !== currentNotes ? { 'on-set-notes': newNotes } : {}),
-                                        ...(newEcomm && newEcomm !== currentEcomm ? { 'ecomm-shot-list': newEcomm } : {})
-                                    }
-                                }
-                            },
-                        }));
-                    }
-                }
-            )
-            .subscribe();
 
         // CHANNEL 2: REAL-TIME PULSE BROADCASTS (PRODUCER ALERTS)
         const pulseChannel = supabase.channel(`production_pulse:${projectId}`)
@@ -465,7 +441,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
             .subscribe();
 
         return () => {
-            supabase.removeChannel(dbChannel);
             supabase.removeChannel(pulseChannel);
         };
     }, [projectId]);
