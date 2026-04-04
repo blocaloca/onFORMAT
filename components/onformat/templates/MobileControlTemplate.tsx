@@ -34,6 +34,7 @@ const DOCUMENT_TYPES = [
     { id: 'storyboard', name: 'Storyboard' },
     { id: 'lookbook', name: 'Lookbook' },
     { id: 'shot-scene-book', name: 'Shot / Scene Book' },
+    { id: 'ecomm-shot-list', name: 'eComm Shot List' },
     { id: 'budget', name: 'Budget / Actuals', isSensitive: true },
     { id: 'crew-list', name: 'Crew List' },
     { id: 'releases', name: 'Releases' },

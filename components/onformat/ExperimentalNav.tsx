@@ -39,6 +39,7 @@ export const TOOLS_BY_PHASE: Record<Phase, { key: string; label: string }[]> = {
     ON_SET: [
         { key: 'schedule', label: 'Schedule' },
         { key: 'call-sheet', label: 'Call Sheet' },
+        { key: 'ecomm-shot-list', label: 'eComm Shot List' },
         { key: 'releases', label: 'Releases' },
         { key: 'on-set-notes', label: 'On-Set Notes' },
         { key: 'camera-report', label: 'Camera Report' },
