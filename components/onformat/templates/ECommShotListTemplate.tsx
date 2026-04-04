@@ -253,8 +253,42 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                         </GlassCard>
                     )}
 
+                    {/* Print Table View (Responsive Letter sizing) */}
+                    {rows.length > 0 && isPrinting && (
+                        <div className="w-full pb-8">
+                            <table className="w-full text-left text-[9px] border-collapse border border-slate-300 table-fixed">
+                                <thead>
+                                    <tr className="bg-slate-100">
+                                        {columns.map(col => <th key={col} className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 break-words">{col}</th>)}
+                                        <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-16">Location</th>
+                                        <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-16">Deliver</th>
+                                        <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-12 text-center">Status</th>
+                                        <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-24">Selects</th>
+                                        <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-32">Notes</th>
+                                        <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-12 text-center">Thumb</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {rows.map(row => (
+                                        <tr key={row._id} className={row._status === 'Wrapped' ? 'opacity-50 grayscale bg-slate-50' : 'bg-white'}>
+                                            {columns.map(col => <td key={col} className="border border-slate-300 p-1.5 whitespace-normal break-words font-medium text-slate-800">{row[col]}</td>)}
+                                            <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._location}</td>
+                                            <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._deliverables}</td>
+                                            <td className="border border-slate-300 p-1.5 font-black uppercase text-[7px] text-center tracking-widest text-slate-600 leading-tight">{row._status}</td>
+                                            <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700 font-medium">{row._selects}</td>
+                                            <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._notes}</td>
+                                            <td className="border border-slate-300 p-1 text-center align-middle">
+                                                {row._thumbnail ? <div className="w-full flex justify-center"><img src={row._thumbnail} className="w-8 h-8 object-cover object-center rounded shadow-sm border border-slate-200" /></div> : '-'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
                     {/* Desktop View */}
-                    {rows.length > 0 && viewMode === 'desktop' && (
+                    {rows.length > 0 && viewMode === 'desktop' && !isPrinting && (
                         <div className="overflow-x-auto pb-12 w-full">
                             <div className="min-w-max border dark:border-slate-800 border-slate-200 rounded-xl dark:bg-slate-900/40 bg-slate-50 overflow-hidden w-full">
                                 {/* Table Header Row */}
