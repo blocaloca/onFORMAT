@@ -978,6 +978,16 @@ export default function OnSetMobilePage() {
 
     const handleUpdateDraft = async (toolId: string, updatedDoc: any) => {
         if (!data.project) return;
+        
+        // Optimistic UI Update for zero-latency mobile responsiveness
+        setData((prev: any) => ({
+            ...prev,
+            docs: {
+                ...prev.docs,
+                [toolId]: updatedDoc
+            }
+        }));
+
         try {
             const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
             if (error || !latest) return;
@@ -994,7 +1004,9 @@ export default function OnSetMobilePage() {
 
             const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
             const searchOrder = [...phaseOrder].reverse();
-            let phaseKey = 'PRODUCTION';
+            const ON_SET_TOOLS = ['schedule', 'call-sheet', 'ecomm-shot-list', 'on-set-notes', 'camera-report', 'script-notes', 'sound-report', 'dit-log'];
+            let phaseKey = ON_SET_TOOLS.includes(originalKey) ? 'ON_SET' : 'PRODUCTION';
+            
             for (const p of searchOrder) {
                 if (phases[p]?.drafts?.[originalKey]) {
                     phaseKey = p;

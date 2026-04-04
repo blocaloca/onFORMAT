@@ -235,27 +235,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
     const innerContent = (
         <div className={`w-full font-sans ${hideControls ? 'pb-24 pt-4' : 'min-h-[80vh] dark:bg-slate-950 dark:text-slate-200 bg-white text-slate-800 p-2 md:p-4 rounded-lg'}`}>
             <div className="w-full space-y-6">
-                    {/* Controls & Dashboard vs Mobile View switch */}
-                    {!isPrinting && !hideControls && (
-                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-                            <div className="flex dark:bg-slate-900 bg-slate-100 border border-slate-200 dark:border-slate-800 rounded-lg p-1 ml-auto">
-                                <button
-                                    onClick={() => setViewMode('desktop')}
-                                    className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-semibold transition-all ${viewMode === 'desktop' ? 'dark:bg-slate-800 bg-white text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
-                                        }`}
-                                >
-                                    <Monitor size={14} /> Dash
-                                </button>
-                                <button
-                                    onClick={() => setViewMode('mobile')}
-                                    className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-xs font-semibold transition-all ${viewMode === 'mobile' ? 'dark:bg-slate-800 bg-white text-orange-500 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'
-                                        }`}
-                                >
-                                    <Smartphone size={14} /> Mobile
-                                </button>
-                            </div>
-                        </div>
-                    )}
+
 
                     {/* Empty State */}
                     {rows.length === 0 && !isPrinting && (

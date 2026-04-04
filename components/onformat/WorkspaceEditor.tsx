@@ -419,8 +419,8 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     if (newNotes && newNotes !== currentNotes) hasUpdates = true;
 
                     // Sync EComm Shot List
-                    const newEcomm = newData.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
-                    const currentEcomm = stateRef.current.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
+                    const newEcomm = newData.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || newData.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
+                    const currentEcomm = stateRef.current.phases?.ON_SET?.drafts?.['ecomm-shot-list'] || stateRef.current.phases?.PRODUCTION?.drafts?.['ecomm-shot-list'];
                     if (newEcomm && newEcomm !== currentEcomm) hasUpdates = true;
 
                     if (hasUpdates) {
@@ -434,13 +434,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                                         ...(prev.phases?.['ON_SET']?.drafts || {}),
                                         ...(newDitLog && newDitLog !== currentDitLog ? { 'dit-log': newDitLog } : {}),
                                         ...(newCameraReport && newCameraReport !== currentCameraReport ? { 'camera-report': newCameraReport } : {}),
-                                        ...(newNotes && newNotes !== currentNotes ? { 'on-set-notes': newNotes } : {})
-                                    }
-                                },
-                                PRODUCTION: {
-                                    ...(prev.phases?.['PRODUCTION'] || {}),
-                                    drafts: {
-                                        ...(prev.phases?.['PRODUCTION']?.drafts || {}),
+                                        ...(newNotes && newNotes !== currentNotes ? { 'on-set-notes': newNotes } : {}),
                                         ...(newEcomm && newEcomm !== currentEcomm ? { 'ecomm-shot-list': newEcomm } : {})
                                     }
                                 }
