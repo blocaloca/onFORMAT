@@ -1,49 +1,47 @@
 'use client';
+
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-    Camera, 
-    X,
-    RotateCcw
-} from 'lucide-react';
+import { Share2, Camera, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
+type EffectKey = 'pixelSort' | 'rgbOffset' | 'datamosh' | 'scanline' | 'noise';
 
 export default function GlitchLab() {
     const router = useRouter();
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const bufferCanvasRef = useRef<HTMLCanvasElement>(null);
+    
     const [cameraActive, setCameraActive] = useState(false);
-
-    // Effect Toggles
-    const [effects, setEffects] = useState({
-        posterize: false,
-        solarize: false,
-        falseColor: false,
-        rgbSplit: false,
-        lumaBleed: false
+    const [intensity, setIntensity] = useState(74);
+    const [activeEffects, setActiveEffects] = useState<Record<EffectKey, boolean>>({
+        pixelSort: false,
+        rgbOffset: true,
+        datamosh: false,
+        scanline: false,
+        noise: false
     });
 
-    const toggleEffect = (name: keyof typeof effects) => {
-        setEffects(prev => ({ ...prev, [name]: !prev[name] }));
+    const toggleEffect = (key: EffectKey) => {
+        setActiveEffects(prev => ({ ...prev, [key]: !prev[key] }));
     };
 
-    // Auto-init camera
+    // Camera Init
     useEffect(() => {
         const init = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } } 
+                    video: { facingMode: 'environment', width: { ideal: 720 }, height: { ideal: 720 } } 
                 });
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
-                    videoRef.current.onloadedmetadata = async () => {
-                        try {
-                            await videoRef.current?.play();
-                            setCameraActive(true);
-                        } catch (e) {}
+                    videoRef.current.onloadedmetadata = () => {
+                        videoRef.current?.play().then(() => setCameraActive(true));
                     };
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("Camera failed", e);
+            }
         };
         init();
         return () => {
@@ -53,163 +51,247 @@ export default function GlitchLab() {
         };
     }, []);
 
-    // Render Loop (Pixel Manipulation Engine)
+    // Main Render Loop
     useEffect(() => {
         let frameId: number;
         const render = () => {
             if (cameraActive && videoRef.current && canvasRef.current && bufferCanvasRef.current) {
-                const video = videoRef.current;
-                const canvas = canvasRef.current;
-                const buffer = bufferCanvasRef.current;
-                const ctx = canvas.getContext('2d', { willReadFrequently: true });
-                const bCtx = buffer.getContext('2d', { willReadFrequently: true });
+                const v = videoRef.current;
+                const c = canvasRef.current;
+                const b = bufferCanvasRef.current;
+                const ctx = c.getContext('2d', { willReadFrequently: true });
+                const bCtx = b.getContext('2d', { willReadFrequently: true });
 
-                if (video.videoWidth > 0 && ctx && bCtx) {
-                    // Constant processing resolution for 'glitch' feel
-                    const procWidth = 320;
-                    const procHeight = Math.floor((320 / video.videoWidth) * video.videoHeight);
-                    
-                    if (buffer.width !== procWidth) {
-                        buffer.width = procWidth;
-                        buffer.height = procHeight;
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
+                if (v.videoWidth > 0 && ctx && bCtx) {
+                    const size = Math.min(v.videoWidth, v.videoHeight);
+                    if (c.width !== size) {
+                        c.width = size;
+                        c.height = size;
+                        b.width = size;
+                        b.height = size;
                     }
 
-                    // 1. Capture to Buffer
-                    bCtx.drawImage(video, 0, 0, procWidth, procHeight);
+                    // 1. Draw raw to buffer
+                    bCtx.drawImage(v, (v.videoWidth - size) / 2, (v.videoHeight - size) / 2, size, size, 0, 0, size, size);
                     
-                    // 2. PIXEL MANIPULATION (THE WILD STUFF)
-                    const imgData = bCtx.getImageData(0, 0, procWidth, procHeight);
+                    // 2. Pixel Logic
+                    const imgData = bCtx.getImageData(0, 0, size, size);
                     const data = imgData.data;
+                    const magnitude = intensity / 100;
 
-                    for (let i = 0; i < data.length; i += 4) {
-                        let r = data[i];
-                        let g = data[i+1];
-                        let b = data[i+2];
-
-                        // A. Posterize (Crunch to 4 levels)
-                        if (effects.posterize) {
-                            r = Math.floor(r / 64) * 85;
-                            g = Math.floor(g / 64) * 85;
-                            b = Math.floor(b / 64) * 85;
-                        }
-
-                        // B. Solarize (Invert mid-tones)
-                        if (effects.solarize) {
-                            r = r > 128 ? 255 - r : r;
-                            g = g > 128 ? 255 - g : g;
-                            b = b > 128 ? 255 - b : b;
-                            // Add brutal contrast
-                            r = (r - 128) * 4 + 128;
-                            g = (g - 128) * 4 + 128;
-                            b = (b - 128) * 4 + 128;
-                        }
-
-                        // C. False Color (Radioactive Neon)
-                        if (effects.falseColor) {
-                            const avg = (r + g + b) / 3;
-                            if (avg < 85) { r = 255; g = 0; b = 255; } // Magenta
-                            else if (avg < 170) { r = 0; g = 255; b = 255; } // Cyan
-                            else { r = 255; g = 255; b = 0; } // Yellow
-                        }
-
-                        data[i] = r;
-                        data[i+1] = g;
-                        data[i+2] = b;
-                    }
-
-                    // 3. APPLY RGB SPLIT (Physical Channel Offset)
-                    if (effects.rgbSplit) {
-                        const shift = 8; // Offset pixels
+                    // RGB OFFSET
+                    if (activeEffects.rgbOffset) {
+                        const shift = Math.floor(20 * magnitude);
                         const original = new Uint8ClampedArray(data);
                         for (let i = 0; i < data.length; i += 4) {
                             if (i + shift * 4 < data.length) {
-                                data[i] = original[i + shift * 4]; // Red channel shift
+                                data[i] = original[i + shift * 4]; // Red shift
+                            }
+                        }
+                    }
+
+                    // NOISE / GRAIN
+                    if (activeEffects.noise) {
+                        for (let i = 0; i < data.length; i += 4) {
+                            const n = (Math.random() - 0.5) * 100 * magnitude;
+                            data[i] += n;
+                            data[i+1] += n;
+                            data[i+2] += n;
+                        }
+                    }
+
+                    // DATAMOSH (Row Jitter)
+                    if (activeEffects.datamosh && Math.random() < (0.2 * magnitude)) {
+                        const row = Math.floor(Math.random() * size);
+                        const rowShift = Math.floor((Math.random() - 0.5) * 50 * magnitude);
+                        const rowStart = row * size * 4;
+                        const rowEnd = (row + 10) * size * 4;
+                        for (let i = rowStart; i < rowEnd && i < data.length; i++) {
+                            data[i] = data[i + rowShift * 4] || data[i];
+                        }
+                    }
+
+                    // PIXEL SORT (Shredding by Luminosity)
+                    if (activeEffects.pixelSort) {
+                        const threshold = 255 - (intensity * 2.5);
+                        for (let row = 0; row < size; row++) {
+                            const rowStart = row * size * 4;
+                            const rowPixels: { r: number, g: number, b: number, a: number, br: number }[] = [];
+                            
+                            // Find sortable spans
+                            let sorting = false;
+                            let spanStart = 0;
+                            
+                            for (let col = 0; col < size; col++) {
+                                const idx = rowStart + (col * 4);
+                                const brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+                                
+                                if (brightness > threshold && !sorting) {
+                                    sorting = true;
+                                    spanStart = col;
+                                } else if (brightness <= threshold && sorting) {
+                                    sorting = false;
+                                    // Sort the span [spanStart, col]
+                                    this.sortSpan(data, rowStart, spanStart, col);
+                                }
                             }
                         }
                     }
 
                     bCtx.putImageData(imgData, 0, 0);
 
-                    // 4. DRAW TO MAIN (UP-SAMPLE)
-                    ctx.save();
-                    ctx.imageSmoothingEnabled = false;
-                    
-                    // Luma Bleeding (Smear Pass)
-                    if (effects.lumaBleed) {
-                        ctx.globalAlpha = 0.5;
-                        ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
-                        ctx.globalCompositeOperation = 'difference';
-                        ctx.drawImage(buffer, 10, 2, canvas.width, canvas.height);
-                        ctx.globalCompositeOperation = 'source-over';
-                        ctx.globalAlpha = 1.0;
-                    } else {
-                        ctx.drawImage(buffer, 0, 0, canvas.width, canvas.height);
+                    // 3. Draw to final with Scanlines
+                    ctx.clearRect(0, 0, size, size);
+                    ctx.drawImage(b, 0, 0);
+
+                    if (activeEffects.scanline) {
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                        for (let i = 0; i < size; i += 4) {
+                            ctx.fillRect(0, i, size, 2);
+                        }
                     }
-                    
-                    ctx.restore();
                 }
             }
             frameId = requestAnimationFrame(render);
         };
         render();
         return () => cancelAnimationFrame(frameId);
-    }, [cameraActive, effects]);
+    }, [cameraActive, intensity, activeEffects]);
 
-    const handleCapture = () => {
-        if (!canvasRef.current || !cameraActive) return;
-        const link = document.createElement('a');
-        link.download = `BENT_CORE_${Date.now()}.png`;
-        link.href = canvasRef.current.toDataURL('image/png');
-        link.click();
+    const handleShare = async () => {
+        if (!canvasRef.current) return;
+        canvasRef.current.toBlob(async (blob) => {
+            if (!blob) return;
+            const file = new File([blob], `glitch_${Date.now()}.png`, { type: 'image/png' });
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'onFORMAT Glitch',
+                        text: 'Captured via on_glitch'
+                    });
+                } catch (err) {
+                    console.error("Share failed", err);
+                }
+            } else {
+                // Fallback to download
+                const link = document.createElement('a');
+                link.download = `glitch_${Date.now()}.png`;
+                link.href = URL.createObjectURL(blob);
+                link.click();
+            }
+        });
     };
 
     return (
-        <div className="fixed inset-0 bg-black flex flex-col overflow-hidden select-none touch-none">
-            {/* TOP BAR */}
-            <div className="h-16 bg-black flex items-center justify-between px-6 z-50">
-                <div className="w-10" />
-                <div className="text-[8px] font-black text-white/30 tracking-[0.5em] uppercase">
-                    Glitch_Lab_Hardware // Direct_Data
-                </div>
-                <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center text-white/40 hover:text-white transition-colors">
-                    <X size={20} />
+        <div className="fixed inset-0 bg-black flex flex-col font-sans select-none overflow-hidden touch-none">
+            {/* HEADER */}
+            <div className="h-16 flex items-center justify-between px-6 z-50">
+                <h1 className="text-xl font-black italic tracking-tighter text-white">ON_GLITCH</h1>
+                <button 
+                    onClick={handleShare}
+                    className="p-2 text-cyan-400 active:scale-90 transition-transform"
+                >
+                    <Share2 size={24} />
                 </button>
             </div>
 
             {/* VIEWPORT */}
-            <div className="flex-1 relative bg-zinc-950 overflow-hidden">
-                <video ref={videoRef} autoPlay playsInline muted className="hidden" />
-                <canvas ref={bufferCanvasRef} className="hidden" />
-                {cameraActive ? (
-                    <canvas ref={canvasRef} className="w-full h-full object-contain pixelated" />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                        <div className="w-10 h-10 border border-white/5 border-t-emerald-500 rounded-full animate-spin" />
-                    </div>
-                )}
+            <div className="relative flex-1 flex flex-col items-center justify-center p-4">
+                <div className="relative w-full aspect-square max-w-[500px] border-2 border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                    {/* Viewport Accents */}
+                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-magenta-500 z-10" style={{ borderColor: '#FF00FF' }} />
+                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-cyan-400 z-10" />
+                    
+                    <video ref={videoRef} className="hidden" playsInline muted />
+                    <canvas ref={bufferCanvasRef} className="hidden" />
+                    <canvas ref={canvasRef} className="w-full h-full object-cover grayscale" style={{ filter: 'brightness(1.2) contrast(1.5)' }} />
+                </div>
             </div>
 
-            {/* BOTTOM BAR */}
-            <div className="h-28 bg-black flex items-center justify-between px-8 z-50 border-t border-white/5">
-                <div className="flex items-center gap-5">
-                    {/* Posterize (Cyan) */}
-                    <button onClick={() => toggleEffect('posterize')} className={`w-8 h-8 rounded-full transition-all duration-300 ${effects.posterize ? 'bg-cyan-400 scale-125 shadow-[0_0_20px_#22d3ee]' : 'bg-cyan-900/10 border border-cyan-400/20'}`} />
-                    {/* Solarize (Orange) */}
-                    <button onClick={() => toggleEffect('solarize')} className={`w-8 h-8 rounded-full transition-all duration-300 ${effects.solarize ? 'bg-orange-500 scale-125 shadow-[0_0_20px_#f97316]' : 'bg-orange-900/10 border border-orange-500/20'}`} />
-                    {/* False Color (Pink) */}
-                    <button onClick={() => toggleEffect('falseColor')} className={`w-8 h-8 rounded-full transition-all duration-300 ${effects.falseColor ? 'bg-pink-500 scale-125 shadow-[0_0_20px_#ec4899]' : 'bg-pink-900/10 border border-pink-500/20'}`} />
-                    {/* RGB Split (Lime) */}
-                    <button onClick={() => toggleEffect('rgbSplit')} className={`w-8 h-8 rounded-full transition-all duration-300 ${effects.rgbSplit ? 'bg-lime-400 scale-125 shadow-[0_0_20px_#a3e635]' : 'bg-lime-900/10 border border-lime-400/20'}`} />
-                    {/* Luma Bleeding (Purple) */}
-                    <button onClick={() => toggleEffect('lumaBleed')} className={`w-8 h-8 rounded-full transition-all duration-300 ${effects.lumaBleed ? 'bg-purple-500 scale-125 shadow-[0_0_20px_#a855f7]' : 'bg-purple-900/10 border border-purple-500/20'}`} />
+            {/* CONTROLS */}
+            <div className="bg-black p-6 space-y-8 pb-12">
+                
+                {/* EFFECT BUTTONS */}
+                <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    {([
+                        { id: 'pixelSort', label: 'PIXEL_SORT', color: 'text-purple-400' },
+                        { id: 'rgbOffset', label: 'RGB_OFFSET', color: 'text-cyan-400', activeBg: 'bg-cyan-400 text-black' },
+                        { id: 'datamosh', label: 'DATAMOSH', color: 'text-white', activeBg: 'bg-magenta-500 text-white' },
+                        { id: 'scanline', label: 'SCANLINE', color: 'text-cyan-600' },
+                        { id: 'noise', label: 'NOISE', color: 'text-yellow-200' }
+                    ] as const).map((eff) => (
+                        <button
+                            key={eff.id}
+                            onClick={() => toggleEffect(eff.id)}
+                            className={`flex-1 min-w-[90px] py-4 text-[9px] font-black tracking-widest border transition-all ${
+                                activeEffects[eff.id] 
+                                ? (eff.activeBg || 'bg-zinc-800 text-white border-white/40') 
+                                : `bg-zinc-900/50 text-zinc-500 border-zinc-800`
+                            }`}
+                            style={activeEffects[eff.id] && eff.id === 'datamosh' ? { backgroundColor: '#FF00FF' } : {}}
+                        >
+                            {eff.label}
+                        </button>
+                    ))}
                 </div>
 
-                <button onClick={handleCapture} disabled={!cameraActive} className="w-14 h-14 flex items-center justify-center bg-yellow-400 rounded-full text-black shadow-[0_0_30px_rgba(250,204,21,0.2)] active:scale-75 transition-all">
-                    <Camera size={24} />
-                </button>
+                {/* INTENSITY SLIDER */}
+                <div className="space-y-4">
+                    <div className="flex justify-between items-end">
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">Intensity</label>
+                        <span className="text-3xl font-black text-cyan-400 leading-none">{intensity}%</span>
+                    </div>
+                    <div className="relative h-6 flex items-center">
+                        <div className="absolute inset-x-0 h-[2px] bg-zinc-800" />
+                        <div className="absolute left-0 h-[2px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ width: `${intensity}%` }} />
+                        <input 
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={intensity}
+                            onChange={(e) => setIntensity(parseInt(e.target.value))}
+                            className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
+                        />
+                        {/* Thumb indicator overlay */}
+                        <div 
+                            className="absolute w-1 h-8 bg-cyan-400 shadow-[0_0_15px_#22d3ee] pointer-events-none"
+                            style={{ left: `calc(${intensity}% - 2px)` }}
+                        />
+                    </div>
+                </div>
+
+                {/* CAPTURE SECTION */}
+                <div className="flex items-center justify-center gap-12 pt-4">
+                    <button 
+                        onClick={() => router.back()}
+                        className="px-6 py-4 bg-magenta-500 text-white text-[10px] font-black uppercase tracking-widest active:scale-95 transition-transform"
+                        style={{ backgroundColor: '#FF00FF' }}
+                    >
+                        Work!
+                    </button>
+
+                    <div className="flex flex-col items-center gap-4">
+                        <button 
+                            onClick={handleShare}
+                            className="w-20 h-20 border-4 border-yellow-400 p-1 active:scale-90 transition-transform"
+                        >
+                            <div className="w-full h-full bg-yellow-400 flex items-center justify-center text-black">
+                                <Camera size={32} />
+                            </div>
+                        </button>
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400">Capture</span>
+                    </div>
+
+                    <div className="w-16" /> {/* Spacer for symmetry */}
+                </div>
             </div>
+
+            <style jsx global>{`
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
         </div>
     );
 }
