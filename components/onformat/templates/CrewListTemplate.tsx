@@ -158,14 +158,14 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     <span className="w-full"></span>
                 </div>
 
-                <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800/30 flex-1">
+                <div className="space-y-0 divide-y divide-zinc-100 flex-1">
                     {items.map((item, idx) => {
                         const isOnline = onlineUsers.has(item.email?.toLowerCase());
                         const roleSynced = mobileRoles.some((r: any) => r.id === item.mobileRoleId && r.id !== 'crew') || 
                                           ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors">
+                            <div key={item.id} className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 transition-colors">
                                 
                                 {/* 1. Role Selector */}
                                 <div className="relative pt-0.5">
@@ -264,9 +264,9 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         <div className="flex flex-col items-center gap-1 w-full relative group/status cursor-help" title={isOnline ? 'Online Now' : (roleSynced ? 'Ready for Phone Sync (Offline)' : 'Unused Role')}>
                                             <div className="flex gap-1.5 items-center">
                                                 {/* Blue Dot = Auth Matrix Sync */}
-                                                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${roleSynced ? 'bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.6)]' : 'bg-zinc-200 dark:bg-zinc-800'}`} />
+                                                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${roleSynced ? 'bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.6)]' : 'bg-zinc-200'}`} />
                                                 {/* Green Dot = Live Online */}
-                                                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isOnline ? 'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.6)]' : 'bg-zinc-200 dark:bg-zinc-800'}`} />
+                                                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${isOnline ? 'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.6)]' : 'bg-zinc-200'}`} />
                                             </div>
                                             <span className="text-[7.5px] uppercase tracking-[0.1em] font-black text-zinc-400 mt-0.5 absolute top-4 opacity-0 group-hover/status:opacity-100 pointer-events-none w-[90px] text-center">
                                                 {isOnline ? 'Active' : (roleSynced ? 'Standby' : 'Local')}
@@ -287,7 +287,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             </button>
 
                                             {deleteConfirmIndex === idx && (
-                                                <div className="absolute right-0 top-8 z-50 bg-white dark:bg-zinc-900 shadow-xl border border-zinc-200 dark:border-zinc-700 p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100">
+                                                <div className="absolute right-0 top-8 z-50 bg-white shadow-xl border border-zinc-200 p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100">
                                                     <button
                                                         onClick={() => handleDeleteItem(idx)}
                                                         className="bg-red-500 hover:bg-red-600 text-white text-[9px] font-black py-1.5 px-2 rounded-md uppercase w-full transition-colors tracking-widest"

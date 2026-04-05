@@ -233,7 +233,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
     const activeShot = rows.find((r) => r._status !== 'Wrapped');
 
     const innerContent = (
-        <div className={`w-full font-sans ${hideControls ? 'pb-24 pt-4' : 'min-h-[80vh] dark:bg-slate-950 dark:text-slate-200 bg-transparent text-slate-800 p-2 md:p-4 rounded-lg'}`}>
+        <div className={`w-full font-sans ${hideControls ? 'pb-24 pt-4' : 'min-h-[80vh] bg-transparent text-zinc-900 p-2 md:p-4 rounded-lg'}`}>
             <div className="w-full space-y-6">
 
 
@@ -243,8 +243,8 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             <div className="p-4 rounded-full bg-transparent border border-zinc-200">
                                 <UploadCloud size={32} className="text-orange-500" />
                             </div>
-                            <h2 className="text-xl font-semibold dark:text-slate-200 text-slate-800">Initialize eComm Runbook</h2>
-                            <p className="dark:text-slate-400 text-slate-500 text-sm max-w-md">
+                            <h2 className="text-xl font-semibold text-zinc-900">Initialize eComm Runbook</h2>
+                            <p className="text-zinc-500 text-sm max-w-md">
                                 Upload a standard CSV or Excel file. The module automatically maps your headers into a dynamic row schema.
                             </p>
 
@@ -326,7 +326,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 </div>
 
                                 {/* Table Body Rows */}
-                                <div className="divide-y dark:divide-slate-800/50 divide-slate-200">
+                                <div className="divide-y divide-zinc-200/50">
                                     {rows.map((row, i) => {
                                         const isWrapped = row._status === 'Wrapped';
                                         return (
@@ -353,7 +353,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         ) : (
                                                             <input
                                                                 type="text"
-                                                                className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs dark:text-slate-300 text-slate-700 font-medium focus:outline-none dark:focus:bg-slate-950 focus:bg-white dark:focus:border-slate-700 focus:border-slate-300 dark:hover:border-slate-800 hover:border-slate-200 transition-colors"
+                                                                className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs text-zinc-900 font-medium focus:outline-none focus:bg-transparent focus:border-zinc-400 hover:border-zinc-200 transition-colors"
                                                                 value={row[col]}
                                                                 onChange={(e) => updateRowState(row._id, { [col]: e.target.value })}
                                                                 placeholder={col}
@@ -371,7 +371,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <input
                                                             type="text"
                                                             placeholder="Ex: Set A"
-                                                            className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs dark:text-slate-300 text-slate-700 focus:outline-none dark:focus:bg-slate-950 focus:bg-white dark:focus:border-slate-700 focus:border-slate-300 dark:hover:border-slate-800 hover:border-slate-200 transition-colors"
+                                                            className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs text-zinc-900 focus:outline-none focus:bg-transparent focus:border-zinc-400 hover:border-zinc-200 transition-colors"
                                                             value={row._location}
                                                             onChange={(e) => updateRowState(row._id, { _location: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -429,7 +429,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <input
                                                             type="text"
                                                             placeholder="e.g. 0102, 0104"
-                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs dark:text-slate-300 text-slate-800 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                                             value={row._selects}
                                                             onChange={(e) => updateRowState(row._id, { _selects: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -445,7 +445,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <input
                                                             type="text"
                                                             placeholder="Format edits..."
-                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs dark:text-slate-300 text-slate-800 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                                             value={row._notes}
                                                             onChange={(e) => updateRowState(row._id, { _notes: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -492,7 +492,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                             <button
                                                                 onClick={() => markRedo(row._id)}
                                                                 disabled={isLocked}
-                                                                className="dark:bg-slate-700 bg-slate-200 dark:hover:bg-slate-600 hover:bg-slate-300 dark:text-slate-200 text-slate-700 px-2 py-1 rounded text-[10px] font-bold transition-all flex items-center gap-1 disabled:opacity-50"
+                                                                className="bg-zinc-200 hover:bg-zinc-300 text-zinc-700 px-2 py-1 rounded text-[10px] font-bold transition-all flex items-center gap-1 disabled:opacity-50"
                                                             >
                                                                 <RotateCcw size={12} />
                                                                 Redo
