@@ -4,31 +4,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Share2, Camera, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-type EffectKey = 'pixelSort' | 'rgbOffset' | 'datamosh' | 'scanline' | 'noise';
+type EffectKey = 'pixelSort' | 'solarize' | 'falseColor' | 'rgbOffset' | 'lumaBleed';
 
-// Helper for pixel sorting
-const sortSpan = (data: Uint8ClampedArray, rowOffset: number, startX: number, endX: number, width: number) => {
+const sortSpan = (data: Uint8ClampedArray, rowOffset: number, startX: number, endX: number) => {
     const pixels = [];
     for (let x = startX; x < endX; x++) {
         const i = rowOffset + (x * 4);
         pixels.push({
-            r: data[i],
-            g: data[i + 1],
-            b: data[i + 2],
-            a: data[i + 3],
+            r: data[i], g: data[i + 1], b: data[i + 2], a: data[i + 3],
             br: (data[i] + data[i + 1] + data[i + 2]) / 3
         });
     }
-    // Sort by brightness
     pixels.sort((a, b) => b.br - a.br);
-    // Write back
     for (let x = startX; x < endX; x++) {
         const i = rowOffset + (x * 4);
         const p = pixels[x - startX];
-        data[i] = p.r;
-        data[i+1] = p.g;
-        data[i+2] = p.b;
-        data[i+3] = p.a;
+        data[i] = p.r; data[i+1] = p.g; data[i+2] = p.b; data[i+3] = p.a;
     }
 };
 
@@ -42,42 +33,32 @@ export default function GlitchLab() {
     const [intensity, setIntensity] = useState(74);
     const [activeEffects, setActiveEffects] = useState<Record<EffectKey, boolean>>({
         pixelSort: true,
+        solarize: false,
+        falseColor: false,
         rgbOffset: true,
-        datamosh: false,
-        scanline: false,
-        noise: false
+        lumaBleed: false
     });
 
-    const toggleEffect = (key: EffectKey) => {
-        setActiveEffects(prev => ({ ...prev, [key]: !prev[key] }));
-    };
+    const toggleEffect = (key: EffectKey) => setActiveEffects(prev => ({ ...prev, [key]: !prev[key] }));
 
-    // Camera Init
     useEffect(() => {
         const init = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment', width: { ideal: 720 }, height: { ideal: 720 } } 
+                    video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } } 
                 });
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
-                    videoRef.current.onloadedmetadata = () => {
-                        videoRef.current?.play().then(() => setCameraActive(true));
-                    };
+                    videoRef.current.onloadedmetadata = () => videoRef.current?.play().then(() => setCameraActive(true));
                 }
-            } catch (e) {
-                console.error("Camera failed", e);
-            }
+            } catch (e) { console.error("Camera failed", e); }
         };
         init();
         return () => {
-            if (videoRef.current?.srcObject) {
-                (videoRef.current.srcObject as MediaStream).getTracks().forEach(t => t.stop());
-            }
+            if (videoRef.current?.srcObject) (videoRef.current.srcObject as MediaStream).getTracks().forEach(t => t.stop());
         };
     }, []);
 
-    // Main Render Loop
     useEffect(() => {
         let frameId: number;
         const render = () => {
@@ -89,90 +70,72 @@ export default function GlitchLab() {
                 const bCtx = b.getContext('2d', { willReadFrequently: true });
 
                 if (v.videoWidth > 0 && ctx && bCtx) {
-                    const size = Math.min(v.videoWidth, v.videoHeight);
-                    if (c.width !== size) {
-                        c.width = size;
-                        c.height = size;
-                        b.width = size;
-                        b.height = size;
-                    }
+                    const size = 320; // Internal processing resolution
+                    if (b.width !== size) { b.width = size; b.height = size; c.width = size; c.height = size; }
 
-                    // 1. Draw raw to buffer
-                    bCtx.drawImage(v, (v.videoWidth - size) / 2, (v.videoHeight - size) / 2, size, size, 0, 0, size, size);
-                    
-                    // 2. Pixel Logic
+                    bCtx.drawImage(v, (v.videoWidth - v.videoHeight) / 2, 0, v.videoHeight, v.videoHeight, 0, 0, size, size);
                     const imgData = bCtx.getImageData(0, 0, size, size);
                     const data = imgData.data;
                     const magnitude = intensity / 100;
 
+                    // PIXEL LOGIC
+                    for (let i = 0; i < data.length; i += 4) {
+                        let r = data[i]; let g = data[i+1]; let b = data[i+2];
+
+                        // SOLARIZE
+                        if (activeEffects.solarize) {
+                            r = r > 128 ? 255 - r : r; g = g > 128 ? 255 - g : g; b = b > 128 ? 255 - b : b;
+                            r = (r - 128) * (1 + magnitude * 3) + 128; // Brutal magnitude contrast
+                            g = (g - 128) * (1 + magnitude * 3) + 128;
+                            b = (b - 128) * (1 + magnitude * 3) + 128;
+                        }
+
+                        // FALSE COLOR
+                        if (activeEffects.falseColor) {
+                            const avgIdx = (r + g + b) / 3;
+                            if (avgIdx < (85 * magnitude)) { r = 255; g = 0; b = 255; }
+                            else if (avgIdx < (170 * magnitude)) { r = 0; g = 255; b = 255; }
+                            else { r = 255; g = 255; b = 0; }
+                        }
+
+                        data[i] = r; data[i+1] = g; data[i+2] = b;
+                    }
+
                     // RGB OFFSET
                     if (activeEffects.rgbOffset) {
-                        const shift = Math.floor(30 * magnitude);
+                        const shift = Math.floor(25 * magnitude);
                         const original = new Uint8ClampedArray(data);
                         for (let i = 0; i < data.length; i += 4) {
-                            if (i + shift * 4 < data.length) {
-                                data[i] = original[i + shift * 4]; // Red shift
-                            }
-                        }
-                    }
-
-                    // NOISE / GRAIN
-                    if (activeEffects.noise) {
-                        for (let i = 0; i < data.length; i += 4) {
-                            const n = (Math.random() - 0.5) * 150 * magnitude;
-                            data[i] += n;
-                            data[i+1] += n;
-                            data[i+2] += n;
-                        }
-                    }
-
-                    // DATAMOSH (Row Jitter)
-                    if (activeEffects.datamosh && Math.random() < (0.2 * magnitude)) {
-                        const row = Math.floor(Math.random() * size);
-                        const rowShift = Math.floor((Math.random() - 0.5) * 80 * magnitude);
-                        const rowStart = row * size * 4;
-                        const rowCount = Math.floor(15 * magnitude);
-                        const rowEnd = (row + rowCount) * size * 4;
-                        for (let i = rowStart; i < rowEnd && i < data.length; i++) {
-                            data[i] = data[i + rowShift * 4] || data[i];
+                            if (i + shift * 4 < data.length) data[i] = original[i + shift * 4];
                         }
                     }
 
                     // PIXEL SORT
                     if (activeEffects.pixelSort) {
                         const threshold = 255 - (intensity * 2.5);
-                        for (let row = 0; row < size; row += 2) { // Step for performance
+                        for (let row = 0; row < size; row += 2) {
                             const rowStart = row * size * 4;
-                            let sorting = false;
-                            let spanStart = 0;
-                            
+                            let sorting = false; let spanStart = 0;
                             for (let col = 0; col < size; col++) {
                                 const idx = rowStart + (col * 4);
                                 const brightness = (data[idx] + data[idx+1] + data[idx+2]) / 3;
-                                
-                                if (brightness > threshold && !sorting) {
-                                    sorting = true;
-                                    spanStart = col;
-                                } else if (brightness <= threshold && sorting) {
-                                    sorting = false;
-                                    sortSpan(data, rowStart, spanStart, col, size);
-                                }
+                                if (brightness > threshold && !sorting) { sorting = true; spanStart = col; }
+                                else if (brightness <= threshold && sorting) { sorting = false; sortSpan(data, rowStart, spanStart, col); }
                             }
-                            if (sorting) sortSpan(data, rowStart, spanStart, size, size);
                         }
                     }
 
                     bCtx.putImageData(imgData, 0, 0);
-
-                    // 3. Draw to final
-                    ctx.clearRect(0, 0, size, size);
+                    ctx.imageSmoothingEnabled = false;
                     ctx.drawImage(b, 0, 0);
 
-                    if (activeEffects.scanline) {
-                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-                        for (let i = 0; i < size; i += 4) {
-                            ctx.fillRect(0, i, size, 2);
-                        }
+                    // LUMA BLEED (Second Pass)
+                    if (activeEffects.lumaBleed) {
+                        ctx.globalAlpha = 0.5 * magnitude;
+                        ctx.globalCompositeOperation = 'difference';
+                        ctx.drawImage(b, 5, 2);
+                        ctx.globalCompositeOperation = 'source-over';
+                        ctx.globalAlpha = 1.0;
                     }
                 }
             }
@@ -186,127 +149,95 @@ export default function GlitchLab() {
         if (!canvasRef.current) return;
         canvasRef.current.toBlob(async (blob) => {
             if (!blob) return;
-            const file = new File([blob], `bent_${Date.now()}.png`, { type: 'image/png' });
-            
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'onFORMAT Glitch',
-                        text: 'Captured via on_glitch'
-                    });
-                } catch (err) { console.error("Share failed", err); }
-            } else {
-                const link = document.createElement('a');
-                link.download = `bent_${Date.now()}.png`;
-                link.href = URL.createObjectURL(blob);
-                link.click();
-            }
+            const file = new File([blob], `shred_${Date.now()}.png`, { type: 'image/png' });
+            if (navigator.share) await navigator.share({ files: [file], title: 'onFORMAT Glitch' }).catch(e => {});
+            else { const link = document.createElement('a'); link.download = `shred_${Date.now()}.png`; link.href = URL.createObjectURL(blob); link.click(); }
         });
     };
 
     const effectButtons = [
         { id: 'pixelSort', label: 'PIXEL_SORT', activeBg: 'bg-zinc-800 text-white border-white/40' },
+        { id: 'solarize', label: 'SOLARIZE', activeBg: 'bg-orange-500 text-white border-orange-500' },
+        { id: 'falseColor', label: 'FALSE_COLOR', activeBg: 'bg-magenta-500 text-white border-magenta-500' },
         { id: 'rgbOffset', label: 'RGB_OFFSET', activeBg: 'bg-cyan-400 text-black border-cyan-400' },
-        { id: 'datamosh', label: 'DATAMOSH', activeBg: 'bg-magenta-500 text-white border-magenta-500' },
-        { id: 'scanline', label: 'SCANLINE', activeBg: 'bg-zinc-800 text-cyan-400 border-cyan-400' },
-        { id: 'noise', label: 'NOISE', activeBg: 'bg-zinc-800 text-yellow-200 border-yellow-200' }
+        { id: 'lumaBleed', label: 'LUMA_BLEED', activeBg: 'bg-purple-600 text-white border-purple-600' }
     ] as const;
 
     return (
         <div className="fixed inset-0 bg-black flex flex-col font-sans select-none overflow-hidden touch-none">
-            {/* HEADER */}
-            <div className="h-16 flex items-center justify-between px-6 z-50">
-                <h1 className="text-xl font-black italic tracking-tighter text-white">ON_GLITCH</h1>
-                <button onClick={handleShare} className="p-2 text-cyan-400 active:scale-90 transition-transform">
-                    <Share2 size={24} />
+            {/* HEADER - COMPRESSED */}
+            <div className="h-12 flex items-center justify-between px-6 z-50 pt-2">
+                <h1 className="text-lg font-black italic tracking-tighter text-white">ON_GLITCH</h1>
+                <button onClick={handleShare} className="p-1 text-cyan-400 active:scale-90 transition-transform">
+                    <Share2 size={20} />
                 </button>
             </div>
 
-            {/* VIEWPORT */}
-            <div className="relative flex-1 flex flex-col items-center justify-center p-4">
-                <div className="relative w-full aspect-square max-w-[500px] bg-zinc-900 border-2 border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 z-10" style={{ borderColor: '#FF00FF' }} />
-                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-cyan-400 z-10" />
-                    
+            {/* VIEWPORT - COMPRESSED */}
+            <div className="relative flex-1 flex flex-col items-center justify-center p-2">
+                <div className="relative w-full aspect-square max-w-[420px] bg-zinc-900 border-2 border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                    <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 z-10" style={{ borderColor: '#FF00FF' }} />
+                    <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-400 z-10" />
                     <video ref={videoRef} className="hidden" playsInline muted />
                     <canvas ref={bufferCanvasRef} className="hidden" />
-                    <canvas ref={canvasRef} className="w-full h-full object-cover" />
+                    <canvas ref={canvasRef} className="w-full h-full object-cover pixelated" />
                 </div>
             </div>
 
-            {/* CONTROLS */}
-            <div className="bg-black p-6 space-y-6 pb-12">
-                
+            {/* CONTROLS - COMPRESSED TRAY */}
+            <div className="bg-black p-4 space-y-4 pb-8">
                 {/* EFFECT BUTTONS */}
-                <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
                     {effectButtons.map((eff) => (
                         <button
-                            key={eff.id}
-                            onClick={() => toggleEffect(eff.id)}
-                            className={`flex-1 min-w-[96px] py-4 text-[9px] font-black tracking-widest border transition-all ${
-                                activeEffects[eff.id] 
-                                ? eff.activeBg 
-                                : `bg-zinc-900/50 text-zinc-500 border-zinc-900`
+                            key={eff.id} onClick={() => toggleEffect(eff.id)}
+                            className={`flex-1 min-w-[90px] py-3 text-[8px] font-black tracking-widest border transition-all ${
+                                activeEffects[eff.id] ? eff.activeBg : `bg-zinc-900/50 text-zinc-500 border-zinc-800`
                             }`}
-                            style={activeEffects[eff.id] && eff.id === 'datamosh' ? { backgroundColor: '#FF00FF', borderColor: '#FF00FF' } : {}}
+                            style={activeEffects[eff.id] && eff.id === 'falseColor' ? { backgroundColor: '#FF00FF', borderColor: '#FF00FF' } : {}}
                         >
                             {eff.label}
                         </button>
                     ))}
                 </div>
 
-                {/* INTENSITY SLIDER */}
-                <div className="space-y-3">
+                {/* INTENSITY SLIDER - TIGHTER */}
+                <div className="space-y-1">
                     <div className="flex justify-between items-end">
                         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">Intensity</label>
-                        <span className="text-3xl font-black text-cyan-400 leading-none">{intensity}%</span>
+                        <span className="text-2xl font-black text-cyan-400 leading-none">{intensity}%</span>
                     </div>
-                    <div className="relative h-6 flex items-center">
-                        <div className="absolute inset-x-0 h-[2px] bg-zinc-800" />
-                        <div className="absolute left-0 h-[2px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ width: `${intensity}%` }} />
+                    <div className="relative h-4 flex items-center">
+                        <div className="absolute inset-x-0 h-[1px] bg-zinc-800" />
+                        <div className="absolute left-0 h-[1px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ width: `${intensity}%` }} />
                         <input 
                             type="range" min="0" max="100" value={intensity}
                             onChange={(e) => setIntensity(parseInt(e.target.value))}
                             className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
                         />
-                        <div 
-                            className="absolute w-1 h-8 bg-cyan-400 shadow-[0_0_15px_#22d3ee] pointer-events-none"
-                            style={{ left: `calc(${intensity}% - 2px)` }}
-                        />
+                        <div className="absolute w-1 h-6 bg-cyan-400 shadow-[0_0_15px_#22d3ee] pointer-events-none" style={{ left: `calc(${intensity}% - 2px)` }} />
                     </div>
                 </div>
 
-                {/* CAPTURE SECTION */}
-                <div className="flex items-center justify-between pt-4 max-w-sm mx-auto w-full">
+                {/* CAPTURE SECTION - COMPRESSED */}
+                <div className="flex items-center justify-between pt-2 max-w-sm mx-auto w-full px-4">
                     <button 
                         onClick={() => router.back()}
-                        className="px-6 py-4 bg-magenta-500 text-white text-[10px] font-black uppercase tracking-widest active:scale-95 transition-transform"
+                        className="px-4 py-3 bg-magenta-500 text-white text-[9px] font-black uppercase tracking-widest active:scale-95 transition-transform"
                         style={{ backgroundColor: '#FF00FF' }}
                     >
                         Work!
                     </button>
-
-                    <div className="flex flex-col items-center gap-4">
-                        <button 
-                            onClick={handleShare}
-                            className="w-20 h-20 border-4 border-yellow-400 p-1 active:scale-90 transition-transform"
-                        >
-                            <div className="w-full h-full bg-yellow-400 flex items-center justify-center text-black">
-                                <Camera size={32} />
-                            </div>
+                    <div className="flex flex-col items-center gap-2">
+                        <button onClick={handleShare} className="w-16 h-16 border-[3px] border-yellow-400 p-1 active:scale-90 transition-transform">
+                            <div className="w-full h-full bg-yellow-400 flex items-center justify-center text-black"><Camera size={24} /></div>
                         </button>
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400">Capture</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-yellow-400">Capture</span>
                     </div>
-
-                    <div className="w-16 h-1" />
+                    <div className="w-10 h-1" />
                 </div>
             </div>
-
-            <style jsx global>{`
-                .no-scrollbar::-webkit-scrollbar { display: none; }
-                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-            `}</style>
+            <style jsx global>{` .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; } .pixelated { image-rendering: pixelated; } `}</style>
         </div>
     );
 }
