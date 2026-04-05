@@ -1340,7 +1340,7 @@ export default function OnSetMobilePage() {
                             
                             {/* ONSET Platform Identity */}
                             <div className="flex flex-col min-w-[70px]">
-                                <img src="/onset-logo.png" alt="ONSET" className="h-[28px] w-auto object-contain" />
+                                <img src={theme === 'dark' ? "/onset-logo-wt.png" : "/onset-logo-bk.png"} alt="ONSET" className="h-[28px] w-auto object-contain" />
                             </div>
 
                             {/* Center: Dynamic Role / Document Name */}
