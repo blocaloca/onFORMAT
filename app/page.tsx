@@ -66,12 +66,12 @@ export default function LandingPage() {
                 Dashboard <ArrowRight size={14} />
               </Link>
             ) : (
-              <button 
-                onClick={() => setIsBetaModalOpen(true)}
-                className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+              <Link 
+                href="/login"
+                className="text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors"
               >
-                Join Private Beta <ArrowRight size={14} />
-              </button>
+                Login
+              </Link>
             )
           ) : (
             <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
