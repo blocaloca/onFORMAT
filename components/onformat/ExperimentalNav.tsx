@@ -356,7 +356,7 @@ export const ExperimentalWorkspaceNav = ({
 
                         <div className={`p-1.5 rounded-lg ${mobileStatus?.hasAlert ? 'bg-destructive/20 text-destructive' :
                             mobileStatus?.isLive ? 'bg-[#3B82F6]/20 text-[#3B82F6]' :
-                                'bg-zinc-100/50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100'
+                                'bg-zinc-100/50 dark:bg-zinc-800/50 text-zinc-500 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white'
                             }`}>
                             <Smartphone size={18} />
                             {mobileStatus?.hasAlert && (
