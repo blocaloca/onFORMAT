@@ -19,6 +19,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
+import BetaApplicationModal from '@/components/modals/BetaApplicationModal';
 
 const FEATURE_SECTIONS = [
   {
@@ -94,6 +95,7 @@ const FAQS = [
 export default function FeaturesPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -117,15 +119,21 @@ export default function FeaturesPage() {
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
           {!loading ? (
-            <Link 
-              href={user ? "/dashboard" : "/login"} 
-              className={user 
-                ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
-                : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-              }
-            >
-              {user ? "Dashboard" : "Join Private Beta"} <ArrowRight size={14} />
-            </Link>
+            user ? (
+              <Link 
+                href="/dashboard" 
+                className="bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+              >
+                Dashboard <ArrowRight size={14} />
+              </Link>
+            ) : (
+              <Link 
+                href="/login"
+                className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors"
+              >
+                Login
+              </Link>
+            )
           ) : (
             <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
           )}
@@ -157,9 +165,12 @@ export default function FeaturesPage() {
                 <p className="text-xl text-zinc-500 font-medium leading-relaxed">{section.description}</p>
                 <div className="pt-8">
                   {!user && (
-                    <Link href="/login" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group">
-                      Join Private Beta <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <button 
+                      onClick={() => setIsBetaModalOpen(true)}
+                      className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-900 group"
+                    >
+                      Apply for Private Beta <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
                   )}
                 </div>
               </div>
@@ -229,9 +240,12 @@ export default function FeaturesPage() {
         <div className="flex flex-col items-center gap-6">
           {!user && (
             <>
-              <Link href="/login" className="bg-zinc-900 text-white px-10 py-5 rounded-full text-xs md:text-base font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-2xl hover:-translate-y-1 flex items-center gap-3">
-                Get Started with a 14-Day Free Trial <ArrowRight size={20} />
-              </Link>
+              <button 
+                onClick={() => setIsBetaModalOpen(true)}
+                className="bg-zinc-900 text-white px-10 py-5 rounded-full text-xs md:text-base font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-2xl hover:-translate-y-1 flex items-center gap-3"
+              >
+                Apply for the Pioneer Beta <ArrowRight size={20} />
+              </button>
               <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
                 Log in to a demo project instantly • no setup required
               </p>
@@ -252,6 +266,10 @@ export default function FeaturesPage() {
         </div>
       </footer>
 
+      <BetaApplicationModal 
+        isOpen={isBetaModalOpen} 
+        onClose={() => setIsBetaModalOpen(false)} 
+      />
     </div>
   );
 }

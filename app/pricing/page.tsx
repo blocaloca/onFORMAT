@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Check, Loader2, ArrowRight } from 'lucide-react';
 import { STRIPE_PLANS } from '@/lib/stripe-products';
 import { getClient } from '@/lib/supabase';
+import BetaApplicationModal from '@/components/modals/BetaApplicationModal';
 
 export default function PricingPage() {
     const [user, setUser] = useState<any>(null);
@@ -12,6 +13,7 @@ export default function PricingPage() {
     const supabase = getClient()
     const [loading, setLoading] = useState<string | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
+    const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
 
     useEffect(() => {
         const getUser = async () => {
@@ -75,15 +77,21 @@ export default function PricingPage() {
                     <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
                     <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-900 border-b-2 border-zinc-900 pb-1 hidden md:block">Pricing</Link>
                     {!loadingAuth ? (
-                        <Link 
-                            href={user ? "/dashboard" : "/login"} 
-                            className={user 
-                                ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
-                                : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-                            }
-                        >
-                            {user ? "Dashboard" : "Join Private Beta"} <ArrowRight size={14} />
-                        </Link>
+                        user ? (
+                            <Link 
+                                href="/dashboard" 
+                                className="bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+                            >
+                                Dashboard <ArrowRight size={14} />
+                            </Link>
+                        ) : (
+                            <Link 
+                                href="/login"
+                                className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors"
+                            >
+                                Login
+                            </Link>
+                        )
                     ) : (
                         <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
                     )}
@@ -98,7 +106,8 @@ export default function PricingPage() {
                         Production-grade pricing.
                     </h1>
                     <p className="text-zinc-500 font-medium text-lg leading-relaxed">
-                        Every account automatically starts with a <span className="text-zinc-900 font-bold">14-Day Free Trial</span>. <br className="hidden md:block" /> No credit card, commitment, or tier selection required until you're ready.
+                        Join the waitlist for <span className="text-zinc-900 font-bold underline decoration-orange-500 decoration-2">Cohort 02</span>. 
+                        Approved pioneers receive a <span className="text-zinc-900 font-bold">30-Day Solo Pioneer Trial ($19 value)</span>.
                     </p>
                 </div>
 
@@ -127,9 +136,18 @@ export default function PricingPage() {
                                 CURRENT PLAN
                             </button>
                         ) : (
-                            <Link href="/login" className="block text-center w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-colors">
-                                {user ? "DOWNGRADE" : "GET STARTED"}
-                            </Link>
+                            user ? (
+                                <Link href="/dashboard" className="block text-center w-full bg-zinc-100 text-zinc-900 py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-200 transition-colors">
+                                    DOWNGRADE
+                                </Link>
+                            ) : (
+                                <button 
+                                    onClick={() => setIsBetaModalOpen(true)}
+                                    className="w-full bg-zinc-900 text-white py-4 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition-colors"
+                                >
+                                    APPLY FOR BETA
+                                </button>
+                            )
                         )}
                     </div>
 
@@ -200,6 +218,10 @@ export default function PricingPage() {
                 {/* FAQ Link Removed */}
 
             </div>
+            <BetaApplicationModal 
+                isOpen={isBetaModalOpen} 
+                onClose={() => setIsBetaModalOpen(false)} 
+            />
         </div>
     );
 }
