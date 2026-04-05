@@ -151,7 +151,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                     <div className="space-y-1">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 ml-1">Full Name</label>
                         <input
-                            className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl shadow-sm py-4 px-5 text-zinc-900 dark:text-black font-bold placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 transition-all"
+                            className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl shadow-sm py-4 px-5 text-black font-bold placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 transition-all"
                             placeholder="NAME"
                             value={form.name}
                             onChange={e => setForm({ ...form, name: e.target.value })}
@@ -162,7 +162,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                         <div className="space-y-1">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 ml-1">Role / Position</label>
                             <input
-                                className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 dark:text-black text-[17px] font-black tracking-tight uppercase outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
+                                className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-[16px] shadow-sm py-3 px-4 text-black text-[17px] font-black tracking-tight uppercase outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                                 placeholder="ROLE"
                                 value={form.role}
                                 onChange={e => setForm({ ...form, role: e.target.value })}
@@ -171,7 +171,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                         <div className="space-y-1">
                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 ml-1">Department</label>
                             <input
-                                className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 dark:text-black text-[17px] font-black tracking-tight uppercase outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
+                                className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-black text-[17px] font-black tracking-tight uppercase outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                                 placeholder="DEPT"
                                 value={form.department}
                                 onChange={e => setForm({ ...form, department: e.target.value })}
@@ -182,7 +182,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                     <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 ml-1">Email Address</label>
                         <input
-                            className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 dark:text-black text-[17px] font-black tracking-tight outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
+                            className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-black text-[17px] font-black tracking-tight outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                             placeholder="EMAIL"
                             value={form.email}
                             onChange={e => setForm({ ...form, email: e.target.value })}
@@ -192,7 +192,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                     <div className="space-y-1">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-500 ml-1">Phone Number</label>
                         <input
-                            className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-zinc-900 dark:text-black text-[17px] font-black tracking-tight outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
+                            className="w-full bg-white dark:bg-white border border-zinc-100 dark:border-zinc-800 rounded-[16px] shadow-sm py-3 px-4 text-black text-[17px] font-black tracking-tight outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/10"
                             placeholder="PHONE"
                             value={form.phone}
                             onChange={e => setForm({ ...form, phone: e.target.value })}
@@ -233,7 +233,7 @@ export const CrewListView = ({ data, liveUsers = [], onAdd, onUpdate, onDelete, 
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 dark:text-zinc-500" size={14} />
                     <input
-                        className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl shadow-sm py-3.5 pl-11 pr-5 text-sm text-zinc-900 dark:text-black placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 uppercase font-bold tracking-widest transition-all"
+                        className="w-full bg-white dark:bg-white border border-zinc-200 dark:border-zinc-300 rounded-xl shadow-sm py-3.5 pl-11 pr-5 text-sm text-black placeholder:text-zinc-400 dark:placeholder:text-zinc-500 outline-none focus:border-zinc-900 focus:ring-4 focus:ring-zinc-900/5 uppercase font-bold tracking-widest transition-all"
                         placeholder="SEARCH CREW..."
                         value={search}
                         onChange={e => setSearch(e.target.value)}
