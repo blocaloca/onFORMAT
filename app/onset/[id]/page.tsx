@@ -203,6 +203,17 @@ export default function OnSetMobilePage() {
     const [myProjects, setMyProjects] = useState<any[]>([]);
     const [isTestMode, setIsTestMode] = useState(false);
     const [liveUsers, setLiveUsers] = useState<string[]>([]);
+    const [systemTaps, setSystemTaps] = useState(0);
+
+    // Hardware Override: Jump to Glitch Lab
+    useEffect(() => {
+        if (systemTaps === 3) {
+            setSystemTaps(0);
+            window.location.href = '/lab/glitch';
+        }
+        const timer = setTimeout(() => setSystemTaps(0), 1000);
+        return () => clearTimeout(timer);
+    }, [systemTaps]);
 
     // --------------------------------------------------------------------------------
     // RECOVERY: Load test mode on mount
@@ -1401,7 +1412,12 @@ export default function OnSetMobilePage() {
                             {/* Drawer */}
                             <div className="relative w-4/5 max-w-sm h-full bg-zinc-50 dark:bg-[#0A0A0A] border-l border-zinc-100 dark:border-zinc-800 p-6 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300 pointer-events-auto">
                                 <div className="flex justify-between items-center mb-8">
-                                    <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">System</h2>
+                                    <h2 
+                                        onClick={() => setSystemTaps(prev => prev + 1)}
+                                        className={`text-xs font-bold uppercase tracking-widest transition-all active:scale-95 cursor-default select-none ${systemTaps > 0 ? 'text-emerald-500' : 'text-zinc-500 dark:text-zinc-400'}`}
+                                    >
+                                        System
+                                    </h2>
                                     <button onClick={() => setShowMenu(false)} className="bg-zinc-50/50 dark:bg-zinc-800/50 p-2 rounded-full text-zinc-600 dark:text-zinc-300 transition-colors">
                                         <Menu size={14} />
                                     </button>
