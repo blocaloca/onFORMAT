@@ -196,7 +196,7 @@ export const PropsListTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 py-0.5 ${item.status === 'acquired' ? 'border-green-200 text-green-700 bg-green-50' : item.status === 'wrapped' ? 'border-zinc-200 text-zinc-500 bg-zinc-100 line-through' : 'border-red-200 text-red-400 bg-red-50'} text-zinc-900`}
+                                                className={`appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none rounded px-1 py-0.5 ${item.status === 'acquired' ? 'text-green-700' : item.status === 'wrapped' ? 'text-zinc-500 line-through' : 'text-red-400'} text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="pending">Needed</option>

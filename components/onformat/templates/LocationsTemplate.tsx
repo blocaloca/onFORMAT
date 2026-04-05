@@ -119,7 +119,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                     onChange={(e) => updateLocation(index, field, e.target.value)}
                     placeholder={placeholder}
                     disabled={isLocked}
-                    className="w-full text-sm font-medium text-zinc-700 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-200 transition-colors text-zinc-900"
+                    className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none py-1 placeholder:text-zinc-200 transition-colors text-zinc-900"
                 />
             )}
         </div>
@@ -139,7 +139,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                     onChange={(e) => updateLocation(index, 'name', e.target.value)}
                     placeholder="LOCATION NAME"
                     disabled={isLocked}
-                    className="w-full text-2xl font-black uppercase tracking-normal text-black bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-none outline-none placeholder:text-zinc-200"
+                    className="w-full text-2xl font-black uppercase tracking-normal text-black bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-200"
                 />
             )}
 
@@ -155,7 +155,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                             <select
                                 value={loc.usageType || 'Set'}
                                 onChange={(e) => updateLocation(index, 'usageType', e.target.value)}
-                                className="w-full text-sm font-bold text-black bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 cursor-pointer"
+                                className="w-full text-sm font-bold text-black bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none py-1 cursor-pointer"
                                 disabled={isLocked}
                             >
                                 <option value="Set">Set / Location</option>
@@ -175,7 +175,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                 value={loc.activeDays || ''}
                                 onChange={(e) => updateLocation(index, 'activeDays', e.target.value)}
                                 placeholder="e.g. Day 1, 10/24"
-                                className="w-full text-sm font-medium text-zinc-700 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 placeholder:text-zinc-300 text-zinc-900"
+                                className="w-full text-sm font-medium text-zinc-700 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none py-1 placeholder:text-zinc-300 text-zinc-900"
                                 disabled={isLocked}
                             />
                         )}
@@ -191,7 +191,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
             <div className="flex-1 flex flex-col gap-2 min-h-[0px] overflow-hidden">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Notes & Logistics {pageIdx > 0 ? '(Cont.)' : ''}</span>
                 {isPrinting ? (
-                    <div className="w-full h-full p-3 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-zinc-50 whitespace-pre-wrap">
+                    <div className="w-full h-full p-3 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-transparent whitespace-pre-wrap">
                         {noteChunk}
                     </div>
                 ) : (
@@ -200,7 +200,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                         onChange={(e) => updateLocation(index, 'notes', e.target.value)}
                         placeholder="Logistics, parking, power..."
                         disabled={isLocked}
-                        className="w-full h-full bg-zinc-50 p-3 text-sm leading-relaxed text-zinc-600 resize-none border border-transparent focus:border-zinc-200 outline-none rounded-sm placeholder:text-zinc-300 text-zinc-900"
+                        className="w-full h-full bg-transparent p-3 text-sm leading-relaxed text-zinc-600 resize-none border border-transparent hover:border-zinc-200 outline-none rounded-sm placeholder:text-zinc-300 text-zinc-900"
                     />
                 )}
             </div>
@@ -276,7 +276,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                     <div className="flex flex-col gap-6 h-full">
                                         {!isContinuation && (
                                             <>
-                                                <div className="w-full aspect-[2.35/1] bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                                <div className="w-full aspect-[2.35/1] bg-transparent border border-zinc-100 relative overflow-hidden rounded-sm">
                                                     <ImageUploader
                                                         currentUrl={loc.mainImage}
                                                         onUpload={(url) => updateLocation(index, 'mainImage', url)}
@@ -287,7 +287,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                     />
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
-                                                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                                    <div className="w-full aspect-video bg-transparent border border-zinc-100 relative overflow-hidden rounded-sm">
                                                         <ImageUploader
                                                             currentUrl={loc.smallImage1}
                                                             onUpload={(url) => updateLocation(index, 'smallImage1', url)}
@@ -316,7 +316,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 <h3 className="text-lg font-black uppercase tracking-tight text-black border-b border-zinc-100 pb-2">
                                                     {loc.name || 'Location Name'} <span className="text-zinc-400">— Notes Continued</span>
                                                 </h3>
-                                                <div className="w-full h-full p-4 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-zinc-50 whitespace-pre-wrap italic">
+                                                <div className="w-full h-full p-4 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-transparent whitespace-pre-wrap italic">
                                                     {noteChunk}
                                                 </div>
                                             </div>
@@ -329,7 +329,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                             <>
                                                 {/* Left: Main Image + Details */}
                                                 <div className="col-span-8 flex flex-col gap-6 h-full">
-                                                    <div className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm h-[60%]">
+                                                    <div className="w-full bg-transparent border border-zinc-100 relative overflow-hidden rounded-sm h-[60%]">
                                                         <ImageUploader
                                                             currentUrl={loc.mainImage}
                                                             onUpload={(url) => updateLocation(index, 'mainImage', url)}
@@ -374,7 +374,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                 <h3 className="text-lg font-black uppercase tracking-tight text-black border-b border-zinc-100 pb-2">
                                                     {loc.name || 'Location Name'} <span className="text-zinc-400">— Notes Continued</span>
                                                 </h3>
-                                                <div className="flex-1 p-6 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-zinc-50 whitespace-pre-wrap italic">
+                                                <div className="flex-1 p-6 text-sm leading-relaxed text-zinc-600 border border-zinc-100 bg-transparent whitespace-pre-wrap italic">
                                                     {noteChunk}
                                                 </div>
                                             </div>

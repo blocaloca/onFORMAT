@@ -150,15 +150,12 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         </div>
 
                         {/* Rows */}
-                        <div className="space-y-0 divide-y divide-zinc-100 dark:divide-zinc-800/30 flex-1">
+                        <div className="space-y-0 divide-y divide-zinc-100 flex-1">
                             {pageShots.map((shot, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                                 return (
-                                    <div key={shot.id} className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 py-1 items-start transition-colors group ${isComplete
-                                        ? (darkMode ? 'bg-emerald-500/5' : 'bg-emerald-50/30')
-                                        : (darkMode ? 'hover:bg-zinc-800/40' : 'hover:bg-zinc-50/50')
-                                        }`}>
+                                    <div key={shot.id} className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 py-1 items-start transition-colors group ${isComplete ? 'bg-emerald-50/30' : 'hover:bg-zinc-50/50'}`}>
 
                                         {/* Number */}
                                         <div className="flex items-start justify-center pt-2">
@@ -174,7 +171,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={shot.scene}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { scene: e.target.value })}
-                                                    className={`w-full text-[11px] font-black focus:outline-none border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-1 py-1 transition-all bg-transparent text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300`}
+                                                    className={`w-full text-[11px] font-black focus:outline-none border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-1 py-1 transition-all bg-transparent text-zinc-900 placeholder:text-zinc-300`}
                                                     placeholder="Sc"
                                                     disabled={isLocked}
                                                 />
@@ -205,7 +202,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.angle}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { angle: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700 dark:text-zinc-300`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_ANGLES.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -221,7 +218,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={shot.movement}
                                                     onChange={(e) => handleUpdateShot(globalIdx, { movement: e.target.value })}
-                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700 dark:text-zinc-300`}
+                                                    className={`w-full appearance-none text-[10px] uppercase font-bold tracking-tight px-1 py-1 rounded-sm cursor-pointer focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 transition-all text-zinc-700`}
                                                     disabled={isLocked}
                                                 >
                                                     {SHOT_MOVEMENTS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -240,7 +237,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         value={shot.description}
                                                         onChange={autoResize}
                                                         rows={1}
-                                                        className={`flex-1 text-[11px] leading-tight focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-2 py-1 resize-none overflow-hidden min-h-[24px] transition-all text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300`}
+                                                        className={`flex-1 text-[11px] leading-tight focus:outline-none bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-2 py-1 resize-none overflow-hidden min-h-[24px] transition-all text-zinc-900 placeholder:text-zinc-300`}
                                                         placeholder="Describe action..."
                                                         disabled={isLocked}
                                                         style={{ height: 'auto' }}
@@ -257,7 +254,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     )}
 
                                                     {deleteConfirmIndex === globalIdx && (
-                                                        <div className={`absolute right-0 top-8 z-50 shadow-xl border p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100 ${darkMode ? 'bg-zinc-900 border-zinc-700' : 'bg-white border-zinc-200'}`}>
+                                                        <div className={`absolute right-0 top-8 z-50 shadow-xl border p-2 rounded-lg w-[100px] flex flex-col gap-2 animate-in fade-in zoom-in-95 duration-100 bg-white border-zinc-200`}>
                                                             <button
                                                                 onClick={() => handleDeleteShot(globalIdx)}
                                                                 className="bg-red-500 hover:bg-red-600 text-white text-[9px] font-black py-1.5 px-2 rounded-md uppercase w-full transition-colors tracking-widest"
@@ -277,7 +274,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 disabled={isLocked}
                                                 className={`w-3.5 h-3.5 rounded flex items-center justify-center transition-all ${isComplete
                                                         ? 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/20'
-                                                        : (darkMode ? 'bg-zinc-800 text-zinc-600 border border-zinc-700' : 'bg-zinc-100 text-zinc-300 border border-zinc-200')
+                                                        : 'bg-zinc-100 text-zinc-300 border border-zinc-200'
                                                     } ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                                             >
                                                 {isComplete && <Check size={10} strokeWidth={4} />}
@@ -292,9 +289,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 <div className="pt-3 print-hidden">
                                     <button
                                         onClick={handleAddShot}
-                                        className={`flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2.5 rounded-xl w-[120px] transition-all border ${darkMode
-                                            ? 'bg-zinc-900/40 border-zinc-800 text-zinc-500 hover:bg-zinc-800 hover:text-white'
-                                            : 'bg-zinc-50 border-zinc-200 text-zinc-400 hover:bg-white hover:text-zinc-900 hover:border-zinc-300'}`}
+                                        className={`flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2.5 rounded-xl w-[120px] transition-all border bg-zinc-50 border-zinc-200 text-zinc-400 hover:bg-white hover:text-zinc-900 hover:border-zinc-300`}
                                     >
                                         <Plus size={10} /> Add Shot
                                     </button>
@@ -313,7 +308,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                             {/* Empty State */}
                             {shots.length === 0 && (
-                                <div className={`text-center py-12 ${darkMode ? 'text-zinc-700' : 'text-zinc-300'}`}>
+                                <div className={`text-center py-12 text-zinc-300`}>
                                     <p className="text-xs font-bold uppercase tracking-widest">No shots added</p>
                                 </div>
                             )}

@@ -77,7 +77,7 @@ export const CreativeConceptTemplate = ({
                     <div className="flex flex-col h-full font-sans relative group min-h-[600px]">
                         
                         {/* Lab Design Accents */}
-                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-200 dark:via-zinc-800 to-transparent opacity-50" />
+                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-zinc-200 to-transparent opacity-50" />
                         
                         {index > 0 && (
                             <div className="mb-6 px-6 py-2 border-l border-zinc-200">
@@ -104,7 +104,7 @@ export const CreativeConceptTemplate = ({
                                 <div className="flex items-center gap-4">
                                     <div className="flex gap-1">
                                         {[1, 2, 3].map(i => (
-                                            <div key={i} className="w-1 h-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                                            <div key={i} className="w-1 h-1 rounded-full bg-zinc-300" />
                                         ))}
                                     </div>
                                     <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">

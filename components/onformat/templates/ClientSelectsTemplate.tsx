@@ -103,13 +103,13 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
                                         {/* File Number */}
                                         <input
                                             type="text"
                                             value={item.fileNumber}
                                             onChange={e => handleUpdateItem(globalIdx, { fileNumber: e.target.value })}
-                                            className={`font-mono font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-mono font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="..."
                                             disabled={isLocked}
                                         />
@@ -119,7 +119,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <textarea
                                             value={item.description}
                                             onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                            className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 resize-none overflow-hidden placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Description..."
                                             rows={Math.max(1, item.description.split('\n').length)}
                                             disabled={isLocked}
@@ -130,7 +130,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         <textarea
                                             value={item.notes}
                                             onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                            className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 resize-none overflow-hidden text-zinc-500 italic placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 resize-none overflow-hidden text-zinc-500 italic placeholder:text-zinc-300 min-h-[20px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Notes..."
                                             rows={Math.max(1, item.notes.split('\n').length)}
                                             disabled={isLocked}
@@ -142,7 +142,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-black uppercase text-[11px] tracking-wider text-center w-full cursor-pointer outline-none ${item.status === 'approved' ? 'text-green-600' : item.status === 'edit' ? 'text-blue-600' : item.status === 'reshoot' ? 'text-orange-500' : item.status === 'kill' ? 'text-red-500' : 'text-zinc-200' } ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                                className={`appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-black uppercase text-[11px] tracking-wider text-center w-full cursor-pointer outline-none ${item.status === 'approved' ? 'text-green-600' : item.status === 'edit' ? 'text-blue-600' : item.status === 'reshoot' ? 'text-orange-500' : item.status === 'kill' ? 'text-red-500' : 'text-zinc-200' } ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -188,7 +188,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Entry
                                     </button>
                                 </div>

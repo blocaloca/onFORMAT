@@ -165,12 +165,12 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                           ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
                         
                         return (
-                            <div key={item.id} className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition-colors">
+                            <div key={item.id} className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors">
                                 
                                 {/* 1. Role Selector */}
                                 <div className="relative pt-0.5">
                                     {isPrinting ? (
-                                        <div className="w-full text-[10px] uppercase font-black tracking-tight px-1 py-1 block text-black truncate">{item.role}</div>
+                                        <div className="w-full text-[10px] uppercase font-black tracking-tight px-1 py-1 block text-zinc-900 truncate">{item.role}</div>
                                     ) : (
                                         <div className="relative flex flex-col justify-center w-full">
                                             {(!PRODUCTION_ROLES.includes(item.role) && !mobileRoles?.some((mr:any) => mr.name === item.role) && item.role !== '') ? (
@@ -214,7 +214,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 {/* 2. Full Name */}
                                 <div className="pt-0.5">
                                     {isPrinting ? (
-                                        <div className="w-full text-[11px] font-black px-2 py-1 block text-black truncate">{item.name}</div>
+                                        <div className="w-full text-[11px] font-black px-2 py-1 block text-zinc-900 truncate">{item.name}</div>
                                     ) : (
                                         <input 
                                             value={item.name}
@@ -308,7 +308,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         <div className="pt-3">
                             <button 
                                 onClick={handleAddItem}
-                                className="flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-black dark:hover:text-white transition-all px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 w-[160px]"
+                                className="flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-black dark:hover:text-zinc-900 transition-all px-4 py-2.5 rounded-xl border border-zinc-100 dark:border-zinc-200 hover:border-zinc-300 w-[160px]"
                             >
                                 <Plus size={10} /> Add Personnel
                             </button>
@@ -317,7 +317,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                 </div>
 
                 {items.length === 0 && (
-                    <div className="py-20 flex flex-col items-center justify-center bg-zinc-50/50 dark:bg-zinc-900/10 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800">
+                    <div className="py-20 flex flex-col items-center justify-center bg-transparent rounded-xl border border-dashed border-zinc-200">
                          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">No personnel added to list</p>
                     </div>
                 )}

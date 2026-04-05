@@ -178,7 +178,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         type="text"
                                         value={data.date || ''}
                                         onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
-                                        className={`w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 print:hidden text-zinc-900`}
+                                        className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-mono font-bold text-sm outline-none py-1 print:hidden text-zinc-900`}
                                         placeholder="MM/DD/YYYY"
                                         disabled={isLocked}
                                     />
@@ -198,7 +198,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const ampm = (data.callTime || "").split(" ")[1] || "AM";
                                                 onUpdate({ callTime: `${time} ${ampm}`.trim() });
                                             }}
-                                            className="flex-1 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-mono font-bold text-sm border-b border-zinc-200 focus:border-zinc-400 focus:bg-white outline-none py-1 text-zinc-900"
+                                            className="flex-1 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-mono font-bold text-sm outline-none py-1 text-zinc-900"
                                             placeholder="00:00"
                                             disabled={isLocked}
                                         />
@@ -211,7 +211,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const newAmpm = currentAmpm === "AM" ? "PM" : "AM";
                                                 onUpdate({ callTime: `${time} ${newAmpm}`.trim() });
                                             }}
-                                            className="text-[10px] font-bold uppercase bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-700 px-2 py-1 rounded cursor-pointer transition-colors"
+                                            className="text-[10px] font-bold uppercase bg-zinc-100 hover:bg-zinc-200 px-2 py-1 rounded cursor-pointer transition-colors"
                                             disabled={isLocked}
                                         >
                                             {(data.callTime || "").split(" ")[1] || "AM"}
@@ -254,7 +254,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     value={item.set.replace('END OF DAY', '').trim()} // Piggyback date/label on 'set'
                                                     onChange={(e) => handleUpdateItem(globalIdx, { set: `END OF DAY ${e.target.value}` })}
                                                     placeholder="NEXT DAY DATE"
-                                                    className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 placeholder:text-zinc-500 outline-none text-center min-w-[100px] ${isPrinting ? 'hidden' : ''} text-zinc-900`}
+                                                    className={`bg-transparent border-b border-transparent hover:border-zinc-200 px-2 placeholder:text-zinc-500 outline-none text-center min-w-[100px] ${isPrinting ? 'hidden' : ''} text-zinc-900`}
                                                     disabled={isLocked}
                                                 />
                                                 {isPrinting && <span>{item.set.replace('END OF DAY', '').trim()}</span>}
@@ -280,7 +280,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         onDragStart={() => handleDragStart(globalIdx)}
                                         onDragOver={(e) => { e.preventDefault(); handleDragOver(globalIdx); }}
                                         onDragEnd={handleDragEnd}
-                                        className={`grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-all group cursor-default relative
+                                        className={`grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50/50 transition-all group cursor-default relative
                                             ${draggedIndex === globalIdx ? 'opacity-30' : ''}
                                             ${dragOverIndex === globalIdx && draggedIndex !== globalIdx ? 'border-t-2 border-emerald-500' : 'border-t border-transparent'}
                                         `}
@@ -295,7 +295,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.time}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { time: formatTimeInput(e.target.value) })}
-                                                    className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-mono font-bold focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-mono font-bold focus:outline-none rounded px-1 py-1 text-black"
                                                     placeholder="00:00"
                                                     disabled={isLocked}
                                                 />
@@ -311,7 +311,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.scene}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { scene: e.target.value })}
-                                                    className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-bold text-center focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-bold text-center focus:outline-none rounded px-1 py-1 text-black"
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
@@ -329,7 +329,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     <select
                                                         value={item.intExt}
                                                         onChange={(e) => handleUpdateItem(globalIdx, { intExt: e.target.value as any })}
-                                                        className="bg-black text-[11px] font-bold uppercase px-1 rounded-sm appearance-none cursor-pointer text-center w-10 flex-shrink-0 text-zinc-900"
+                                                        className="bg-black text-[11px] font-bold uppercase px-1 rounded-sm appearance-none cursor-pointer text-center w-10 flex-shrink-0 text-white"
                                                         disabled={isLocked}
                                                     >
                                                         {INT_EXT_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -338,7 +338,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                         type="text"
                                                         value={item.set}
                                                         onChange={(e) => handleUpdateItem(globalIdx, { set: e.target.value })}
-                                                        className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 min-w-0 text-black"
+                                                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-bold uppercase focus:outline-none rounded px-1 py-1 min-w-0 text-black"
                                                         placeholder="SETTING"
                                                         disabled={isLocked}
                                                     />
@@ -354,7 +354,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <select
                                                     value={item.dayNight}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { dayNight: e.target.value as any })}
-                                                    className="w-full bg-zinc-100 text-[11px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-black text-center text-black"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-[11px] font-bold uppercase px-1 py-1 rounded-sm appearance-none cursor-pointer focus:outline-none text-center text-black"
                                                     disabled={isLocked}
                                                 >
                                                     {TIME_OF_DAY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -371,7 +371,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={item.description}
                                                     onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                    className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-zinc-600 text-zinc-900"
+                                                    className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm focus:outline-none rounded px-1 py-1 text-zinc-600"
                                                     placeholder="Action / Notes..."
                                                     disabled={isLocked}
                                                 />
@@ -438,7 +438,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 <div className="pt-2 print-hidden flex gap-2">
                                     <button
                                         onClick={() => handleAddItem(false)}
-                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm border border-transparent hover:border-zinc-200 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm border border-transparent hover:border-zinc-200 transition-all"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Scene
                                     </button>

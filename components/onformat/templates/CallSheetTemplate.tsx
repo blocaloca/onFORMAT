@@ -386,7 +386,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     value={shootDate}
                                                     onChange={(e) => updateField('date', formatDate(e.target.value))}
                                                     placeholder="MM/DD/YYYY"
-                                                    className="block w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
+                                                    className="block w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-2xl font-black uppercase placeholder:text-zinc-200 outline-none text-black tracking-normal"
                                                     disabled={isLocked || !canEditVitals}
                                                 />
                                             )}
@@ -411,13 +411,13 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         type="text"
                                                         value={generalCall}
                                                         onChange={e => updateField('crewCall', formatTime(e.target.value))}
-                                                        className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
+                                                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-sans text-5xl font-black outline-none text-black placeholder:text-zinc-100 tracking-normal"
                                                         placeholder="00:00"
                                                         disabled={isLocked || !canEditVitals}
                                                     />
                                                 )}
                                             </div>
-                                            <div className={`w-32 ${isPrinting ? '' : 'bg-zinc-50 dark:bg-zinc-900/50 border-l border-zinc-100'} p-3 flex items-center justify-center`}>
+                                            <div className={`w-32 ${isPrinting ? '' : 'bg-transparent border-l border-zinc-100'} p-3 flex items-center justify-center`}>
                                                 <img
                                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://onformat.io/onset/${metadata?.projectId || 'demo'}`}
                                                     alt="Set QR"
@@ -429,7 +429,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                 </div>
 
                                 {/* Logistics Row */}
-                                <div className={`grid grid-cols-4 gap-4 ${isPrinting ? 'border-t border-b border-black py-4' : 'bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-sm border border-zinc-100'}`}>
+                                <div className={`grid grid-cols-4 gap-4 ${isPrinting ? 'border-t border-b border-black py-4' : 'bg-transparent p-3 rounded-sm border border-zinc-100'}`}>
                                     <div className="col-span-1">
                                         <div className="flex justify-between items-center mb-1">
                                             <label className="block text-[9px] font-bold uppercase text-zinc-400">Weather</label>
@@ -450,7 +450,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.weather || ''}
                                                 onChange={e => updateField('weather', e.target.value)}
                                                 placeholder="75° Sunny"
-                                                className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none font-bold text-sm text-zinc-900"
+                                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none font-bold text-sm text-zinc-900"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -465,7 +465,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.sunriseSunset || ''}
                                                 onChange={e => updateField('sunriseSunset', e.target.value)}
                                                 placeholder="06:00 / 20:00"
-                                                className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none font-bold text-sm text-zinc-900"
+                                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none font-bold text-sm text-zinc-900"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -490,7 +490,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 value={data.hospital || ''}
                                                 onChange={e => updateField('hospital', e.target.value)}
                                                 placeholder="Hospital Name & Address"
-                                                className="w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none font-bold text-sm text-red-600 text-zinc-900"
+                                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none font-bold text-sm text-red-600 text-zinc-900"
                                                 disabled={isLocked}
                                             />
                                         )}
@@ -525,7 +525,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.basecamp || ''}
                                                 onChange={(e) => updateField('basecamp', e.target.value)}
-                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed text-zinc-900"
+                                                className="w-full bg-transparent border border-zinc-200 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed text-zinc-900"
                                                 placeholder="Basecamp Address..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -560,25 +560,25 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                         {isPrinting ? (
                                                             <div className="text-[10px] font-bold uppercase text-black pt-0.5 leading-normal block">{item.time}</div>
                                                         ) : (
-                                                            <input
-                                                                type="text"
-                                                                value={item.time}
-                                                                onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
-                                                                placeholder="00:00"
-                                                                className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-black"
-                                                                disabled={isLocked}
-                                                            />
+                                                                <input
+                                                                    type="text"
+                                                                    value={item.time}
+                                                                    onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
+                                                                    placeholder="00:00"
+                                                                    className="w-full text-[10px] font-bold uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-black"
+                                                                    disabled={isLocked}
+                                                                />
                                                         )}
                                                     </div>
 
                                                     {/* Type Dropdown */}
                                                     <div className="relative">
-                                                        <select
-                                                            value={item.type || 'Other'}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                            className={`w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none appearance-none cursor-pointer pt-0.5 text-black hover:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                            disabled={isLocked}
-                                                        >
+                                                            <select
+                                                                value={item.type || 'Other'}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
+                                                                className={`w-full text-[10px] font-bold uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none appearance-none cursor-pointer pt-0.5 text-black hover:text-zinc-600 ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                                disabled={isLocked}
+                                                            >
                                                             <option value="Arrive">Arrive</option>
                                                             <option value="Set Up">Set Up</option>
                                                             <option value="Shoot">Shoot</option>
@@ -594,34 +594,34 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     </div>
 
                                                     <div>
-                                                        <textarea
-                                                            value={item.description}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { description: e.target.value })}
-                                                            style={{ resize: 'none' }}
-                                                            placeholder="Description"
-                                                            rows={1}
-                                                            onInput={(e) => {
-                                                                const target = e.target as HTMLTextAreaElement;
-                                                                target.style.height = 'auto';
-                                                                target.style.height = target.scrollHeight + 'px';
-                                                            }}
-                                                            className={`w-full text-[10px] font-medium uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                            disabled={isLocked}
-                                                        />
+                                                            <textarea
+                                                                value={item.description}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { description: e.target.value })}
+                                                                style={{ resize: 'none' }}
+                                                                placeholder="Description"
+                                                                rows={1}
+                                                                onInput={(e) => {
+                                                                    const target = e.target as HTMLTextAreaElement;
+                                                                    target.style.height = 'auto';
+                                                                    target.style.height = target.scrollHeight + 'px';
+                                                                }}
+                                                                className={`w-full text-[10px] font-medium uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                                disabled={isLocked}
+                                                            />
                                                         <div className={`text-[10px] font-medium uppercase text-black pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                             {item.description}
                                                         </div>
                                                     </div>
 
                                                     <div>
-                                                        <input
-                                                            type="text"
-                                                            value={item.location}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
-                                                            placeholder="Location"
-                                                            className={`w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
-                                                            disabled={isLocked}
-                                                        />
+                                                            <input
+                                                                type="text"
+                                                                value={item.location}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
+                                                                placeholder="Location"
+                                                                className={`w-full text-[10px] font-bold uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-black ${isPrinting ? 'hidden' : ''} print:hidden`}
+                                                                disabled={isLocked}
+                                                            />
                                                         <div className={`text-[10px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                                             {item.location}
                                                         </div>
@@ -650,7 +650,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                                 <button
                                                     onClick={handleAddEvent}
-                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                                 >
                                                     <Plus size={10} /> Add Item
                                                 </button>
@@ -681,14 +681,14 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     {isPrinting ? (
                                                         <div className="text-[9px] font-bold uppercase text-black pt-0.5 leading-normal block">{item.time}</div>
                                                     ) : (
-                                                        <input
-                                                            type="text"
-                                                            value={item.time}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
-                                                            placeholder="00:00"
-                                                            className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-zinc-900"
-                                                            disabled={isLocked}
-                                                        />
+                                                            <input
+                                                                type="text"
+                                                                value={item.time}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { time: formatTime(e.target.value) })}
+                                                                placeholder="00:00"
+                                                                className="w-full text-[10px] font-bold uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-zinc-900"
+                                                                disabled={isLocked}
+                                                            />
                                                     )}
                                                 </div>
 
@@ -697,12 +697,12 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     {isPrinting ? (
                                                         <div className="text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal block">{item.type || 'Other'}</div>
                                                     ) : (
-                                                        <select
-                                                            value={item.type || 'Other'}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
-                                                            className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black"
-                                                            disabled={isLocked}
-                                                        >
+                                                            <select
+                                                                value={item.type || 'Other'}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { type: e.target.value })}
+                                                                className="w-full text-[10px] font-bold uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none appearance-none cursor-pointer pt-0.5 text-zinc-600 hover:text-black"
+                                                                disabled={isLocked}
+                                                            >
                                                             <option value="Arrive">Arrive</option>
                                                             <option value="Set Up">Set Up</option>
                                                             <option value="Shoot">Shoot</option>
@@ -720,20 +720,20 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     {isPrinting ? (
                                                         <div className="text-[9px] font-medium uppercase text-black pt-0.5 pb-0.5 whitespace-pre-wrap leading-normal block">{item.description}</div>
                                                     ) : (
-                                                        <textarea
-                                                            value={item.description}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { description: e.target.value })}
-                                                            style={{ resize: 'none' }}
-                                                            placeholder="Description"
-                                                            rows={1}
-                                                            onInput={(e) => {
-                                                                const target = e.target as HTMLTextAreaElement;
-                                                                target.style.height = 'auto';
-                                                                target.style.height = target.scrollHeight + 'px';
-                                                            }}
-                                                            className="w-full text-[10px] font-medium uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-zinc-900"
-                                                            disabled={isLocked}
-                                                        />
+                                                            <textarea
+                                                                value={item.description}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { description: e.target.value })}
+                                                                style={{ resize: 'none' }}
+                                                                placeholder="Description"
+                                                                rows={1}
+                                                                onInput={(e) => {
+                                                                    const target = e.target as HTMLTextAreaElement;
+                                                                    target.style.height = 'auto';
+                                                                    target.style.height = target.scrollHeight + 'px';
+                                                                }}
+                                                                className="w-full text-[10px] font-medium uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 pt-0.5 overflow-hidden text-zinc-900"
+                                                                disabled={isLocked}
+                                                            />
                                                     )}
                                                 </div>
 
@@ -741,14 +741,14 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                     {isPrinting ? (
                                                         <div className="text-[9px] font-bold uppercase text-black pt-0.5 pb-0.5 leading-normal block">{item.location}</div>
                                                     ) : (
-                                                        <input
-                                                            type="text"
-                                                            value={item.location}
-                                                            onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
-                                                            placeholder="Location"
-                                                            className="w-full text-[10px] font-bold uppercase bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-zinc-900"
-                                                            disabled={isLocked}
-                                                        />
+                                                            <input
+                                                                type="text"
+                                                                value={item.location}
+                                                                onChange={(e) => handleUpdateEvent(globalIdx, { location: e.target.value })}
+                                                                placeholder="Location"
+                                                                className="w-full text-[10px] font-bold uppercase bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 pt-0.5 text-zinc-900"
+                                                                disabled={isLocked}
+                                                            />
                                                     )}
                                                 </div>
 
@@ -774,7 +774,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                             <button
                                                 onClick={handleAddEvent}
-                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                             >
                                                 <Plus size={10} /> Add Item
                                             </button>

@@ -184,7 +184,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         value={data.date || ''}
                                         onChange={e => updateField('date', formatDate(e.target.value))}
                                         placeholder="MM/DD/YYYY"
-                                        className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                        className={`font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                         disabled={isLocked}
                                     />
                                     <div className={`font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
@@ -224,14 +224,14 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                     <React.Fragment key={item.id}>
                                         {/* ROLL HEADER */}
                                         {isNewRoll && (
-                                            <div className="col-span-13 bg-zinc-100 dark:bg-zinc-900 border-y border-zinc-200 py-1 px-2 flex items-center justify-between mt-2 mb-1">
+                                            <div className="col-span-13 bg-transparent border-y border-zinc-200 py-1 px-2 flex items-center justify-between mt-2 mb-1">
                                                 <div className="flex gap-4">
                                                     <div className="flex items-center gap-1">
                                                         <span className="text-[9px] font-bold uppercase text-zinc-400">Roll</span>
                                                         <input
                                                             value={item.roll || data.roll}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { roll: e.target.value })}
-                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-black font-mono text-sm w-16 outline-none hover:bg-white focus:bg-white rounded px-1 uppercase text-zinc-900"
+                                                            className="bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-black font-mono text-sm w-16 outline-none rounded px-1 uppercase text-zinc-900"
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -257,7 +257,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.soundRoll || ''}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { soundRoll: e.target.value })}
-                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-sm w-16 outline-none hover:bg-white focus:bg-white rounded px-1 uppercase text-right text-zinc-900"
+                                                            className="bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-sm w-16 outline-none rounded px-1 uppercase text-right text-zinc-900"
                                                             placeholder="-"
                                                         />
                                                     </div>
@@ -265,7 +265,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                             </div>
                                         )}
 
-                                        <div className="grid grid-cols-[40px_40px_40px_1fr_50px_30px_30px_30px_40px_80px_1fr_30px_30px] gap-2 py-1.5 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                        <div className="grid grid-cols-[40px_40px_40px_1fr_50px_30px_30px_30px_40px_80px_1fr_30px_30px] gap-2 py-1.5 items-center hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
                                             <input type="text" value={item.scene} onChange={e => handleUpdateItem(globalIdx, { scene: e.target.value })} className={`text-center font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.scene}</div>
 
@@ -303,7 +303,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 <select
                                                     value={item.status}
                                                     onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                    className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-center w-full cursor-pointer outline-none ${item.status === 'circle' ? 'text-yellow-500' : item.status === 'good' ? 'text-green-600' : item.status === 'bad' ? 'text-red-500 text-opacity-50' : 'text-zinc-200' } ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                                    className={`appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-center w-full cursor-pointer outline-none ${item.status === 'circle' ? 'text-yellow-500' : item.status === 'good' ? 'text-green-600' : item.status === 'bad' ? 'text-red-500 text-opacity-50' : 'text-zinc-200' } ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                     disabled={isLocked}
                                                 >
                                                     {STATUS_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -355,7 +355,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Take
                                     </button>

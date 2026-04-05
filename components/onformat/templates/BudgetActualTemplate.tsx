@@ -129,7 +129,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                         )}
 
                         {!metadata?.importedBudget?.items && items.length === 0 && !isLocked && (
-                            <div className="text-center p-8 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 rounded text-zinc-400 text-xs uppercase tracking-widest">
+                            <div className="text-center p-8 bg-transparent border border-dashed border-zinc-200 rounded text-zinc-400 text-xs uppercase tracking-widest">
                                 No Budget Data Found in Pre-Production
                             </div>
                         )}
@@ -151,7 +151,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 const variance = (item.budgeted || 0) - (item.actual || 0);
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors px-2">
+                                    <div key={item.id} className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 py-2 items-center hover:bg-zinc-50 transition-colors px-2">
 
                                         {/* Description */}
                                         <div>
@@ -159,7 +159,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.description}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-bold uppercase focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black print:hidden`}
+                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-bold uppercase outline-none px-1 py-1 text-zinc-900 print:hidden`}
                                                 disabled={isLocked}
                                             />
                                             <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black`}>{item.description}</div>
@@ -176,7 +176,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="number"
                                                 value={item.actual || ''}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { actual: parseFloat(e.target.value) || 0 })}
-                                                className={`w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm font-mono font-bold text-right focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 text-black print:hidden`}
+                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-mono font-bold text-right outline-none px-1 py-1 text-zinc-900 print:hidden`}
                                                 placeholder="0.00"
                                                 disabled={isLocked}
                                             />
@@ -194,7 +194,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.notes}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className={`w-full bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-[10px] text-zinc-500 font-mono focus:outline-none focus:bg-white focus:ring-1 focus:ring-zinc-400/10 rounded px-1 py-1 print:hidden text-zinc-900`}
+                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm text-zinc-500 font-mono outline-none px-1 py-1 print:hidden text-zinc-900`}
                                                 placeholder="..."
                                                 disabled={isLocked}
                                             />
@@ -220,7 +220,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 <div className="pt-2 print-hidden flex justify-between items-center">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Line Item
                                     </button>

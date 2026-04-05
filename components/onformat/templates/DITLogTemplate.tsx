@@ -338,7 +338,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             value={data.date || ''}
                                             onChange={e => updateField('date', e.target.value)}
                                             placeholder="MM/DD/YYYY"
-                                            className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             disabled={isLocked}
                                         />
                                         <div className={`font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.date}</div>
@@ -349,7 +349,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             value={data.ditName || ''}
                                             onChange={e => updateField('ditName', e.target.value)}
                                             placeholder="NAME"
-                                            className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             disabled={isLocked}
                                         />
                                         <div className={`font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.ditName}</div>
@@ -376,14 +376,14 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex === 0) ? localIdx : ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_100px_70px_70px_60px_120px_1fr_80px_30px] gap-2 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_100px_70px_70px_60px_120px_1fr_80px_30px] gap-2 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
 
                                         {/* Time */}
                                         <input
                                             type="text"
                                             value={item.time}
                                             onChange={e => handleUpdateItem(globalIdx, { time: e.target.value })}
-                                            className={`text-center font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`text-center font-mono font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="00:00"
                                             disabled={isLocked}
                                         />
@@ -394,7 +394,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             <select
                                                 value={item.eventType}
                                                 onChange={e => handleUpdateItem(globalIdx, { eventType: e.target.value as any })}
-                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                                className={`appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="" disabled className="text-zinc-300">SELECT TYPE</option>
@@ -410,7 +410,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             type="text"
                                             value={item.source}
                                             onChange={e => handleUpdateItem(globalIdx, { source: e.target.value })}
-                                            className={`font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-mono font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Source..."
                                             disabled={isLocked}
                                         />
@@ -421,7 +421,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             type="text"
                                             value={item.destination}
                                             onChange={e => handleUpdateItem(globalIdx, { destination: e.target.value })}
-                                            className={`font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-mono font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Dest..."
                                             disabled={isLocked}
                                         />
@@ -432,7 +432,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             type="text"
                                             value={item.dataSize || ''}
                                             onChange={e => handleUpdateItem(globalIdx, { dataSize: e.target.value })}
-                                            className={`font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-mono font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 text-zinc-600 block w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="0 GB"
                                             disabled={isLocked}
                                         />
@@ -443,7 +443,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             type="text"
                                             value={item.checksum || ''}
                                             onChange={e => handleUpdateItem(globalIdx, { checksum: e.target.value })}
-                                            className={`font-mono text-[9px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-500 block w-full truncate ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`font-mono text-[9px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 text-zinc-500 block w-full truncate ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="xxhash..."
                                             disabled={isLocked}
                                         />
@@ -454,7 +454,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                             type="text"
                                             value={item.description}
                                             onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                            className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none rounded px-1 placeholder:text-zinc-300 w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Notes..."
                                             disabled={isLocked}
                                         />
@@ -514,7 +514,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Log Entry
                                     </button>

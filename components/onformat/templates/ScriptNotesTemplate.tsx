@@ -167,7 +167,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                         value={data.date || ''}
                                         onChange={e => updateField('date', formatDate(e.target.value))}
                                         placeholder="MM/DD/YYYY"
-                                        className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                        className={`font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full placeholder:text-zinc-300 ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                         disabled={isLocked}
                                     />
                                     <div className={`font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>
@@ -194,7 +194,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_1fr_1fr_100px_1.5fr_30px] gap-6 py-6 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_1fr_1fr_100px_1.5fr_30px] gap-6 py-6 items-start hover:bg-zinc-50 transition-colors group">
 
                                         {/* Scene # - min-w-0 added */}
                                         {isPrinting ? (
@@ -204,7 +204,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 type="text"
                                                 value={item.scene}
                                                 onChange={e => handleUpdateItem(globalIdx, { scene: e.target.value })}
-                                                className="font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full text-center placeholder:text-zinc-300 py-2 min-w-0 text-zinc-900"
+                                                className="font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full text-center placeholder:text-zinc-300 py-2 min-w-0 text-zinc-900"
                                                 placeholder="#"
                                                 disabled={isLocked}
                                             />
@@ -244,7 +244,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                 <select
                                                     value={item.bestTake}
                                                     onChange={e => handleUpdateItem(globalIdx, { bestTake: e.target.value })}
-                                                    className="appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] text-center cursor-pointer outline-none border rounded px-2 py-1 w-20 hover:bg-zinc-100 text-zinc-900"
+                                                    className="appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-[11px] text-center cursor-pointer outline-none w-20 transition-colors text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     <option value="">-</option>
@@ -265,7 +265,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                                         <textarea
                                                             value={item.notes}
                                                             onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                            className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed italic text-zinc-600 min-w-0 text-zinc-900"
+                                                            className="text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed italic text-zinc-600 min-w-0 text-zinc-900"
                                                             placeholder="Supervisor notes..."
                                                             disabled={isLocked}
                                                         />
@@ -325,7 +325,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                 <button
                                     onClick={handleAddItem}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                 >
                                     <Plus size={10} /> Add Scene
                                 </button>

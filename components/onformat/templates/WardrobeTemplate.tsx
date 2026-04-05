@@ -139,7 +139,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 type="text"
                                                 value={item.lookNumber}
                                                 onChange={e => handleUpdateItem(globalIdx, { lookNumber: e.target.value })}
-                                                className="font-mono font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full text-center placeholder:text-zinc-300 text-zinc-900"
+                                                className="font-mono font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full text-center rounded px-1 placeholder:text-zinc-300 text-zinc-900"
                                                 placeholder="#"
                                                 disabled={isLocked}
                                             />
@@ -193,7 +193,7 @@ export const WardrobeTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <select
                                                 value={item.status}
                                                 onChange={e => handleUpdateItem(globalIdx, { status: e.target.value as any })}
-                                                className={`appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 h-[22px] leading-none font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none border rounded px-1 ${item.status === 'ready' ? 'border-green-200 text-green-700 bg-green-50' : item.status === 'fitting' ? 'border-blue-200 text-blue-700 bg-blue-50' : 'border-zinc-200 text-zinc-400 bg-zinc-50'} text-zinc-900`}
+                                                className={`appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 h-[22px] leading-none font-bold text-[11px] uppercase text-center w-full cursor-pointer outline-none rounded px-1 ${item.status === 'ready' ? 'text-green-700' : item.status === 'fitting' ? 'text-blue-700' : 'text-zinc-400'} text-zinc-900`}
                                                 disabled={isLocked}
                                             >
                                                 <option value="concept">Concept</option>

@@ -40,7 +40,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
         onUpdate?.({ [field]: value });
     };
 
-    const inputStyle = "w-full bg-zinc-50 border border-zinc-200 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all resize-none placeholder:text-zinc-400 font-sans text-zinc-900";
+    const inputStyle = "w-full bg-transparent border border-zinc-200 rounded-md p-3 text-sm outline-none focus:ring-1 focus:ring-zinc-400 transition-all resize-none placeholder:text-zinc-400 font-sans text-zinc-900";
     const labelStyle = "block font-bold text-zinc-500 mb-2 text-[10px] uppercase tracking-widest";
 
     const renderField = (key: keyof BriefData, placeholder: string, minHeight: string = 'min-h-[60px]') => {
@@ -62,7 +62,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                         placeholder={placeholder}
                     />
                 )}
-                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3`}>
+                <div className={`${isPrinting ? 'block' : 'hidden print:block'} ${minHeight} w-full text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-transparent border border-zinc-200 rounded-md p-3`}>
                     {textVal || "—"}
                 </div>
             </div>
@@ -167,7 +167,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                                         <>
                                             <section>
                                                 <label className={labelStyle}>Narrative / Creative Approach</label>
-                                                <div className="text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3 min-h-[220px]">
+                                                <div className="text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-transparent border border-zinc-200 rounded-md p-3 min-h-[220px]">
                                                     {chunk}
                                                 </div>
                                             </section>
@@ -188,7 +188,7 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
                                         // Continuation pages: Only Narrative
                                         <section>
                                             <label className={labelStyle}>Narrative / Creative Approach (Cont.)</label>
-                                            <div className="text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-zinc-50 border border-zinc-200 rounded-md p-3 min-h-[500px]">
+                                            <div className="text-sm font-sans leading-relaxed text-black whitespace-pre-wrap bg-transparent border border-zinc-200 rounded-md p-3 min-h-[500px]">
                                                 {chunk}
                                             </div>
                                         </section>

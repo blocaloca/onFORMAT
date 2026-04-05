@@ -287,7 +287,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                         <button
                                                             key={lb.id}
                                                             onClick={() => handlePin(item.id, lb.url)}
-                                                            className="aspect-square bg-zinc-50 dark:bg-zinc-900/50 relative group/lb border border-transparent hover:border-black transition-colors"
+                                                            className="aspect-square bg-transparent relative group/lb border border-transparent hover:border-black transition-colors"
                                                         >
                                                             {lb.url ? (
                                                                 <img src={lb.url} className="w-full h-full object-cover" />
@@ -340,21 +340,21 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                             <div className="absolute top-10 right-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm print:hidden">
                                                 {/* Pin Button */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => setActivePinTargetId(isPinOpen ? null : item.id)} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${isPinOpen ? 'text-blue-600 bg-blue-50' : 'text-zinc-400'}`} title="Pin from Lookbook"><Pin size={12} /></button>
+                                                    <button onClick={() => setActivePinTargetId(isPinOpen ? null : item.id)} className={`p-1 rounded hover:bg-zinc-100 ${isPinOpen ? 'text-blue-600 bg-blue-50' : 'text-zinc-400'}`} title="Pin from Lookbook"><Pin size={12} /></button>
                                                 </div>
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '3:2' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '3:2' ? 'text-black' : 'text-zinc-400'}`} title="3:2"><Monitor size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Crop size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '3:2' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '3:2' ? 'text-black' : 'text-zinc-400'}`} title="3:2"><Monitor size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Crop size={12} /></button>
                                                 </div>
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'medium' ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 ${item.size === 'medium' ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
                                                 </div>
                                                 <button onClick={() => handleDeleteItem(originalIndex)} className="p-1 rounded hover:bg-red-50 text-zinc-400 hover:text-red-500"><Trash2 size={12} /></button>
                                             </div>
                                         )}
 
-                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} relative overflow-hidden transition-all ${isPrinting ? 'bg-transparent' : `bg-zinc-50 dark:bg-zinc-900/50 border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200'}`}`}>
+                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} relative overflow-hidden transition-all ${isPrinting ? 'bg-transparent' : `bg-transparent border ${invalidScene && item.sceneLink ? 'border-red-500 border-2' : 'border-zinc-200'}`}`}>
                                             {isPrinting ? (
                                                 item.url ? (
                                                     <img src={item.url} className="w-full h-full object-cover" />

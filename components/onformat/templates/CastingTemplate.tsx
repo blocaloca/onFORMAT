@@ -104,7 +104,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                         {pageItems.map((item) => (
                             <div key={item.id} className={`break-inside-avoid ${!isPortrait ? 'flex gap-8 items-center' : ''}`}>
                                 {/* 4:5 Aspect Ratio Image Card */}
-                                <div className={`relative bg-zinc-100 dark:bg-zinc-900 mb-4 group overflow-hidden border border-zinc-200 ${!isPortrait ? 'w-1/2 aspect-[4/5] mb-0' : 'w-full aspect-[4/5]'}`}>
+                                <div className={`relative bg-transparent mb-4 group overflow-hidden border border-zinc-200 ${!isPortrait ? 'w-1/2 aspect-[4/5] mb-0' : 'w-full aspect-[4/5]'}`}>
                                     <ImageUpload
                                         value={item.imageUrl}
                                         onChange={(url) => updateItem(item.id, 'imageUrl', url)}
@@ -138,7 +138,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                 onChange={(e) => updateItem(item.id, 'role', e.target.value)}
                                                 placeholder="ROLE / CHARACTER"
                                                 disabled={isLocked}
-                                                className="w-full text-[10px] font-bold uppercase tracking-widest text-blue-600 outline-none placeholder:text-blue-200 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 mb-1 text-zinc-900"
+                                                className="w-full text-[10px] font-bold uppercase tracking-widest text-blue-600 outline-none placeholder:text-blue-200 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 mb-1 text-zinc-900"
                                             />
                                         )}
 
@@ -151,7 +151,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                 onChange={(e) => updateItem(item.id, 'name', e.target.value)}
                                                 placeholder="Talent Name"
                                                 disabled={isLocked}
-                                                className="w-full text-xl font-bold text-black outline-none placeholder:text-zinc-300 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2"
+                                                className="w-full text-xl font-bold text-black outline-none placeholder:text-zinc-300 bg-transparent border-b border-transparent hover:border-zinc-200 px-2"
                                             />
                                         )}
                                     </div>
@@ -167,7 +167,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.agency}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, agency: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-zinc-900"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-zinc-900"
                                                     placeholder="Agency Name"
                                                     disabled={isLocked}
                                                 />
@@ -182,7 +182,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.union}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, union: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-zinc-900"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-zinc-900"
                                                     placeholder="SAG / Non-Union"
                                                     disabled={isLocked}
                                                 />
@@ -197,7 +197,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.contact}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, contact: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-zinc-900"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-zinc-900"
                                                     placeholder="Email / Phone"
                                                     disabled={isLocked}
                                                 />
@@ -212,7 +212,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                                     type="text"
                                                     value={item.specs.sizes}
                                                     onChange={(e) => updateItem(item.id, 'specs', { ...item.specs, sizes: e.target.value })}
-                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-zinc-900"
+                                                    className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-zinc-900"
                                                     placeholder="5'10, Shoe 10..."
                                                     disabled={isLocked}
                                                 />
@@ -229,7 +229,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                             <textarea
                                                 value={item.notes || ''}
                                                 onChange={(e) => updateItem(item.id, 'notes', e.target.value)}
-                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 text-sm resize-none h-16 text-zinc-900"
+                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border border-zinc-200 rounded-md p-2 text-sm resize-none h-16 text-zinc-900"
                                                 placeholder="Additional notes..."
                                                 disabled={isLocked}
                                             />

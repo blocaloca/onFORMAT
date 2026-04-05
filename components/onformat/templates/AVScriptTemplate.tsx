@@ -113,7 +113,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 {pageRows.map((row, localIdx) => {
                                     const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                     return (
-                                        <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                        <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
 
                                             {/* Scene */}
                                             {isPrinting ? (
@@ -125,7 +125,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={row.scene}
                                                     onChange={e => handleUpdateRow(globalIdx, { scene: e.target.value })}
-                                                    className={`font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 py-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 text-center`}
+                                                    className={`font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 py-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400 text-center`}
                                                     placeholder="#"
                                                     disabled={isLocked}
                                                 />
@@ -141,7 +141,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                     type="text"
                                                     value={row.time}
                                                     onChange={e => handleUpdateRow(globalIdx, { time: handleDurationChange(e.target.value) })}
-                                                    className={`font-mono text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-2 py-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400`}
+                                                    className={`font-mono text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 py-2 outline-none w-full text-zinc-900 placeholder:text-zinc-400`}
                                                     placeholder="00:00:00"
                                                     disabled={isLocked}
                                                 />
@@ -156,7 +156,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <textarea
                                                     value={row.visual}
                                                     onChange={e => handleUpdateRow(globalIdx, { visual: e.target.value })}
-                                                    className={`text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase break-words`}
+                                                    className={`text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed uppercase break-words`}
                                                     placeholder="ACTION DESCRIPTION..."
                                                     disabled={isLocked}
                                                 />
@@ -171,7 +171,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <textarea
                                                     value={row.audio}
                                                     onChange={e => handleUpdateRow(globalIdx, { audio: e.target.value })}
-                                                    className={`text-sm font-mono bg-zinc-50 border border-zinc-200 shadow-sm rounded px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed break-words`}
+                                                    className={`text-sm font-mono bg-transparent border-b border-transparent hover:border-zinc-200 px-4 py-4 outline-none w-full text-zinc-900 placeholder:text-zinc-400 resize-none min-h-[100px] max-h-[160px] overflow-y-auto leading-relaxed break-words`}
                                                     placeholder="Dialogue or SFX..."
                                                     disabled={isLocked}
                                                 />
@@ -227,7 +227,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     )}
                                 {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                     <div className="pt-2">
-                                        <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-2 py-2 rounded-sm w-full">
+                                        <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-2 py-2 rounded-sm w-full">
                                             <Plus size={10} className="mr-1" /> Add Scene
                                         </button>
                                     </div>

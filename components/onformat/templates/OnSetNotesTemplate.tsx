@@ -138,7 +138,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.date}
                                                 onChange={e => handleUpdateItem(idx, { date: formatDate(e.target.value) })}
-                                                className={`font-mono font-bold w-24 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                                className={`font-mono font-bold w-24 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="MM/DD/YYYY"
                                                 disabled={isLocked}
                                             />
@@ -150,7 +150,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.time}
                                                 onChange={e => handleUpdateItem(idx, { time: e.target.value })}
-                                                className={`font-mono font-bold w-16 bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                                className={`font-mono font-bold w-16 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none uppercase text-zinc-500 text-[10px] ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="00:00"
                                                 disabled={isLocked}
                                             />
@@ -163,7 +163,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(idx, { description: e.target.value })}
-                                                className={`flex-1 font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none placeholder:text-zinc-300 uppercase ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                                className={`flex-1 font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none placeholder:text-zinc-300 uppercase ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                                 placeholder="NOTE SUBJECT / TOPIC"
                                                 disabled={isLocked}
                                             />
@@ -208,12 +208,12 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         <textarea
                                             value={item.body}
                                             onChange={e => handleUpdateItem(idx, { body: e.target.value })}
-                                            className={`w-full bg-zinc-50 p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm focus:bg-white focus:ring-1 focus:ring-zinc-400 border border-transparent focus:border-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`w-full bg-transparent p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm border border-transparent hover:border-zinc-200 focus:border-zinc-400 focus:bg-white transition-all ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Write report details here..."
                                             rows={Math.max(3, item.body.split('\n').length)}
                                             disabled={isLocked}
                                         />
-                                        <div className={`w-full bg-zinc-50 dark:bg-zinc-900/50 p-3 min-h-[100px] text-sm leading-relaxed rounded-sm whitespace-pre-wrap break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
+                                        <div className={`w-full bg-transparent p-3 min-h-[100px] text-sm leading-relaxed rounded-sm whitespace-pre-wrap break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                             {item.body}
                                         </div>
                                     </div>
@@ -223,7 +223,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAdd}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Report Entry
                                     </button>
