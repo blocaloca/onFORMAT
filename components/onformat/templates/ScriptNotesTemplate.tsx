@@ -194,7 +194,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_1fr_1fr_100px_1.5fr_30px] gap-6 py-6 items-start hover:bg-zinc-50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_1fr_1fr_100px_1.5fr_30px] gap-6 py-6 items-start bg-transparent transition-colors group">
 
                                         {/* Scene # - min-w-0 added */}
                                         {isPrinting ? (
@@ -217,7 +217,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             <textarea
                                                 value={item.visual}
                                                 onChange={e => handleUpdateItem(globalIdx, { visual: e.target.value })}
-                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed min-w-0 text-zinc-900"
+                                                className="text-[10px] bg-transparent border border-zinc-200 rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed min-w-0 text-zinc-900"
                                                 placeholder="Visual description..."
                                                 disabled={isLocked}
                                             />
@@ -230,7 +230,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                             <textarea
                                                 value={item.audio}
                                                 onChange={e => handleUpdateItem(globalIdx, { audio: e.target.value })}
-                                                className="text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed min-w-0 text-zinc-900"
+                                                className="text-[10px] bg-transparent border border-zinc-200 rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 min-h-[80px] resize-none leading-relaxed min-w-0 text-zinc-900"
                                                 placeholder="Dialogue / Sound..."
                                                 disabled={isLocked}
                                             />
@@ -325,7 +325,7 @@ export const ScriptNotesTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                 <button
                                     onClick={handleAddItem}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                 >
                                     <Plus size={10} /> Add Scene
                                 </button>

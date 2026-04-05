@@ -14,7 +14,7 @@ import {
     Users,
     ChevronDown
 } from 'lucide-react';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG as QRCode } from 'qrcode.react';
 
 interface MobileControlTemplateProps {
     data: any;
@@ -131,7 +131,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                     
                     {/* ADD ROLE AT THE TOP */}
                     {metadata?.isOwner && (
-                        <div className="bg-white dark:bg-zinc-800/50 p-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+                        <div className="bg-transparent p-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                             <div className="flex items-center gap-3 flex-1 pl-3">
                                 <Users size={16} className="text-zinc-400" />
                                 <div className="relative flex-1">
@@ -156,8 +156,8 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                         </div>
                     )}
 
-                    <div className="bg-white dark:bg-zinc-800/50 rounded-[2rem] border border-zinc-200 dark:border-zinc-700 shadow-sm overflow-hidden text-black dark:text-zinc-100">
-                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-700 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-900/10">
+                    <div className="bg-transparent rounded-[2rem] border border-zinc-200 dark:border-zinc-700 shadow-sm overflow-hidden text-black dark:text-zinc-100">
+                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-700 flex justify-between items-center bg-transparent">
                             <div>
                                 <h2 className="text-sm font-black uppercase tracking-tight">Access Permissions Matrix</h2>
                                 <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Tactical document authorization</p>
@@ -177,7 +177,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                         <div className="overflow-x-auto">
                             <table className="w-full border-collapse">
                                 <thead>
-                                    <tr className="bg-zinc-50/80 dark:bg-zinc-900/80 border-b border-zinc-100 dark:border-zinc-700">
+                                    <tr className="bg-transparent border-b border-zinc-100 dark:border-zinc-700">
                                         <th className="py-3 px-6 text-left w-[220px]">
                                             <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Document Permissions</span>
                                         </th>
@@ -234,7 +234,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
 
                 {/* Uplink Panel (QR) */}
                 <div className="w-full xl:w-[280px] shrink-0 space-y-6">
-                    <div className="bg-white dark:bg-zinc-800/80 p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-700 shadow-sm relative overflow-hidden flex flex-col items-center text-center">
+                    <div className="bg-transparent p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-700 shadow-sm relative overflow-hidden flex flex-col items-center text-center">
                         <div className="mb-6">
                             <h3 className="text-sm font-black uppercase tracking-tight text-black dark:text-white">Mobile Uplink</h3>
                             <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Crew Gateway</p>
@@ -245,14 +245,13 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                                 value={mobileUrl}
                                 size={140}
                                 level="H"
-                                renderAs="svg"
                             />
                         </div>
 
                         <div className="w-full space-y-3">
-                            <button 
+                                <button 
                                 onClick={copyToClipboard}
-                                className="w-full flex items-center justify-center gap-2 bg-zinc-100 dark:bg-zinc-900 py-3 rounded-xl transition-all hover:bg-zinc-200 dark:hover:bg-zinc-700 active:scale-95"
+                                className="w-full flex items-center justify-center gap-2 bg-transparent border border-zinc-200 dark:border-zinc-800 py-3 rounded-xl transition-all hover:border-zinc-400 active:scale-95"
                             >
                                 {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-zinc-400" />}
                                 <span className={`text-[9px] font-black uppercase tracking-widest ${copied ? 'text-emerald-500' : 'text-zinc-600 dark:text-zinc-400'}`}>

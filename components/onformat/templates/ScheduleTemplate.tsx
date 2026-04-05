@@ -211,7 +211,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 const newAmpm = currentAmpm === "AM" ? "PM" : "AM";
                                                 onUpdate({ callTime: `${time} ${newAmpm}`.trim() });
                                             }}
-                                            className="text-[10px] font-bold uppercase bg-zinc-100 hover:bg-zinc-200 px-2 py-1 rounded cursor-pointer transition-colors"
+                                            className="text-[10px] font-bold uppercase bg-transparent border border-zinc-200 hover:border-zinc-300 px-2 py-1 rounded cursor-pointer transition-all"
                                             disabled={isLocked}
                                         >
                                             {(data.callTime || "").split(" ")[1] || "AM"}
@@ -264,7 +264,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             {!isLocked && (
                                                 <button
                                                     onClick={() => handleDeleteItem(globalIdx)} // Direct delete for break
-                                                    className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-zinc-300 hover:text-red-500 transition-opacity opacity-0 group-hover:opacity-100 bg-white border border-zinc-200 shadow-sm rounded-full z-20 print:hidden"
+                                                    className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-zinc-300 hover:text-red-500 transition-opacity opacity-0 group-hover:opacity-100 bg-transparent border border-zinc-200 shadow-sm rounded-full z-20 print:hidden"
                                                 >
                                                     <Trash2 size={12} />
                                                 </button>
@@ -280,7 +280,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         onDragStart={() => handleDragStart(globalIdx)}
                                         onDragOver={(e) => { e.preventDefault(); handleDragOver(globalIdx); }}
                                         onDragEnd={handleDragEnd}
-                                        className={`grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start hover:bg-zinc-50/50 transition-all group cursor-default relative
+                                        className={`grid grid-cols-[80px_50px_160px_60px_1fr_60px_30px] gap-2 py-2 items-start bg-transparent transition-all group cursor-default relative
                                             ${draggedIndex === globalIdx ? 'opacity-30' : ''}
                                             ${dragOverIndex === globalIdx && draggedIndex !== globalIdx ? 'border-t-2 border-emerald-500' : 'border-t border-transparent'}
                                         `}
@@ -438,13 +438,13 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 <div className="pt-2 print-hidden flex gap-2">
                                     <button
                                         onClick={() => handleAddItem(false)}
-                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm border border-transparent hover:border-zinc-200 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-2 py-2 rounded-sm border border-transparent hover:border-zinc-200 transition-all"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Scene
                                     </button>
                                     <button
                                         onClick={() => handleAddItem(true)}
-                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 px-2 py-2 rounded-sm border border-transparent hover:border-indigo-100 transition-all"
+                                        className="flex-1 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-indigo-400 hover:text-indigo-600 bg-transparent px-2 py-2 rounded-sm border border-transparent hover:border-indigo-100 transition-all"
                                     >
                                         <Plus size={10} className="mr-1" /> End of Day Break
                                     </button>

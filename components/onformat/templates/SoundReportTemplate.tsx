@@ -137,27 +137,27 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Roll #</label>
-                                    <input value={data.roll || ''} onChange={e => updateField('roll', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="1" disabled={isLocked} />
+                                    <input value={data.roll || ''} onChange={e => updateField('roll', e.target.value)} className={`font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="1" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.roll}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Sample Rate</label>
-                                    <input value={data.sampleRate || ''} onChange={e => updateField('sampleRate', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="48kHz" disabled={isLocked} />
+                                    <input value={data.sampleRate || ''} onChange={e => updateField('sampleRate', e.target.value)} className={`font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="48kHz" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.sampleRate}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Bit Depth</label>
-                                    <input value={data.bitDepth || ''} onChange={e => updateField('bitDepth', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="24bit" disabled={isLocked} />
+                                    <input value={data.bitDepth || ''} onChange={e => updateField('bitDepth', e.target.value)} className={`font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="24bit" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.bitDepth}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">FPS</label>
-                                    <input value={data.fps || ''} onChange={e => updateField('fps', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="23.98" disabled={isLocked} />
+                                    <input value={data.fps || ''} onChange={e => updateField('fps', e.target.value)} className={`font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="23.98" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.fps}</div>
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Mixer</label>
-                                    <input value={data.mixer || ''} onChange={e => updateField('mixer', e.target.value)} className={`font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="Name" disabled={isLocked} />
+                                    <input value={data.mixer || ''} onChange={e => updateField('mixer', e.target.value)} className={`font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="Name" disabled={isLocked} />
                                     <div className={`font-bold pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{data.mixer}</div>
                                 </div>
                             </div>
@@ -180,7 +180,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             {pageTakes.map((take, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={take.id} className="grid grid-cols-[50px_40px_80px_60px_1fr_1fr_30px_30px] gap-2 py-2 items-center hover:bg-zinc-50 transition-colors group">
+                                    <div key={take.id} className="grid grid-cols-[50px_40px_80px_60px_1fr_1fr_30px_30px] gap-2 py-2 items-center hover:bg-transparent transition-colors group">
 
                                         {/* Scene */}
                                         <input
@@ -301,7 +301,7 @@ export const SoundReportTemplate = ({ data, onUpdate, isLocked = false, plain, o
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2">
-                                    <button onClick={handleAddTake} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddTake} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Take
                                     </button>
                                 </div>

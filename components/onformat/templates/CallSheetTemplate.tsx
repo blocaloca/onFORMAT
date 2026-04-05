@@ -400,7 +400,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest">General Call</span>
                                             <span className="text-[9px] font-bold uppercase text-zinc-400 tracking-widest w-32 text-center">GET onSET MOBILE</span>
                                         </div>
-                                        <div className={`grid grid-cols-[1fr_auto] ${isPrinting ? 'items-center' : 'border border-zinc-200 rounded-sm overflow-hidden bg-white h-32'}`}>
+                                        <div className={`grid grid-cols-[1fr_auto] ${isPrinting ? 'items-center' : 'border border-zinc-200 rounded-sm overflow-hidden bg-transparent h-32'}`}>
                                             <div className={isPrinting ? 'py-4' : 'p-6 flex items-center'}>
                                                 {isPrinting ? (
                                                     <div className="w-full font-sans text-5xl font-black text-black tracking-normal -translate-y-[35%]">
@@ -508,7 +508,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <textarea
                                                 value={data.notes || ''}
                                                 onChange={(e) => updateField('notes', e.target.value)}
-                                                className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed text-zinc-900"
+                                                className="w-full bg-transparent border border-zinc-200 rounded-md p-2 text-sm rounded-sm outline-none focus:border-zinc-400 resize-none overflow-hidden leading-relaxed text-zinc-900"
                                                 placeholder="General production notes..."
                                                 rows={3}
                                                 disabled={isLocked}
@@ -650,7 +650,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                             <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                                 <button
                                                     onClick={handleAddEvent}
-                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                                 >
                                                     <Plus size={10} /> Add Item
                                                 </button>
@@ -774,7 +774,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                             <button
                                                 onClick={handleAddEvent}
-                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                             >
                                                 <Plus size={10} /> Add Item
                                             </button>

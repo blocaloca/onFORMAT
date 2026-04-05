@@ -313,7 +313,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-white rounded-sm border-zinc-200 border outline-none focus:border-zinc-400 focus:bg-white text-left uppercase tracking-widest h-4 leading-4"
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-transparent rounded-sm border-zinc-200 border outline-none focus:border-zinc-400 focus:bg-transparent text-left uppercase tracking-widest h-4 leading-4"
                                                     placeholder="00"
                                                     value={item.imageNumber || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}
@@ -327,7 +327,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-white rounded-sm border-zinc-200 border outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
+                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-transparent rounded-sm border-zinc-200 border outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
                                                     placeholder="SCENE / SHOT TITLE"
                                                     value={item.title || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { title: e.target.value })}
@@ -382,7 +382,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     </div>
                                                 ) : (
                                                     <input
-                                                        className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-white rounded-sm border-zinc-200 border border-none focus:text-black outline-none placeholder-zinc-300 py-0.5"
+                                                        className="w-full text-[9px] font-bold uppercase tracking-widest text-zinc-500 bg-transparent rounded-sm border-zinc-200 border border-none focus:text-black outline-none placeholder-zinc-300 py-0.5"
                                                         placeholder="SHOT TYPE / ANGLE"
                                                         value={item.caption}
                                                         onChange={(e) => handleUpdateItem(originalIndex, { caption: e.target.value })}
@@ -399,7 +399,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                     <div className="flex items-center gap-1">
                                                         <span className="text-[8px] font-bold text-zinc-300 uppercase">SC</span>
                                                         <input
-                                                            className={`w-8 text-[9px] font-mono text-right bg-white rounded-sm border-zinc-200 border outline-none border-b border-zinc-200 text-zinc-600 focus:border-zinc-400 focus:bg-white focus:text-black`}
+                                                            className={`w-8 text-[9px] font-mono text-right bg-transparent rounded-sm border-zinc-200 border outline-none border-b border-zinc-200 text-zinc-600 focus:border-zinc-400 focus:bg-transparent focus:text-black`}
                                                             placeholder="#"
                                                             value={item.sceneLink || ''}
                                                             onChange={(e) => handleUpdateItem(originalIndex, { sceneLink: e.target.value })}
@@ -422,9 +422,9 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
 
             {!isLocked && (
                 <div className="py-8 flex flex-col items-center gap-4 print:hidden pb-20">
-                    <button
+                        <button
                         onClick={handleAddItem}
-                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-white px-8 py-3 transition-all rounded-full hover:shadow-lg shadow-sm"
+                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-transparent px-8 py-3 transition-all rounded-full hover:shadow-lg shadow-sm"
                     >
                         <span>+ Add Frame</span>
                     </button>

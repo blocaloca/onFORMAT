@@ -207,7 +207,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-white rounded-sm border-zinc-200 border outline-none focus:border-zinc-400 focus:bg-white text-left uppercase tracking-widest h-4 leading-4"
+                                                    className="w-6 flex-shrink-0 text-[10px] font-bold text-black bg-transparent rounded-sm border-zinc-200 border outline-none focus:border-zinc-400 focus:bg-transparent text-left uppercase tracking-widest h-4 leading-4"
                                                     placeholder="00"
                                                     value={item.imageNumber || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { imageNumber: e.target.value })}
@@ -221,7 +221,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 </div>
                                             ) : (
                                                 <input
-                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-white rounded-sm border-zinc-200 border outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
+                                                    className="flex-1 text-[10px] font-bold text-zinc-900 bg-transparent rounded-sm border-zinc-200 border outline-none focus:text-black uppercase tracking-wider h-4 leading-4"
                                                     placeholder="IMAGE TITLE"
                                                     value={item.title || ''}
                                                     onChange={(e) => handleUpdateItem(originalIndex, { title: e.target.value })}
@@ -235,18 +235,18 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             <div className="absolute top-12 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/90 backdrop-blur-sm rounded-md p-1 border border-zinc-200 shadow-sm">
                                                 {/* Aspect Ratio Selector */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Monitor size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '9:16' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '9:16' ? 'text-black' : 'text-zinc-400'}`} title="9:16"><Smartphone size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '1:1' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '1:1' ? 'text-black' : 'text-zinc-400'}`} title="1:1"><Square size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '4:5' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '4:5' ? 'text-black' : 'text-zinc-400'}`} title="4:5"><Crop size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '5:4' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.aspectRatio === '5:4' ? 'text-black' : 'text-zinc-400'}`} title="5:4"><Maximize size={12} className="rotate-90" /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '16:9' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '16:9' ? 'text-black' : 'text-zinc-400'}`} title="16:9"><Monitor size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '9:16' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '9:16' ? 'text-black' : 'text-zinc-400'}`} title="9:16"><Smartphone size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '1:1' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '1:1' ? 'text-black' : 'text-zinc-400'}`} title="1:1"><Square size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '4:5' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '4:5' ? 'text-black' : 'text-zinc-400'}`} title="4:5"><Crop size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { aspectRatio: '5:4' })} className={`p-1 rounded hover:bg-zinc-100 ${item.aspectRatio === '5:4' ? 'text-black' : 'text-zinc-400'}`} title="5:4"><Maximize size={12} className="rotate-90" /></button>
                                                 </div>
 
                                                 {/* Size Selector */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${(!item.size || item.size === 'medium') ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'large' ? 'text-black' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 ${(!item.size || item.size === 'medium') ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 ${item.size === 'large' ? 'text-black' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
                                                 </div>
 
                                                 {/* Caption Toggle */}
@@ -281,7 +281,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         )}
 
                                         {/* Image Container */}
-                                        <div className={`w-full bg-zinc-50 dark:bg-zinc-900/50 ${getAspectClass(item.aspectRatio)} shadow-sm relative overflow-hidden`}>
+                                        <div className={`w-full bg-transparent ${getAspectClass(item.aspectRatio)} shadow-sm relative overflow-hidden`}>
                                             {isPrinting ? (
                                                 item.url ? (
                                                     <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
@@ -302,7 +302,7 @@ export const LookbookTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                 <div className="w-full text-[10px] font-mono text-gray-500 whitespace-pre-wrap break-words block mt-1">{item.caption}</div>
                                             ) : (
                                                 <textarea
-                                                    className="w-full text-[10px] font-mono text-gray-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-400 focus:bg-white placeholder-gray-300 resize-none overflow-hidden mt-1 text-zinc-900"
+                                                    className="w-full text-[10px] font-mono text-gray-500 bg-transparent rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-400 focus:bg-transparent placeholder-gray-300 resize-none overflow-hidden mt-1 text-zinc-900"
                                                     placeholder="Add notes..."
                                                     rows={2}
                                                     value={item.caption}

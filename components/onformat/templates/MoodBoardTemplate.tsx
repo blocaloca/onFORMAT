@@ -212,7 +212,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                     value={data.overview || ''}
                                     onChange={(e) => onUpdate({ overview: e.target.value })}
                                     placeholder="Describe the visual direction, tone, and style..."
-                                    className={`w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded-md p-3 text-sm min-h-[60px] outline-none focus:border-zinc-400 focus:bg-white resize-none placeholder-zinc-300 print:hidden text-zinc-900`}
+                                    className={`w-full bg-transparent border border-zinc-200 rounded-md p-3 text-sm min-h-[60px] outline-none focus:border-zinc-400 focus:bg-transparent resize-none placeholder-zinc-300 print:hidden text-zinc-900`}
                                 />
                                 <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full bg-transparent p-3 text-sm min-h-[60px] whitespace-pre-wrap break-words text-black`}>
                                     {data.overview || "—"}
@@ -244,9 +244,9 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
 
                                                 {/* Size Selector */}
                                                 <div className="flex items-center border-r border-zinc-200 pr-1 mr-1 gap-1">
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${(!item.size || item.size === 'medium') ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
-                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 ${item.size === 'large' ? 'text-black' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'small' })} className={`p-1 rounded hover:bg-zinc-100 ${item.size === 'small' ? 'text-black' : 'text-zinc-400'}`} title="Small"><Grid3x3 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'medium' })} className={`p-1 rounded hover:bg-zinc-100 ${(!item.size || item.size === 'medium') ? 'text-black' : 'text-zinc-400'}`} title="Medium"><Grid2x2 size={12} /></button>
+                                                    <button onClick={() => handleUpdateItem(originalIndex, { size: 'large' })} className={`p-1 rounded hover:bg-zinc-100 ${item.size === 'large' ? 'text-black' : 'text-zinc-400'}`} title="Large"><RectangleHorizontal size={12} /></button>
                                                 </div>
 
                                                 {/* Caption Toggle */}
@@ -288,7 +288,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                         )}
 
                                         {/* Image Container */}
-                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} shadow-sm relative ${isPrinting ? 'bg-transparent' : 'bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200'}`}>
+                                        <div className={`w-full ${getAspectClass(item.aspectRatio)} shadow-sm relative ${isPrinting ? 'bg-transparent' : 'bg-transparent border border-dashed border-zinc-200'}`}>
                                             {isPrinting ? (
                                                 item.url ? (
                                                     <img src={item.url} className="w-full h-full object-cover" />
@@ -311,7 +311,7 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                                                 </div>
                                             ) : (
                                                 <textarea
-                                                    className="w-full text-[10px] text-center font-mono text-zinc-500 bg-white rounded-sm border-zinc-200 border outline-none border-b border-transparent focus:border-zinc-300 placeholder-zinc-300 resize-none overflow-hidden text-zinc-900"
+                                                    className="w-full text-[10px] text-center font-mono bg-transparent border-b border-transparent hover:border-zinc-200 outline-none placeholder-zinc-300 resize-none overflow-hidden text-zinc-900"
                                                     placeholder="CAPTION..."
                                                     rows={2}
                                                     value={item.caption}

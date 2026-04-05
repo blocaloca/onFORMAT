@@ -233,14 +233,14 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
     const activeShot = rows.find((r) => r._status !== 'Wrapped');
 
     const innerContent = (
-        <div className={`w-full font-sans ${hideControls ? 'pb-24 pt-4' : 'min-h-[80vh] dark:bg-slate-950 dark:text-slate-200 bg-white text-slate-800 p-2 md:p-4 rounded-lg'}`}>
+        <div className={`w-full font-sans ${hideControls ? 'pb-24 pt-4' : 'min-h-[80vh] dark:bg-slate-950 dark:text-slate-200 bg-transparent text-slate-800 p-2 md:p-4 rounded-lg'}`}>
             <div className="w-full space-y-6">
 
 
                     {/* Empty State */}
                     {rows.length === 0 && !isPrinting && (
-                        <GlassCard className="p-12 text-center flex flex-col items-center gap-4 mt-12 border-dashed border-2 dark:border-slate-700 border-slate-300 bg-slate-50 dark:bg-slate-900/50">
-                            <div className="p-4 rounded-full dark:bg-slate-800 bg-slate-200 border dark:border-slate-700 border-slate-300">
+                        <GlassCard className="p-12 text-center flex flex-col items-center gap-4 mt-12 border-dashed border-2 border-zinc-200 bg-transparent">
+                            <div className="p-4 rounded-full bg-transparent border border-zinc-200">
                                 <UploadCloud size={32} className="text-orange-500" />
                             </div>
                             <h2 className="text-xl font-semibold dark:text-slate-200 text-slate-800">Initialize eComm Runbook</h2>
@@ -263,7 +263,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                     </div>
                                     <button
                                         onClick={initializeBlank}
-                                        className="px-6 py-2.5 dark:bg-slate-800 bg-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 dark:text-slate-200 text-slate-700 active:scale-95 transition-all rounded-md font-medium border dark:border-slate-700 border-slate-300 text-sm"
+                                        className="px-6 py-2.5 bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900 dark:text-slate-200 text-slate-700 active:scale-95 transition-all rounded-md font-medium border border-zinc-200 text-sm"
                                     >
                                         Create Blank List
                                     </button>
@@ -277,7 +277,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div className="w-full pb-8">
                             <table className="w-full text-left text-[9px] border-collapse border border-slate-300 table-fixed">
                                 <thead>
-                                    <tr className="bg-slate-100">
+                                    <tr className="bg-transparent border-b border-black">
                                         {columns.map(col => <th key={col} className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 break-words">{col}</th>)}
                                         <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-16">Location</th>
                                         <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-16">Deliver</th>
@@ -289,7 +289,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 </thead>
                                 <tbody>
                                     {rows.map(row => (
-                                        <tr key={row._id} className={row._status === 'Wrapped' ? 'opacity-50 grayscale bg-slate-50' : 'bg-white'}>
+                                        <tr key={row._id} className={row._status === 'Wrapped' ? 'opacity-50 grayscale bg-transparent' : 'bg-transparent'}>
                                             {columns.map(col => <td key={col} className="border border-slate-300 p-1.5 whitespace-normal break-words font-medium text-slate-800">{row[col]}</td>)}
                                             <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._location}</td>
                                             <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._deliverables}</td>
@@ -309,9 +309,9 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                     {/* Desktop View */}
                     {rows.length > 0 && viewMode === 'desktop' && !isPrinting && (
                         <div className="overflow-x-auto pb-12 w-full">
-                            <div className="min-w-max border dark:border-slate-800 border-slate-200 rounded-xl dark:bg-slate-900/40 bg-slate-50 overflow-hidden w-full">
+                            <div className="min-w-max border border-zinc-200 rounded-xl bg-transparent overflow-hidden w-full">
                                 {/* Table Header Row */}
-                                <div className="flex items-center gap-3 px-4 py-3 dark:bg-slate-900 bg-slate-100 border-b dark:border-slate-800 border-slate-200 text-xs font-semibold dark:text-slate-400 text-slate-500 tracking-wider uppercase">
+                                <div className="flex items-center gap-3 px-4 py-3 bg-transparent border-b border-zinc-200 text-xs font-semibold text-zinc-400 tracking-wider uppercase">
                                     <div className="w-6 shrink-0"></div>
                                     {columns.map((col) => (
                                         <div key={col} className="w-32 shrink-0">{col}</div>
@@ -337,7 +337,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 onDragOver={(e) => handleDragOver(e, i)}
                                                 onDragEnd={handleDragEnd}
                                                 className={`group flex items-center gap-3 px-4 py-2 transition-all duration-300 relative
-                                                    ${isWrapped ? 'dark:bg-slate-900/20 bg-slate-100/50 opacity-60 scale-[0.99] grayscale pointer-events-auto' : 'dark:bg-slate-900/60 dark:hover:bg-slate-800/80 hover:bg-slate-100'}
+                                                    ${isWrapped ? 'bg-transparent opacity-60 scale-[0.99] grayscale pointer-events-auto' : 'bg-transparent'}
                                                     ${draggedRowIndex === i ? 'opacity-50 scale-95' : ''}
                                                 `}
                                             >
@@ -385,7 +385,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <div className="px-1.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">{row._deliverables}</div>
                                                     ) : (
                                                         <select
-                                                            className="w-full dark:bg-slate-950 bg-white border dark:border-slate-800 border-slate-300 dark:text-slate-300 text-slate-700 text-xs rounded px-1.5 py-1 focus:outline-none focus:border-orange-500"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 dark:text-slate-300 text-slate-700 text-xs rounded px-1.5 py-1 focus:outline-none focus:border-orange-500 transition-all font-medium appearance-none"
                                                             value={row._deliverables}
                                                             onChange={(e) => updateRowState(row._id, { _deliverables: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -429,7 +429,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <input
                                                             type="text"
                                                             placeholder="e.g. 0102, 0104"
-                                                            className="w-full dark:bg-slate-950 bg-white border dark:border-slate-800 border-slate-300 rounded px-2 py-1 text-xs dark:text-slate-300 text-slate-800 focus:outline-none focus:border-orange-500/50 transition-colors"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs dark:text-slate-300 text-slate-800 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                                             value={row._selects}
                                                             onChange={(e) => updateRowState(row._id, { _selects: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -445,7 +445,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <input
                                                             type="text"
                                                             placeholder="Format edits..."
-                                                            className="w-full dark:bg-slate-950 bg-white border dark:border-slate-800 border-slate-300 rounded px-2 py-1 text-xs dark:text-slate-300 text-slate-800 focus:outline-none focus:border-orange-500/50 transition-colors"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs dark:text-slate-300 text-slate-800 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                                             value={row._notes}
                                                             onChange={(e) => updateRowState(row._id, { _notes: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -470,7 +470,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                     {row._thumbnail ? (
                                                         <img src={row._thumbnail} alt="thumb" className="w-8 h-8 object-cover rounded shadow border dark:border-slate-700/50 border-slate-200 block" />
                                                     ) : (
-                                                        <div className="h-8 w-8 border border-dashed dark:border-slate-700 border-slate-300 rounded dark:bg-slate-900 bg-slate-50 flex items-center justify-center dark:text-slate-500 text-slate-400">
+                                                        <div className="h-8 w-8 border border-dashed border-zinc-200 rounded bg-transparent flex items-center justify-center dark:text-slate-500 text-slate-400">
                                                             <ImageIcon size={14} />
                                                         </div>
                                                     )}
@@ -520,7 +520,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 <div className="mt-4 flex">
                                     <button
                                         onClick={addRow}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 dark:bg-slate-800/50 bg-slate-100 hover:bg-slate-200 dark:hover:bg-slate-800 border dark:border-slate-700 border-slate-300 dark:text-slate-300 text-slate-700 rounded-md text-xs font-semibold transition-colors shadow-sm"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-transparent hover:bg-zinc-50 border border-zinc-200 dark:text-slate-300 text-slate-700 rounded-md text-xs font-semibold transition-all shadow-sm"
                                     >
                                         <Plus size={14} /> Add Row
                                     </button>
@@ -533,10 +533,10 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                     {rows.length > 0 && viewMode === 'mobile' && !isPrinting && (
                         <div className="w-full mx-auto pb-24 font-sans space-y-4 pt-2">
                             {!activeShot ? (
-                                <div className="text-center p-12 text-emerald-500 font-medium bg-white dark:bg-white rounded-[24px] shadow-sm border border-zinc-100">✨ All shots wrapped!</div>
+                                <div className="text-center p-12 text-emerald-500 font-medium bg-transparent rounded-[24px] shadow-sm border border-zinc-100">✨ All shots wrapped!</div>
                             ) : (
                                 <div className="space-y-4">
-                                    <div className={`bg-white dark:bg-white rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden transform transition-all duration-500 origin-top
+                                    <div className={`bg-transparent rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden transform transition-all duration-500 origin-top
                                         ${completingId === activeShot._id ? 'opacity-0 scale-95 translate-y-12' : 'opacity-100 scale-100 translate-y-0'}
                                     `}>
                                         
@@ -562,16 +562,16 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         {/* Metadata Cards Format (Like Call Sheet) */}
                                         <div className="grid grid-cols-2 gap-3 mb-6">
                                             {columns.slice(2, 4).map(col => (
-                                                <div key={col} className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                                <div key={col} className="bg-transparent p-4 rounded-[16px] border border-zinc-100">
                                                     <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">{col}</p>
                                                     <p className="text-zinc-900 dark:text-black font-bold text-sm truncate">{activeShot[col] || '-'}</p>
                                                 </div>
                                             ))}
-                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                            <div className="bg-transparent p-4 rounded-[16px] border border-zinc-100">
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Location</p>
                                                 <p className="text-zinc-900 dark:text-black font-bold text-sm truncate">{activeShot._location}</p>
                                             </div>
-                                            <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
+                                            <div className="bg-transparent p-4 rounded-[16px] border border-zinc-100">
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Deliver</p>
                                                 <p className="text-blue-600 dark:text-blue-600 font-bold text-sm truncate">{activeShot._deliverables}</p>
                                             </div>
@@ -582,7 +582,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             const noteCol = columns.find(c => c.toLowerCase().includes('note') || c.toLowerCase().includes('direction')) || columns[4];
                                             if (activeShot[noteCol] && activeShot[noteCol].trim() !== '') {
                                                 return (
-                                                    <div className="bg-zinc-50 dark:bg-zinc-50 p-4 rounded-[16px] border border-zinc-100 mb-6">
+                                                    <div className="bg-transparent p-4 rounded-[16px] border border-zinc-100 mb-6">
                                                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">{noteCol}</label>
                                                         <p className="text-zinc-900 dark:text-black font-semibold text-sm whitespace-pre-wrap">{activeShot[noteCol]}</p>
                                                     </div>
@@ -594,7 +594,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         {/* Mobile Thumbnail Render */}
                                         <div className="mb-2">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-2">Reference Thumbnail</label>
-                                            <div className="w-full h-32 bg-zinc-50 dark:bg-zinc-50 border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
+                                            <div className="w-full h-32 bg-transparent border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
                                                 <input
                                                     type="file"
                                                     accept="image/*"

@@ -113,11 +113,11 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 {pageRows.map((row, localIdx) => {
                                     const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                     return (
-                                        <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
+                                        <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start bg-transparent transition-colors group">
 
                                             {/* Scene */}
                                             {isPrinting ? (
-                                                <div className="font-bold text-sm text-center text-black py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm">
+                                                <div className="font-bold text-sm text-center text-black py-2 border border-zinc-200 bg-transparent rounded-sm">
                                                     {row.scene || "—"}
                                                 </div>
                                             ) : (
@@ -133,7 +133,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Duration */}
                                             {isPrinting ? (
-                                                <div className="font-mono text-sm text-black py-2 border border-zinc-200 bg-zinc-50/50 rounded-sm text-center">
+                                                <div className="font-mono text-sm text-black py-2 border border-zinc-200 bg-transparent rounded-sm text-center">
                                                     {row.time || "—"}
                                                 </div>
                                             ) : (
@@ -149,7 +149,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Visual */}
                                             {isPrinting ? (
-                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-zinc-50/30 p-4 border border-zinc-200 rounded-sm min-h-[100px] overflow-hidden">
+                                                <div className="text-sm leading-relaxed uppercase whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-transparent p-4 border border-zinc-200 rounded-sm min-h-[100px] overflow-hidden">
                                                     {row.visual || "—"}
                                                 </div>
                                             ) : (
@@ -164,7 +164,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                                             {/* Audio */}
                                             {isPrinting ? (
-                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-zinc-50/10 p-4 border border-zinc-200 rounded-sm min-h-[100px] overflow-hidden">
+                                                <div className="text-sm font-mono leading-relaxed whitespace-pre-wrap break-words text-black dark:text-zinc-100 bg-transparent p-4 border border-zinc-200 rounded-sm min-h-[100px] overflow-hidden">
                                                     {row.audio || "—"}
                                                 </div>
                                             ) : (
@@ -227,7 +227,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                     )}
                                 {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                     <div className="pt-2">
-                                        <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-2 py-2 rounded-sm w-full">
+                                        <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 bg-transparent px-2 py-2 rounded-sm w-full">
                                             <Plus size={10} className="mr-1" /> Add Scene
                                         </button>
                                     </div>

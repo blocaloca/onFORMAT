@@ -136,7 +136,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center bg-transparent transition-colors group">
 
                                         {/* Category */}
                                         <div className="relative">
@@ -281,7 +281,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {/* Add Button - Last Page */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-2 py-2 rounded-sm w-full print-hidden">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 bg-transparent border border-transparent hover:border-zinc-200 px-2 py-2 rounded-sm w-full print-hidden transition-colors">
                                         <Plus size={10} className="mr-1" /> Add Equipment
                                     </button>
                                 </div>

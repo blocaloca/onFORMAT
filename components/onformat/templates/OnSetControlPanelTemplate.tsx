@@ -151,9 +151,9 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
         <div className="space-y-8 animate-in fade-in">
             
             {/* COMPACT STATUS BAR */}
-            <div className="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-zinc-900 px-6 py-4 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
+            <div className="flex flex-col sm:flex-row justify-between items-center bg-transparent px-6 py-4 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
                 <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isLive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/10' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${isLive ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/10' : 'bg-transparent border border-zinc-100 text-zinc-400'}`}>
                         <Radio size={20} className={isLive ? 'animate-pulse' : ''} />
                     </div>
                     <div>
@@ -186,7 +186,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                     
                     {/* ADD ROLE AT THE TOP */}
                     {metadata?.isOwner && (
-                        <div className="bg-white dark:bg-zinc-800/50 p-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+                        <div className="bg-transparent p-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                             <div className="flex items-center gap-3 flex-1 pl-3">
                                 <Users size={16} className="text-zinc-400" />
                                 <div className="relative flex-1">
@@ -211,9 +211,9 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                         </div>
                     )}
 
-                    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm overflow-hidden transition-colors">
+                    <div className="bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-[2rem] shadow-sm overflow-hidden transition-colors">
                         
-                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-zinc-50/50 dark:bg-zinc-800/20">
+                        <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex justify-between items-center bg-transparent">
                             <div>
                                 <h2 className="text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white">Access Permissions Matrix</h2>
                                 <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Define mobile silos for crew</p>
@@ -233,7 +233,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                         <div className="overflow-x-auto scrollbar-hide">
                             <table className="w-full border-collapse">
                                 <thead>
-                                    <tr className="bg-zinc-50/80 dark:bg-zinc-900/80 border-b border-zinc-100 dark:border-zinc-700">
+                                    <tr className="bg-transparent border-b border-zinc-100 dark:border-zinc-700">
                                         <th className="py-3 px-6 text-left w-[220px]">
                                             <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Document Permissions</span>
                                         </th>
@@ -290,7 +290,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
 
                 {/* MOBILE UPLINK GATEWAY */}
                 <div className="w-full lg:w-[280px] shrink-0 space-y-6">
-                    <div className="bg-white dark:bg-zinc-900 p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col items-center text-center transition-colors">
+                    <div className="bg-transparent p-6 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm flex flex-col items-center text-center transition-colors">
                         <div className="mb-6">
                             <h3 className="text-sm font-black uppercase tracking-tight text-zinc-900 dark:text-white">Mobile Uplink</h3>
                             <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">Crew Gateway QR</p>

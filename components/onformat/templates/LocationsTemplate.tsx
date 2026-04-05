@@ -297,7 +297,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                             placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                                         />
                                                     </div>
-                                                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                                    <div className="w-full aspect-video bg-transparent border border-zinc-100 relative overflow-hidden rounded-sm">
                                                         <ImageUploader
                                                             currentUrl={loc.smallImage2}
                                                             onUpload={(url) => updateLocation(index, 'smallImage2', url)}
@@ -347,7 +347,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
 
                                                 {/* Right: Stacked Small Images */}
                                                 <div className="col-span-4 flex flex-col gap-4 h-full">
-                                                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                                    <div className="w-full aspect-video bg-transparent border border-zinc-100 relative overflow-hidden rounded-sm">
                                                         <ImageUploader
                                                             currentUrl={loc.smallImage1}
                                                             onUpload={(url) => updateLocation(index, 'smallImage1', url)}
@@ -357,7 +357,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                                                             placeholder={<div className="text-zinc-200 text-xs font-bold uppercase tracking-widest">+ Detail</div>}
                                                         />
                                                     </div>
-                                                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 relative overflow-hidden rounded-sm">
+                                                    <div className="w-full aspect-video bg-transparent border border-zinc-100 relative overflow-hidden rounded-sm">
                                                         <ImageUploader
                                                             currentUrl={loc.smallImage2}
                                                             onUpload={(url) => updateLocation(index, 'smallImage2', url)}
@@ -392,7 +392,7 @@ export const LocationsTemplate = ({ data, onUpdate, isLocked = false, plain, met
                 <div className="max-w-md mx-auto py-8 text-center print-hidden">
                     <button
                         onClick={handleAddLocation}
-                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:border-black transition-colors rounded-sm"
+                        className="flex items-center justify-center gap-2 w-full border border-dashed border-zinc-300 py-4 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:border-black transition-colors rounded-sm"
                     >
                         <Plus size={14} /> <span>Add Location</span>
                     </button>

@@ -239,7 +239,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.camera || data.camera}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { camera: e.target.value })}
-                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-sm w-8 outline-none hover:bg-white focus:bg-white rounded px-1 uppercase text-center text-zinc-900"
+                                                            className="bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-sm w-8 outline-none rounded px-1 uppercase text-center text-zinc-900"
                                                         />
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -247,7 +247,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                         <input
                                                             value={item.mediaType || 'Card'}
                                                             onChange={e => handleBatchUpdateRoll(currentRoll, { mediaType: e.target.value })}
-                                                            className="bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-sm w-20 outline-none hover:bg-white focus:bg-white rounded px-1 text-zinc-900"
+                                                            className="bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-sm w-20 outline-none rounded px-1 text-zinc-900"
                                                         />
                                                     </div>
                                                 </div>
@@ -265,38 +265,38 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                             </div>
                                         )}
 
-                                        <div className="grid grid-cols-[40px_40px_40px_1fr_50px_30px_30px_30px_40px_80px_1fr_30px_30px] gap-2 py-1.5 items-center hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
-                                            <input type="text" value={item.scene} onChange={e => handleUpdateItem(globalIdx, { scene: e.target.value })} className={`text-center font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
+                                        <div className="grid grid-cols-[40px_40px_40px_1fr_50px_30px_30px_30px_40px_80px_1fr_30px_30px] gap-2 py-1.5 items-center bg-transparent transition-colors group">
+                                            <input type="text" value={item.scene} onChange={e => handleUpdateItem(globalIdx, { scene: e.target.value })} className={`text-center font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.scene}</div>
 
-                                            <input type="text" value={item.shot} onChange={e => handleUpdateItem(globalIdx, { shot: e.target.value })} className={`text-center font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
+                                            <input type="text" value={item.shot} onChange={e => handleUpdateItem(globalIdx, { shot: e.target.value })} className={`text-center font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.shot}</div>
 
-                                            <input type="text" value={item.take} onChange={e => handleUpdateItem(globalIdx, { take: e.target.value })} className={`text-center font-mono font-bold bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
+                                            <input type="text" value={item.take} onChange={e => handleUpdateItem(globalIdx, { take: e.target.value })} className={`text-center font-mono font-bold bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="-" disabled={isLocked} />
                                             <div className={`text-center font-mono font-bold text-sm pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.take}</div>
 
-                                            <input type="text" value={item.description} onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })} className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="Shot description..." disabled={isLocked} />
+                                            <input type="text" value={item.description} onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })} className={`bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="Shot description..." disabled={isLocked} />
                                             <div className={`text-sm px-1 pt-0.5 leading-normal break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.description}</div>
 
-                                            <input type="text" value={item.lens} onChange={e => handleUpdateItem(globalIdx, { lens: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="mm" disabled={isLocked} />
+                                            <input type="text" value={item.lens} onChange={e => handleUpdateItem(globalIdx, { lens: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="mm" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.lens}</div>
 
-                                            <input type="text" value={item.fps} onChange={e => handleUpdateItem(globalIdx, { fps: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="fps" disabled={isLocked} />
+                                            <input type="text" value={item.fps} onChange={e => handleUpdateItem(globalIdx, { fps: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="fps" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.fps}</div>
 
-                                            <input type="text" value={item.shutter} onChange={e => handleUpdateItem(globalIdx, { shutter: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="180" disabled={isLocked} />
+                                            <input type="text" value={item.shutter} onChange={e => handleUpdateItem(globalIdx, { shutter: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="180" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.shutter}</div>
 
-                                            <input type="text" value={item.wb} onChange={e => handleUpdateItem(globalIdx, { wb: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="5600" disabled={isLocked} />
+                                            <input type="text" value={item.wb} onChange={e => handleUpdateItem(globalIdx, { wb: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="5600" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.wb}</div>
 
-                                            <input type="text" value={item.iso} onChange={e => handleUpdateItem(globalIdx, { iso: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="iso" disabled={isLocked} />
+                                            <input type="text" value={item.iso} onChange={e => handleUpdateItem(globalIdx, { iso: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="iso" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.iso}</div>
 
-                                            <input type="text" value={item.timecode} onChange={e => handleUpdateItem(globalIdx, { timecode: e.target.value })} className={`text-center font-mono text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="00:00:00:00" disabled={isLocked} />
+                                            <input type="text" value={item.timecode} onChange={e => handleUpdateItem(globalIdx, { timecode: e.target.value })} className={`text-center font-mono text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="00:00:00:00" disabled={isLocked} />
                                             <div className={`text-center font-mono text-[10px] pt-0.5 leading-normal ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.timecode}</div>
 
-                                            <input type="text" value={item.notes} onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })} className={`bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-500 italic w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="..." disabled={isLocked} />
+                                            <input type="text" value={item.notes} onChange={e => handleUpdateItem(globalIdx, { notes: e.target.value })} className={`bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-zinc-500 italic w-full ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`} placeholder="..." disabled={isLocked} />
                                             <div className={`text-xs px-1 pt-0.5 leading-normal text-zinc-500 italic break-words ${isPrinting ? 'block' : 'hidden'} print:block`}>{item.notes}</div>
 
                                             <div className="relative flex justify-center">
@@ -355,7 +355,7 @@ export const CameraReportTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Take
                                     </button>

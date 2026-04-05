@@ -151,7 +151,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 const variance = (item.budgeted || 0) - (item.actual || 0);
 
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 py-2 items-center hover:bg-zinc-50 transition-colors px-2">
+                                    <div key={item.id} className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 py-2 items-center bg-transparent transition-colors px-2">
 
                                         {/* Description */}
                                         <div>
@@ -220,7 +220,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 <div className="pt-2 print-hidden flex justify-between items-center">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-2 py-2 rounded-sm"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent border border-transparent hover:border-zinc-200 px-3 py-2 rounded-sm transition-colors"
                                     >
                                         <Plus size={10} className="mr-1" /> Add Line Item
                                     </button>

@@ -208,7 +208,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                         <textarea
                                             value={item.body}
                                             onChange={e => handleUpdateItem(idx, { body: e.target.value })}
-                                            className={`w-full bg-transparent p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm border border-transparent hover:border-zinc-200 focus:border-zinc-400 focus:bg-white transition-all ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
+                                            className={`w-full bg-transparent p-3 outline-none resize-none min-h-[100px] text-sm leading-relaxed rounded-sm border border-transparent hover:border-zinc-200 focus:border-zinc-400 focus:bg-transparent transition-all ${isPrinting ? 'hidden' : ''} print:hidden text-zinc-900`}
                                             placeholder="Write report details here..."
                                             rows={Math.max(3, item.body.split('\n').length)}
                                             disabled={isLocked}
@@ -223,7 +223,7 @@ export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAdd}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black hover:bg-zinc-50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Report Entry
                                     </button>

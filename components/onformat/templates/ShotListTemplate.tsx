@@ -155,7 +155,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                                 return (
-                                    <div key={shot.id} className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 py-1 items-start transition-colors group ${isComplete ? 'bg-emerald-50/30' : 'hover:bg-zinc-50/50'}`}>
+                                    <div key={shot.id} className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 py-1 items-start transition-colors group ${isComplete ? 'bg-emerald-50/30' : 'bg-transparent hover:border-zinc-200 border border-transparent'}`}>
 
                                         {/* Number */}
                                         <div className="flex items-start justify-center pt-2">
@@ -289,7 +289,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 <div className="pt-3 print-hidden">
                                     <button
                                         onClick={handleAddShot}
-                                        className={`flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2.5 rounded-xl w-[120px] transition-all border bg-zinc-50 border-zinc-200 text-zinc-400 hover:bg-white hover:text-zinc-900 hover:border-zinc-300`}
+                                        className={`flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2.5 rounded-xl w-[120px] transition-all border bg-transparent border-zinc-200 text-zinc-400 hover:bg-transparent hover:text-zinc-900 hover:border-zinc-300`}
                                     >
                                         <Plus size={10} /> Add Shot
                                     </button>

@@ -103,7 +103,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 py-2 items-start hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[80px_1fr_1fr_100px_30px] gap-2 py-2 items-start bg-transparent transition-colors group">
                                         {/* File Number */}
                                         <input
                                             type="text"
@@ -188,7 +188,7 @@ export const ClientSelectsTemplate = ({ data, onUpdate, isLocked = false, plain,
                             })}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 bg-transparent px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Entry
                                     </button>
                                 </div>

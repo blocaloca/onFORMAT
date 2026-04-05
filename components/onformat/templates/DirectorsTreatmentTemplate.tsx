@@ -147,7 +147,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     </div>
                 ) : (
                     <input
-                        className="w-full bg-white rounded-sm border-zinc-200 border text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300 text-zinc-900"
+                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-xl font-black uppercase tracking-normal outline-none placeholder-zinc-300 text-zinc-900"
                         value={slide.title}
                         onChange={(e) => updateSlide(slide.id, { title: e.target.value })}
                         placeholder="SLIDE TITLE"
@@ -160,7 +160,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     </div>
                 ) : (
                     <input
-                        className="w-full bg-white rounded-sm border-zinc-200 border text-[10px] uppercase tracking-widest text-emerald-600 font-bold outline-none placeholder-emerald-300/50 mb-2 text-zinc-900"
+                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-[10px] uppercase tracking-widest text-emerald-600 font-bold outline-none placeholder-emerald-300/50 mb-2 text-zinc-900"
                         value={slide.category}
                         onChange={(e) => updateSlide(slide.id, { category: e.target.value })}
                         placeholder="TYPE OF TREATMENT (E.G. CINEMATOGRAPHY, WARDROBE)"
@@ -183,7 +183,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                         </div>
                     ) : (
                         <textarea
-                            className="w-full h-full bg-white rounded-sm border-zinc-200 border text-lg leading-relaxed outline-none resize-none placeholder-zinc-200 font-serif whitespace-pre-wrap text-zinc-900"
+                            className="w-full h-full bg-transparent border border-zinc-200 rounded-sm text-lg leading-relaxed outline-none resize-none placeholder-zinc-200 font-serif whitespace-pre-wrap text-zinc-900"
                             value={slide.content}
                             onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
                             placeholder="Write your narrative here..."
@@ -200,7 +200,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="flex flex-col h-full relative group">
                     {TitleBlock}
                     {renderLayoutControls(slide)}
-                    <div className="w-full aspect-video bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden shrink-0">
+                    <div className="w-full aspect-video bg-transparent border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden shrink-0">
                         {isPrinting ? (
                             <img
                                 src={slide.modules.image1 || ''}
@@ -222,7 +222,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                             </div>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans text-zinc-900"
+                                className="w-full h-full bg-transparent border border-zinc-200 rounded-sm text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans text-zinc-900"
                                 value={slide.content}
                                 onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
                                 placeholder="Add a caption or brief description..."
@@ -242,7 +242,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                 <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
                     {/* Left: Images */}
                     <div className="flex flex-col gap-4 h-full">
-                        <div className="flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
+                        <div className="flex-1 bg-transparent border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
                             {isPrinting ? (
                                 <img
                                     src={slide.modules.image1 || ''}
@@ -257,7 +257,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                 />
                             )}
                         </div>
-                        <div className="flex-1 bg-zinc-50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
+                        <div className="flex-1 bg-transparent border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
                             {isPrinting ? (
                                 <img
                                     src={slide.modules.image2 || ''}
@@ -281,7 +281,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                             </div>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans whitespace-pre-wrap text-zinc-900"
+                                className="w-full h-full bg-transparent border border-zinc-200 rounded-sm text-sm leading-relaxed outline-none resize-none placeholder-zinc-300 font-sans whitespace-pre-wrap text-zinc-900"
                                 value={slide.content}
                                 onChange={(e) => updateSlide(slide.id, { content: e.target.value })}
                                 placeholder="Describe the visual approach, key beat, or character note..."
@@ -362,7 +362,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                                                 </button>
                                                 <button
                                                     onClick={() => setDeleteConfirmId(null)}
-                                                    className="w-full bg-zinc-100 dark:bg-zinc-900 text-black text-[11px] font-bold py-2 rounded"
+                                                    className="w-full bg-transparent text-black text-[11px] font-bold py-2 rounded border border-zinc-200"
                                                 >
                                                     CANCEL
                                                 </button>

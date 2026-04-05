@@ -137,7 +137,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className={`py-4 px-2 rounded hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group grid grid-cols-[90px_80px_1fr_100px_120px_60px_30px] gap-x-4 gap-y-2`}>
+                                    <div key={item.id} className={`py-4 px-2 rounded bg-transparent transition-colors group grid grid-cols-[90px_80px_1fr_100px_120px_60px_30px] gap-x-4 gap-y-2`}>
 
                                         {/* Col 1: Date (Centered Vertically across 2 rows) */}
                                         <div className="row-span-2 place-self-center self-center w-full">
@@ -230,7 +230,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                                                 >
                                                     {item.status === 'complete' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-green-100 text-green-700 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DONE</span>}
                                                     {item.status === 'in-progress' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-blue-50 text-blue-600 border border-blue-100 rounded text-[9px] font-bold uppercase tracking-wider leading-none">DOING</span>}
-                                                    {item.status === 'pending' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">TODO</span>}
+                                                    {item.status === 'pending' && <span className="w-full h-[18px] flex items-center justify-center px-2 bg-transparent text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider leading-none">TODO</span>}
                                                 </button>
                                             )}
                                         </div>
@@ -305,7 +305,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                             {/* Add Button - Last Page */}
                             {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
                                 <div className="pt-2 print:hidden">
-                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-2 py-2 rounded-sm w-full">
+                                    <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Archive Task
                                     </button>
                                 </div>

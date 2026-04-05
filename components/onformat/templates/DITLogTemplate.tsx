@@ -376,7 +376,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex === 0) ? localIdx : ITEMS_FIRST_PAGE + ((pageIndex - 1) * ITEMS_OTHER_PAGES) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[60px_100px_70px_70px_60px_120px_1fr_80px_30px] gap-2 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[60px_100px_70px_70px_60px_120px_1fr_80px_30px] gap-2 py-2 items-center hover:bg-transparent transition-colors group">
 
                                         {/* Time */}
                                         <input
@@ -468,7 +468,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                         >
                                             {item.status === 'complete' && <span className="px-2 py-0.5 bg-green-100 text-green-700 border border-green-200 rounded text-[9px] font-bold uppercase tracking-wider">DONE</span>}
                                             {item.status === 'failed' && <span className="px-2 py-0.5 bg-red-100 text-red-700 border border-red-200 rounded text-[9px] font-bold uppercase tracking-wider">FAIL</span>}
-                                            {item.status === 'pending' && <span className="px-2 py-0.5 bg-zinc-100 dark:bg-zinc-900 text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider">...</span>}
+                                            {item.status === 'pending' && <span className="px-2 py-0.5 bg-transparent text-zinc-400 border border-zinc-200 rounded text-[9px] font-bold uppercase tracking-wider">...</span>}
                                         </button>
                                         <div className={`text-center py-1 text-[10px] font-bold uppercase text-black ${isPrinting ? 'block' : 'hidden'} print:block`}>
                                             {item.status === 'complete' && 'DONE'}
@@ -514,7 +514,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
                                 <div className="pt-4 flex items-center gap-4 print:hidden border-t border-zinc-100 mt-2">
                                     <button
                                         onClick={handleAddItem}
-                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-50/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                        className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                     >
                                         <Plus size={10} /> Add Log Entry
                                     </button>
@@ -559,7 +559,7 @@ export const DITLogTemplate = ({ data, onUpdate, isLocked = false, plain, orient
 
                             <button
                                 onClick={() => handleStartIngest(alert)}
-                                className="ml-2 mt-1 bg-white hover:bg-zinc-200 dark:hover:bg-zinc-700 text-black text-sm font-bold uppercase tracking-wider py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors"
+                                className="ml-2 mt-1 bg-transparent hover:bg-zinc-200 text-black text-sm font-bold uppercase tracking-wider py-2 px-3 rounded flex items-center justify-center gap-2 transition-colors border border-zinc-200"
                             >
                                 <HardDrive size={14} /> Start Ingest
                             </button>

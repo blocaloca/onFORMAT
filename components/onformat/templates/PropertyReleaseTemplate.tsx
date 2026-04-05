@@ -171,7 +171,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             value={localData.productionCompany || ''}
                             onChange={e => handleChange('productionCompany', e.target.value)}
                             onBlur={() => handleBlur('productionCompany')}
-                            className="font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide text-zinc-900"
+                            className="font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 rounded-sm px-2 outline-none w-full placeholder:text-zinc-300 uppercase tracking-wide text-zinc-900 transition-all"
                             placeholder="PRODUCER NAME"
                             disabled={isLocked}
                         />
@@ -201,7 +201,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             value={localData.shootDates || ''}
                             onChange={e => handleChange('shootDates', e.target.value)}
                             onBlur={() => handleBlur('shootDates')}
-                            className="font-mono font-bold text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none text-right text-zinc-900"
+                            className="font-mono font-bold text-sm bg-transparent border-b border-transparent hover:border-zinc-200 rounded-sm px-2 outline-none text-right text-zinc-900 transition-all"
                             placeholder="YYYY-MM-DD"
                             disabled={isLocked}
                         />
@@ -209,7 +209,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                 </div>
 
                 {/* Legal Text - Maximized Space */}
-                <div className="flex-1 relative min-h-0 mb-4 border border-zinc-100 rounded bg-zinc-50 dark:bg-zinc-900/50/50 p-4">
+                <div className="flex-1 relative min-h-0 mb-4 border border-zinc-100 rounded bg-transparent p-4">
                     <div className="h-full overflow-y-auto pr-2 custom-scrollbar">
                         {isLocked || isPrinting ? (
                             <p className="whitespace-pre-wrap text-justify leading-relaxed opacity-90 text-[10px] font-serif">
@@ -217,7 +217,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             </p>
                         ) : (
                             <textarea
-                                className="w-full h-full bg-white rounded-sm border-zinc-200 border text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify text-zinc-900"
+                                className="w-full h-full bg-transparent rounded-sm border-transparent hover:border-zinc-200 border-b text-[10px] leading-relaxed resize-none outline-none placeholder:text-zinc-300 font-serif text-justify text-zinc-900 transition-all"
                                 placeholder={data.isCustom ? "Paste custom release text here..." : "Edit standard release text..."}
                                 value={data.isCustom ? (localData.customLegalText || '') : (localData.standardLegalText || DEFAULT_PROPERTY_TEXT)}
                                 onChange={e => handleChange(data.isCustom ? 'customLegalText' : 'standardLegalText', e.target.value)}
@@ -236,7 +236,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.address || ''}
                                 onChange={e => handleChange('address', e.target.value)}
                                 onBlur={() => handleBlur('address')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-sm font-bold focus:border-zinc-400 focus:bg-white outline-none transition-colors text-zinc-900"
+                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 p-1 text-sm font-bold focus:border-zinc-400 focus:bg-white outline-none transition-all text-zinc-900"
                                 placeholder="123 Location St, City, State"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -249,7 +249,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.ownerName || ''}
                                 onChange={e => handleChange('ownerName', e.target.value)}
                                 onBlur={() => handleBlur('ownerName')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-colors text-zinc-900"
+                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-all text-zinc-900"
                                 placeholder="Full Name"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -260,7 +260,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.compensation || ''}
                                 onChange={e => handleChange('compensation', e.target.value)}
                                 onBlur={() => handleBlur('compensation')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-colors text-zinc-900"
+                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-all text-zinc-900"
                                 placeholder="$ Amount"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -271,7 +271,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.email || ''}
                                 onChange={e => handleChange('email', e.target.value)}
                                 onBlur={() => handleBlur('email')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-colors text-zinc-900"
+                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-all text-zinc-900"
                                 placeholder="Email"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -282,7 +282,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 value={localData.phone || ''}
                                 onChange={e => handleChange('phone', e.target.value)}
                                 onBlur={() => handleBlur('phone')}
-                                className="w-full bg-zinc-50 border-b border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-colors text-zinc-900"
+                                className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 p-1 text-sm focus:border-zinc-400 focus:bg-white outline-none transition-all text-zinc-900"
                                 placeholder="Phone"
                                 disabled={isLocked || !!data.signatureUrl}
                             />
@@ -315,7 +315,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                                 <input
                                     value={typedName}
                                     onChange={e => setTypedName(e.target.value)}
-                                    className="w-full text-center font-bold text-lg bg-zinc-50 border-b-2 border-zinc-200 outline-none focus:border-emerald-500 transition-colors py-2 mb-2 font-mono text-zinc-900"
+                                    className="w-full text-center font-bold text-lg bg-transparent border-b border-transparent hover:border-zinc-200 outline-none focus:border-emerald-500 transition-all py-2 mb-2 font-mono text-zinc-900"
                                     placeholder="Type Full Name"
                                 />
                                 <p className="text-[9px] text-zinc-400 text-center max-w-xs">
@@ -325,7 +325,7 @@ export const PropertyReleaseTemplate = ({ data, onUpdate, isLocked = false, plai
                             <div className="flex gap-2 mt-2">
                                 <button
                                     onClick={() => setTypedName('')}
-                                    className="flex items-center gap-1 text-[10px] font-bold uppercase text-zinc-400 hover:text-black dark:hover:text-zinc-100 px-3 py-1 bg-zinc-100 dark:bg-zinc-900 rounded"
+                                    className="flex items-center gap-1 text-[10px] font-bold uppercase text-zinc-400 hover:text-black dark:hover:text-zinc-100 px-3 py-1 bg-transparent border border-zinc-200 rounded"
                                 >
                                     <Trash2 size={12} /> Clear
                                 </button>

@@ -206,7 +206,7 @@ export const ReleasesManagerTemplate = ({
                                     <div
                                         key={item.id}
                                         onClick={() => { setActiveId(item.id); setView('detail'); }}
-                                        className="group flex items-center justify-between p-3 bg-white border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
+                                        className="group flex items-center justify-between p-3 bg-transparent border border-zinc-200 rounded-lg shadow-sm hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer relative"
                                     >
                                         <div className="flex items-center gap-3">
                                             {isPrinting ? (
@@ -214,7 +214,7 @@ export const ReleasesManagerTemplate = ({
                                                     {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
                                                 </div>
                                             ) : (
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'}`}>
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.status === 'signed' ? 'bg-green-50 text-green-600' : 'bg-transparent text-zinc-400'}`}>
                                                     {item.status === 'signed' ? <CheckCircle size={16} /> : <FileText size={16} />}
                                                 </div>
                                             )}
@@ -247,7 +247,7 @@ export const ReleasesManagerTemplate = ({
                                             {!isLocked && !isPrinting && (
                                                 <button
                                                     onClick={(e) => handleDelete(e, item.id)}
-                                                    className="opacity-0 group-hover:opacity-100 p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 dark:bg-zinc-900 rounded text-zinc-400 hover:text-red-500 transition-all"
+                                                    className="opacity-0 group-hover:opacity-100 p-2 hover:bg-transparent rounded text-zinc-400 hover:text-red-500 transition-all"
                                                     title="Delete Release"
                                                 >
                                                     <Trash2 size={14} />
@@ -269,7 +269,7 @@ export const ReleasesManagerTemplate = ({
                                 <button
                                     onClick={handleCreate}
                                     disabled={isLocked}
-                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 bg-transparent px-3 py-2 rounded-sm transition-colors border border-transparent hover:border-zinc-200"
                                 >
                                     <Plus size={10} /> Add {activeTab} Release
                                 </button>

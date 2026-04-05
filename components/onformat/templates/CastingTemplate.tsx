@@ -119,7 +119,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                     {!isLocked && (
                                         <button
                                             onClick={() => deleteItem(item.id)}
-                                            className="absolute top-2 right-2 p-2 bg-white/90 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-50"
+                                            className="absolute top-2 right-2 p-2 bg-transparent text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all hover:bg-red-50"
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -229,7 +229,7 @@ export const CastingTemplate = ({ data, onUpdate, isLocked, metadata, orientatio
                                             <textarea
                                                 value={item.notes || ''}
                                                 onChange={(e) => updateItem(item.id, 'notes', e.target.value)}
-                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border border-zinc-200 rounded-md p-2 text-sm resize-none h-16 text-zinc-900"
+                                                className="w-full font-medium outline-none text-zinc-600 placeholder:text-zinc-200 bg-transparent border-b border-transparent hover:border-zinc-200 rounded-md p-2 text-sm resize-none h-16 text-zinc-900 transition-all font-sans"
                                                 placeholder="Additional notes..."
                                                 disabled={isLocked}
                                             />
