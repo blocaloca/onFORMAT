@@ -176,8 +176,6 @@ export default function GlitchLab() {
             {/* VIEWPORT - COMPRESSED */}
             <div className="relative flex-1 flex flex-col items-center justify-center p-2">
                 <div className="relative w-full aspect-square max-w-[420px] bg-zinc-900 border-2 border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                    <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 z-10" style={{ borderColor: '#FF00FF' }} />
-                    <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-400 z-10" />
                     <video ref={videoRef} className="hidden" playsInline muted />
                     <canvas ref={bufferCanvasRef} className="hidden" />
                     <canvas ref={canvasRef} className="w-full h-full object-cover pixelated" />
