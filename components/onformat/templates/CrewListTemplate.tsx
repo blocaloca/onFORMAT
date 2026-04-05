@@ -122,7 +122,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     }, [items, metadata?.projectId, isLocked, isPrinting]);
 
     const headerLabelStyle = "text-[9px] font-black uppercase tracking-widest text-zinc-400";
-    const inputStyle = "text-[11px] font-medium bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-2 py-1 outline-none transition-all w-full text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300";
+    const inputStyle = "text-[11px] font-medium bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-emerald-500/50 px-2 py-1 outline-none transition-all w-full text-zinc-900 dark:text-zinc-900 placeholder:text-zinc-300";
 
     return (
         <DocumentLayout
@@ -195,7 +195,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                                             handleUpdateItem(idx, { role: val });
                                                         }
                                                     }}
-                                                    className={`text-[10px] font-black uppercase tracking-tight bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-zinc-400 px-1 py-1 outline-none w-full text-zinc-900 dark:text-zinc-100 appearance-none cursor-pointer`}
+                                                    className={`text-[10px] font-black uppercase tracking-tight bg-transparent border-b border-transparent hover:border-zinc-200 focus:border-zinc-400 px-1 py-1 outline-none w-full text-zinc-900 dark:text-zinc-900 appearance-none cursor-pointer`}
                                                     disabled={isLocked}
                                                 >
                                                     <option value="" disabled>Select Role...</option>
