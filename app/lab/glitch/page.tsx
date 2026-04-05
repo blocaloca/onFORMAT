@@ -6,6 +6,32 @@ import { useRouter } from 'next/navigation';
 
 type EffectKey = 'pixelSort' | 'rgbOffset' | 'datamosh' | 'scanline' | 'noise';
 
+// Helper for pixel sorting
+const sortSpan = (data: Uint8ClampedArray, rowOffset: number, startX: number, endX: number, width: number) => {
+    const pixels = [];
+    for (let x = startX; x < endX; x++) {
+        const i = rowOffset + (x * 4);
+        pixels.push({
+            r: data[i],
+            g: data[i + 1],
+            b: data[i + 2],
+            a: data[i + 3],
+            br: (data[i] + data[i + 1] + data[i + 2]) / 3
+        });
+    }
+    // Sort by brightness
+    pixels.sort((a, b) => b.br - a.br);
+    // Write back
+    for (let x = startX; x < endX; x++) {
+        const i = rowOffset + (x * 4);
+        const p = pixels[x - startX];
+        data[i] = p.r;
+        data[i+1] = p.g;
+        data[i+2] = p.b;
+        data[i+3] = p.a;
+    }
+};
+
 export default function GlitchLab() {
     const router = useRouter();
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -15,7 +41,7 @@ export default function GlitchLab() {
     const [cameraActive, setCameraActive] = useState(false);
     const [intensity, setIntensity] = useState(74);
     const [activeEffects, setActiveEffects] = useState<Record<EffectKey, boolean>>({
-        pixelSort: false,
+        pixelSort: true,
         rgbOffset: true,
         datamosh: false,
         scanline: false,
@@ -81,7 +107,7 @@ export default function GlitchLab() {
 
                     // RGB OFFSET
                     if (activeEffects.rgbOffset) {
-                        const shift = Math.floor(20 * magnitude);
+                        const shift = Math.floor(30 * magnitude);
                         const original = new Uint8ClampedArray(data);
                         for (let i = 0; i < data.length; i += 4) {
                             if (i + shift * 4 < data.length) {
@@ -93,7 +119,7 @@ export default function GlitchLab() {
                     // NOISE / GRAIN
                     if (activeEffects.noise) {
                         for (let i = 0; i < data.length; i += 4) {
-                            const n = (Math.random() - 0.5) * 100 * magnitude;
+                            const n = (Math.random() - 0.5) * 150 * magnitude;
                             data[i] += n;
                             data[i+1] += n;
                             data[i+2] += n;
@@ -103,22 +129,20 @@ export default function GlitchLab() {
                     // DATAMOSH (Row Jitter)
                     if (activeEffects.datamosh && Math.random() < (0.2 * magnitude)) {
                         const row = Math.floor(Math.random() * size);
-                        const rowShift = Math.floor((Math.random() - 0.5) * 50 * magnitude);
+                        const rowShift = Math.floor((Math.random() - 0.5) * 80 * magnitude);
                         const rowStart = row * size * 4;
-                        const rowEnd = (row + 10) * size * 4;
+                        const rowCount = Math.floor(15 * magnitude);
+                        const rowEnd = (row + rowCount) * size * 4;
                         for (let i = rowStart; i < rowEnd && i < data.length; i++) {
                             data[i] = data[i + rowShift * 4] || data[i];
                         }
                     }
 
-                    // PIXEL SORT (Shredding by Luminosity)
+                    // PIXEL SORT
                     if (activeEffects.pixelSort) {
                         const threshold = 255 - (intensity * 2.5);
-                        for (let row = 0; row < size; row++) {
+                        for (let row = 0; row < size; row += 2) { // Step for performance
                             const rowStart = row * size * 4;
-                            const rowPixels: { r: number, g: number, b: number, a: number, br: number }[] = [];
-                            
-                            // Find sortable spans
                             let sorting = false;
                             let spanStart = 0;
                             
@@ -131,21 +155,21 @@ export default function GlitchLab() {
                                     spanStart = col;
                                 } else if (brightness <= threshold && sorting) {
                                     sorting = false;
-                                    // Sort the span [spanStart, col]
-                                    this.sortSpan(data, rowStart, spanStart, col);
+                                    sortSpan(data, rowStart, spanStart, col, size);
                                 }
                             }
+                            if (sorting) sortSpan(data, rowStart, spanStart, size, size);
                         }
                     }
 
                     bCtx.putImageData(imgData, 0, 0);
 
-                    // 3. Draw to final with Scanlines
+                    // 3. Draw to final
                     ctx.clearRect(0, 0, size, size);
                     ctx.drawImage(b, 0, 0);
 
                     if (activeEffects.scanline) {
-                        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
                         for (let i = 0; i < size; i += 4) {
                             ctx.fillRect(0, i, size, 2);
                         }
@@ -162,7 +186,7 @@ export default function GlitchLab() {
         if (!canvasRef.current) return;
         canvasRef.current.toBlob(async (blob) => {
             if (!blob) return;
-            const file = new File([blob], `glitch_${Date.now()}.png`, { type: 'image/png' });
+            const file = new File([blob], `bent_${Date.now()}.png`, { type: 'image/png' });
             
             if (navigator.share) {
                 try {
@@ -171,66 +195,61 @@ export default function GlitchLab() {
                         title: 'onFORMAT Glitch',
                         text: 'Captured via on_glitch'
                     });
-                } catch (err) {
-                    console.error("Share failed", err);
-                }
+                } catch (err) { console.error("Share failed", err); }
             } else {
-                // Fallback to download
                 const link = document.createElement('a');
-                link.download = `glitch_${Date.now()}.png`;
+                link.download = `bent_${Date.now()}.png`;
                 link.href = URL.createObjectURL(blob);
                 link.click();
             }
         });
     };
 
+    const effectButtons = [
+        { id: 'pixelSort', label: 'PIXEL_SORT', activeBg: 'bg-zinc-800 text-white border-white/40' },
+        { id: 'rgbOffset', label: 'RGB_OFFSET', activeBg: 'bg-cyan-400 text-black border-cyan-400' },
+        { id: 'datamosh', label: 'DATAMOSH', activeBg: 'bg-magenta-500 text-white border-magenta-500' },
+        { id: 'scanline', label: 'SCANLINE', activeBg: 'bg-zinc-800 text-cyan-400 border-cyan-400' },
+        { id: 'noise', label: 'NOISE', activeBg: 'bg-zinc-800 text-yellow-200 border-yellow-200' }
+    ] as const;
+
     return (
         <div className="fixed inset-0 bg-black flex flex-col font-sans select-none overflow-hidden touch-none">
             {/* HEADER */}
             <div className="h-16 flex items-center justify-between px-6 z-50">
                 <h1 className="text-xl font-black italic tracking-tighter text-white">ON_GLITCH</h1>
-                <button 
-                    onClick={handleShare}
-                    className="p-2 text-cyan-400 active:scale-90 transition-transform"
-                >
+                <button onClick={handleShare} className="p-2 text-cyan-400 active:scale-90 transition-transform">
                     <Share2 size={24} />
                 </button>
             </div>
 
             {/* VIEWPORT */}
             <div className="relative flex-1 flex flex-col items-center justify-center p-4">
-                <div className="relative w-full aspect-square max-w-[500px] border-2 border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                    {/* Viewport Accents */}
-                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-magenta-500 z-10" style={{ borderColor: '#FF00FF' }} />
+                <div className="relative w-full aspect-square max-w-[500px] bg-zinc-900 border-2 border-white/10 overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 z-10" style={{ borderColor: '#FF00FF' }} />
                     <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-cyan-400 z-10" />
                     
                     <video ref={videoRef} className="hidden" playsInline muted />
                     <canvas ref={bufferCanvasRef} className="hidden" />
-                    <canvas ref={canvasRef} className="w-full h-full object-cover grayscale" style={{ filter: 'brightness(1.2) contrast(1.5)' }} />
+                    <canvas ref={canvasRef} className="w-full h-full object-cover" />
                 </div>
             </div>
 
             {/* CONTROLS */}
-            <div className="bg-black p-6 space-y-8 pb-12">
+            <div className="bg-black p-6 space-y-6 pb-12">
                 
                 {/* EFFECT BUTTONS */}
                 <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                    {([
-                        { id: 'pixelSort', label: 'PIXEL_SORT', color: 'text-purple-400' },
-                        { id: 'rgbOffset', label: 'RGB_OFFSET', color: 'text-cyan-400', activeBg: 'bg-cyan-400 text-black' },
-                        { id: 'datamosh', label: 'DATAMOSH', color: 'text-white', activeBg: 'bg-magenta-500 text-white' },
-                        { id: 'scanline', label: 'SCANLINE', color: 'text-cyan-600' },
-                        { id: 'noise', label: 'NOISE', color: 'text-yellow-200' }
-                    ] as const).map((eff) => (
+                    {effectButtons.map((eff) => (
                         <button
                             key={eff.id}
                             onClick={() => toggleEffect(eff.id)}
-                            className={`flex-1 min-w-[90px] py-4 text-[9px] font-black tracking-widest border transition-all ${
+                            className={`flex-1 min-w-[96px] py-4 text-[9px] font-black tracking-widest border transition-all ${
                                 activeEffects[eff.id] 
-                                ? (eff.activeBg || 'bg-zinc-800 text-white border-white/40') 
-                                : `bg-zinc-900/50 text-zinc-500 border-zinc-800`
+                                ? eff.activeBg 
+                                : `bg-zinc-900/50 text-zinc-500 border-zinc-900`
                             }`}
-                            style={activeEffects[eff.id] && eff.id === 'datamosh' ? { backgroundColor: '#FF00FF' } : {}}
+                            style={activeEffects[eff.id] && eff.id === 'datamosh' ? { backgroundColor: '#FF00FF', borderColor: '#FF00FF' } : {}}
                         >
                             {eff.label}
                         </button>
@@ -238,7 +257,7 @@ export default function GlitchLab() {
                 </div>
 
                 {/* INTENSITY SLIDER */}
-                <div className="space-y-4">
+                <div className="space-y-3">
                     <div className="flex justify-between items-end">
                         <label className="text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400">Intensity</label>
                         <span className="text-3xl font-black text-cyan-400 leading-none">{intensity}%</span>
@@ -247,14 +266,10 @@ export default function GlitchLab() {
                         <div className="absolute inset-x-0 h-[2px] bg-zinc-800" />
                         <div className="absolute left-0 h-[2px] bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ width: `${intensity}%` }} />
                         <input 
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={intensity}
+                            type="range" min="0" max="100" value={intensity}
                             onChange={(e) => setIntensity(parseInt(e.target.value))}
                             className="absolute inset-0 w-full opacity-0 cursor-pointer z-10"
                         />
-                        {/* Thumb indicator overlay */}
                         <div 
                             className="absolute w-1 h-8 bg-cyan-400 shadow-[0_0_15px_#22d3ee] pointer-events-none"
                             style={{ left: `calc(${intensity}% - 2px)` }}
@@ -263,7 +278,7 @@ export default function GlitchLab() {
                 </div>
 
                 {/* CAPTURE SECTION */}
-                <div className="flex items-center justify-center gap-12 pt-4">
+                <div className="flex items-center justify-between pt-4 max-w-sm mx-auto w-full">
                     <button 
                         onClick={() => router.back()}
                         className="px-6 py-4 bg-magenta-500 text-white text-[10px] font-black uppercase tracking-widest active:scale-95 transition-transform"
@@ -284,7 +299,7 @@ export default function GlitchLab() {
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-yellow-400">Capture</span>
                     </div>
 
-                    <div className="w-16" /> {/* Spacer for symmetry */}
+                    <div className="w-16 h-1" />
                 </div>
             </div>
 
