@@ -136,7 +136,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                             {pageItems.map((item, localIdx) => {
                                 const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
                                 return (
-                                    <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-800/50 dark:bg-zinc-900/50 transition-colors group">
+                                    <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center hover:bg-zinc-50 dark:hover:bg-zinc-50/50 transition-colors group">
 
                                         {/* Category */}
                                         <div className="relative">
@@ -148,7 +148,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 <select
                                                     value={item.category}
                                                     onChange={e => handleUpdateItem(globalIdx, { category: e.target.value as any })}
-                                                    className="appearance-none bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-700 text-zinc-900"
+                                                    className="appearance-none bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-bold text-[11px] uppercase w-full cursor-pointer outline-none text-zinc-900"
                                                     disabled={isLocked}
                                                 >
                                                     {CATEGORY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -166,7 +166,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.description}
                                                 onChange={e => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className="font-medium text-sm bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 placeholder:text-zinc-300 w-full text-zinc-900"
+                                                className="font-medium text-sm bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none focus:bg-zinc-50/50 rounded px-1 placeholder:text-zinc-300 w-full text-zinc-900"
                                                 placeholder="e.g. Sony FX3 Body..."
                                                 disabled={isLocked}
                                             />
@@ -231,7 +231,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 type="text"
                                                 value={item.quantity}
                                                 onChange={e => handleUpdateItem(globalIdx, { quantity: e.target.value })}
-                                                className="text-center font-bold text-[10px] bg-zinc-50 border border-zinc-200 shadow-sm rounded-sm px-2 outline-none focus:bg-white rounded px-1 text-zinc-900"
+                                                className="text-center font-bold text-[10px] bg-transparent border-b border-transparent hover:border-zinc-200 px-2 outline-none focus:bg-zinc-50/50 rounded px-1 text-zinc-900"
                                                 placeholder="1"
                                                 disabled={isLocked}
                                             />

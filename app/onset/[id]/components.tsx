@@ -2936,7 +2936,7 @@ export const MobileReadOnlyListView = ({ data, titleKey, subtitleKey, detailKeys
                         {detailKeys && detailKeys.length > 0 && (
                             <div className="flex flex-wrap gap-2 text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mt-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
                                 {detailKeys.map((k: string) => (
-                                    <div key={k} className="bg-zinc-50/50 dark:bg-zinc-50/50 px-2.5 py-1 rounded-lg border border-black/[0.02] flex items-center gap-2">
+                                    <div key={k} className="flex items-center gap-2 pr-2 border-r last:border-r-0 border-zinc-100 dark:border-zinc-800">
                                         <span className="opacity-40 font-black uppercase text-[8px] tracking-widest">{k}</span>
                                         <EditableInput
                                             value={item[k] || ''}
