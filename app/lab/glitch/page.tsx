@@ -146,12 +146,29 @@ export default function GlitchLab() {
     }, [cameraActive, intensity, activeEffects]);
 
     const handleShare = async () => {
-        if (!canvasRef.current) return;
-        canvasRef.current.toBlob(async (blob) => {
+        if (!canvasRef.current || !bufferCanvasRef.current) return;
+        
+        // High-Resolution Capture Bridge (Upscale 320 -> 1080)
+        const outputCanvas = document.createElement('canvas');
+        outputCanvas.width = 1080;
+        outputCanvas.height = 1080;
+        const oCtx = outputCanvas.getContext('2d');
+        
+        if (oCtx) {
+            oCtx.imageSmoothingEnabled = false; // Preserve the crunchy glitches
+            oCtx.drawImage(canvasRef.current, 0, 0, 1080, 1080);
+        }
+
+        outputCanvas.toBlob(async (blob) => {
             if (!blob) return;
-            const file = new File([blob], `shred_${Date.now()}.png`, { type: 'image/png' });
+            const file = new File([blob], `bent_${Date.now()}.png`, { type: 'image/png' });
             if (navigator.share) await navigator.share({ files: [file], title: 'onFORMAT Glitch' }).catch(e => {});
-            else { const link = document.createElement('a'); link.download = `shred_${Date.now()}.png`; link.href = URL.createObjectURL(blob); link.click(); }
+            else { 
+                const link = document.createElement('a'); 
+                link.download = `bent_${Date.now()}.png`; 
+                link.href = URL.createObjectURL(blob); 
+                link.click(); 
+            }
         });
     };
 
