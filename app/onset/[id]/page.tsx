@@ -287,9 +287,14 @@ export default function OnSetMobilePage() {
         };
     }, [id]);
 
+    // --------------------------------------------------------------------------------
     // PRESENCE & STATUS LOGIC
+    // --------------------------------------------------------------------------------
     useEffect(() => {
         if (!id || !userEmail) return;
+
+        // Persist for Hardware Override (e.g. Glitch Lab presence)
+        localStorage.setItem('onset_last_active_project', id);
 
         // Fetch My Projects
         const fetchMyProjects = async () => {

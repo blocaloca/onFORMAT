@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Share2, Camera, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { getClient } from '@/lib/supabase';
 
 type EffectKey = 'pixelSort' | 'solarize' | 'falseColor' | 'rgbOffset' | 'lumaBleed';
 
@@ -38,6 +39,43 @@ export default function GlitchLab() {
         rgbOffset: true,
         lumaBleed: false
     });
+
+    // --- HARDWARE HEARTBEAT (Presence Persistence) ---
+    useEffect(() => {
+        const supabase = getClient();
+        const storedEmail = localStorage.getItem('onset_user_email');
+        const projectId = localStorage.getItem('onset_last_active_project');
+        
+        if (!storedEmail || !projectId) return;
+
+        // Pulse DB Status (Live on Set)
+        const updateStatus = async (online: boolean) => {
+            await supabase.from('crew_membership').update({ 
+                is_online: online, 
+                last_seen_at: new Date().toISOString() 
+            }).eq('project_id', projectId).eq('user_email', storedEmail);
+        };
+
+        const channel = supabase.channel(`production_presence:${projectId}`);
+        channel.subscribe(async (status) => {
+            if (status === 'SUBSCRIBED') {
+                await channel.track({
+                    user_email: storedEmail,
+                    online_at: new Date().toISOString(),
+                    hardware: 'GLITCH_CAM'
+                });
+                updateStatus(true);
+            }
+        });
+
+        const heartbeat = setInterval(() => updateStatus(true), 30000);
+
+        return () => {
+            clearInterval(heartbeat);
+            channel.unsubscribe();
+            updateStatus(false);
+        };
+    }, []);
 
     const toggleEffect = (key: EffectKey) => setActiveEffects(prev => ({ ...prev, [key]: !prev[key] }));
 
