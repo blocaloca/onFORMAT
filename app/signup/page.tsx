@@ -23,7 +23,18 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
-      // Double Check: Atomic Logout (Redundant but Safe)
+      // 1. Beta Approval Check
+      const { data: betaRequest, error: betaError } = await supabase
+        .from('beta_requests')
+        .select('status')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      if (betaError || betaRequest?.status !== 'approved') {
+        throw new Error("Early access is currently restricted to approved Beta Pioneers. Please apply on the landing page.");
+      }
+
+      // 2. Auth Logic (Resetting and Logout)
       // ... existing logic ...
       const { data: currentSession } = await supabase.auth.getSession();
 
@@ -165,17 +176,17 @@ export default function SignupPage() {
               <p className="text-xs text-purple-300 mt-1">Minimum 8 characters</p>
             </div>
 
-            <button
+             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-black uppercase tracking-widest hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Start Free Trial'}
+              {loading ? 'Transmitting...' : 'Join Private Beta'}
             </button>
           </form>
 
-          <p className="text-xs text-purple-300 text-center mt-4">
-            14-day free trial. No credit card required.
+          <p className="text-xs text-purple-300 text-center mt-4 uppercase font-bold tracking-widest">
+            30-day Beta Pioneer Trial. No credit card required.
           </p>
 
           <p className="text-center text-purple-200 mt-6">

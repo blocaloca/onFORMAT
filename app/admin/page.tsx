@@ -2,8 +2,9 @@ import React, { Suspense } from 'react';
 export const dynamic = 'force-dynamic';
 import { createClient } from '@/lib/supabase-server';
 import { redirect } from 'next/navigation';
-import { fetchAdminUsers, fetchFeedback } from './actions';
-import { Ban, CheckCircle, Crown, Eye, Lock, Shield, Sparkles, User, Inbox, Check, Bug, Lightbulb, MessageSquare, ChevronLeft, Trash2 } from 'lucide-react';
+import { fetchAdminUsers, fetchFeedback, fetchBetaRequests } from './actions';
+import { Lock, Shield, ChevronLeft, User, Inbox, Crown } from 'lucide-react';
+import InboxArea from './InboxArea';
 import { UserActions } from './AdminActions';
 import { isFounder } from '@/lib/permissions';
 import AnnouncementEditor from '@/components/admin/AnnouncementEditor';
@@ -34,6 +35,7 @@ export default async function AdminPage() {
   // 2. Fetch Data
   const users = await fetchAdminUsers();
   const feedback = await fetchFeedback();
+  const betaRequests = await fetchBetaRequests();
 
   // 3. Render Helper (Robust Name Sanitizer)
   const renderName = (u: any) => {
@@ -78,88 +80,8 @@ export default async function AdminPage() {
         {/* Announcement Editor */}
         <AnnouncementEditor user={user} />
 
-        {/* Feedback Inbox Section */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <Inbox size={20} className="text-zinc-400" />
-            <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Feedback Inbox</h2>
-          </div>
-          <div className="bg-white rounded-lg shadow-sm border border-zinc-200 overflow-hidden">
-            {feedback.length === 0 ? (
-              <div className="p-8 text-center text-zinc-400 text-xs uppercase tracking-widest">No messages yet</div>
-            ) : (
-              <table className="w-full text-left table-auto">
-                <thead className="bg-zinc-50 border-b border-zinc-200">
-                  <tr>
-                    <th className="px-6 py-3 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[10%]">Type</th>
-                    <th className="px-6 py-3 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[50%]">Message</th>
-                    <th className="px-6 py-3 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[20%]">User</th>
-                    <th className="px-6 py-3 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[10%] text-center">Date</th>
-                    <th className="px-6 py-3 text-[10px] uppercase font-bold tracking-widest text-zinc-400 w-[10%] text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100">
-                  {feedback.map((msg: any) => (
-                    <tr key={msg.id} className={`group transition-colors ${msg.status === 'new' ? 'bg-blue-50/30 hover:bg-blue-50/50' : 'bg-white hover:bg-zinc-50'}`}>
-                      <td className="px-6 py-4">
-                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${msg.type === 'bug' ? 'bg-red-100 text-red-700' :
-                          msg.type === 'feature' ? 'bg-emerald-100 text-emerald-700' : 'bg-zinc-100 text-zinc-600'
-                          } ${msg.status === 'read' ? 'opacity-50' : ''}`}>
-                          {msg.type === 'bug' ? <Bug size={10} /> : msg.type === 'feature' ? <Lightbulb size={10} /> : <MessageSquare size={10} />}
-                          {msg.type}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <p className="text-xs text-zinc-700 font-medium leading-relaxed">{msg.message}</p>
-                        {msg.context && Object.keys(msg.context).length > 0 && (
-                          <div className="mt-1 text-[9px] font-mono text-zinc-400 truncate max-w-md">
-                            {JSON.stringify(msg.context)}
-                          </div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-zinc-900">{msg.user_email || 'Unknown'}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="text-[10px] text-zinc-400 font-mono">{new Date(msg.created_at).toLocaleDateString()}</span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex gap-4 justify-end items-center">
-                          {/* MARK READ FORM */}
-                          {msg.status !== 'read' && (
-                            <form method="POST" action="/api/admin/feedback">
-                              <input type="hidden" name="action" value="read" />
-                              <input type="hidden" name="id" value={msg.id} />
-                              <button type="submit" className="text-blue-500 hover:text-blue-700 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
-                                <Check size={10} /> Mark Read
-                              </button>
-                            </form>
-                          )}
-                          {msg.status === 'read' && (
-                            <span className="text-emerald-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                              <CheckCircle size={10} /> Read
-                            </span>
-                          )}
-
-                          {/* DELETE FORM */}
-                          <form method="POST" action="/api/admin/feedback">
-                            <input type="hidden" name="action" value="delete" />
-                            <input type="hidden" name="id" value={msg.id} />
-                            <button type="submit" className="text-zinc-400 hover:text-red-500 transition-colors p-1" title="Delete Report">
-                              <Trash2 size={12} />
-                            </button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </section>
+         {/* Inbox Area (Feedback + Beta Requests) */}
+        <InboxArea feedback={feedback} betaRequests={betaRequests} />
 
         {/* User Management Section */}
         <section>

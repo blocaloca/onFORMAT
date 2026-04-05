@@ -61,11 +61,12 @@ The application uses a Document-Store pattern inside SQL. Structure:
     *   **Roll-Scoped Smart Carry-Over**: Camera Report template correctly auto-increments takes and carries over metadata (Roll, Scene, Lens, FPS) from the previous row.
     *   **Realtime Permissions & Login**: Mobile login works via Crew List email matching (Robust Fallback implemented). Status Light syncs to Desktop.
     *   **AI VISION Lab**: Pure conceptual ideation workspace. Implements "Silent Scribe" manual-paste workflow. 
+    *   **eComm Shot List**: High-volume capture module with barcode integration and live status reporting. (New Phase 02 Tool).
 
 *   **Partially Built**:
-    *   **Group A/B/C Permissions**:
-        *   *Exists*: UI toggles in Control Panel and Crew List.
-        *   *Missing*: The Mobile App (`app/mobile`) receives the Allowed Tools list but **ignores** the User's Group. It displays ALL allowed tools to ANY logged-in crew member. Enforce logic is missing.
+    *   **RBAC Matrix Permissions**:
+        *   *Exists*: Visual Grid Matrix for 1-to-1 Role-to-Document mapping is functional on Desktop.
+        *   *Missing*: Enforcement on the `app/mobile` route is being phased in to replace the legacy A/B/C/D grouping.
     *   **DIT Media Alert**:
         *   *Exists*: Control Panel displays alerts from DIT Log.
         *   *Missing*: The "Signal Light" notification system in `WorkspaceEditor` only monitors Crew Status. It does not trigger system-wide alerts for DIT issues.

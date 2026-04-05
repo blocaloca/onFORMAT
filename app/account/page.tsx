@@ -553,7 +553,7 @@ export default function AccountPage() {
                         </div>
                         <div className="flex-1 text-center md:text-left">
                             <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Production Support Ecosystem</h2>
-                            <p className="text-zinc-400 text-sm max-w-xl leading-relaxed mb-6">Explore our newly expanded User Manual. Learn about role-based ABCD permissions, OnSet Mobile synchronization, and real-time Producer alerts.</p>
+                            <p className="text-zinc-400 text-sm max-w-xl leading-relaxed mb-6">Explore our newly expanded User Manual. Learn about the granular RBAC Matrix, high-volume eCommerce tools, and real-time Producer alerts.</p>
                             <Link 
                                 href="/help"
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-zinc-900 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-zinc-100 transition-all active:scale-[0.95]"

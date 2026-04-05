@@ -175,6 +175,36 @@ export default function HelpPage() {
                         </div>
                     </section>
 
+                    {/* SECTION: ECOMMERCE SHOT LIST */}
+                    <section id="ecommerce" className="scroll-mt-24 mb-32">
+                        <div className="flex items-center gap-3 mb-8">
+                            <div className="p-2 bg-blue-600/10 text-blue-600 rounded-lg">
+                                <Zap size={24} />
+                            </div>
+                            <h3 className="text-2xl font-black uppercase tracking-tight">eComm Shot List</h3>
+                        </div>
+
+                        <div className="flex flex-col md:flex-row gap-12 items-start">
+                            <div className="flex-1 space-y-6 text-zinc-600 dark:text-zinc-400">
+                                <p className="leading-relaxed">
+                                    Our high-volume eCommerce module is built for the rapid pace of product capture. It handles barcode scanning and SKU tracking directly from the Shot List interface, ensuring every asset is tracked from ingest to export.
+                                </p>
+                                <div className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-3">Key Capabilities</h4>
+                                    <ul className="space-y-3 text-[13px]">
+                                        <li className="flex gap-3 items-center"><Check size={14} className="text-blue-500" /> Barcode & SKU System Integration</li>
+                                        <li className="flex gap-3 items-center"><Check size={14} className="text-blue-500" /> Real-time Capture Status Reporting</li>
+                                        <li className="flex gap-3 items-center"><Check size={14} className="text-blue-500" /> Automated Ingest Verification</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="w-full md:w-80 bg-zinc-100 dark:bg-zinc-900 aspect-square rounded-3xl border border-zinc-200 dark:border-zinc-800 flex items-center justify-center group overflow-hidden relative">
+                                <Zap size={100} className="text-zinc-300 dark:text-zinc-800 group-hover:text-blue-500/20 transition-colors duration-500" />
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-blue-500/5 blur-[80px] rounded-full group-hover:bg-blue-500/10 transition-colors" />
+                            </div>
+                        </div>
+                    </section>
+
                     {/* SECTION: PRINTROOM */}
                     <section id="printroom" className="scroll-mt-24">
                         <div className="flex items-center gap-3 mb-8">

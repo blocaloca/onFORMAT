@@ -12,6 +12,7 @@ import {
   CheckCircle 
 } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
+import BetaApplicationModal from '@/components/modals/BetaApplicationModal';
 
 const SCREENSHOTS = [
   '/assets/slider-1.png',
@@ -25,6 +26,7 @@ export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -56,15 +58,21 @@ export default function LandingPage() {
           <Link href="/features" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Features</Link>
           <Link href="/pricing" className="text-xs font-semibold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors hidden md:block">Pricing</Link>
           {!loading ? (
-            <Link 
-              href={user ? "/dashboard" : "/login"} 
-              className={user 
-                ? "bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
-                : "bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
-              }
-            >
-              {user ? "Dashboard" : "Join Private Beta"} <ArrowRight size={14} />
-            </Link>
+            user ? (
+              <Link 
+                href="/dashboard" 
+                className="bg-orange-500/90 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)] flex items-center gap-2 backdrop-blur-md border border-orange-400/50"
+              >
+                Dashboard <ArrowRight size={14} />
+              </Link>
+            ) : (
+              <button 
+                onClick={() => setIsBetaModalOpen(true)}
+                className="bg-zinc-900 text-white px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+              >
+                Join Private Beta <ArrowRight size={14} />
+              </button>
+            )
           ) : (
             <div className="h-10 w-32 bg-zinc-100 rounded-full animate-pulse" />
           )}
@@ -87,9 +95,12 @@ export default function LandingPage() {
         <div className="flex flex-col items-center gap-4 mb-16">
           {!user && (
             <>
-              <Link href="/login" className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3">
+              <button 
+                onClick={() => setIsBetaModalOpen(true)}
+                className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3"
+              >
                 Join Private Beta <ArrowRight size={18} />
-              </Link>
+              </button>
               <p className="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 Invitation / Access Code Required
@@ -149,7 +160,7 @@ export default function LandingPage() {
             </div>
             <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">POWER-UP PRODUCER!</h3>
             <p className="text-zinc-500 leading-relaxed font-medium">
-              Maintain multiple projects simultaneously. 18 Creative and Production Documents from Development to Post. You set crew permissions, they see what’s important for their role.
+              Maintain multiple projects simultaneously. 25+ Creative and Production Documents from Development to Post. Manage your set with a granular RBAC matrix and high-volume eCommerce shot lists.
             </p>
           </div>
 
@@ -214,6 +225,11 @@ export default function LandingPage() {
           <p className="text-[10px] md:text-xs font-semibold text-zinc-400 uppercase tracking-widest">&copy; 2026 onFORMAT. All rights reserved.</p>
         </div>
       </footer>
+
+      <BetaApplicationModal 
+        isOpen={isBetaModalOpen} 
+        onClose={() => setIsBetaModalOpen(false)} 
+      />
     </div>
   );
 }

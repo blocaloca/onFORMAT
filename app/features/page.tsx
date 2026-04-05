@@ -39,8 +39,9 @@ const FEATURE_SECTIONS = [
     features: [
       { name: "Dynamic Shot List", value: "Detailed shot registry with Size, Angle, and Movement, auto-populated from your script." },
       { name: "Budgeting Engine", value: "Line-item cost tracking with category organization and real-time total reconciliation." },
-      { name: "Crew & Talent Management", value: "Full contact directories with department grouping and ABCD mobile permission levels." },
-      { name: "Visual Location Logs", value: "Visual scout logs with technical specs, accessibility data, and address mapping." }
+      { name: "Crew & Talent Management", value: "Full contact directories with department grouping and granular RBAC Matrix permission levels." },
+      { name: "Visual Location Logs", value: "Visual scout logs with technical specs, accessibility data, and address mapping." },
+      { name: "eComm Shot List", value: "High-volume product capture module with barcode/SKU integration and live status reporting." }
     ]
   },
   {
@@ -186,7 +187,7 @@ export default function FeaturesPage() {
             {[
               { icon: <Cpu />, title: "AI LIAISON", desc: "A creative partner trained in the nuances of production to help you draft scripts, vision, and strategy." },
               { icon: <Smartphone />, title: "onSET MOBILE", desc: "Mobile-first interfaces for crew that allow for live shot completion and technical logging." },
-              { icon: <Shield />, title: "PERMISSION MATRIX", desc: "Producer-level control over which crew members see which documents based on ABCD grouping." },
+              { icon: <Shield />, title: "PERMISSION MATRIX", desc: "Producer-level control over which crew members see which documents based on a granular RBAC matrix." },
               { icon: <FileText />, title: "PRINT ROOM", desc: "Beautifully formatted, client-ready PDF exports that compile multiple project docs into one." },
               { icon: <Zap />, title: "DATA REACTION", desc: "Changes in your schedule update your call sheet. Changes in your script update your shot list." },
               { icon: <Layout />, title: "PHASE LOGIC", desc: "A unified workspace that guides the project lifecycle from concept to archive without friction." }

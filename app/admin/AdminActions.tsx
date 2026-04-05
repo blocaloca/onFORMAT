@@ -129,3 +129,61 @@ export function FeedbackActions({ message }: { message: any }) {
     );
 }
 
+
+// Beta Request Actions Component
+export function BetaRequestActions({ request }: { request: any }) {
+    const router = useRouter();
+    const [isPending, setIsPending] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const { approveBetaRequest, deleteBetaRequest } = require('./actions');
+
+    const handleApprove = async () => {
+        setIsPending(true);
+        try {
+            await approveBetaRequest(request.id);
+            router.refresh();
+        } finally {
+            setIsPending(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!confirm("Are you sure you want to delete this application?")) return;
+        setIsDeleting(true);
+        try {
+            await deleteBetaRequest(request.id);
+            router.refresh();
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-end gap-3">
+            {request.status === 'approved' ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider">
+                    <CheckCircle size={12} />
+                    Pioneer Approved
+                </div>
+            ) : (
+                <button
+                    onClick={handleApprove}
+                    disabled={isPending || isDeleting}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-black hover:opacity-80 text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm ${isPending ? 'opacity-70 cursor-wait' : ''}`}
+                >
+                    {isPending ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+                    Grant Access
+                </button>
+            )}
+
+            <button
+                onClick={handleDelete}
+                disabled={isPending || isDeleting}
+                className={`text-zinc-400 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50 ${isDeleting ? 'opacity-70 cursor-wait' : ''}`}
+                title="Delete Application"
+            >
+                {isDeleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+            </button>
+        </div>
+    );
+}

@@ -6,6 +6,8 @@
 3. **"From Creative Vision to Line Items: Intelligence that follows the thread."**
 4. **"Total Recall, Zero Noise. The first AI workflow built for Production."**
 5. **"Aligning the Machine with the Mission."**
+6. **"Granular Control, Total Sync. Role-Based Access for any size set."**
+7. **"Rapid Ingest. Production-Ready eComm Shot Lists for high-volume capture."**
 
 ---
 
@@ -25,3 +27,4 @@ This Hybrid Architecture gives you the best of both worlds:
 *   **Deep Alignment:** The AI always "knows" what kind of film you are making.
 *   **Maximum Efficiency:** You never pay AI costs for simple data entry tasks.
 *   **Contextual Focus:** The AI adapts its persona automatically—acting as a Creative Director in development and a Line Producer in execution—without you ever having to flip a switch.
+*   **Security & Scale:** Our 1-to-1 RBAC Matrix and high-volume eComm tools ensure you can scale from a solo passion project to an enterprise production without losing control.

@@ -204,3 +204,87 @@ export async function deleteFeedback(formData: FormData) {
 
     revalidatePath('/admin');
 }
+// Action: Fetch Beta Requests
+export async function fetchBetaRequests() {
+    const { data, error } = await adminSupabase
+        .from('beta_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.warn("Beta requests table error:", error.message);
+        return [];
+    }
+    return data;
+}
+
+// Action: Approve Beta Request
+export async function approveBetaRequest(requestId: string) {
+    try {
+        const { data: request, error: fetchError } = await adminSupabase
+            .from('beta_requests')
+            .select('*')
+            .eq('id', requestId)
+            .single();
+
+        if (fetchError) throw fetchError;
+
+        // 1. Mark request as approved
+        await adminSupabase
+            .from('beta_requests')
+            .update({ status: 'approved' })
+            .eq('id', requestId);
+
+        // 2. If user already exists in profiles, grant beta access and 30-day solo tier
+        const { data: existingProfile } = await adminSupabase
+            .from('profiles')
+            .select('id')
+            .eq('email', request.email)
+            .single();
+
+        if (existingProfile) {
+            await adminSupabase
+                .from('profiles')
+                .update({ 
+                    is_beta_user: true
+                })
+                .eq('id', existingProfile.id);
+            
+            // Grant 30-day solo tier (Scout)
+            await adminSupabase
+                .from('subscriptions')
+                .upsert({
+                    user_id: existingProfile.id,
+                    status: 'active',
+                    tier: 'scout',
+                    price_id: 'beta_grant_30d',
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'user_id' });
+        }
+
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error: any) {
+        console.error("Approve Beta Error:", error.message);
+        return { success: false, error: error.message };
+    }
+}
+
+// Action: Delete Beta Request
+export async function deleteBetaRequest(requestId: string) {
+    try {
+        const id = typeof requestId === 'string' ? requestId : (requestId as any).get?.('id');
+        if (!id) return { success: false, error: "Missing ID" };
+
+        await adminSupabase
+            .from('beta_requests')
+            .delete()
+            .eq('id', id);
+
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error: any) {
+        console.error("Delete Beta Request Error:", error.message);
+        return { success: false, error: error.message };
+    }
+}
