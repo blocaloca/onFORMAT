@@ -365,7 +365,7 @@ export const ExperimentalWorkspaceNav = ({
                         </div>
 
                         <div className="text-left w-full overflow-hidden">
-                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-[#3B82F6]' : 'text-zinc-700 dark:text-zinc-300 group-hover:text-black'}`}>
+                            <div className={`text-xs font-black uppercase tracking-wider leading-none mb-0.5 ${mobileStatus?.isLive ? 'text-[#3B82F6]' : 'text-zinc-700 dark:text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white'}`}>
                                 onSET Mobile
                             </div>
                             {mobileStatus?.hasAlert ? (
