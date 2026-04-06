@@ -30,7 +30,6 @@ export default function RootLayout({
       <body suppressHydrationWarning className="font-sans antialiased bg-zinc-50 text-zinc-900 w-full max-w-[100vw] overflow-x-hidden">
         <ThemeProvider>
           {children}
-          <BetaFeedbackTrigger />
         </ThemeProvider>
       </body>
     </html>

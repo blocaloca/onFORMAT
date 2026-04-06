@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTheme } from '@/components/ThemeProvider';
 import { Sun, Moon } from 'lucide-react';
+import { BetaFeedbackTrigger } from '../feedback/BetaFeedbackTrigger';
 
 interface HeaderProps {
   projectName?: string;
@@ -47,13 +48,7 @@ export const Header = ({ projectName, activeToolLabel, syncStatus }: HeaderProps
       </div>
 
       <div className="flex items-center gap-4">
-        <button
-          onClick={() => setTheme(darkMode ? 'light' : 'dark')}
-          className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-          title="Toggle Theme"
-        >
-          {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
+        <BetaFeedbackTrigger variant="icon" />
       </div>
 
     </header>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ChevronLeft, ChevronRight, Plus, Trash2, Printer, Sparkles, RectangleVertical, RectangleHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Printer, Sparkles, RectangleVertical, RectangleHorizontal, Sun, Moon } from 'lucide-react';
 
 export type NavMode = 'stack' | 'collection' | 'hidden';
 
@@ -36,7 +36,7 @@ export const DocumentNavBar = ({
     orientation,
     onToggleOrientation
 }: DocumentNavBarProps) => {
-    const { theme } = useTheme();
+    const { theme, setTheme } = useTheme();
     const darkMode = theme === 'dark';
 
     // Helpers for Collection Mode (Day Logic)
@@ -103,19 +103,27 @@ export const DocumentNavBar = ({
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
                 {onToggleOrientation && (
-                    <button
-                        onClick={onToggleOrientation}
-                        className={`p-2 rounded-sm border transition-all flex items-center justify-center ${darkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white' : 'bg-white border-zinc-300 text-zinc-400 hover:text-black'}`}
-                        title={`Switch to ${orientation === 'portrait' ? 'Landscape' : 'Portrait'}`}
-                    >
-                        {orientation === 'portrait' ? <RectangleVertical size={14} /> : <RectangleHorizontal size={14} />}
-                    </button>
+                    <div className="flex items-center rounded-sm border overflow-hidden">
+                        <button
+                            onClick={onToggleOrientation}
+                            className={`p-2 transition-all flex items-center justify-center border-r ${darkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white' : 'bg-white border-zinc-300 text-zinc-400 hover:text-black'}`}
+                            title={`Switch to ${orientation === 'portrait' ? 'Landscape' : 'Portrait'}`}
+                        >
+                            {orientation === 'portrait' ? <RectangleVertical size={14} /> : <RectangleHorizontal size={14} />}
+                        </button>
+                        <button
+                            onClick={() => setTheme(darkMode ? 'light' : 'dark')}
+                            className={`p-2 transition-all flex items-center justify-center ${darkMode ? 'bg-zinc-900 text-zinc-500 hover:text-white' : 'bg-white text-zinc-400 hover:text-black'}`}
+                            title="Toggle Theme"
+                        >
+                            {darkMode ? <Sun size={14} /> : <Moon size={14} />}
+                        </button>
+                    </div>
                 )}
 
                 <div className={`h-4 w-px mx-1 ${darkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
-
 
                 {onToggleAi && activeToolKey === 'project-vision' && (
                     <button
@@ -146,6 +154,6 @@ export const DocumentNavBar = ({
                     </button>
                 )}
             </div>
-        </div >
+        </div>
     );
 };
