@@ -536,14 +536,14 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 <div className="text-center p-12 text-emerald-500 font-medium bg-transparent rounded-[24px] shadow-sm border border-zinc-100">✨ All shots wrapped!</div>
                             ) : (
                                 <div className="space-y-4">
-                                    <div className={`bg-transparent rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden transform transition-all duration-500 origin-top
+                                    <div className={`bg-white rounded-[24px] p-6 border border-zinc-100 dark:border-zinc-200 shadow-sm relative overflow-hidden transform transition-all duration-500 origin-top
                                         ${completingId === activeShot._id ? 'opacity-0 scale-95 translate-y-12' : 'opacity-100 scale-100 translate-y-0'}
                                     `}>
                                         
                                         <div className="flex justify-between items-start mb-6">
                                             <div>
                                                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-1">Current Shot</span>
-                                                <h3 className="text-3xl font-black uppercase tracking-tight text-zinc-900 dark:text-black leading-none">
+                                                <h3 className="text-3xl font-black uppercase tracking-tight text-black leading-none">
                                                     {activeShot[columns[0]] || 'New'}
                                                 </h3>
                                                 <p className="text-zinc-500 font-bold mt-1 ml-1 text-xs">
@@ -562,18 +562,18 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         {/* Metadata Cards Format (Like Call Sheet) */}
                                         <div className="grid grid-cols-2 gap-3 mb-6">
                                             {columns.slice(2, 4).map(col => (
-                                                <div key={col} className="bg-transparent p-4 rounded-[16px] border border-zinc-100">
+                                                <div key={col} className="bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
                                                     <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">{col}</p>
-                                                    <p className="text-zinc-900 dark:text-black font-bold text-sm truncate">{activeShot[col] || '-'}</p>
+                                                    <p className="text-black font-bold text-sm truncate">{activeShot[col] || '-'}</p>
                                                 </div>
                                             ))}
-                                            <div className="bg-transparent p-4 rounded-[16px] border border-zinc-100">
+                                            <div className="bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Location</p>
-                                                <p className="text-zinc-900 dark:text-black font-bold text-sm truncate">{activeShot._location}</p>
+                                                <p className="text-black font-bold text-sm truncate">{activeShot._location}</p>
                                             </div>
-                                            <div className="bg-transparent p-4 rounded-[16px] border border-zinc-100">
+                                            <div className="bg-zinc-50 p-4 rounded-[16px] border border-zinc-100">
                                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400 mb-1">Deliver</p>
-                                                <p className="text-blue-600 dark:text-blue-600 font-bold text-sm truncate">{activeShot._deliverables}</p>
+                                                <p className="text-blue-600 font-bold text-sm truncate">{activeShot._deliverables}</p>
                                             </div>
                                         </div>
 
@@ -582,9 +582,9 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                             const noteCol = columns.find(c => c.toLowerCase().includes('note') || c.toLowerCase().includes('direction')) || columns[4];
                                             if (activeShot[noteCol] && activeShot[noteCol].trim() !== '') {
                                                 return (
-                                                    <div className="bg-transparent p-4 rounded-[16px] border border-zinc-100 mb-6">
+                                                    <div className="bg-zinc-50 p-4 rounded-[16px] border border-zinc-100 mb-6">
                                                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-2 block">{noteCol}</label>
-                                                        <p className="text-zinc-900 dark:text-black font-semibold text-sm whitespace-pre-wrap">{activeShot[noteCol]}</p>
+                                                        <p className="text-black font-semibold text-sm whitespace-pre-wrap">{activeShot[noteCol]}</p>
                                                     </div>
                                                 );
                                             }
@@ -594,7 +594,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                         {/* Mobile Thumbnail Render */}
                                         <div className="mb-2">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-1 block mb-2">Reference Thumbnail</label>
-                                            <div className="w-full h-32 bg-transparent border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
+                                            <div className="w-full h-32 bg-zinc-50 border border-zinc-100 rounded-[16px] flex items-center justify-center relative overflow-hidden">
                                                 <input
                                                     type="file"
                                                     accept="image/*"
