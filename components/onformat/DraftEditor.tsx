@@ -25,7 +25,37 @@ interface DraftEditorProps {
     onOpenPrintRoom?: () => void
     isAiDocked?: boolean
     isOwner?: boolean
+    orientation?: 'portrait' | 'landscape'
+    onToggleOrientation?: () => void
 }
+
+const TOOL_ORIENTATIONS: Record<string, 'portrait' | 'landscape'> = {
+    'project-vision': 'portrait',
+    'brief': 'portrait',
+    'directors-treatment': 'portrait',
+    'lookbook': 'landscape',
+    'storyboard': 'landscape',
+    'av-script': 'portrait',
+    'shot-scene-book': 'portrait',
+    'ecomm-shot-list': 'landscape',
+    'budget': 'landscape',
+    'schedule': 'portrait',
+    'crew-list': 'portrait',
+    'locations-sets': 'landscape',
+    'casting-talent': 'portrait',
+    'wardrobe-styling': 'portrait',
+    'props-list': 'portrait',
+    'call-sheet': 'portrait',
+    'dit-log': 'landscape',
+    'sound-report': 'portrait',
+    'camera-report': 'landscape',
+    'on-set-notes': 'portrait',
+    'script-notes': 'landscape',
+    'budget-actual': 'landscape',
+    'deliverables-licensing': 'portrait',
+    'client-selects': 'landscape',
+    'archive-log': 'portrait',
+};
 
 export const DraftEditor = ({
     draft,
@@ -276,9 +306,15 @@ export const DraftEditor = ({
         }
     };
 
-    // Reset index when tool changes to avoid confusion
+    // Orientation Support
+    const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+
+    // Reset index & Sync Orientation when tool changes
     useEffect(() => {
         setActiveVersionIndex(0);
+        // Smart Defaulting per tool type
+        const defaultOrient = TOOL_ORIENTATIONS[activeToolKey] || 'portrait';
+        setOrientation(defaultOrient);
     }, [activeToolKey]);
 
 
@@ -286,8 +322,9 @@ export const DraftEditor = ({
 
 
 
-    // --- Orientation Support Removed ---
-    // User requested toggle removal. Hardcoded to 'portrait'.
+    const toggleOrientation = () => {
+        setOrientation(prev => prev === 'portrait' ? 'landscape' : 'portrait');
+    };
 
     // --- Template Switcher ---
     const TemplateComponent = getTemplateForTool(activeToolKey);
@@ -308,6 +345,8 @@ export const DraftEditor = ({
                 onToggleAi={onOpenAi}
                 isAiDocked={isAiDocked}
                 activeToolKey={activeToolKey}
+                orientation={orientation}
+                onToggleOrientation={toggleOrientation}
             />
 
             <div className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-zinc-900 flex flex-col" id="document-preview-area">
@@ -320,7 +359,7 @@ export const DraftEditor = ({
                         persona={persona}
 
                         plain={false}
-                        orientation="portrait"
+                        orientation={orientation}
                         metadata={{
                             projectName,
                             clientName,

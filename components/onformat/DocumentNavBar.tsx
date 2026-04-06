@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ChevronLeft, ChevronRight, Plus, Trash2, Printer, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Trash2, Printer, Sparkles, RectangleVertical, RectangleHorizontal } from 'lucide-react';
 
 export type NavMode = 'stack' | 'collection' | 'hidden';
 
@@ -16,6 +16,8 @@ interface DocumentNavBarProps {
     onToggleAi?: () => void;
     isAiDocked?: boolean;
     activeToolKey?: string;
+    orientation?: 'portrait' | 'landscape';
+    onToggleOrientation?: () => void;
 }
 
 import { useTheme } from '@/components/ThemeProvider';
@@ -30,7 +32,9 @@ export const DocumentNavBar = ({
     onOpenPrintRoom,
     onToggleAi,
     isAiDocked,
-    activeToolKey
+    activeToolKey,
+    orientation,
+    onToggleOrientation
 }: DocumentNavBarProps) => {
     const { theme } = useTheme();
     const darkMode = theme === 'dark';
@@ -99,7 +103,18 @@ export const DocumentNavBar = ({
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+                {onToggleOrientation && (
+                    <button
+                        onClick={onToggleOrientation}
+                        className={`p-2 rounded-sm border transition-all flex items-center justify-center ${darkMode ? 'bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-white' : 'bg-white border-zinc-300 text-zinc-400 hover:text-black'}`}
+                        title={`Switch to ${orientation === 'portrait' ? 'Landscape' : 'Portrait'}`}
+                    >
+                        {orientation === 'portrait' ? <RectangleVertical size={14} /> : <RectangleHorizontal size={14} />}
+                    </button>
+                )}
+
+                <div className={`h-4 w-px mx-1 ${darkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
 
 
                 {onToggleAi && activeToolKey === 'project-vision' && (
