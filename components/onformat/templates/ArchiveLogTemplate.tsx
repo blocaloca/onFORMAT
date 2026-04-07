@@ -100,10 +100,40 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
         handleUpdateItem(index, { status: nextStatus });
     };
 
-    const isLandscape = orientation === 'landscape';
-    const ITEMS_PER_PAGE = isLandscape ? 4 : 6;
-    const totalPages = Math.ceil(Math.max(items.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => items.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // Dynamic Pagination
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+
+    const pages: ArchiveItem[][] = [];
+    let currentPage: ArchiveItem[] = [];
+    let currentPageHeight = 0;
+
+    items.forEach((item) => {
+        // Row is a bit tall on this one (2 rows of fields)
+        const notesLength = item.notes?.length || 0;
+        const nameLength = item.itemName?.length || 0;
+        const linkLength = item.link?.length || 0;
+
+        const noteLines = Math.max(1, Math.ceil(notesLength / 60));
+        const nameLines = Math.max(1, Math.ceil(nameLength / 40));
+        const linkLines = Math.max(1, Math.ceil(linkLength / 50));
+
+        // Max lines in the two row layout
+        const maxLines = Math.max(noteLines, nameLines, linkLines);
+        let rowScore = 60 + (maxLines * 16); 
+        
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
+        }
+
+        currentPage.push(item);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || items.length === 0) {
+        pages.push(currentPage);
+    }
 
     return (
         <>
@@ -113,9 +143,10 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                     title="Archive Log"
                     hideHeader={false}
                     plain={plain}
-                    subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                    subtitle={pageIndex > 0 ? `Archive Log (Cont.)` : ''}
                     orientation={orientation}
                     metadata={metadata}
+                    isPrinting={isPrinting}
                 >
                     <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
@@ -134,8 +165,8 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
 
                         {/* Rows */}
                         <div className="space-y-1 mt-2 flex-1">
-                            {pageItems.map((item, localIdx) => {
-                                const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                            {pageItems.map((item) => {
+                                const globalIdx = items.findIndex(i => i.id === item.id);
                                 return (
                                     <div key={item.id} className={`py-4 px-2 rounded bg-transparent transition-colors group grid grid-cols-[90px_80px_1fr_100px_120px_60px_30px] gap-x-4 gap-y-2`}>
 
@@ -303,7 +334,7 @@ export const ArchiveLogTemplate = ({ data, onUpdate, isLocked = false, plain, or
                             })}
 
                             {/* Add Button - Last Page */}
-                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
+                            {!isLocked && !isPrinting && pageIndex === pages.length - 1 && (
                                 <div className="pt-2 print:hidden">
                                     <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent px-2 py-2 rounded-sm w-full">
                                         <Plus size={10} className="mr-1" /> Add Archive Task
