@@ -173,6 +173,8 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 if (v.slides && Array.isArray(v.slides) && v.slides.length === 0) return false;
                 if (v.scenes && Array.isArray(v.scenes) && v.scenes.length === 0) return false;
                 if (v.content && Array.isArray(v.content) && v.content.length === 0) return false;
+                if (v.rows && Array.isArray(v.rows) && v.rows.length === 0) return false;
+                if (v.shots && Array.isArray(v.shots) && v.shots.length === 0) return false;
                 return true;
             });
 
@@ -266,8 +268,8 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
                 const canvas = await html2canvas(el, {
                     scale: 2,
                     useCORS: true,
-                    logging: false,
-                    allowTaint: true,
+                    logging: true,
+                    allowTaint: false,
                     backgroundColor: '#FFFFFF'
                 });
 

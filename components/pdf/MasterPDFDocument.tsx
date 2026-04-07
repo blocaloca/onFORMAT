@@ -98,7 +98,10 @@ export const MasterPDFDocument: React.FC<MasterPDFProps> = ({ document, project,
         }
 
         // AV Script
-        if (document.type === 'av-script' && c.rows) return c.rows;
+        if (document.type === 'av-script') {
+            const data = Array.isArray(c) ? (c[0] || {}) : c;
+            return data.rows || [];
+        }
 
         // Generic List
         if (Array.isArray(c)) return c;

@@ -178,7 +178,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             )}
 
                                             {/* Delete Button */}
-                                            {!isLocked && (
+                                            {!isLocked && !isPrinting && (
                                                 <div className="relative flex justify-center w-full pt-1">
                                                     <button
                                                         onClick={() => setDeleteConfirmIndex(deleteConfirmIndex === globalIdx ? null : globalIdx)}
@@ -205,7 +205,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                         </div>
                                     )
                                 })}
-                                    {metadata?.importedBrief && rows.length === 0 && (
+                                    {metadata?.importedBrief && rows.length === 0 && !isPrinting && (
                                         <div className="pt-4 flex justify-center">
                                             <button
                                                 onClick={() => {
