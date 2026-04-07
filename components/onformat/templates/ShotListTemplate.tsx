@@ -120,9 +120,34 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         handleUpdateShot(parseInt(e.target.dataset.index || '0'), { description: e.target.value });
     };
 
-    const ITEMS_PER_PAGE = 12;
-    const totalPages = Math.ceil(Math.max(shots.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => shots.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // Dynamic Pagination
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+
+    const pages: Shot[][] = [];
+    let currentPage: Shot[] = [];
+    let currentPageHeight = 0;
+
+    shots.forEach((shot) => {
+        // Calculate row height score
+        // Base row height is roughly 40px
+        // Textarea height increases based on description length
+        const descLength = shot.description?.length || 0;
+        const textLines = Math.max(1, Math.ceil(descLength / 60)); // Approx 60 chars per line in this grid
+        const rowScore = 32 + (textLines * 18); // Base + (lines * approx line height)
+        
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
+        }
+
+        currentPage.push(shot);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || shots.length === 0) {
+        pages.push(currentPage);
+    }
 
     return (
         <>
@@ -134,7 +159,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     plain={plain}
                     orientation={orientation}
                     metadata={metadata}
-                    subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                    subtitle={pageIndex > 0 ? `Shot List (Cont.)` : ''}
                     isPrinting={isPrinting}
                 >
                     <div className="space-y-4 h-full flex flex-col">
@@ -152,8 +177,8 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                         {/* Rows */}
                         <div className="space-y-0 divide-y divide-zinc-100 flex-1">
-                            {pageShots.map((shot, localIdx) => {
-                                const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                            {pageShots.map((shot) => {
+                                const globalIdx = shots.findIndex(s => s.id === shot.id);
                                 const isComplete = (shot.status || '').toLowerCase() === 'complete';
                                 return (
                                     <div key={shot.id} className={`grid grid-cols-[30px_50px_90px_90px_90px_1fr_30px] gap-2 py-1 items-start transition-colors group ${isComplete ? 'bg-emerald-50/30' : 'bg-transparent hover:border-zinc-200 border border-transparent'}`}>
@@ -286,7 +311,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             })}
 
                             {/* Add Shot Button */}
-                            {!isLocked && !isPrinting && (
+                            {!isLocked && !isPrinting && pageIndex === pages.length - 1 && (
                                 <div className="pt-3 print-hidden">
                                     <button
                                         onClick={handleAddShot}

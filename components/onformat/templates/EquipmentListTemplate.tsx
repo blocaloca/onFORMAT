@@ -83,10 +83,36 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
         setDeleteConfirmIndex(null);
     };
 
-    // Pagination
-    const ITEMS_PER_PAGE = orientation === 'landscape' ? 12 : 15;
-    const totalPages = Math.ceil(Math.max(items.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => items.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // Dynamic Pagination
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+
+    const pages: EquipmentItem[][] = [];
+    let currentPage: EquipmentItem[] = [];
+    let currentPageHeight = 0;
+
+    items.forEach((item) => {
+        // Calculate Row Height Score
+        let rowScore = 50; // Base row height (~40px + padding)
+        
+        // Multi-line description check (approx 50 chars per line in the middle col)
+        const descLines = Math.ceil((item.description?.length || 0) / 50);
+        if (descLines > 1) {
+            rowScore += (descLines - 1) * 20;
+        }
+
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
+        }
+
+        currentPage.push(item);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || items.length === 0) {
+        pages.push(currentPage);
+    }
 
     const grandTotal = items.reduce((sum, item) => {
         const val = parseFloat((item.total || '0').replace(/[^0-9.]/g, ''));
@@ -101,9 +127,10 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                     title="Equipment List"
                     hideHeader={false}
                     plain={plain}
-                    subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                    subtitle={pageIndex > 0 ? `Equipment List (Cont.)` : ''}
                     orientation={orientation}
                     metadata={metadata}
+                    isPrinting={isPrinting}
                 >
                     <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
@@ -133,8 +160,8 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                         {/* Rows */}
                         <div className="space-y-0 divide-y divide-zinc-100 flex-1">
-                            {pageItems.map((item, localIdx) => {
-                                const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                            {pageItems.map((item) => {
+                                const globalIdx = items.findIndex(i => i.id === item.id);
                                 return (
                                     <div key={item.id} className="grid grid-cols-[100px_1fr_60px_100px_60px_40px_60px_30px] gap-4 py-2 items-center bg-transparent transition-colors group">
 
@@ -279,7 +306,7 @@ export const EquipmentListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 )
                             })}
                             {/* Add Button - Last Page */}
-                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
+                            {!isLocked && !isPrinting && pageIndex === pages.length - 1 && (
                                 <div className="pt-2">
                                     <button onClick={handleAddItem} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 bg-transparent border border-transparent hover:border-zinc-200 px-2 py-2 rounded-sm w-full print-hidden transition-colors">
                                         <Plus size={10} className="mr-1" /> Add Equipment

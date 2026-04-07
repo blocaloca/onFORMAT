@@ -90,9 +90,29 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
     const totalActual = items.reduce((sum, item) => sum + (item.actual || 0), 0);
     const totalVariance = totalBudgeted - totalActual;
 
-    const ITEMS_PER_PAGE = orientation === 'landscape' ? 10 : 14;
-    const totalPages = Math.ceil(Math.max(items.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => items.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // Dynamic Pagination
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+
+    const pages: ActualLineItem[][] = [];
+    let currentPage: ActualLineItem[] = [];
+    let currentPageHeight = 0;
+
+    items.forEach((item) => {
+        let rowScore = 38; // Base row height (~36px)
+        
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
+        }
+
+        currentPage.push(item);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || items.length === 0) {
+        pages.push(currentPage);
+    }
 
     return (
         <>
@@ -104,7 +124,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                     plain={plain}
                     orientation={orientation}
                     metadata={metadata}
-                    subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                    subtitle={pageIndex > 0 ? `Actual Budget (Cont.)` : ''}
                     isPrinting={isPrinting}
                 >
                     <div className="space-y-6 h-full flex flex-col">
@@ -147,8 +167,8 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
 
                         {/* Rows */}
                         <div className="flex-1 space-y-0 divide-y divide-zinc-100">
-                            {pageItems.map((item, localIdx) => {
-                                const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                            {pageItems.map((item) => {
+                                const globalIdx = items.findIndex(i => i.id === item.id);
                                 const variance = (item.budgeted || 0) - (item.actual || 0);
 
                                 return (
@@ -217,7 +237,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                 )
                             })}
 
-                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
+                            {!isLocked && !isPrinting && pageIndex === pages.length - 1 && (
                                 <div className="pt-2 print-hidden flex justify-between items-center">
                                     <button
                                         onClick={handleAddItem}

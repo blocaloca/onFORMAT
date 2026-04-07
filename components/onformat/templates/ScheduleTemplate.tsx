@@ -151,9 +151,40 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         onUpdate({ items: newItems });
     };
 
-    const ITEMS_PER_PAGE = 15;
-    const totalPages = Math.ceil(Math.max(items.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => items.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // Dynamic Pagination
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+
+    const pages: ScheduleItem[][] = [];
+    let currentPage: ScheduleItem[] = [];
+    let currentPageHeight = 0;
+
+    items.forEach((item) => {
+        // Calculate row height score
+        let rowScore = 0;
+        if (item.intExt === 'BREAK') {
+            rowScore = 60; // Break rows are taller
+        } else {
+            const descLength = item.description?.length || 0;
+            const setLength = item.set?.length || 0;
+            const maxTextInRow = Math.max(descLength, setLength * 1.5); // Approx relative weights
+            
+            const lines = Math.max(1, Math.ceil(maxTextInRow / 50)); 
+            rowScore = 32 + (lines * 16); 
+        }
+        
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
+        }
+
+        currentPage.push(item);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || items.length === 0) {
+        pages.push(currentPage);
+    }
 
     return (
         <>
@@ -165,7 +196,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     plain={plain}
                     orientation={orientation}
                     metadata={metadata}
-                    subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                    subtitle={pageIndex > 0 ? `Schedule (Cont.)` : ''}
                     isPrinting={isPrinting}
                 >
                     <div className="space-y-6 h-full flex flex-col">
@@ -237,10 +268,9 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             <span></span>
                         </div>
 
-                        {/* Rows */}
                         <div className="flex-1 space-y-0 divide-y divide-zinc-100">
-                            {pageItems.map((item, localIdx) => {
-                                const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                            {pageItems.map((item) => {
+                                const globalIdx = items.findIndex(i => i.id === item.id);
 
                                 if (item.intExt === 'BREAK') {
                                     // Render simplified Break Row
@@ -435,7 +465,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                 )
                             })}
                             {/* Add Button - Last Page */}
-                            {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
+                            {!isLocked && !isPrinting && pageIndex === pages.length - 1 && (
                                 <div className="pt-2 print-hidden flex gap-2">
                                     <button
                                         onClick={() => handleAddItem(false)}

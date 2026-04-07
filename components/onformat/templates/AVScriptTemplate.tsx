@@ -79,9 +79,45 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
         return `${hh}:${mm}:${ss}`;
     };
 
-    const ITEMS_PER_PAGE = 6;
-    const totalPages = Math.ceil(Math.max(rows.length, 1) / ITEMS_PER_PAGE);
-    const pages = Array.from({ length: totalPages }, (_, i) => rows.slice(i * ITEMS_PER_PAGE, (i + 1) * ITEMS_PER_PAGE));
+    // Dynamic Pagination Logic
+    // Row Height Score (Approximate)
+    // US Letter Portrait height: 1056px. Content area ~800-900px.
+    // Base row height (padding + borders): ~100px.
+    // Each line (~60 chars) adds ~20px.
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 650 : 850;
+
+    const pages: AVRow[][] = [];
+    let currentPage: AVRow[] = [];
+    let currentPageHeight = 0;
+
+    rows.forEach((row) => {
+        // Calculate Row Height Score
+        // Base score for the row structure
+        let rowScore = 120; 
+
+        // Additional score based on text length (approximate line count)
+        const visualLines = Math.ceil((row.visual?.length || 0) / 45);
+        const audioLines = Math.ceil((row.audio?.length || 0) / 45);
+        const maxLines = Math.max(visualLines, audioLines, 1);
+        
+        rowScore += (maxLines - 1) * 22; // Add ~22px per additional line
+
+        // Safety cap for extremely large rows to prevent infinite loops (though unlikely here)
+        if (rowScore > MAX_PAGE_HEIGHT_SCORE) rowScore = MAX_PAGE_HEIGHT_SCORE;
+
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
+        }
+
+        currentPage.push(row);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || rows.length === 0) {
+        pages.push(currentPage);
+    }
 
     return (
         <div className="flex flex-col items-center w-full relative">
@@ -95,7 +131,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         plain={plain}
                         orientation={orientation}
                         metadata={metadata}
-                        subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                        subtitle={pageIndex > 0 ? `AV Script (Cont.)` : ''}
                         isPrinting={isPrinting}
                     >
                         <div className="space-y-6 text-sm font-sans h-full flex flex-col">
@@ -111,8 +147,8 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
 
                             {/* Rows */}
                             <div className="space-y-0 divide-y divide-zinc-100 flex-1">
-                                {pageRows.map((row, localIdx) => {
-                                    const globalIdx = (pageIndex * ITEMS_PER_PAGE) + localIdx;
+                                {pageRows.map((row) => {
+                                    const globalIdx = rows.findIndex(r => r.id === row.id);
                                     return (
                                         <div key={row.id} className="grid grid-cols-[60px_110px_1fr_1fr_30px] gap-6 py-6 px-4 items-start bg-transparent transition-colors group">
 
@@ -226,7 +262,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                                             </button>
                                         </div>
                                     )}
-                                {!isLocked && !isPrinting && pageIndex === totalPages - 1 && (
+                                {!isLocked && !isPrinting && pageIndex === pages.length - 1 && (
                                     <div className="pt-2">
                                         <button onClick={handleAddRow} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black dark:hover:text-zinc-100 bg-transparent px-2 py-2 rounded-sm w-full">
                                             <Plus size={10} className="mr-1" /> Add Scene
