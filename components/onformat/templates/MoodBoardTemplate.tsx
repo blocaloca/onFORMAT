@@ -195,11 +195,12 @@ export const MoodBoardTemplate = ({ data, onUpdate, isLocked = false, plain, ori
             {pages.map((pageItems, pageIndex) => (
                 <DocumentLayout
                     key={pageIndex}
-                    title="Storyboard"
+                    title="Moodboard"
                     hideHeader={pageIndex > 0}
                     plain={plain}
                     orientation={orientation}
                     metadata={pageIndex === 0 ? metadata : undefined}
+                    isPrinting={isPrinting}
                 >
                     <div className="space-y-6 h-full flex flex-col">
 

@@ -263,6 +263,7 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                     plain={plain}
                     orientation={orientation}
                     metadata={pageIndex === 0 ? metadata : undefined}
+                    isPrinting={isPrinting}
                 >
                     <div className="flex flex-col h-full">
 
@@ -420,11 +421,11 @@ export const StoryboardTemplate = ({ data, onUpdate, isLocked = false, plain, or
                 </DocumentLayout>
             ))}
 
-            {!isLocked && (
-                <div className="py-8 flex flex-col items-center gap-4 print:hidden pb-20">
+            {!isLocked && !isPrinting && (
+                <div className="py-8 flex flex-col items-center gap-4 pb-20">
                         <button
                         onClick={handleAddItem}
-                        className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-transparent px-8 py-3 transition-all rounded-full hover:shadow-lg shadow-sm"
+                        className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-black dark:hover:text-zinc-100 border border-dashed border-zinc-300 hover:border-black bg-transparent px-8 py-3 transition-all rounded-xl hover:shadow-lg shadow-sm"
                     >
                         <span>+ Add Frame</span>
                     </button>

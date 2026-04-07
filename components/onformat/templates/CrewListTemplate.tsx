@@ -131,6 +131,7 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             plain={plain}
             orientation={orientation}
             metadata={metadata}
+            isPrinting={isPrinting}
         >
             <div className="space-y-4 text-sm font-sans flex-1">
                 

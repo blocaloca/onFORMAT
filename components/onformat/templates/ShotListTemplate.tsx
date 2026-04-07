@@ -135,6 +135,7 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     orientation={orientation}
                     metadata={metadata}
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                    isPrinting={isPrinting}
                 >
                     <div className="space-y-4 h-full flex flex-col">
 

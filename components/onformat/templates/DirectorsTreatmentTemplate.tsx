@@ -339,6 +339,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                             plain={plain}
                             orientation={orientation}
                             metadata={metadata}
+                            isPrinting={isPrinting}
                         >
                             <div className="h-full relative">
                                 {renderSlideContent(displaySlide as TreatmentSlide)}

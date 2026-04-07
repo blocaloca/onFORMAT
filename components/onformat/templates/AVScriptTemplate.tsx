@@ -96,6 +96,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                         orientation={orientation}
                         metadata={metadata}
                         subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
+                        isPrinting={isPrinting}
                     >
                         <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 

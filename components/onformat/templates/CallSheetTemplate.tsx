@@ -366,6 +366,7 @@ export const CallSheetTemplate = ({ data, onUpdate, isLocked = false, plain, ori
                     subtitle={pageIndex > 0 ? `Page ${pageIndex + 1}` : ''}
                     orientation={orientation}
                     metadata={metadata}
+                    isPrinting={isPrinting}
                 >
                     <div className="space-y-6 text-sm font-sans h-full flex flex-col">
 
