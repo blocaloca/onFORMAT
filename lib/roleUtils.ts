@@ -20,9 +20,9 @@ export function deriveMobileRoleId(roleName: string): string {
     if (r.includes('gaffer') || r.includes('electric')) return 'electric';
     if (r.includes('grip')) return 'grip';
     if (r.includes('sound') || r.includes('mixer')) return 'sound';
+    if (r.includes('makeup') || r.includes('hmu')) return 'hmu';
     if (r.includes('art') || r.includes('designer') || r.includes('prop')) return 'art';
     if (r.includes('stylist') || r.includes('wardrobe')) return 'wardrobe';
-    if (r.includes('makeup') || r.includes('hmu')) return 'hmu';
     if (r.includes('editor')) return 'editor';
     if (r.includes('location')) return 'locations';
     if (r.includes('client') || r.includes('agency')) return 'client';
