@@ -17,6 +17,7 @@ import {
     Radio
 } from 'lucide-react';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
+import { PRODUCTION_ROLES, deriveMobileRoleId } from '@/lib/roleUtils';
 
 interface OnSetControlPanelTemplateProps {
     data: any;
@@ -98,38 +99,30 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
         onUpdate({ ...safeData, isLive: !isLive });
     };
 
-    const addRole = () => {
-        if (!newRoleName || isLocked || !metadata?.isOwner) return;
+    const addRole = (e?: React.MouseEvent | string) => {
+        const overrideName = typeof e === 'string' ? e : undefined;
+        const nameToUse = overrideName || newRoleName;
+        if (!nameToUse || isLocked || !metadata?.isOwner) return;
         
         // --- TACTICAL HOOKS: Sync ROLE ID with OnSet Identity Engine ---
-        let id = newRoleName.toLowerCase().replace(/\s+/g, '-');
-        const r = newRoleName.toLowerCase();
+        let id = deriveMobileRoleId(nameToUse);
         
-        if (r === 'dit' || r.includes('media')) id = 'dit';
-        else if (r.includes('producer') || r.includes('coordinator')) id = 'producer';
-        else if (r === 'director') id = 'director';
-        else if (r.includes('supervisor') || r === 'scripty') id = 'scripty';
-        else if (r.includes('photography') || r === 'dp') id = 'dp';
-        else if (r.includes('ad') || r.includes('assistant director')) id = 'ad';
-        else if (r.includes('gaffer') || r.includes('electric')) id = 'electric';
-        else if (r.includes('grip')) id = 'grip';
-        else if (r.includes('sound') || r.includes('mixer')) id = 'sound';
-        else if (r.includes('art') || r.includes('designer') || r.includes('prop')) id = 'art';
-        else if (r.includes('stylist') || r.includes('wardrobe')) id = 'wardrobe';
-        else if (r.includes('makeup') || r.includes('hmu')) id = 'hmu';
-        else if (r.includes('editor')) id = 'editor';
-        else if (r.includes('location')) id = 'locations';
-        else if (r.includes('client') || r.includes('agency')) id = 'client';
-        else if (r.includes('crew') || r === 'pa') id = 'crew';
+        // If the util falls back to 'crew' but the role wasn't generic, preserve their custom name as the ID
+        if (id === 'crew' && !nameToUse.toLowerCase().includes('crew') && nameToUse.toLowerCase() !== 'pa') {
+            id = nameToUse.toLowerCase().trim().replace(/\s+/g, '-');
+        }
 
         if (roles.find((role: any) => role.id === id)) {
+            alert(`The role silo "${id.toUpperCase()}" is already active in the permissions matrix.`);
             setNewRoleName('');
+            setIsDropdownOpen(false);
             return;
         }
 
-        const newRoles = [...roles, { id, name: newRoleName, color: 'zinc' }];
+        const newRoles = [...roles, { id, name: nameToUse, color: 'zinc' }];
         onUpdate({ ...safeData, roles: newRoles });
         setNewRoleName('');
+        setIsDropdownOpen(false);
     };
 
     const removeRole = (roleId: string) => {
@@ -226,10 +219,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                                     <div 
                                                         key={role}
                                                         className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
-                                                        onClick={() => {
-                                                            setNewRoleName(role);
-                                                            setIsDropdownOpen(false);
-                                                        }}
+                                                        onClick={() => addRole(role)}
                                                     >
                                                         {role}
                                                     </div>
@@ -237,7 +227,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                             {newRoleName && !PRODUCTION_ROLES.some(r => r.toLowerCase() === newRoleName.toLowerCase()) && (
                                                 <div 
                                                     className="px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer transition-colors"
-                                                    onClick={() => setIsDropdownOpen(false)}
+                                                    onClick={() => addRole(newRoleName)}
                                                 >
                                                     + Custom: "{newRoleName}"
                                                 </div>

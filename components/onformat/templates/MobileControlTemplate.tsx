@@ -83,27 +83,28 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
         onUpdate({ ...data, matrix: newMatrix });
     };
 
-    const addRole = () => {
-        if (!newRoleName || isLocked || !metadata?.isOwner) return;
-        
-        // --- TACTICAL HOOKS: Sync ROLE ID with OnSet Identity Engine ---
-        const r = newRoleName.toLowerCase();
-        let id = deriveMobileRoleId(newRoleName);
-        
-        // If deriveMobileRoleId defaults to 'crew' but they explicitly defined something custom,
-        // we should create a safe custom ID so it doesn't collide with literal 'General Crew'
+    const addRole = (e?: React.MouseEvent | string) => {
+        const overrideName = typeof e === 'string' ? e : undefined;
+        const nameToUse = overrideName || newRoleName;
+        if (!nameToUse || isLocked || !metadata?.isOwner) return;
+
+        const r = nameToUse.toLowerCase();
+        let id = deriveMobileRoleId(nameToUse);
         if (id === 'crew' && !r.includes('crew') && r !== 'pa') {
-            id = newRoleName.toLowerCase().trim().replace(/\s+/g, '-');
+            id = nameToUse.toLowerCase().trim().replace(/\s+/g, '-');
         }
 
         if (roles.find((role: any) => role.id === id)) {
+            alert(`The role silo "${id.toUpperCase()}" is already active in the permissions matrix.`);
             setNewRoleName('');
+            setIsDropdownOpen(false);
             return;
         }
 
-        const newRoles = [...roles, { id, name: newRoleName, color: 'zinc' }];
-        onUpdate({ ...data, roles: newRoles });
+        const newRoles = [...roles, { id, name: nameToUse, color: 'zinc' }];
+        onUpdate({ ...safeData, roles: newRoles });
         setNewRoleName('');
+        setIsDropdownOpen(false);
     };
 
     const removeRole = (roleId: string) => {
@@ -171,10 +172,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                                                     <div 
                                                         key={role}
                                                         className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
-                                                        onClick={() => {
-                                                            setNewRoleName(role);
-                                                            setIsDropdownOpen(false);
-                                                        }}
+                                                        onClick={() => addRole(role)}
                                                     >
                                                         {role}
                                                     </div>
@@ -182,7 +180,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                                             {newRoleName && !PRODUCTION_ROLES.some(r => r.toLowerCase() === newRoleName.toLowerCase()) && (
                                                 <div 
                                                     className="px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer transition-colors"
-                                                    onClick={() => setIsDropdownOpen(false)}
+                                                    onClick={() => addRole(newRoleName)}
                                                 >
                                                     + Custom: "{newRoleName}"
                                                 </div>
