@@ -2,7 +2,7 @@ export const PRODUCTION_ROLES = [
     'Producer', 'Director', 'Director of Photography', '1st AD', '2nd AD',
     'UPM / Line Producer', 'Production Coordinator', 'Script Supervisor',
     'Gaffer', 'Key Grip', 'Sound Mixer', 'DIT', 'Media Manager',
-    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'Makeup Artist',
+    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'HMU (Hair & Makeup)',
     'Editor', 'Location Manager', 'PA (Production Assistant)',
     'General Crew', 'Other'
 ];
