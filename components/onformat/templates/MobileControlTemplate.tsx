@@ -62,6 +62,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
 
     const [copied, setCopied] = useState(false);
     const [newRoleName, setNewRoleName] = useState('');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const mobileUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/onset/${metadata?.projectId || ''}`;
 
@@ -134,17 +135,60 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                         <div className="bg-transparent p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-2 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                             <div className="flex items-center gap-3 flex-1 pl-3">
                                 <Users size={14} className="text-zinc-400" />
-                                <div className="relative flex-1">
-                                    <input 
-                                        value={newRoleName}
-                                        onChange={(e) => setNewRoleName(e.target.value)}
-                                        placeholder="Authorize Production Role..."
-                                        className="w-full bg-transparent outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-300 dark:text-white"
-                                        list="production-roles-list"
-                                    />
-                                    <datalist id="production-roles-list">
-                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
-                                    </datalist>
+                                <div 
+                                    className="relative flex-1"
+                                    onBlur={(e) => {
+                                        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                                            setTimeout(() => setIsDropdownOpen(false), 150);
+                                        }
+                                    }}
+                                >
+                                    <div className="flex items-center">
+                                        <input 
+                                            value={newRoleName}
+                                            onChange={(e) => {
+                                                setNewRoleName(e.target.value);
+                                                setIsDropdownOpen(true);
+                                            }}
+                                            onFocus={() => setIsDropdownOpen(true)}
+                                            placeholder="Authorize Production Role..."
+                                            className="w-full bg-transparent outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-300 dark:text-white"
+                                        />
+                                        <button 
+                                            type="button"
+                                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded absolute right-0"
+                                        >
+                                            <ChevronDown size={14} className="text-zinc-400" />
+                                        </button>
+                                    </div>
+                                    
+                                    {isDropdownOpen && (
+                                        <div className="absolute top-[120%] left-0 w-full max-h-48 overflow-y-auto bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shadow-xl rounded-xl z-50 py-1 scrollbar-hide">
+                                            {PRODUCTION_ROLES
+                                                .filter(role => role.toLowerCase().includes(newRoleName.toLowerCase()))
+                                                .map(role => (
+                                                    <div 
+                                                        key={role}
+                                                        className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
+                                                        onClick={() => {
+                                                            setNewRoleName(role);
+                                                            setIsDropdownOpen(false);
+                                                        }}
+                                                    >
+                                                        {role}
+                                                    </div>
+                                                ))}
+                                            {newRoleName && !PRODUCTION_ROLES.some(r => r.toLowerCase() === newRoleName.toLowerCase()) && (
+                                                <div 
+                                                    className="px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer transition-colors"
+                                                    onClick={() => setIsDropdownOpen(false)}
+                                                >
+                                                    + Custom: "{newRoleName}"
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button 
