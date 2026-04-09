@@ -189,16 +189,17 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                         <div className="bg-transparent p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-2 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                             <div className="flex items-center gap-3 flex-1 pl-3">
                                 <Users size={14} className="text-zinc-400" />
-                                <div className="relative flex-1 flex items-center">
-                                    <select 
+                                <div className="relative flex-1">
+                                    <input 
                                         value={newRoleName}
                                         onChange={(e) => setNewRoleName(e.target.value)}
-                                        className="w-full bg-transparent outline-none text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-white cursor-pointer appearance-none pr-6"
-                                    >
-                                        <option value="" disabled>Select Role...</option>
-                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role}>{role}</option>)}
-                                    </select>
-                                    <ChevronDown size={14} className="text-zinc-400 absolute right-2 pointer-events-none" />
+                                        placeholder="Authorize Production Role..."
+                                        className="w-full bg-transparent outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-300 dark:text-white"
+                                        list="control-roles-list"
+                                    />
+                                    <datalist id="control-roles-list">
+                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
+                                    </datalist>
                                 </div>
                             </div>
                             <button 
