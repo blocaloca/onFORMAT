@@ -186,25 +186,23 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                     
                     {/* ADD ROLE AT THE TOP */}
                     {metadata?.isOwner && (
-                        <div className="bg-transparent p-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-4 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
+                        <div className="bg-transparent p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-2 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                             <div className="flex items-center gap-3 flex-1 pl-3">
-                                <Users size={16} className="text-zinc-400" />
+                                <Users size={14} className="text-zinc-400" />
                                 <div className="relative flex-1">
-                                    <input 
+                                    <select 
                                         value={newRoleName}
                                         onChange={(e) => setNewRoleName(e.target.value)}
-                                        placeholder="Authorize Production Role..."
-                                        className="w-full bg-transparent outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-300 dark:text-white"
-                                        list="control-roles-list"
-                                    />
-                                    <datalist id="control-roles-list">
-                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role} />)}
-                                    </datalist>
+                                        className="w-full bg-transparent outline-none text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-white cursor-pointer appearance-none"
+                                    >
+                                        <option value="" disabled>Select Role...</option>
+                                        {PRODUCTION_ROLES.map(role => <option key={role} value={role}>{role}</option>)}
+                                    </select>
                                 </div>
                             </div>
                             <button 
                                 onClick={addRole}
-                                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors"
+                                className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 dark:hover:bg-emerald-500 transition-colors"
                             >
                                 Add Role
                             </button>
@@ -238,7 +236,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                             <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Document Permissions</span>
                                         </th>
                                         {roles.map((role: any) => (
-                                            <th key={role.id} className="py-3 px-0.5 text-center group min-w-[50px]">
+                                            <th key={role.id} className="py-3 px-0 text-center group min-w-[40px]">
                                                 <div className="flex flex-col items-center">
                                                     <span className="text-[9px] font-black uppercase tracking-widest leading-tight mb-1 dark:text-zinc-100">{role.name}</span>
                                                     <button 
@@ -266,7 +264,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                             {roles.map((role: any) => {
                                                 const access = getDocAccess(role.id, doc.id);
                                                 return (
-                                                    <td key={role.id} className="py-2 px-0.5 text-center">
+                                                    <td key={role.id} className="py-1 px-0 text-center">
                                                         <button 
                                                             disabled={!metadata?.isOwner}
                                                             onClick={() => toggleAccess(role.id, doc.id)}
