@@ -199,6 +199,12 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                                 setIsDropdownOpen(true);
                                             }}
                                             onFocus={() => setIsDropdownOpen(true)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    e.preventDefault();
+                                                    addRole(newRoleName);
+                                                }
+                                            }}
                                             placeholder="Authorize Production Role..."
                                             className="w-full bg-transparent outline-none text-xs font-black uppercase tracking-widest placeholder:text-zinc-300 dark:text-white"
                                         />
@@ -219,7 +225,10 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                                     <div 
                                                         key={role}
                                                         className="px-4 py-2.5 text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer text-zinc-700 dark:text-zinc-300 transition-colors"
-                                                        onClick={() => addRole(role)}
+                                                        onMouseDown={(e) => {
+                                                            e.preventDefault();
+                                                            addRole(role);
+                                                        }}
                                                     >
                                                         {role}
                                                     </div>
@@ -227,7 +236,10 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                             {newRoleName && !PRODUCTION_ROLES.some(r => r.toLowerCase() === newRoleName.toLowerCase()) && (
                                                 <div 
                                                     className="px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 cursor-pointer transition-colors"
-                                                    onClick={() => addRole(newRoleName)}
+                                                    onMouseDown={(e) => {
+                                                        e.preventDefault();
+                                                        addRole(newRoleName);
+                                                    }}
                                                 >
                                                     + Custom: "{newRoleName}"
                                                 </div>
