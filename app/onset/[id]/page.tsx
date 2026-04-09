@@ -1693,7 +1693,8 @@ export default function OnSetMobilePage() {
                                     <EmptyState label={DOC_LABELS[activeTab] || 'Document'} />
                                 )}
                             </>
-                        )}
+                        );
+                        })()}
                     </div>
                 </main>
 
