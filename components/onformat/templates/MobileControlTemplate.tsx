@@ -134,15 +134,16 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                         <div className="bg-transparent p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 shadow-sm flex items-center gap-2 transition-all focus-within:ring-2 focus-within:ring-blue-500/20">
                             <div className="flex items-center gap-3 flex-1 pl-3">
                                 <Users size={14} className="text-zinc-400" />
-                                <div className="relative flex-1">
+                                <div className="relative flex-1 flex items-center">
                                     <select 
                                         value={newRoleName}
                                         onChange={(e) => setNewRoleName(e.target.value)}
-                                        className="w-full bg-transparent outline-none text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-white cursor-pointer appearance-none"
+                                        className="w-full bg-transparent outline-none text-[10px] font-black uppercase tracking-widest text-zinc-900 dark:text-white cursor-pointer appearance-none pr-6"
                                     >
                                         <option value="" disabled>Select Role...</option>
                                         {PRODUCTION_ROLES.map(role => <option key={role} value={role}>{role}</option>)}
                                     </select>
+                                    <ChevronDown size={14} className="text-zinc-400 absolute right-2 pointer-events-none" />
                                 </div>
                             </div>
                             <button 
@@ -180,9 +181,9 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                                             <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Document Permissions</span>
                                         </th>
                                         {roles.map((role: any) => (
-                                            <th key={role.id} className="py-3 px-0 text-center group min-w-[40px]">
+                                            <th key={role.id} className="py-3 px-1 text-center group min-w-[50px] w-[50px]">
                                                 <div className="flex flex-col items-center">
-                                                    <span className="text-[9px] font-black uppercase tracking-widest leading-tight mb-1">{role.name}</span>
+                                                    <span className="text-[9px] font-black uppercase tracking-widest leading-tight mb-1 dark:text-zinc-100">{role.name}</span>
                                                     <button 
                                                         onClick={() => removeRole(role.id)}
                                                         className="opacity-0 group-hover:opacity-100 text-[8px] font-bold text-red-500 uppercase tracking-tighter transition-opacity"
@@ -192,6 +193,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                                                 </div>
                                             </th>
                                         ))}
+                                        <th className="w-full"></th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-zinc-50 dark:divide-zinc-800/30">
@@ -222,6 +224,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
                                                     </td>
                                                 );
                                             })}
+                                            <td className="w-full"></td>
                                         </tr>
                                     ))}
                                 </tbody>
