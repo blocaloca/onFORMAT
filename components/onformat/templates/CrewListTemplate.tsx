@@ -191,8 +191,16 @@ export const CrewListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             {pageItems.map((item) => {
                                 const globalIdx = items.findIndex(i => i.id === item.id);
                         const isOnline = onlineUsers.has(item.email?.toLowerCase());
-                        const roleSynced = mobileRoles.some((r: any) => r.id === item.mobileRoleId && r.id !== 'crew') || 
-                                          ['dit', 'producer', 'director', 'scripty', 'dp', 'client'].includes(item.mobileRoleId || '');
+                        
+                        // Dynamically heal stale ID bindings
+                        let effectiveRoleId = item.mobileRoleId;
+                        if (!effectiveRoleId || effectiveRoleId === 'crew') {
+                            const match = mobileRoles.find((r: any) => r.name.toLowerCase() === item.role?.toLowerCase());
+                            effectiveRoleId = match ? match.id : deriveMobileRoleId(item.role || '');
+                        }
+
+                        const roleSynced = mobileRoles.some((r: any) => r.id === effectiveRoleId && r.id !== 'crew') || 
+                                          ['dit', 'producer', 'director', 'scripty', 'dp', 'client', 'pa', 'hmu'].includes(effectiveRoleId || '');
                         
                         return (
                             <div key={item.id} className="grid grid-cols-[150px_1fr_180px_100px_90px_30px] gap-3 py-1 items-center group hover:bg-zinc-50 transition-colors">

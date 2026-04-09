@@ -26,6 +26,7 @@ export function deriveMobileRoleId(roleName: string): string {
     if (r.includes('editor')) return 'editor';
     if (r.includes('location')) return 'locations';
     if (r.includes('client') || r.includes('agency')) return 'client';
+    if (r.includes('pa (production') || r === 'pa' || r.includes('production assistant')) return 'pa';
     
     // Default or explicitly mapping "General Crew" / undefined entries
     return 'crew';
