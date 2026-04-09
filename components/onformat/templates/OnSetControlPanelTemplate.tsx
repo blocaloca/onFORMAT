@@ -234,11 +234,11 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                             <table className="w-full border-collapse">
                                 <thead>
                                     <tr className="bg-transparent border-b border-zinc-100 dark:border-zinc-700">
-                                        <th className="py-3 px-6 text-left w-[220px]">
+                                        <th className="py-3 px-4 text-left w-[180px]">
                                             <span className="text-[9px] font-black uppercase text-zinc-400 tracking-widest">Document Permissions</span>
                                         </th>
                                         {roles.map((role: any) => (
-                                            <th key={role.id} className="py-3 px-2 text-center group min-w-[80px]">
+                                            <th key={role.id} className="py-3 px-0.5 text-center group min-w-[50px]">
                                                 <div className="flex flex-col items-center">
                                                     <span className="text-[9px] font-black uppercase tracking-widest leading-tight mb-1 dark:text-zinc-100">{role.name}</span>
                                                     <button 
@@ -255,7 +255,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                 <tbody className="divide-y divide-zinc-50 dark:divide-zinc-800/30">
                                     {DOCUMENT_TYPES.map(doc => (
                                         <tr key={doc.id} className="group hover:bg-blue-500/[0.02] dark:hover:bg-blue-500/[0.05] transition-colors">
-                                            <td className="py-2.5 px-6">
+                                            <td className="py-2.5 px-4">
                                                 <div className="flex items-center gap-2.5">
                                                     <span className="text-[10px] font-black uppercase tracking-tight text-zinc-600 dark:text-zinc-300">{doc.name}</span>
                                                     {doc.isSensitive && (
@@ -266,7 +266,7 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
                                             {roles.map((role: any) => {
                                                 const access = getDocAccess(role.id, doc.id);
                                                 return (
-                                                    <td key={role.id} className="py-2 px-2 text-center">
+                                                    <td key={role.id} className="py-2 px-0.5 text-center">
                                                         <button 
                                                             disabled={!metadata?.isOwner}
                                                             onClick={() => toggleAccess(role.id, doc.id)}
