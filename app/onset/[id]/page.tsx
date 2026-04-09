@@ -1518,25 +1518,7 @@ export default function OnSetMobilePage() {
                                         <LogOut size={14} /> Disconnect from Set
                                     </button>
 
-                                    <button
-                                        onClick={() => {
-                                            localStorage.removeItem('onset_user_email');
-                                            localStorage.removeItem('onset_test_mode');
-                                            localStorage.clear();
 
-                                            // Fire and forget
-                                            if (userEmail && id) {
-                                                supabase.from('crew_membership').update({ is_online: false })
-                                                          .eq('project_id', id).eq('user_email', userEmail).then();
-                                                supabase.removeAllChannels().then();
-                                            }
-                                            
-                                            // Trigger fast redirection
-                                            window.location.href = '/api/auth/logout';
-                                        }}
-                                        className="w-full bg-red-500/10 text-red-500 border border-red-500/20 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
-                                        <LogOut size={14} /> Log Out Completely
-                                    </button>
                                 </div>
                             </div>
                         </div>
