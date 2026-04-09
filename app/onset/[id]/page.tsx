@@ -1569,16 +1569,29 @@ export default function OnSetMobilePage() {
                                     isMasterOwner={data._isMasterOwner}
                                 />
                             );
-                        })() : (
+                        })() : (() => {
+                            const controlDoc = data.docs['onset-mobile-control'];
+                            const matrixObj = controlDoc?.matrix || {};
+                            const rId = data._roleId || 'crew';
+                            const roleMatrix = matrixObj[rId] || {};
+                            
+                            const permission = roleMatrix[activeTab] || (() => {
+                                const legacyKey = Object.keys(roleMatrix).find(mk => mapMobileKey(mk) === activeTab);
+                                return legacyKey ? roleMatrix[legacyKey] : 'none';
+                            })();
+
+                            const isReadOnlyDynamic = !(data._isMasterOwner && !data._isTestMode) && permission !== 'edit';
+
+                            return (
                             <>
                                 {activeTab === 'av-script' && <ScriptView data={data.docs['av-script']} />}
-                                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} isReadOnly={!data._canEdit} />}
+                                {activeTab === 'shot-scene-book' && <ShotListView data={data.docs['shot-scene-book']} onCheckShot={handleCheckShot} isReadOnly={isReadOnlyDynamic} />}
                                 {activeTab === 'call-sheet' && (
                                     <CallSheetView
                                         data={data.docs['call-sheet']}
                                         scheduleData={data.docs['schedule']}
                                         onUpdate={handleUpdateCallSheet}
-                                        isReadOnly={!data._canEdit}
+                                        isReadOnly={isReadOnlyDynamic}
                                     />
                                 )}
                                 {activeTab === 'dit-log' && <MobileDITLogView
@@ -1587,9 +1600,9 @@ export default function OnSetMobilePage() {
                                     projectId={id}
                                     mediaAlerts={mediaAlerts}
                                     setMediaAlerts={setMediaAlerts}
-                                    isReadOnly={!data._canEdit}
+                                    isReadOnly={isReadOnlyDynamic}
                                 />}
-                                {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} isReadOnly={!data._canEdit} />}
+                                {activeTab === 'camera-report' && <MobileCameraReportView data={data.docs['camera-report']} onAdd={handleUpdateCameraReport} projectId={id} isReadOnly={isReadOnlyDynamic} />}
                                 {activeTab === 'crew-list' && (
                                     <CrewListView
                                         data={data.docs['crew-list']}
@@ -1597,7 +1610,7 @@ export default function OnSetMobilePage() {
                                         onAdd={(m) => handleUpdateCrewList('add', m)}
                                         onUpdate={(m) => handleUpdateCrewList('update', m)}
                                         onDelete={(id) => handleUpdateCrewList('delete', id)}
-                                        isReadOnly={!data._canEdit}
+                                        isReadOnly={isReadOnlyDynamic}
                                     />
                                 )}
                                 {activeTab === 'schedule' && (
@@ -1605,7 +1618,7 @@ export default function OnSetMobilePage() {
                                         data={data.docs['schedule']}
                                         callSheetData={data.docs['call-sheet']}
                                         onUpdate={(newData) => handleUpdateDraft('schedule', newData)}
-                                        isReadOnly={!data._canEdit}
+                                        isReadOnly={isReadOnlyDynamic}
                                     />
                                 )}
                                 {activeTab === 'on-set-notes' && <MobileOnSetNotesView
@@ -1613,10 +1626,10 @@ export default function OnSetMobilePage() {
                                     onAdd={handleAddOnSetNote}
                                     onUpdate={handleEditOnSetNote}
                                     onDelete={handleDeleteOnSetNote}
-                                    isReadOnly={!data._canEdit}
+                                    isReadOnly={isReadOnlyDynamic}
                                 />}
-                                {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} onAdd={(m) => handleUpdateList('locations', 'add', m)} onUpdate={(m) => handleUpdateList('locations', 'update', m)} onDelete={(id) => handleUpdateList('locations', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} isReadOnly={!data._canEdit} />}
+                                {activeTab === 'locations' && <MobileLocationsView data={data.docs['locations']} onAdd={(m) => handleUpdateList('locations', 'add', m)} onUpdate={(m) => handleUpdateList('locations', 'update', m)} onDelete={(id) => handleUpdateList('locations', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'releases' && <MobileReleasesView data={data.docs['releases']} onUpdate={handleUpdateReleases} isReadOnly={isReadOnlyDynamic} />}
                                 {activeTab === 'script-notes' && <MobileScriptNotesView
                                     data={data.docs['script-notes']}
                                     avScript={data.docs['av-script']}
@@ -1624,56 +1637,56 @@ export default function OnSetMobilePage() {
                                     onUpdate={(item: any) => handleUpdateScriptNotes('update', item)}
                                     onDelete={(id: string) => handleUpdateScriptNotes('delete', id)}
                                     onSetItems={(items: any[]) => handleUpdateScriptNotes('set-items', items)}
-                                    isReadOnly={!data._canEdit}
+                                    isReadOnly={isReadOnlyDynamic}
                                 />}
                                 {activeTab === 'sound-report' && <MobileSoundReportView
                                     data={data.docs['sound-report']}
                                     onAdd={(item: any) => handleUpdateSoundReport('add', item)}
                                     onUpdate={(item: any) => handleUpdateSoundReport('update', item)}
                                     onDelete={(id: string) => handleUpdateSoundReport('delete', id)}
-                                    isReadOnly={!data._canEdit}
+                                    isReadOnly={isReadOnlyDynamic}
                                 />}
 
-                                {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" onAdd={(m) => handleUpdateList('dashboard', 'add', m)} onUpdate={(m) => handleUpdateList('dashboard', 'update', m)} onDelete={(id) => handleUpdateList('dashboard', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} onAdd={(m) => handleUpdateList('budget', 'add', m)} onUpdate={(m) => handleUpdateList('budget', 'update', m)} onDelete={(id) => handleUpdateList('budget', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} onAdd={(m) => handleUpdateList('equipment-list', 'add', m)} onUpdate={(m) => handleUpdateList('equipment-list', 'update', m)} onDelete={(id) => handleUpdateList('equipment-list', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'storyboard' && <MobileStoryboardView data={data.docs['storyboard']} onAdd={(m) => handleUpdateList('storyboard', 'add', m)} onUpdate={(m) => handleUpdateList('storyboard', 'update', m)} onDelete={(id) => handleUpdateList('storyboard', 'delete', id)} isReadOnly={!data._canEdit} />}
+                                {activeTab === 'dashboard' && <MobileReadOnlyListView data={data.docs['dashboard'] || {}} titleKey="title" onAdd={(m) => handleUpdateList('dashboard', 'add', m)} onUpdate={(m) => handleUpdateList('dashboard', 'update', m)} onDelete={(id) => handleUpdateList('dashboard', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'budget' && <MobileReadOnlyListView data={data.docs['budget']} titleKey="description" subtitleKey="category" detailKeys={['rate', 'quantity']} onAdd={(m) => handleUpdateList('budget', 'add', m)} onUpdate={(m) => handleUpdateList('budget', 'update', m)} onDelete={(id) => handleUpdateList('budget', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'equipment-list' && <MobileReadOnlyListView data={data.docs['equipment-list']} titleKey="description" subtitleKey="category" detailKeys={['quantity', 'vendor', 'total']} onAdd={(m) => handleUpdateList('equipment-list', 'add', m)} onUpdate={(m) => handleUpdateList('equipment-list', 'update', m)} onDelete={(id) => handleUpdateList('equipment-list', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'storyboard' && <MobileStoryboardView data={data.docs['storyboard']} onAdd={(m) => handleUpdateList('storyboard', 'add', m)} onUpdate={(m) => handleUpdateList('storyboard', 'update', m)} onDelete={(id) => handleUpdateList('storyboard', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
 
                                 {/* Phase 2: Missing Documents leveraging lists */}
-                                {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} onAdd={(m) => handleUpdateList('deliverables', 'add', m)} onUpdate={(m) => handleUpdateList('deliverables', 'update', m)} onDelete={(id) => handleUpdateList('deliverables', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} onAdd={(m) => handleUpdateList('archive', 'add', m)} onUpdate={(m) => handleUpdateList('archive', 'update', m)} onDelete={(id) => handleUpdateList('archive', 'delete', id)} isReadOnly={!data._canEdit} />}
+                                {activeTab === 'client-selects' && <MobileClientSelectsView data={data.docs['client-selects']} onAdd={(item: any) => handleUpdateClientSelects('add', item)} onUpdate={(item: any) => handleUpdateClientSelects('update', item)} onDelete={(id: string) => handleUpdateClientSelects('delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'deliverables' && <MobileReadOnlyListView data={data.docs['deliverables']} titleKey="item" subtitleKey="format" detailKeys={['usage', 'specs']} onAdd={(m) => handleUpdateList('deliverables', 'add', m)} onUpdate={(m) => handleUpdateList('deliverables', 'update', m)} onDelete={(id) => handleUpdateList('deliverables', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'archive' && <MobileReadOnlyListView data={data.docs['archive']} titleKey="itemName" subtitleKey="date" detailKeys={['activity', 'destination', 'status']} onAdd={(m) => handleUpdateList('archive', 'add', m)} onUpdate={(m) => handleUpdateList('archive', 'update', m)} onDelete={(id) => handleUpdateList('archive', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
 
                                 {/* Phase 3: Missing Document Views & Visual Cards */}
                                 {activeTab === 'project-vision' && (
                                     <MobileVisionView
                                         data={data.docs['project-vision']}
                                         onUpdate={(newData: any) => handleUpdateDraft('project-vision', newData)}
-                                        isReadOnly={!data._canEdit}
+                                        isReadOnly={isReadOnlyDynamic}
                                     />
                                 )}
                                 {activeTab === 'creative-brief' && (
                                     <MobileBriefView
                                         data={data.docs['creative-brief']}
                                         onUpdate={(newData) => handleUpdateDraft('creative-brief', newData)}
-                                        isReadOnly={!data._canEdit}
+                                        isReadOnly={isReadOnlyDynamic}
                                     />
                                 )}
                                 {activeTab === 'ecomm-shot-list' && (
                                     <ECommShotListTemplate
                                         data={data.docs['ecomm-shot-list'] || {}}
                                         onUpdate={(newData) => handleUpdateDraft('ecomm-shot-list', newData)}
-                                        isLocked={!data._canEdit}
+                                        isLocked={isReadOnlyDynamic}
                                         plain={true}
                                         defaultViewMode="mobile"
                                         hideControls={true}
                                     />
                                 )}
-                                {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} onAdd={(m) => handleUpdateList('treatment', 'add', m, 'slides')} onUpdate={(m) => handleUpdateList('treatment', 'update', m, 'slides')} onDelete={(id) => handleUpdateList('treatment', 'delete', id, 'slides')} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} onAdd={(m) => handleUpdateList('lookbook', 'add', m)} onUpdate={(m) => handleUpdateList('lookbook', 'update', m)} onDelete={(id) => handleUpdateList('lookbook', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} onAdd={(m) => handleUpdateList('wardrobe', 'add', m)} onUpdate={(m) => handleUpdateList('wardrobe', 'update', m)} onDelete={(id) => handleUpdateList('wardrobe', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} onAdd={(m) => handleUpdateList('casting', 'add', m)} onUpdate={(m) => handleUpdateList('casting', 'update', m)} onDelete={(id) => handleUpdateList('casting', 'delete', id)} isReadOnly={!data._canEdit} />}
-                                {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} onAdd={(m) => handleUpdateList('props-list', 'add', m)} onUpdate={(m) => handleUpdateList('props-list', 'update', m)} onDelete={(id) => handleUpdateList('props-list', 'delete', id)} isReadOnly={!data._canEdit} />}
+                                {activeTab === 'treatment' && <MobileTreatmentView data={data.docs['treatment']} onAdd={(m) => handleUpdateList('treatment', 'add', m, 'slides')} onUpdate={(m) => handleUpdateList('treatment', 'update', m, 'slides')} onDelete={(id) => handleUpdateList('treatment', 'delete', id, 'slides')} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} onAdd={(m) => handleUpdateList('lookbook', 'add', m)} onUpdate={(m) => handleUpdateList('lookbook', 'update', m)} onDelete={(id) => handleUpdateList('lookbook', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} onAdd={(m) => handleUpdateList('wardrobe', 'add', m)} onUpdate={(m) => handleUpdateList('wardrobe', 'update', m)} onDelete={(id) => handleUpdateList('wardrobe', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} onAdd={(m) => handleUpdateList('casting', 'add', m)} onUpdate={(m) => handleUpdateList('casting', 'update', m)} onDelete={(id) => handleUpdateList('casting', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} onAdd={(m) => handleUpdateList('props-list', 'add', m)} onUpdate={(m) => handleUpdateList('props-list', 'update', m)} onDelete={(id) => handleUpdateList('props-list', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
 
                                 {/* Fallback for other docs */}
                                 {!['av-script', 'shot-scene-book', 'ecomm-shot-list', 'call-sheet', 'dit-log', 'camera-report', 'crew-list', 'schedule', 'on-set-notes', 'locations', 'releases', 'script-notes', 'sound-report', 'budget', 'equipment-list', 'casting', 'wardrobe', 'props-list', 'storyboard', 'project-vision', 'client-selects', 'deliverables', 'creative-brief', 'treatment', 'lookbook', 'archive', 'dashboard'].includes(activeTab) && (
