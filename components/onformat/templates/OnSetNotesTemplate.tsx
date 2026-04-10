@@ -28,7 +28,6 @@ interface OnSetNotesTemplateProps {
 export const OnSetNotesTemplate = ({ data, onUpdate, isLocked = false, plain, orientation, metadata, isPrinting = false }: OnSetNotesTemplateProps) => {
 
     // State for delete confirmation popover
-    // State for delete confirmation popover
     const [deleteConfirmIndex, setDeleteConfirmIndex] = useState<number | null>(null);
 
     const formatDate = (val: string) => {

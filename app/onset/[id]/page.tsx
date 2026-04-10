@@ -526,8 +526,15 @@ export default function OnSetMobilePage() {
             // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
             let roleId = me?.mobileRoleId;
             if (!roleId && me?.role) {
-                // --- TACTICAL HOOKS: Unified Role-to-ID Hydration ---
-                roleId = deriveMobileRoleId(me.role);
+                // --- TACTICAL HOOKS: Consult Matrix Custom Roles first ---
+                const customMatch = mobileControl?.roles?.find((r: any) => r.name.toLowerCase() === me.role.toLowerCase());
+                
+                if (customMatch) {
+                    roleId = customMatch.id;
+                } else {
+                    // --- TACTICAL HOOKS: Unified Role-to-ID Hydration ---
+                    roleId = deriveMobileRoleId(me.role);
+                }
             }
             if (!roleId) roleId = role?.trim().toLowerCase().replace(/\s+/g, '-');
 
@@ -1262,6 +1269,22 @@ export default function OnSetMobilePage() {
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+
+            // --- SQL BRIDGE: Proactive Authorization Sync ---
+            // Ensure newly added or updated personnel have SQL records for RLS/Auth
+            if (action !== 'delete' && payload.email && payload.email.trim() !== '') {
+                try {
+                    await supabase.from('crew_membership').upsert({
+                        project_id: id,
+                        user_email: payload.email.trim().toLowerCase(),
+                        role: payload.role || 'General Crew'
+                    }, { onConflict: 'project_id, user_email' });
+                    console.log(`[OnsetMobile] Auth Bridge: Synced ${payload.email}`);
+                } catch (bridgeError) {
+                    console.error("[OnsetMobile] Auth Bridge failed:", bridgeError);
+                }
+            }
+
             fetchData();
         } catch (e) { console.error(e) }
     };

@@ -2,7 +2,7 @@ export const PRODUCTION_ROLES = [
     'Producer', 'Director', 'Director of Photography', '1st AD', '2nd AD',
     'UPM / Line Producer', 'Production Coordinator', 'Script Supervisor',
     'Gaffer', 'Key Grip', 'Sound Mixer', 'DIT', 'Media Manager',
-    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'HMU (Hair & Makeup)',
+    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'Makeup Artist', 'HMU (Hair & Makeup)',
     'Editor', 'Location Manager', 'PA (Production Assistant)',
     'General Crew', 'Other'
 ];
@@ -11,7 +11,7 @@ export function deriveMobileRoleId(roleName: string): string {
     if (!roleName) return 'crew';
     const r = roleName.toLowerCase().trim();
     
-    if (r === 'dit' || r.includes('media')) return 'dit';
+    if (r.includes('dit') || r.includes('media')) return 'dit';
     if (r.includes('producer') || r.includes('coordinator')) return 'producer';
     if (r === 'director') return 'director';
     if (r.includes('supervisor') || r === 'scripty') return 'scripty';

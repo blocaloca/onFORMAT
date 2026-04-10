@@ -26,14 +26,6 @@ interface OnSetControlPanelTemplateProps {
     metadata?: any;
 }
 
-const PRODUCTION_ROLES = [
-    'Producer', 'Director', 'Director of Photography', '1st AD', '2nd AD',
-    'UPM / Line Producer', 'Production Coordinator', 'Script Supervisor',
-    'Gaffer', 'Key Grip', 'Sound Mixer', 'DIT', 'Media Manager',
-    'Production Designer', 'Art Director', 'Stylist / Wardrobe', 'Makeup Artist',
-    'Editor', 'Location Manager', 'PA (Production Assistant)',
-    'General Crew', 'Other'
-];
 
 // Combine all tools into a single flat list as requested (no phase labels)
 const DOCUMENT_TYPES = [
