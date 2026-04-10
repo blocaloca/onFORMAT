@@ -505,7 +505,6 @@ export default function OnSetMobilePage() {
 
             // --- RELIABILITY FIX: Read fresh simulation status directly from source of truth ---
             const effectiveTestMode = (typeof window !== 'undefined') && localStorage.getItem('onset_test_mode') === 'true';
-            const isMasterOwner = session?.user && (projectData.user_id === session.user.id);
             const isOwner = isMasterOwner && !effectiveTestMode;
             if (me?.role) {
                 setUserRole(me.role);

@@ -8,72 +8,77 @@
      · serverActions
 
    Creating an optimized production build ...
- ✓ Compiled successfully in 3.9s
+ ✓ Compiled successfully in 3.0s
    Skipping validation of types
    Skipping linting
    Collecting page data ...
-   Generating static pages (0/49) ...
-   Generating static pages (12/49) 
-   Generating static pages (24/49) 
-   Generating static pages (36/49) 
- ✓ Generating static pages (49/49)
+   Generating static pages (0/54) ...
+   Generating static pages (13/54) 
+   Generating static pages (26/54) 
+   Generating static pages (40/54) 
+ ✓ Generating static pages (54/54)
    Finalizing page optimization ...
    Collecting build traces ...
 
 Route (app)                                 Size  First Load JS
-┌ ○ /                                    4.22 kB         110 kB
+┌ ○ /                                    3.58 kB         166 kB
 ├ ○ /_not-found                             1 kB         103 kB
-├ ○ /account                             6.41 kB         166 kB
-├ ƒ /admin                               4.72 kB         164 kB
-├ ○ /admin/dashboard                     3.29 kB         159 kB
+├ ○ /account                             7.39 kB         167 kB
+├ ƒ /admin                               13.8 kB         184 kB
+├ ○ /admin/dashboard                     3.32 kB         159 kB
 ├ ○ /admin/dev-center                    5.11 kB         161 kB
-├ ƒ /api/admin/audit                       202 B         102 kB
-├ ƒ /api/admin/changelog                   202 B         102 kB
-├ ƒ /api/admin/feedback                    202 B         102 kB
-├ ƒ /api/admin/save-api-key                202 B         102 kB
-├ ƒ /api/admin/test-ai                     202 B         102 kB
-├ ƒ /api/announcements                     202 B         102 kB
-├ ƒ /api/auth/logout                       202 B         102 kB
-├ ƒ /api/chat                              202 B         102 kB
-├ ƒ /api/checkout                          202 B         102 kB
-├ ƒ /api/create-portal-link                202 B         102 kB
-├ ƒ /api/custom-templates/[id]             202 B         102 kB
-├ ƒ /api/director                          202 B         102 kB
-├ ƒ /api/director/create-projects          202 B         102 kB
-├ ƒ /api/documents                         202 B         102 kB
-├ ƒ /api/onformat-v0                       202 B         102 kB
-├ ƒ /api/onset/my-projects                 202 B         102 kB
-├ ƒ /api/portal                            202 B         102 kB
-├ ƒ /api/projects                          202 B         102 kB
-├ ƒ /api/projects/archive                  202 B         102 kB
-├ ƒ /api/stripe/checkout                   202 B         102 kB
-├ ƒ /api/stripe/portal                     202 B         102 kB
-├ ƒ /api/test-openai                       202 B         102 kB
-├ ƒ /api/webhook/stripe                    202 B         102 kB
-├ ƒ /api/webhooks/stripe                   202 B         102 kB
-├ ƒ /auth/callback                         202 B         102 kB
+├ ƒ /api/admin/audit                       204 B         102 kB
+├ ƒ /api/admin/changelog                   204 B         102 kB
+├ ƒ /api/admin/feedback                    204 B         102 kB
+├ ƒ /api/admin/save-api-key                204 B         102 kB
+├ ƒ /api/admin/test-ai                     204 B         102 kB
+├ ƒ /api/announcements                     204 B         102 kB
+├ ƒ /api/auth/logout                       204 B         102 kB
+├ ƒ /api/auth/register-success             204 B         102 kB
+├ ƒ /api/chat                              204 B         102 kB
+├ ƒ /api/checkout                          204 B         102 kB
+├ ƒ /api/create-portal-link                204 B         102 kB
+├ ƒ /api/custom-templates/[id]             204 B         102 kB
+├ ƒ /api/director                          204 B         102 kB
+├ ƒ /api/director/create-projects          204 B         102 kB
+├ ƒ /api/documents                         204 B         102 kB
+├ ƒ /api/onformat-v0                       204 B         102 kB
+├ ƒ /api/onset/my-projects                 204 B         102 kB
+├ ƒ /api/portal                            204 B         102 kB
+├ ƒ /api/projects                          204 B         102 kB
+├ ƒ /api/projects/archive                  204 B         102 kB
+├ ƒ /api/stripe/checkout                   204 B         102 kB
+├ ƒ /api/stripe/portal                     204 B         102 kB
+├ ƒ /api/test-openai                       204 B         102 kB
+├ ƒ /api/webhook/stripe                    204 B         102 kB
+├ ƒ /api/webhooks/stripe                   204 B         102 kB
+├ ƒ /auth/callback                         204 B         102 kB
 ├ ○ /dashboard                           5.14 kB         182 kB
 ├ ○ /dashboard/archived                  5.14 kB         182 kB
 ├ ○ /dashboard/v2-grid-test              2.13 kB         166 kB
-├ ƒ /debug-projects                        202 B         102 kB
+├ ƒ /debug-projects                        204 B         102 kB
 ├ ○ /director                            2.01 kB         158 kB
 ├ ƒ /document/[id]                        535 kB         691 kB
-├ ○ /features                            5.77 kB         111 kB
+├ ○ /features                            5.34 kB         168 kB
+├ ○ /help                                5.25 kB         111 kB
 ├ ƒ /join/[id]                           3.44 kB         159 kB
-├ ○ /login                               3.05 kB         168 kB
+├ ○ /lab/glitch                          7.08 kB         163 kB
+├ ○ /lab/matrix                          4.54 kB         106 kB
+├ ○ /login                                3.7 kB         163 kB
 ├ ƒ /mobile/[id]                         8.42 kB         174 kB
 ├ ○ /onformat-v0                         2.69 kB         105 kB
 ├ ○ /onset                               4.07 kB         163 kB
-├ ƒ /onset/[id]                          34.3 kB         206 kB
-├ ○ /pricing                             3.35 kB         163 kB
-├ ƒ /project/[id]                         226 kB         400 kB
-├ ○ /signup                              1.74 kB         161 kB
-├ ○ /support                             4.36 kB         164 kB
+├ ƒ /onset/[id]                          34.8 kB         460 kB
+├ ○ /pricing                             2.76 kB         166 kB
+├ ƒ /project/[id]                         227 kB         672 kB
+├ ○ /sandbox/ecommerce                   5.61 kB         362 kB
+├ ○ /signup                              2.05 kB         161 kB
+├ ○ /support                             4.38 kB         164 kB
 ├ ○ /terms                                 166 B         105 kB
 ├ ○ /test-card                            5.1 kB         107 kB
 ├ ○ /test-db                             1.17 kB         157 kB
 ├ ○ /test-templates                      1.86 kB         104 kB
-├ ○ /test/light-mode                     5.66 kB         171 kB
+├ ○ /test/light-mode                     5.35 kB         171 kB
 ├ ○ /test/onset-ui                       3.62 kB         106 kB
 └ ○ /test/shotlist                       3.32 kB         109 kB
 + First Load JS shared by all             102 kB
