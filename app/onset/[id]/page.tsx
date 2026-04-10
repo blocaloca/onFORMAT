@@ -364,7 +364,7 @@ export default function OnSetMobilePage() {
         };
     }, [id, userEmail, userRole]);
 
-    const fetchData = async () => {
+    const fetchData = async (overrideEmail?: string) => {
         try {
             // 0. Identity Check
             const storedEmail = (typeof window !== 'undefined') ? localStorage.getItem('onset_user_email') : undefined;
@@ -490,22 +490,39 @@ export default function OnSetMobilePage() {
 
             const mobileControl = allDrafts['onset-mobile-control'];
             const matrix = mobileControl?.matrix || {};
-            const isLive = mobileControl?.isLive;
+            // Default isLive to true for demo projects to ensure testing uptime
+            const isLive = mobileControl?.isLive ?? (projectData.name?.toLowerCase().includes('demo') || id.toLowerCase().includes('demo'));
 
             // PERMISSIONS: Confirm if the user is the project's true administrative owner
             const { data: { session } } = await supabase.auth.getSession();
             const isMasterOwner = session?.user && (projectData.user_id === session.user.id);
+            const effectiveTestMode = (typeof window !== 'undefined') && localStorage.getItem('onset_test_mode') === 'true';
+            const isOwner = isMasterOwner && !effectiveTestMode;
             
             // Find current user's role in the specific Crew List draft for IDENTITY
-            const crewListDoc = allDrafts['crew-list'];
+            // SEARCH ALL PHASES: If the latest crew list is empty, search backwards for a legacy one
+            let crewListDoc = allDrafts['crew-list'];
+            if (!crewListDoc || !crewListDoc.crew || crewListDoc.crew.length === 0) {
+                const searchOrder = ['PRODUCTION', 'PRE_PRODUCTION', 'DEVELOPMENT', 'ON_SET', 'POST'];
+                for (const pk of searchOrder) {
+                    const raw = projectData.data?.phases?.[pk]?.drafts?.['crew-list'];
+                    if (raw) {
+                        try {
+                            const parsed = JSON.parse(raw);
+                            const doc = Array.isArray(parsed) ? parsed[0] : parsed;
+                            if (doc.crew && doc.crew.length > 0) {
+                                crewListDoc = doc;
+                                break;
+                            }
+                        } catch {}
+                    }
+                }
+            }
+
             const crewArray = (crewListDoc?.crew || (Array.isArray(crewListDoc) ? crewListDoc : []));
             const me = crewArray.find((c: any) =>
                 c.email && emailToUse && c.email.trim().toLowerCase() === emailToUse.trim().toLowerCase()
             );
-
-            // --- RELIABILITY FIX: Read fresh simulation status directly from source of truth ---
-            const effectiveTestMode = (typeof window !== 'undefined') && localStorage.getItem('onset_test_mode') === 'true';
-            const isOwner = isMasterOwner && !effectiveTestMode;
             if (me?.role) {
                 setUserRole(me.role);
 
@@ -583,8 +600,11 @@ export default function OnSetMobilePage() {
                 setActiveTab('');
             }
 
+            console.log(`[OnsetMobile] Auth Resolved: email=${emailToUse}, role=${me?.role || role}, roleId=${roleId}, permissionsCount=${availableKeys.length}`);
+            
             const finalData = { 
                 ...computedData, 
+                version: Date.now(),
                 availableKeys, 
                 _canEdit: !!canEdit, 
                 _isMasterOwner: !!isMasterOwner, 
