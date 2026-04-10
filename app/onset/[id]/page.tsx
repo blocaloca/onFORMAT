@@ -367,8 +367,8 @@ export default function OnSetMobilePage() {
     const fetchData = async () => {
         try {
             // 0. Identity Check
-            const storedEmail = localStorage.getItem('onset_user_email');
-            let emailToUse = storedEmail;
+            const storedEmail = (typeof window !== 'undefined') ? localStorage.getItem('onset_user_email') : undefined;
+            let emailToUse = overrideEmail || storedEmail;
 
             // Try to get from Auth if not in local storage - REMOVED FOR IDENTITY RECOVERY
             // if (!emailToUse) {
@@ -498,14 +498,15 @@ export default function OnSetMobilePage() {
             
             // Find current user's role in the specific Crew List draft for IDENTITY
             const crewListDoc = allDrafts['crew-list'];
-            const me = crewListDoc?.crew?.find((c: any) =>
-                c.email && c.email.trim().toLowerCase() === emailToUse?.trim().toLowerCase()
+            const crewArray = (crewListDoc?.crew || (Array.isArray(crewListDoc) ? crewListDoc : []));
+            const me = crewArray.find((c: any) =>
+                c.email && emailToUse && c.email.trim().toLowerCase() === emailToUse.trim().toLowerCase()
             );
 
             // --- RELIABILITY FIX: Read fresh simulation status directly from source of truth ---
             const effectiveTestMode = (typeof window !== 'undefined') && localStorage.getItem('onset_test_mode') === 'true';
-
-            // SYNC UI: Prioritize the explicit Crew List role name for the display label
+            const isMasterOwner = session?.user && (projectData.user_id === session.user.id);
+            const isOwner = isMasterOwner && !effectiveTestMode;
             if (me?.role) {
                 setUserRole(me.role);
 
@@ -525,18 +526,28 @@ export default function OnSetMobilePage() {
             
             // roleId determines the MATRIX mapping (identifies who you are in the silo switchboard)
             let roleId = me?.mobileRoleId;
-            if (!roleId && me?.role) {
-                // --- TACTICAL HOOKS: Consult Matrix Custom Roles first ---
-                const customMatch = mobileControl?.roles?.find((r: any) => r.name.toLowerCase() === me.role.toLowerCase());
-                
-                if (customMatch) {
-                    roleId = customMatch.id;
+            
+            // Prioritize Owner Identity
+            if (isOwner) {
+                roleId = 'owner';
+            } else if ((!roleId || roleId === 'crew') && (me?.role || role)) {
+                const currentRoleTitle = me?.role || role;
+                // Force DIT role mapping
+                if (currentRoleTitle.toLowerCase().includes('dit')) {
+                    roleId = 'dit';
                 } else {
-                    // --- TACTICAL HOOKS: Unified Role-to-ID Hydration ---
-                    roleId = deriveMobileRoleId(me.role);
+                    // --- TACTICAL HOOKS: Consult Matrix Custom Roles first ---
+                    const customMatch = mobileControl?.roles?.find((r: any) => r.name.toLowerCase() === currentRoleTitle.toLowerCase());
+                    
+                    if (customMatch) {
+                        roleId = customMatch.id;
+                    } else {
+                        // --- TACTICAL HOOKS: Unified Role-to-ID Hydration ---
+                        roleId = deriveMobileRoleId(currentRoleTitle);
+                    }
                 }
             }
-            if (!roleId) roleId = role?.trim().toLowerCase().replace(/\s+/g, '-');
+            if (!roleId) roleId = (me?.role || role)?.trim().toLowerCase().replace(/\s+/g, '-');
 
             const roleMatrix = matrix[roleId!] || {};
             
@@ -595,7 +606,7 @@ export default function OnSetMobilePage() {
             setLastSyncTime(nowTime);
             localStorage.setItem(`onset_cache_time_${id}`, nowTime);
             setIsOffline(false);
-            setUserRole(role || '');
+            setUserRole(me?.role || role || '');
             setLoading(false);
         } catch (err) {
             console.error("Fetch Data Error (Potentially Offline):", err);
