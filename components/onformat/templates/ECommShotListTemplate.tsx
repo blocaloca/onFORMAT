@@ -311,16 +311,16 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                         <div className="overflow-x-auto pb-12 w-full">
                             <div className="min-w-max border border-zinc-200 rounded-xl bg-transparent overflow-hidden w-full">
                                 {/* Table Header Row */}
-                                <div className="flex items-center gap-3 px-4 py-3 bg-transparent border-b border-zinc-200 text-xs font-semibold text-zinc-400 tracking-wider uppercase">
+                                <div className="flex items-center gap-3 px-4 py-3 bg-transparent border-b border-zinc-200 text-sm font-semibold text-zinc-400 tracking-wider uppercase">
                                     <div className="w-6 shrink-0"></div>
                                     {columns.map((col) => (
-                                        <div key={col} className="w-32 shrink-0">{col}</div>
+                                        <div key={col} className={`${col.toLowerCase().includes('number') || col.toLowerCase().includes('shot') ? 'w-40' : 'w-44'} shrink-0`}>{col}</div>
                                     ))}
-                                    <div className="w-32 shrink-0">Location</div>
-                                    <div className="w-32 shrink-0">Deliverables</div>
+                                    <div className="w-40 shrink-0">Location</div>
+                                    <div className="w-40 shrink-0">Deliverables</div>
                                     <div className="w-24 shrink-0">Status</div>
-                                    <div className="w-40 shrink-0">Selects</div>
-                                    <div className="w-48 shrink-0">Retouching Notes</div>
+                                    <div className="w-48 shrink-0">Selects</div>
+                                    <div className="w-56 shrink-0">Retouching Notes</div>
                                     <div className="w-16 shrink-0 flex justify-center">Thumb</div>
                                     {!isPrinting && <div className="w-24 shrink-0 text-right">Action</div>}
                                 </div>
@@ -347,13 +347,13 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
 
                                                 {/* Editable dynamic columns */}
                                                 {columns.map((col) => (
-                                                    <div key={col} className="w-32 shrink-0">
+                                                    <div key={col} className={`${col.toLowerCase().includes('number') || col.toLowerCase().includes('shot') ? 'w-40' : 'w-44'} shrink-0`}>
                                                         {isPrinting ? (
-                                                            <div className="px-1.5 py-1 text-xs text-slate-800 font-medium whitespace-normal">{row[col]}</div>
+                                                            <div className="px-1.5 py-1 text-sm text-slate-800 font-medium whitespace-normal">{row[col]}</div>
                                                         ) : (
                                                             <input
                                                                 type="text"
-                                                                className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs text-zinc-900 font-medium focus:outline-none focus:bg-transparent focus:border-zinc-400 hover:border-zinc-200 transition-colors"
+                                                                className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-sm text-zinc-900 font-medium focus:outline-none focus:bg-transparent focus:border-zinc-400 hover:border-zinc-200 transition-colors"
                                                                 value={row[col]}
                                                                 onChange={(e) => updateRowState(row._id, { [col]: e.target.value })}
                                                                 placeholder={col}
@@ -364,14 +364,14 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 ))}
 
                                                 {/* Location Input (Editable) */}
-                                                <div className="w-32 shrink-0">
+                                                <div className="w-40 shrink-0">
                                                     {isPrinting ? (
-                                                        <div className="px-1.5 py-1 text-xs text-slate-800 font-medium whitespace-normal">{row._location}</div>
+                                                        <div className="px-1.5 py-1 text-sm text-slate-800 font-medium whitespace-normal">{row._location}</div>
                                                     ) : (
                                                         <input
                                                             type="text"
                                                             placeholder="Ex: Set A"
-                                                            className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-xs text-zinc-900 focus:outline-none focus:bg-transparent focus:border-zinc-400 hover:border-zinc-200 transition-colors"
+                                                            className="w-full bg-transparent border border-transparent rounded px-1.5 py-1 text-sm text-zinc-900 focus:outline-none focus:bg-transparent focus:border-zinc-400 hover:border-zinc-200 transition-colors"
                                                             value={row._location}
                                                             onChange={(e) => updateRowState(row._id, { _location: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -380,12 +380,12 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 </div>
 
                                                 {/* Deliverables Pulldown */}
-                                                <div className="w-32 shrink-0">
+                                                <div className="w-40 shrink-0">
                                                     {isPrinting ? (
-                                                        <div className="px-1.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">{row._deliverables}</div>
+                                                        <div className="px-1.5 py-1 text-sm font-semibold text-slate-700 dark:text-slate-300">{row._deliverables}</div>
                                                     ) : (
                                                         <select
-                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 dark:text-slate-300 text-slate-700 text-xs rounded px-1.5 py-1 focus:outline-none focus:border-orange-500 transition-all font-medium appearance-none"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 dark:text-slate-300 text-slate-700 text-sm rounded px-1.5 py-1 focus:outline-none focus:border-orange-500 transition-all font-medium appearance-none"
                                                             value={row._deliverables}
                                                             onChange={(e) => updateRowState(row._id, { _deliverables: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -403,7 +403,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                         <div className="text-[10px] font-bold uppercase">{row._status}</div>
                                                     ) : (
                                                         <select
-                                                            className={`w-full text-[10px] font-bold rounded py-1 px-1.5 appearance-none text-center outline-none uppercase tracking-wider
+                                                            className={`w-full text-xs font-bold rounded py-1 px-1.5 appearance-none text-center outline-none uppercase tracking-wider
                                                             ${row._status === 'Prep' ? 'bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400' : ''}
                                                             ${row._status === 'On Rack' ? 'bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400' : ''}
                                                             ${row._status === 'On Set' ? 'bg-rose-500/10 border border-rose-500/20 text-rose-500 dark:text-rose-400' : ''}
@@ -422,14 +422,14 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 </div>
 
                                                 {/* Selects Input */}
-                                                <div className="w-40 shrink-0">
+                                                <div className="w-48 shrink-0">
                                                     {isPrinting ? (
-                                                        <div className="whitespace-normal text-xs">{row._selects}</div>
+                                                        <div className="whitespace-normal text-sm">{row._selects}</div>
                                                     ) : (
                                                         <input
                                                             type="text"
                                                             placeholder="e.g. 0102, 0104"
-                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-sm text-zinc-900 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                                             value={row._selects}
                                                             onChange={(e) => updateRowState(row._id, { _selects: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -438,14 +438,14 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                                 </div>
 
                                                 {/* Retouching Notes */}
-                                                <div className="w-48 shrink-0">
+                                                <div className="w-56 shrink-0">
                                                     {isPrinting ? (
-                                                        <div className="whitespace-normal text-xs">{row._notes}</div>
+                                                        <div className="whitespace-normal text-sm">{row._notes}</div>
                                                     ) : (
                                                         <input
                                                             type="text"
                                                             placeholder="Format edits..."
-                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-xs text-zinc-900 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
+                                                            className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 rounded px-2 py-1 text-sm text-zinc-900 focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                                             value={row._notes}
                                                             onChange={(e) => updateRowState(row._id, { _notes: e.target.value })}
                                                             disabled={isWrapped || isLocked}
@@ -520,7 +520,7 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
                                 <div className="mt-4 flex">
                                     <button
                                         onClick={addRow}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-transparent hover:bg-zinc-50 border border-zinc-200 dark:text-slate-300 text-slate-700 rounded-md text-xs font-semibold transition-all shadow-sm"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-transparent hover:bg-zinc-50 border border-zinc-200 dark:text-slate-300 text-slate-700 rounded-md text-sm font-semibold transition-all shadow-sm"
                                     >
                                         <Plus size={14} /> Add Row
                                     </button>
