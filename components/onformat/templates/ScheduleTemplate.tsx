@@ -158,7 +158,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     let currentPage: ScheduleItem[] = [];
     let currentPageHeight = 0;
 
-    const HEADER_OVERHEAD = 120; // Page 1 header (~120px)
+    const HEADER_OVERHEAD = 240; // Increased overhead for Page 1 header (~240px)
 
     items.forEach((item) => {
         // Calculate row height score
