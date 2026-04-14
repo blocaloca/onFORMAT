@@ -158,6 +158,8 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     let currentPage: ScheduleItem[] = [];
     let currentPageHeight = 0;
 
+    const HEADER_OVERHEAD = 120; // Page 1 header (~120px)
+
     items.forEach((item) => {
         // Calculate row height score
         let rowScore = 0;
@@ -172,7 +174,9 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
             rowScore = 32 + (lines * 16); 
         }
         
-        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+        const currentLimit = pages.length === 0 ? (MAX_PAGE_HEIGHT_SCORE - HEADER_OVERHEAD) : MAX_PAGE_HEIGHT_SCORE;
+
+        if (currentPageHeight + rowScore > currentLimit && currentPage.length > 0) {
             pages.push(currentPage);
             currentPage = [];
             currentPageHeight = 0;
@@ -195,7 +199,10 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     hideHeader={false}
                     plain={plain}
                     orientation={orientation}
-                    metadata={metadata}
+                    metadata={{
+                        ...metadata,
+                        date: undefined // Remove duplicate date string from layout header to avoid redundancy with the template's Shoot Date field
+                    }}
                     subtitle={pageIndex > 0 ? `Schedule (Cont.)` : ''}
                     isPrinting={isPrinting}
                 >

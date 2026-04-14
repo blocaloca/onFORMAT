@@ -65,6 +65,7 @@ export const DocumentLayout = ({
                     <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-2">
                         <div className="flex flex-col">
                             <h1 className="text-2xl font-sans font-bold uppercase tracking-tight text-zinc-900 dark:text-zinc-900">{title}</h1>
+                            {subtitle && <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest leading-none mt-1">{subtitle}</span>}
                             {metadata?.date && (
                                 <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest mt-1">
                                     {metadata.date}
@@ -139,7 +140,10 @@ export const DocumentLayout = ({
                         {!hideHeader && (
                             <div>
                                 <div className="flex justify-between items-end border-b border-zinc-200 pb-4 mb-6">
-                                    <h1 className="text-3xl font-black uppercase tracking-normal leading-tight text-black">{title}</h1>
+                                    <div className="flex flex-col">
+                                        <h1 className="text-3xl font-black uppercase tracking-normal leading-tight text-black">{title}</h1>
+                                        {subtitle && <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest mt-1">{subtitle}</span>}
+                                    </div>
                                     {metadata && metadata.date && (
                                         <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest pb-1">
                                             {metadata.date}
