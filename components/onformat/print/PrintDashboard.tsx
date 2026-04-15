@@ -18,6 +18,7 @@ interface PrintDashboardProps {
     projectName?: string;
     clientName?: string;
     producer?: string;
+    projectId?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -71,7 +72,7 @@ const DOCUMENTS_REGISTRY = TOOL_TYPES;
 
 // Inner Component (Accesses Context)
 // ---------------------------------------------------------------------------
-const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onClose: () => void, projectName: string, clientName?: string, producer?: string }) => {
+const PrintRoomContent = ({ onClose, projectName, clientName, producer, projectId }: { onClose: () => void, projectName: string, clientName?: string, producer?: string, projectId?: string }) => {
     const { activeProject, getToolData, getToolStack } = useProject();
 
     // Selection State
@@ -103,7 +104,8 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
             setMasterOrientation(saved);
         }
 
-        const savedLogo = localStorage.getItem('printroom_studiologo');
+        const logoKey = projectId ? `printroom_studiologo_${projectId}` : 'printroom_studiologo';
+        const savedLogo = localStorage.getItem(logoKey);
         if (savedLogo) {
             setCoverSettings(s => ({ ...s, studioLogo: savedLogo }));
         }
@@ -128,12 +130,13 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
     }, [masterOrientation]);
 
     useEffect(() => {
+        const logoKey = projectId ? `printroom_studiologo_${projectId}` : 'printroom_studiologo';
         if (coverSettings.studioLogo) {
-            localStorage.setItem('printroom_studiologo', coverSettings.studioLogo);
+            localStorage.setItem(logoKey, coverSettings.studioLogo);
         } else {
-            localStorage.removeItem('printroom_studiologo');
+            localStorage.removeItem(logoKey);
         }
-    }, [coverSettings.studioLogo]);
+    }, [coverSettings.studioLogo, projectId]);
 
     const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -544,10 +547,10 @@ const PrintRoomContent = ({ onClose, projectName, clientName, producer }: { onCl
 // ---------------------------------------------------------------------------
 // Wrapper
 // ---------------------------------------------------------------------------
-export const PrintDashboard = ({ phases, projectName, clientName, producer, onClose }: PrintDashboardProps) => {
+export const PrintDashboard = ({ phases, projectName, clientName, producer, onClose, projectId }: PrintDashboardProps) => {
     return (
         <ProjectProvider phases={phases} projectMetadata={{ name: projectName, producer: producer }}>
-            <PrintRoomContent onClose={onClose} projectName={projectName || 'Untitled'} clientName={clientName} producer={producer} />
+            <PrintRoomContent onClose={onClose} projectName={projectName || 'Untitled'} clientName={clientName} producer={producer} projectId={projectId} />
         </ProjectProvider>
     );
 };

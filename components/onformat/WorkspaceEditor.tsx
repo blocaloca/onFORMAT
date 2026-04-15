@@ -1057,6 +1057,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                             projectName={state.projectName}
                             clientName={state.clientName}
                             producer={state.producer}
+                            projectId={projectId}
                         />
                     ) : state.activeTool === 'project-overview' ? (
                         <ProjectOverview
