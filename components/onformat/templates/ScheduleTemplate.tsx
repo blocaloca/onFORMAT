@@ -152,26 +152,26 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     };
 
     // Dynamic Pagination
-    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 700; // Reduced for portrait to avoid clipping
 
     const pages: ScheduleItem[][] = [];
     let currentPage: ScheduleItem[] = [];
     let currentPageHeight = 0;
 
-    const HEADER_OVERHEAD = 240; // Increased overhead for Page 1 header (~240px)
+    const HEADER_OVERHEAD = 300; // High overhead for Page 1 header (~300px)
 
     items.forEach((item) => {
         // Calculate row height score
         let rowScore = 0;
         if (item.intExt === 'BREAK') {
-            rowScore = 60; // Break rows are taller
+            rowScore = 80; // Break rows are taller
         } else {
             const descLength = item.description?.length || 0;
             const setLength = item.set?.length || 0;
-            const maxTextInRow = Math.max(descLength, setLength * 1.5); // Approx relative weights
+            const maxTextInRow = Math.max(descLength, setLength * 1.2); 
             
-            const lines = Math.max(1, Math.ceil(maxTextInRow / 50)); 
-            rowScore = 32 + (lines * 16); 
+            const lines = Math.max(1, Math.ceil(maxTextInRow / 45)); 
+            rowScore = 40 + (lines * 20); // Increased base and line height score
         }
         
         const currentLimit = pages.length === 0 ? (MAX_PAGE_HEIGHT_SCORE - HEADER_OVERHEAD) : MAX_PAGE_HEIGHT_SCORE;
@@ -201,7 +201,7 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                     orientation={orientation}
                     metadata={{
                         ...metadata,
-                        date: undefined // Remove duplicate date string from layout header to avoid redundancy with the template's Shoot Date field
+                        date: undefined // Consistently hide redundancy
                     }}
                     subtitle={pageIndex > 0 ? `Schedule (Cont.)` : ''}
                     isPrinting={isPrinting}
@@ -213,53 +213,56 @@ export const ScheduleTemplate = ({ data, onUpdate, isLocked = false, plain, orie
                             <div className="grid grid-cols-2 gap-8 border-b-2 border-black pb-6">
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">Shoot Date</label>
-                                    <input
-                                        type="text"
-                                        value={data.date || ''}
-                                        onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
-                                        className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-mono font-bold text-sm outline-none py-1 print:hidden text-zinc-900`}
-                                        placeholder="MM/DD/YYYY"
-                                        disabled={isLocked}
-                                    />
-                                    <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full font-mono font-bold text-sm border-b border-zinc-200 py-1`}>
-                                        {data.date || "—"}
-                                    </div>
+                                    {isPrinting ? (
+                                        <div className="w-full font-mono font-bold text-sm text-black py-1">
+                                            {data.date || "—"}
+                                        </div>
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            value={data.date || ''}
+                                            onChange={(e) => onUpdate({ date: formatDate(e.target.value) })}
+                                            className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-mono font-bold text-sm outline-none py-1 text-zinc-900`}
+                                            placeholder="MM/DD/YYYY"
+                                            disabled={isLocked}
+                                        />
+                                    )}
                                 </div>
                                 <div>
                                     <label className="block text-[10px] font-bold uppercase text-zinc-400 mb-1">General Call Time</label>
-                                    {/* Call Time Edit Mode */}
-                                    <div className={`flex items-center gap-2 ${isPrinting ? 'hidden' : 'print:hidden'}`}>
-                                        <input
-                                            type="text"
-                                            value={(data.callTime || "").split(" ")[0]}
-                                            onChange={(e) => {
-                                                const time = formatTimeInput(e.target.value);
-                                                const ampm = (data.callTime || "").split(" ")[1] || "AM";
-                                                onUpdate({ callTime: `${time} ${ampm}`.trim() });
-                                            }}
-                                            className="flex-1 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-mono font-bold text-sm outline-none py-1 text-zinc-900"
-                                            placeholder="00:00"
-                                            disabled={isLocked}
-                                        />
-                                        <button
-                                            onClick={() => {
-                                                if (isLocked) return;
-                                                const parts = (data.callTime || "").split(" ");
-                                                const time = parts[0] || "";
-                                                const currentAmpm = parts[1] || "AM";
-                                                const newAmpm = currentAmpm === "AM" ? "PM" : "AM";
-                                                onUpdate({ callTime: `${time} ${newAmpm}`.trim() });
-                                            }}
-                                            className="text-[10px] font-bold uppercase bg-transparent border border-zinc-200 hover:border-zinc-300 px-2 py-1 rounded cursor-pointer transition-all"
-                                            disabled={isLocked}
-                                        >
-                                            {(data.callTime || "").split(" ")[1] || "AM"}
-                                        </button>
-                                    </div>
-                                    {/* Call Time Print Mode */}
-                                    <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full font-mono font-bold text-sm border-b border-zinc-200 py-1`}>
-                                        {data.callTime || "—"}
-                                    </div>
+                                    {isPrinting ? (
+                                        <div className="w-full font-mono font-bold text-sm text-black py-1">
+                                            {data.callTime || "—"}
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="text"
+                                                value={(data.callTime || '').split(' ')[0]}
+                                                onChange={(e) => {
+                                                    const time = formatTimeInput(e.target.value);
+                                                    const ampm = (data.callTime || '').split(' ')[1] || 'AM';
+                                                    onUpdate({ callTime: `${time} ${ampm}`.trim() });
+                                                }}
+                                                className={`w-16 bg-transparent border-b border-transparent hover:border-zinc-200 px-2 font-mono font-bold text-sm outline-none py-1 text-zinc-900`}
+                                                placeholder="00:00"
+                                                disabled={isLocked}
+                                            />
+                                            <select
+                                                value={(data.callTime || '').split(' ')[1] || 'AM'}
+                                                onChange={(e) => {
+                                                    const time = (data.callTime || '').split(' ')[0] || '';
+                                                    const newAmpm = e.target.value;
+                                                    onUpdate({ callTime: `${time} ${newAmpm}`.trim() });
+                                                }}
+                                                className="bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer text-zinc-500"
+                                                disabled={isLocked}
+                                            >
+                                                <option>AM</option>
+                                                <option>PM</option>
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
