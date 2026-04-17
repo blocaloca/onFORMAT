@@ -293,7 +293,7 @@ const getIconForTool = (key: string) => {
 const MobileDebugOverlay = ({ email, role, silo, count }: { email: string | null, role: string | null, silo: string, count: number }) => (
     <div className="fixed top-0 left-0 right-0 bg-black border-b-2 border-pink-500 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md shadow-2xl animate-pulse" style={{ borderBottomColor: '#ec4899' }}>
         <div className="flex flex-col">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1 text-pink-500/50">SECURE SIGNAL [v1.0.6]</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1 text-pink-500/50">SECURE SIGNAL [v1.0.7]</span>
             <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Waiting...'}</span>
         </div>
         <div className="flex flex-col items-center">
@@ -522,32 +522,38 @@ export default function MobilePage() {
 
     const fetchProject = async () => {
         setLoading(true);
+        console.log(`[Mobile] Initiating fetch for project: ${id}`);
 
-        // 1. Authenticate
-        const { data: { user } } = await supabase.auth.getUser();
+        // 1. Authenticate FIRST
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        
+        if (authError || !user) {
+            console.error("[Mobile] Auth Error or No User:", authError);
+            // We don't return here yet, we might be in 'local' mode or shared view
+        }
+
         if (user) {
-            setUserEmail(user.email || '');
-            // Fetch Role
-            // Fetch Role & ID (Case-Insensitive ILIKE fix)
+            const normalizedEmail = user.email?.toLowerCase()?.trim();
+            setUserEmail(normalizedEmail || '');
+            console.log(`[Mobile] Authenticated as: ${normalizedEmail}`);
+
+            // 2. Fetch Role (Strict match)
             const { data: crew, error: roleError } = await supabase
                 .from('crew_membership')
                 .select('id, role')
                 .eq('project_id', id)
-                .ilike('user_email', user.email)
+                .ilike('user_email', user.email!)
                 .maybeSingle();
 
-            if (roleError) console.error("[Security] Role Lookup Error:", roleError);
-
+            if (roleError) console.error("[Mobile] Role Lookup Error:", roleError);
             if (crew) {
-                console.log(`[Security] Identity Verified: ${user.email} as ${crew.role}`);
+                console.log(`[Mobile] Role Verified: ${crew.role}`);
                 setUserRole(crew.role);
                 setMembershipId(crew.id);
-            } else {
-                console.warn(`[Security] No role found for ${user.email} in project ${id}`);
             }
         }
 
-        // HANDLE LOCAL WORKSPACE (Simulation)
+        // 3. Handle Local Mode
         if (id === 'local') {
             const localState = localStorage.getItem('onformat_v0_state');
             if (localState) {
@@ -557,25 +563,31 @@ export default function MobilePage() {
                         name: parsedState.projectName || 'Local Workspace',
                         data: { ...parsedState, phases: parsedState.phases || {} }
                     });
-
-                    // Local simulation now relies on the same matrix computation as live projects
                     setLoading(false);
                     return;
-                } catch (e) {
-                    console.error("Local State Parse Error", e);
-                }
+                } catch (e) { console.error("Local State Error", e); }
             }
         }
 
-        const { data, error } = await supabase
+        // 4. Fetch Project (Supabase)
+        // This is where RLS will hit us if we aren't careful
+        const { data, error: projectError } = await supabase
             .from('projects')
             .select('*')
             .eq('id', id)
             .maybeSingle();
 
-        if (data && data.data) {
-            setProject(data);
+        if (projectError) {
+            console.error("[Mobile] Project Fetch Error (RLS?):", projectError);
         }
+
+        if (data) {
+            console.log("[Mobile] Project Data Received Successfully");
+            setProject(data);
+        } else {
+            console.warn("[Mobile] No Project found. ID:", id);
+        }
+        
         setLoading(false);
     }
 
