@@ -1,4 +1,5 @@
 'use client';
+// DEPLOYMENT_VERSION: 1.0.5 [SECURITY_HARDENED]
 import { useRouter } from 'next/navigation';
 import { getClient } from '@/lib/supabase';
 import { useParams } from 'next/navigation';
@@ -289,10 +290,10 @@ const getIconForTool = (key: string) => {
 
 // --- Main Page ---
 
-const DebugOverlay = ({ email, role, silo, count }: any) => (
+const MobileDebugOverlay = ({ email, role, silo, count }: any) => (
     <div className="fixed top-0 left-0 right-0 bg-black border-b-2 border-pink-500 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md shadow-2xl" style={{ borderBottomColor: '#ec4899' }}>
         <div className="flex flex-col">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Identity [v1.0.4]</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Identity [v1.0.5]</span>
             <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Waiting...'}</span>
         </div>
         <div className="flex flex-col items-center">
@@ -527,11 +528,22 @@ export default function MobilePage() {
         if (user) {
             setUserEmail(user.email || '');
             // Fetch Role
-            // Fetch Role & ID
-            const { data: crew } = await supabase.from('crew_membership').select('id, role').eq('project_id', id).eq('user_email', user.email).maybeSingle();
+            // Fetch Role & ID (Case-Insensitive ILIKE fix)
+            const { data: crew, error: roleError } = await supabase
+                .from('crew_membership')
+                .select('id, role')
+                .eq('project_id', id)
+                .ilike('user_email', user.email)
+                .maybeSingle();
+
+            if (roleError) console.error("[Security] Role Lookup Error:", roleError);
+
             if (crew) {
+                console.log(`[Security] Identity Verified: ${user.email} as ${crew.role}`);
                 setUserRole(crew.role);
                 setMembershipId(crew.id);
+            } else {
+                console.warn(`[Security] No role found for ${user.email} in project ${id}`);
             }
         }
 
@@ -721,7 +733,7 @@ export default function MobilePage() {
                 onSelect={handleSelectTool}
             />
             {/* Debug Overlay (Temporary for Beta Hardening) */}
-            <DebugOverlay 
+            <MobileDebugOverlay 
                 email={userEmail} 
                 role={userRole} 
                 silo={deriveMobileRoleId(userRole || 'Crew')} 
