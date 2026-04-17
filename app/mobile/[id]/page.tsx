@@ -579,6 +579,7 @@ export default function MobilePage() {
             setProject(data);
         }
         setLoading(false);
+    }
 
     const handleSelectTool = (key: string) => {
         const phases = project?.data?.phases || {};
