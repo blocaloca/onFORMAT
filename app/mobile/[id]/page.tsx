@@ -277,7 +277,7 @@ const getIconForTool = (key: string) => {
 // --- Main Page ---
 
 const DebugOverlay = ({ email, role, silo, count }: any) => (
-    <div className="fixed top-0 left-0 right-0 bg-black border-b-2 border-magenta-500 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md shadow-2xl" style={{ borderBottomColor: '#ff00ff' }}>
+    <div className="fixed top-0 left-0 right-0 bg-black border-b-2 border-pink-500 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md shadow-2xl" style={{ borderBottomColor: '#ec4899' }}>
         <div className="flex flex-col">
             <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Identity</span>
             <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Waiting...'}</span>
@@ -440,15 +440,17 @@ export default function MobilePage() {
             }
         });
 
-        // 2. Founder/Owner Bypass (Conditional)
+        // 2. Founder/Owner Bypass (TEMPORARILY DISABLED FOR TESTING)
+        // We are enforcing strict matrix filtering even for founders to confirm the fix.
+        /*
         const isFounder = userEmail?.toLowerCase() === 'casteelio@gmail.com';
-        
         if (isFounder && supportAccessEnabled) {
-            console.log("[Mobile] Admin Mode: Full Access granted via Support Access toggle.");
+            console.log("[Mobile] Admin Mode Bypass Active");
             const allPossibleTools = Object.values(TOOLS_BY_PHASE).flat().map(t => t.key);
             setAllowedTools([...new Set(allPossibleTools)]);
             return;
         }
+        */
 
         // 3. Resolve Role Silo (Robust Matching)
         // If userRole is still null, we CANNOT resolve access, so we keep allowed as [].
@@ -552,15 +554,7 @@ export default function MobilePage() {
                         data: { ...parsedState, phases: parsedState.phases || {} }
                     });
 
-                    // Parse Allowed Tools logic... (Keeping existing logic)
-                    const controlRaw = parsedState.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
-                    let allowed: string[] = [];
-                    if (controlRaw) {
-                        const rawParsed = JSON.parse(controlRaw);
-                        const stack = Array.isArray(rawParsed) ? rawParsed : [rawParsed];
-                        allowed = stack[0]?.selectedTools || [];
-                    }
-                    setAllowedTools(allowed);
+                    // Local simulation now relies on the same matrix computation as live projects
                     setLoading(false);
                     return;
                 } catch (e) {
