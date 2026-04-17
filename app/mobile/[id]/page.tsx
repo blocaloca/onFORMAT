@@ -276,6 +276,23 @@ const getIconForTool = (key: string) => {
 
 // --- Main Page ---
 
+const DebugOverlay = ({ email, role, silo, count }: any) => (
+    <div className="fixed bottom-0 left-0 right-0 bg-black/95 border-t border-zinc-800 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md safe-area-bottom">
+        <div className="flex flex-col">
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Active Identity</span>
+            <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Unknown'}</span>
+        </div>
+        <div className="flex flex-col items-center">
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Role | Silo</span>
+            <span className="text-[10px] font-bold text-white uppercase">{role || 'None'} | {silo}</span>
+        </div>
+        <div className="flex flex-col items-end">
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Authorized</span>
+            <span className="text-[10px] font-black text-blue-500">{count} Docs</span>
+        </div>
+    </div>
+);
+
 export default function MobilePage() {
     const params = useParams();
     const router = useRouter();
@@ -401,50 +418,57 @@ export default function MobilePage() {
 
     }, [project, userEmail, userRole, loading, id]);
 
-    // Compute Allowed Tools (Matrix-Aligned)
+    // Compute Allowed Tools (Strict Matrix Enforcement)
     useEffect(() => {
-        const allowed: string[] = [];
+        // DEFAULT: Start with absolutely nothing (Strict Deny)
+        let allowed: string[] = [];
         
-        // 1. Parse Control Panel Metadata (Matrix & Roles)
-        // We look for 'onset-mobile-control' in ON_SET or PRODUCTION phases
-        const controlRaw = project?.data?.phases?.['ON_SET']?.drafts?.['onset-mobile-control'] || 
-                          project?.data?.phases?.['PRODUCTION']?.drafts?.['onset-mobile-control'];
-        
+        // 1. Scan ALL Phases for 'onset-mobile-control' (Robust lookup)
+        const phases = project?.data?.phases || {};
         let matrix: Record<string, any> = {};
-        
-        if (controlRaw) {
-            try {
-                const parsed = JSON.parse(controlRaw);
-                const stack = Array.isArray(parsed) ? parsed : [parsed];
-                const controlData = stack[0] || {};
-                matrix = controlData.matrix || {};
-            } catch (e) {
-                console.error("[Mobile] Matrix Parse Error:", e);
-            }
-        }
+        const supportAccessEnabled = project?.data?.supportAccess === true;
 
-        // 2. Identify User Silo
-        // Priorities: 
-        // a. Founder/Owner Bypass
+        Object.values(phases).forEach((phase: any) => {
+            const controlRaw = phase?.drafts?.['onset-mobile-control'];
+            if (controlRaw) {
+                try {
+                    const parsed = JSON.parse(controlRaw);
+                    const stack = Array.isArray(parsed) ? parsed : [parsed];
+                    const controlData = stack[0] || {};
+                    if (controlData.matrix) matrix = controlData.matrix;
+                } catch (e) { }
+            }
+        });
+
+        // 2. Founder/Owner Bypass (Conditional)
         const isFounder = userEmail?.toLowerCase() === 'casteelio@gmail.com';
         
-        if (isFounder) {
-            // ADMIN OVERRIDE: Show all tools known to the system
+        if (isFounder && supportAccessEnabled) {
+            console.log("[Mobile] Admin Mode: Full Access granted via Support Access toggle.");
             const allPossibleTools = Object.values(TOOLS_BY_PHASE).flat().map(t => t.key);
             setAllowedTools([...new Set(allPossibleTools)]);
             return;
         }
 
-        // b. Resolving Role Silo (e.g., "DIT" -> "dit")
+        // 3. Resolve Role Silo (Robust Matching)
+        // If userRole is still null, we CANNOT resolve access, so we keep allowed as [].
+        if (!userRole && !isFounder) {
+            console.warn("[Mobile] No User Role found yet. Access restricted.");
+            setAllowedTools([]);
+            return;
+        }
+
         const roleId = deriveMobileRoleId(userRole || 'Crew');
+        const rawRoleNormalized = (userRole || 'Crew').toLowerCase().trim();
 
-        console.log(`[Mobile] Resolving Access for Silo: ${roleId}`);
+        console.log(`[Mobile] Resolving Silo: ${roleId} (Raw: ${userRole})`);
 
-        // 3. Filter Tools based on Matrix
-        // If a tool has 'view' or 'edit' for this roleId, allow it.
+        // 4. Matrix Match
+        // We look for any silo key that matches our canonical ID or raw name.
         Object.entries(matrix).forEach(([siloKey, permissions]: [string, any]) => {
-            // Check if this silo matches the user's role ID
-            if (siloKey === roleId) {
+            const siloKeyNormalized = siloKey.toLowerCase().trim();
+            
+            if (siloKeyNormalized === roleId || siloKeyNormalized === rawRoleNormalized) {
                 Object.entries(permissions).forEach(([toolKey, access]) => {
                     if (access === 'view' || access === 'edit') {
                         allowed.push(toolKey);
@@ -453,9 +477,12 @@ export default function MobilePage() {
             }
         });
 
-        // 4. Force unique and update state
+        // 5. Final Guard: Project-wide 'isLive' check? 
+        // For now, we respect the matrix.
         setAllowedTools([...new Set(allowed)]);
     }, [project, userEmail, userRole]);
+
+
 
 
 
@@ -701,10 +728,19 @@ export default function MobilePage() {
     }
 
     return (
-        <MobileDocList
-            project={project}
-            allowedTools={allowedTools}
-            onSelect={handleSelectTool}
-        />
+        <div className="relative min-h-screen">
+            <MobileDocList
+                project={project}
+                allowedTools={allowedTools}
+                onSelect={handleSelectTool}
+            />
+            {/* Debug Overlay (Temporary for Beta Hardening) */}
+            <DebugOverlay 
+                email={userEmail} 
+                role={userRole} 
+                silo={deriveMobileRoleId(userRole || 'Crew')} 
+                count={allowedTools.length} 
+            />
+        </div>
     );
 }
