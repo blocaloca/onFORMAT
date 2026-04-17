@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { ArrowLeft, FileText, Calendar, Clapperboard, Users, MapPin, Shirt, Package, File, ChevronRight, CheckCircle2, Lock, AlertCircle } from 'lucide-react';
 import { TOOLS_BY_PHASE } from '@/components/onformat/ExperimentalNav';
+import { deriveMobileRoleId } from '@/lib/roleUtils';
 
 // --- Mobile Components ---
 
@@ -283,8 +284,6 @@ export default function MobilePage() {
     const supabase = React.useMemo(() => getClient(), []);
     const [loading, setLoading] = useState(true);
     const [project, setProject] = useState<any>(null);
-    const [userGroups, setUserGroups] = useState<string[]>([]);
-    const [projectToolGroups, setProjectToolGroups] = useState<Record<string, string[]>>({});
     const [allowedTools, setAllowedTools] = useState<string[]>([]);
 
     // Auth State
@@ -329,17 +328,6 @@ export default function MobilePage() {
                         if (payload.new) {
                             console.log('[Mobile] Received Project Update');
                             setProject(payload.new);
-
-                            // Update Tool Groups
-                            const controlRaw = payload.new.data?.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
-                            if (controlRaw) {
-                                try {
-                                    const parsed = JSON.parse(controlRaw);
-                                    const stack = Array.isArray(parsed) ? parsed : [parsed];
-                                    const tGroups = stack[0]?.toolGroups || {};
-                                    setProjectToolGroups(tGroups);
-                                } catch { }
-                            }
                         }
                     }
                 )
@@ -377,7 +365,6 @@ export default function MobilePage() {
             if (match) {
                 // AUTHORIZED as CREW MEMBER
                 setAccessDenied(false);
-                setUserGroups(match.onSetGroups || []);
 
                 // 3. Auto-Check-In (Update Status to Online if needed)
                 // Only update if currently offline to prevent redundant writes
@@ -399,7 +386,6 @@ export default function MobilePage() {
             if (isOwner || (isFounder && isSupportAccess)) {
                 // AUTHORIZED as ADMIN (Ghost Mode)
                 setAccessDenied(false);
-                setUserGroups(['A', 'B', 'C']); // Admins get all access
                 // We do NOT update status because there is no row to update.
                 console.log(`[Mobile] Admin Access (Ghost Mode): ${normalizedUserEmail} not in Crew List`);
                 return;
@@ -415,44 +401,62 @@ export default function MobilePage() {
 
     }, [project, userEmail, userRole, loading, id]);
 
-    // Compute Allowed Tools
+    // Compute Allowed Tools (Matrix-Aligned)
     useEffect(() => {
         const allowed: string[] = [];
-        const isSystemUser = !!userRole; // Fallback if needed, but userGroups should handle it
-
-        // If no tool groups defined, default to NONE (or maybe ALL for backward compatibility? Assuming strict for now)
-        // Actually, if toolGroups is empty, it might mean the Control Panel hasn't been saved yet.
-        // Let's implement strict check: tool must have group 'X', user must have group 'X'.
-
-        Object.keys(projectToolGroups).forEach(key => {
-            const groupsForTool = projectToolGroups[key] || [];
-
-            // Core Logic:
-            // 1. If User has 'A', they see EVERYTHING that is enabled.
-            if (userGroups.includes('A')) {
-                // Check if tool is enabled at all (has any groups assigned)
-                if (groupsForTool.length > 0) allowed.push(key);
-                return;
+        
+        // 1. Parse Control Panel Metadata (Matrix & Roles)
+        // We look for 'onset-mobile-control' in ON_SET or PRODUCTION phases
+        const controlRaw = project?.data?.phases?.['ON_SET']?.drafts?.['onset-mobile-control'] || 
+                          project?.data?.phases?.['PRODUCTION']?.drafts?.['onset-mobile-control'];
+        
+        let matrix: Record<string, any> = {};
+        
+        if (controlRaw) {
+            try {
+                const parsed = JSON.parse(controlRaw);
+                const stack = Array.isArray(parsed) ? parsed : [parsed];
+                const controlData = stack[0] || {};
+                matrix = controlData.matrix || {};
+            } catch (e) {
+                console.error("[Mobile] Matrix Parse Error:", e);
             }
+        }
 
-            // 2. Determine match
-            const hasMatch = groupsForTool.some(g => userGroups.includes(g));
+        // 2. Identify User Silo
+        // Priorities: 
+        // a. Founder/Owner Bypass
+        const isFounder = userEmail?.toLowerCase() === 'casteelio@gmail.com';
+        
+        if (isFounder) {
+            // ADMIN OVERRIDE: Show all tools known to the system
+            const allPossibleTools = Object.values(TOOLS_BY_PHASE).flat().map(t => t.key);
+            setAllowedTools([...new Set(allPossibleTools)]);
+            return;
+        }
 
-            if (hasMatch) {
-                // Group B Restrictions: Hide technical logs & budget
-                if (userGroups.includes('B') && !userGroups.includes('A')) {
-                    const hiddenForB = ['dit-log', 'camera-report', 'budget', 'budget-actual', 'sound-report'];
-                    if (hiddenForB.includes(key)) return;
-                }
+        // b. Resolving Role Silo (e.g., "DIT" -> "dit")
+        const roleId = deriveMobileRoleId(userRole || 'Crew');
 
-                // Group C: See specific tool only (implicit by exact match)
-                allowed.push(key);
+        console.log(`[Mobile] Resolving Access for Silo: ${roleId}`);
+
+        // 3. Filter Tools based on Matrix
+        // If a tool has 'view' or 'edit' for this roleId, allow it.
+        Object.entries(matrix).forEach(([siloKey, permissions]: [string, any]) => {
+            // Check if this silo matches the user's role ID
+            if (siloKey === roleId) {
+                Object.entries(permissions).forEach(([toolKey, access]) => {
+                    if (access === 'view' || access === 'edit') {
+                        allowed.push(toolKey);
+                    }
+                });
             }
         });
 
-        // Unique filter
+        // 4. Force unique and update state
         setAllowedTools([...new Set(allowed)]);
-    }, [projectToolGroups, userGroups]);
+    }, [project, userEmail, userRole]);
+
 
 
     // --- PRESENCE LOGIC (Status Lights & Standby) ---
@@ -546,20 +550,6 @@ export default function MobilePage() {
 
         if (data && data.data) {
             setProject(data);
-            // IDENTITY ALIGNMENT: Strict user_id check. Access set via checkIn logic.
-            // We do NOT auto-set userRole to Owner here, checkIn handles it.
-
-            // Parse Tool Groups (from Control Panel)
-            const controlRaw = data.data.phases?.['ON_SET']?.drafts?.['onset-mobile-control'];
-            let tGroups: Record<string, string[]> = {};
-            if (controlRaw) {
-                try {
-                    const parsed = JSON.parse(controlRaw);
-                    const stack = Array.isArray(parsed) ? parsed : [parsed];
-                    tGroups = stack[0]?.toolGroups || {};
-                } catch { }
-            }
-            setProjectToolGroups(tGroups);
         }
         setLoading(false);
     }
