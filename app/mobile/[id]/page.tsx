@@ -277,18 +277,18 @@ const getIconForTool = (key: string) => {
 // --- Main Page ---
 
 const DebugOverlay = ({ email, role, silo, count }: any) => (
-    <div className="fixed bottom-0 left-0 right-0 bg-black/95 border-t border-zinc-800 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md safe-area-bottom">
+    <div className="fixed top-0 left-0 right-0 bg-black border-b-2 border-magenta-500 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md shadow-2xl" style={{ borderBottomColor: '#ff00ff' }}>
         <div className="flex flex-col">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Active Identity</span>
-            <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Unknown'}</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Identity</span>
+            <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Waiting...'}</span>
         </div>
         <div className="flex flex-col items-center">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Role | Silo</span>
-            <span className="text-[10px] font-bold text-white uppercase">{role || 'None'} | {silo}</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Silo</span>
+            <span className="text-[10px] font-bold text-white uppercase">{silo}</span>
         </div>
         <div className="flex flex-col items-end">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Authorized</span>
-            <span className="text-[10px] font-black text-blue-500">{count} Docs</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Matrix Filter</span>
+            <span className="text-[10px] font-black text-[#ff00ff]">{count === 0 ? 'STRICT LOCK' : `${count} Docs`}</span>
         </div>
     </div>
 );
@@ -579,7 +579,6 @@ export default function MobilePage() {
             setProject(data);
         }
         setLoading(false);
-    }
 
     const handleSelectTool = (key: string) => {
         const phases = project?.data?.phases || {};
