@@ -440,36 +440,17 @@ export default function MobilePage() {
             }
         });
 
-        // 2. Founder/Owner Bypass (TEMPORARILY DISABLED FOR TESTING)
-        // We are enforcing strict matrix filtering even for founders to confirm the fix.
-        /*
-        const isFounder = userEmail?.toLowerCase() === 'casteelio@gmail.com';
-        if (isFounder && supportAccessEnabled) {
-            console.log("[Mobile] Admin Mode Bypass Active");
-            const allPossibleTools = Object.values(TOOLS_BY_PHASE).flat().map(t => t.key);
-            setAllowedTools([...new Set(allPossibleTools)]);
-            return;
-        }
-        */
-
-        // 3. Resolve Role Silo (Robust Matching)
-        // If userRole is still null, we CANNOT resolve access, so we keep allowed as [].
-        if (!userRole && !isFounder) {
-            console.warn("[Mobile] No User Role found yet. Access restricted.");
+        // 2. Resolve Role Silo (Strict Matrix Match)
+        if (!userRole) {
             setAllowedTools([]);
             return;
         }
 
-        const roleId = deriveMobileRoleId(userRole || 'Crew');
-        const rawRoleNormalized = (userRole || 'Crew').toLowerCase().trim();
+        const roleId = deriveMobileRoleId(userRole);
+        const rawRoleNormalized = userRole.toLowerCase().trim();
 
-        console.log(`[Mobile] Resolving Silo: ${roleId} (Raw: ${userRole})`);
-
-        // 4. Matrix Match
-        // We look for any silo key that matches our canonical ID or raw name.
         Object.entries(matrix).forEach(([siloKey, permissions]: [string, any]) => {
             const siloKeyNormalized = siloKey.toLowerCase().trim();
-            
             if (siloKeyNormalized === roleId || siloKeyNormalized === rawRoleNormalized) {
                 Object.entries(permissions).forEach(([toolKey, access]) => {
                     if (access === 'view' || access === 'edit') {
@@ -479,8 +460,6 @@ export default function MobilePage() {
             }
         });
 
-        // 5. Final Guard: Project-wide 'isLive' check? 
-        // For now, we respect the matrix.
         setAllowedTools([...new Set(allowed)]);
     }, [project, userEmail, userRole]);
 
