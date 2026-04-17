@@ -35,11 +35,24 @@ const MobileDocList = ({ project, allowedTools, onSelect }: any) => {
     // Flatten tools
     const allTools = Object.values(TOOLS_BY_PHASE).flat();
     const visibleTools = allTools.filter((t: any) => allowedTools.includes(t.key));
-
     const today = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
+    // Resolve Live Status from Control Panel
+    let isLive = false;
+    const phases = project?.data?.phases || {};
+    Object.values(phases).forEach((phase: any) => {
+        const controlRaw = phase?.drafts?.['onset-mobile-control'];
+        if (controlRaw) {
+            try {
+                const parsed = JSON.parse(controlRaw);
+                const stack = Array.isArray(parsed) ? parsed : [parsed];
+                if (stack[0]?.isLive) isLive = true;
+            } catch (e) { }
+        }
+    });
+
     return (
-        <div className="pt-20 pb-12 px-5 min-h-screen bg-black text-white selection:bg-emerald-500/30">
+        <div className="pt-24 pb-12 px-5 min-h-screen bg-black text-white selection:bg-emerald-500/30">
             {/* Project Card */}
             {/* INGEST NOTIFICATION BANNER */}
             {project.data?.phases?.ON_SET?.metadata?.ingest_pending && (
@@ -61,8 +74,8 @@ const MobileDocList = ({ project, allowedTools, onSelect }: any) => {
 
                 <div className="relative z-10">
                     <div className="flex justify-between items-start mb-6">
-                        <div className="px-2 py-1 bg-white/5 border border-white/5 rounded text-[9px] font-mono uppercase text-zinc-400">
-                            Status: Active
+                        <div className={`px-2 py-1 border rounded text-[9px] font-black uppercase tracking-widest ${isLive ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500' : 'bg-zinc-800 border-zinc-700 text-zinc-500'}`}>
+                            {isLive ? 'LIVE' : 'STANDBY'}
                         </div>
                         <div className="text-[9px] font-mono text-zinc-500 uppercase">
                             {today}
@@ -279,16 +292,16 @@ const getIconForTool = (key: string) => {
 const DebugOverlay = ({ email, role, silo, count }: any) => (
     <div className="fixed top-0 left-0 right-0 bg-black border-b-2 border-pink-500 p-3 z-[9999] flex justify-between items-center px-4 backdrop-blur-md shadow-2xl" style={{ borderBottomColor: '#ec4899' }}>
         <div className="flex flex-col">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Identity</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Identity [v1.0.4]</span>
             <span className="text-[10px] font-mono text-emerald-500 truncate max-w-[120px]">{email || 'Waiting...'}</span>
         </div>
         <div className="flex flex-col items-center">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Silo</span>
-            <span className="text-[10px] font-bold text-white uppercase">{silo}</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Role | Silo</span>
+            <span className="text-[10px] font-bold text-white uppercase">{role || 'None'} | {silo}</span>
         </div>
         <div className="flex flex-col items-end">
-            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Matrix Filter</span>
-            <span className="text-[10px] font-black text-[#ff00ff]">{count === 0 ? 'STRICT LOCK' : `${count} Docs`}</span>
+            <span className="text-[8px] font-black uppercase text-zinc-500 tracking-widest leading-none mb-1">Matrix Active</span>
+            <span className="text-[10px] font-black text-[#ec4899]">{count} Authorized</span>
         </div>
     </div>
 );
