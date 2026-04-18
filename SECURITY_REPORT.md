@@ -1,33 +1,52 @@
-# Security & Identity Vulnerability Report
+# Security & Identity Vulnerability Report (Living Document)
 
 ## Executive Summary
-A critical vulnerability exists where new user registrations ("Sign Ups") can inadvertently inherit the active session of a previously logged-in administrator (Founder). This results in the new user viewing the Founder's private data immediately upon accessing the dashboard.
+This document tracks critical security vulnerabilities, resolutions, and architectural paradigms to ensure future AI contributors or engineers do not inadvertently regress the security posture of creative-os.
 
-## 1. The Core Vulnerability: Zombie Session Persistence
-**Symptom:** A new user signup on a browser with an existing session results in the user interacting with the application *as* the previous user (Founder).
+---
 
+## Issue 1: Zombie Session Persistence (Resolved)
+
+**Symptom:** A new user signup on a browser with an existing session resulted in the new user interacting with the application *as* the previous user (Founder).
+**Root Cause:** Suboptimal Cookie/Middleware session invalidation on the client side.
+**Resolution:**
+- Atomic Logout logic enforced (`/auth/logout`) with strict cookie wiping.
+- Middleware explicitly programmed to ignore session refreshing on `/login` and `/signup` routes.
+- Component-level singleton instantiation of Supabase.
+
+---
+
+## Issue 2: OnSet Mobile "Project Not Found" / RLS Lockdown (Resolved: v1.0.7)
+
+**Symptom:** Following the strict enforcement of Postgres Row Level Security (RLS) on all core tables (via `017_security_hardening.sql`), the OnSET Mobile app (`/onset/[id]`) began throwing "PROJECT NOT FOUND" errors and failing.
 **Root Cause:**
-*   **Cookie Resilience:** Supabase Auth cookies (`sb-[ref]-auth-token`) are failing to be deleted by the client-side `signOut()` methods due to timing issues or attribute mismatches (Path/Domain).
-*   **Middleware Resurrection:** The application `middleware.ts` may be refreshing and re-setting the valid Founder cookie *during* the signup request flow, effectively undoing the logout action before the new session is established.
-*   **Singleton Pollution:** The client-side Supabase instance (`lib/supabase.ts`) persists in browser memory (SPA state), holding the old JWT token even after the UI attempts to switch users.
+- OnSET Mobile relies on a "Soft Login" architecture via QR codes (saving email to `localStorage`), where users do not have a formal `auth.jwt()` Supabase session.
+- The new RLS rules strictly blocked `anon` requests natively on the client for `projects` and `crew_membership`.
+- Because the read queries failed, the app failed to load the project, failed to resolve the crew member's identity, and failed to grant array privileges.
 
-## 2. Permissions Architecture Risk
-*   **Logic:** `lib/permissions.ts` uses `isFounder(email)`.
-*   **Risk:** The logic is sound, but the *input* is compromised. Because the session remains "Founder", the email passed to this function is the Founder's email, correctly granting full access to the wrong person (the new user using the old session).
+**Secure Remediation Pattern (The "Bypass" Architecture):**
+To preserve the friction-free QR code mobile workflow while maintaining high-security RLS on the Web Dashboard, a strictly controlled API-Bypass architecture was implemented:
+1. **`GET /api/onset/project?id=[ID]&email=[EMAIL]`**
+   - Uses `supabaseAdmin` to fetch the project data ignoring RLS.
+   - Performs a server-side `.ilike` lookup on `crew_membership` to securely determine the user's role (`_roleFromDB`).
+   - Prevents unauthorized modification while ensuring the mobile app retrieves accurate data and resolves roles correctly.
+2. **`POST /api/onset/project-update`**
+   - Intercepts all mobile write events (DIT Logs, Camera Reports, Notes) instead of allowing them to execute `supabase.from('projects').update`.
+   - Modifies the project safely on the backend via Service Role and returns the result to synchronize the client.
 
-## 3. Remediation Plan (Phase 4)
+**CRITICAL SAFEGUARD FOR FUTURE WORK:**
+- **DO NOT** attempt to make `app/onset/[id]/page.tsx` fetch or write to `projects` directly using the `supabase` API. RLS will silently block it. You **MUST** use the `/api/onset/` route handlers.
+- **DO NOT** lower the database's native RLS policies to fix client-side access bugs.
 
-### A. Atomic Logout Route
-Create a dedicated API route `/auth/logout` that:
-1.  Manually expires all auth cookies with strict path/domain matching.
-2.  Calls `supabase.auth.signOut()` globally.
-3.  Performs a hard redirect to `/login`.
+---
 
-### B. Middleware Guardrails
-Update `middleware.ts` to explicitly **ignore session refreshing** on `/login` and `/signup` routes. It should strictly pass-through these requests without attempting to validate or renew existing cookies.
+## Issue 3: Role Authorization Ghosting (Resolved)
 
-### C. Client Singleton Removal
-Refactor `lib/supabase.ts` to export a **function** (`createClient()`) instead of a **singleton instance**. This ensures every React component mount gets a fresh authentication state, preventing memory leaks of old tokens.
+**Symptom:** Users designated as "DIT" or "Director of Photography" on a project were receiving "Crew" access globally, hiding authorized documents.
+**Root Cause:**
+- Email inputs were not standardized, meaning `Casteelfoto@gmail.com` did not match the database `casteelfoto@gmail.com`.
+- Mobile Role IDs were loosely matched using string replacing, failing to correctly map explicit tools to complex roles like "Director of Photography" (which needed mapping to `dp`).
 
-### D. Verification Enforcement
-Ensure `app/signup/page.tsx` strictly blocks dashboard access until `data.session` is confirmed unique and valid, halting the flow if Email Confirmation is required but not yet completed.
+**Resolution:**
+- **Identity:** All database lookups for crew membership now aggressively utilize Postgres `.ilike` for case-insensitive matching.
+- **Role Mapping:** The unified utility `deriveMobileRoleId()` is enforced throughout the codebase as the single source of truth for translating a human-readable `role` (e.g., "Director of Photography") into a programmatic matrix pointer (`dp`).
