@@ -675,6 +675,15 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error("Pulse failed", e); }
     };
 
+    const fetchFreshProject = async () => {
+        const queryUrl = `/api/onset/project?id=${id}`;
+        const res = await fetch(queryUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error("Failed to fetch fresh project API");
+        const json = await res.json();
+        if (json.error || !json.data) throw new Error(json.error || "No project returned");
+        return { data: json.data, error: null };
+    };
+
     const saveProjectData = async (dataPayload: any) => {
         const res = await fetch('/api/onset/project-update', {
             method: 'POST',
@@ -688,7 +697,7 @@ export default function OnSetMobilePage() {
         if (!data.project) return;
         try {
             // 1. Get fresh project to minimize conflicts
-            const { data: fresh, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: fresh, error } = await fetchFreshProject();
             if (error || !fresh) return;
 
             const existingPhase = fresh.data?.phases?.ON_SET || {};
@@ -750,7 +759,7 @@ export default function OnSetMobilePage() {
     const handleUpdateCameraReport = async (item: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -804,7 +813,7 @@ export default function OnSetMobilePage() {
     const handleAddOnSetNote = async (item: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -841,7 +850,7 @@ export default function OnSetMobilePage() {
     const handleEditOnSetNote = async (updatedItem: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -871,7 +880,7 @@ export default function OnSetMobilePage() {
     const handleDeleteOnSetNote = async (itemId: string) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -898,7 +907,7 @@ export default function OnSetMobilePage() {
     const handleUpdateReleases = async (updatedList: any[]) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -922,7 +931,7 @@ export default function OnSetMobilePage() {
         if (!data.project) return;
 
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -997,7 +1006,7 @@ export default function OnSetMobilePage() {
     const handleUpdateCallSheet = async (updatedDoc: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -1047,7 +1056,7 @@ export default function OnSetMobilePage() {
         }));
 
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -1141,7 +1150,7 @@ export default function OnSetMobilePage() {
     const handleUpdateScriptNotes = async (action: 'add' | 'update' | 'delete' | 'set-items', payload: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -1183,7 +1192,7 @@ export default function OnSetMobilePage() {
     const handleUpdateSoundReport = async (action: 'add' | 'update' | 'delete', payload: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -1223,7 +1232,7 @@ export default function OnSetMobilePage() {
     const handleUpdateClientSelects = async (action: 'add' | 'update' | 'delete', payload: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -1267,7 +1276,7 @@ export default function OnSetMobilePage() {
     const handleUpdateCrewList = async (action: 'add' | 'update' | 'delete', payload: any) => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
@@ -1327,7 +1336,7 @@ export default function OnSetMobilePage() {
     const handleUpdateList = async (toolId: string, action: 'add' | 'update' | 'delete', payload: any, listKey: string = 'items') => {
         if (!data.project) return;
         try {
-            const { data: latest, error } = await supabase.from('projects').select('*').eq('id', id).single();
+            const { data: latest, error } = await fetchFreshProject();
             if (error || !latest) return;
 
             const phases = latest.data.phases;
