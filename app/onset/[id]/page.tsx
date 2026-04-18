@@ -387,16 +387,18 @@ export default function OnSetMobilePage() {
                 setUserEmail(emailToUse);
             }
 
-            // 1. Fetch Project with Timeout
-            const fetchProjectPromise = supabase
-                .from('projects')
-                .select('*')
-                .eq('id', id)
-                .single();
+            // 1. Fetch Project with Timeout (Bypass RLS for soft-login crew access)
+            const queryUrl = `/api/onset/project?id=${id}` + (emailToUse ? `&email=${encodeURIComponent(emailToUse)}` : '');
+            const fetchProjectPromise = fetch(queryUrl, { cache: 'no-store' }).then(async (res) => {
+                if (!res.ok) throw new Error("Failed to fetch project API");
+                const json = await res.json();
+                if (json.error || !json.data) throw new Error(json.error || "No project returned");
+                return { data: json.data, _roleFromDB: json._roleFromDB, error: null };
+            });
 
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 4000));
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 8000));
 
-            const { data: projectData, error } = await Promise.race([fetchProjectPromise, timeoutPromise]) as any;
+            const { data: projectData, _roleFromDB, error } = await Promise.race([fetchProjectPromise, timeoutPromise]) as any;
 
             if (error || !projectData) {
                 throw new Error("Project not found or network offline");
@@ -408,15 +410,9 @@ export default function OnSetMobilePage() {
                 const { data: { session } } = await supabase.auth.getSession();
                 const isOwnerDataMatch = session?.user && (projectData.user_id === session.user.id);
                 
-                // FIRST: Consult the explicit Production Crew Membership
-                const { data: crew } = await supabase.from('crew_membership')
-                    .select('role')
-                    .eq('project_id', id)
-                    .ilike('user_email', emailToUse)
-                    .maybeSingle();
-
-                if (crew) {
-                    role = crew.role;
+                // FIRST: Consult the explicit Production Crew Membership (Resolved server-side!)
+                if (_roleFromDB) {
+                    role = _roleFromDB;
                 } else if (isOwnerDataMatch) {
                     // SECOND: Default to Owner identity if not in the Crew List
                     role = 'Owner';
@@ -679,6 +675,15 @@ export default function OnSetMobilePage() {
         } catch (e) { console.error("Pulse failed", e); }
     };
 
+    const saveProjectData = async (dataPayload: any) => {
+        const res = await fetch('/api/onset/project-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, data: dataPayload, email: userEmail })
+        });
+        if (!res.ok) throw new Error("Failed to save via API");
+    };
+
     const handleUpdateDIT = async (newItem: any) => {
         if (!data.project) return;
         try {
@@ -733,7 +738,7 @@ export default function OnSetMobilePage() {
                 }
             };
 
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
 
             // 5. Reload local
             fetchData();
@@ -769,7 +774,7 @@ export default function OnSetMobilePage() {
 
             updatedPhases[logPhaseKey].drafts['camera-report'] = JSON.stringify(logDoc);
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
 
             // REALTIME BROADCAST: Trigger DIT Alert if new roll pulled
             if (item.roll) {
@@ -827,7 +832,7 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts['on-set-notes'] = JSON.stringify([logDoc, ...history]);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
             fetchData();
             broadcastPulse('NOTE_ALERT', 'New On-Set Note published');
         } catch (e) { console.error(e) }
@@ -856,7 +861,7 @@ export default function OnSetMobilePage() {
             if (idx >= 0) {
                 logDoc.items[idx] = { ...logDoc.items[idx], ...updatedItem };
                 updatedPhases[logPhaseKey].drafts['on-set-notes'] = JSON.stringify([logDoc, ...history]);
-                await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+                await saveProjectData({ ...latest.data, phases: updatedPhases });
                 fetchData();
                 broadcastPulse('NOTE_ALERT', 'On-Set Note updated');
             }
@@ -885,7 +890,7 @@ export default function OnSetMobilePage() {
             logDoc.items = logDoc.items.filter((i: any) => i.id !== itemId);
             updatedPhases[logPhaseKey].drafts['on-set-notes'] = JSON.stringify([logDoc, ...history]);
 
-            await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+            await saveProjectData({ ...latest.data, phases: updatedPhases });
             fetchData();
         } catch (e) { console.error(e) }
     }
@@ -908,7 +913,7 @@ export default function OnSetMobilePage() {
             const releaseDoc = { releases: updatedList };
             updatedPhases[phaseKey].drafts['releases'] = JSON.stringify(releaseDoc);
 
-            await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+            await saveProjectData({ ...latest.data, phases: updatedPhases });
             fetchData();
         } catch (e) { console.error(e) }
     }
@@ -982,7 +987,7 @@ export default function OnSetMobilePage() {
                 phases: updatedPhases
             };
 
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
             fetchData();
             broadcastPulse('CAMERA_ALERT', `Shot ${shotId} marked ${status}`);
 
@@ -1024,7 +1029,7 @@ export default function OnSetMobilePage() {
             updatedPhases[phaseKey].drafts['call-sheet'] = finalDraft;
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
             fetchData();
         } catch (e) { console.error(e) }
     }
@@ -1114,7 +1119,7 @@ export default function OnSetMobilePage() {
             }
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
 
             // SYNC BROADCAST: Trigger immediate desktop re-fetch
             const syncChannel = supabase.channel(`project_sync:${id}`)
@@ -1170,7 +1175,7 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts['script-notes'] = JSON.stringify([doc, ...history]);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
             fetchData();
         } catch (e) { console.error(e) }
     };
@@ -1210,7 +1215,7 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts['sound-report'] = JSON.stringify([doc, ...history]);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
             fetchData();
         } catch (e) { console.error(e) }
     };
@@ -1254,7 +1259,7 @@ export default function OnSetMobilePage() {
             doc.items = list;
             updatedPhases[logPhaseKey].drafts['client-selects'] = JSON.stringify([doc, ...history]);
 
-            await supabase.from('projects').update({ data: { ...latest.data, phases: updatedPhases } }).eq('id', id);
+            await saveProjectData({ ...latest.data, phases: updatedPhases });
             fetchData();
         } catch (e) { console.error(e) }
     };
@@ -1298,7 +1303,7 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts['crew-list'] = JSON.stringify([doc, ...history]);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
 
             // --- SQL BRIDGE: Proactive Authorization Sync ---
             // Ensure newly added or updated personnel have SQL records for RLS/Auth
@@ -1371,7 +1376,7 @@ export default function OnSetMobilePage() {
             updatedPhases[logPhaseKey].drafts[originalKey] = JSON.stringify([doc, ...history]);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
-            await supabase.from('projects').update({ data: updatedProjectData }).eq('id', id);
+            await saveProjectData(updatedProjectData);
             fetchData();
         } catch (e) { console.error(e) }
     };
