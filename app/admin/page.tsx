@@ -10,6 +10,7 @@ import { isFounder } from '@/lib/permissions';
 import AnnouncementEditor from '@/components/admin/AnnouncementEditor';
 import Link from 'next/link';
 import MarketingDashboard from '@/components/admin/MarketingDashboard';
+import ResendTestButton from '@/components/admin/ResendTestButton';
 
 export default async function AdminPage() {
   // 1. Auth Check
@@ -68,6 +69,8 @@ export default async function AdminPage() {
           <h1 className="text-xl font-black uppercase tracking-widest">Founder Control</h1>
         </div>
         <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-zinc-400">
+          <ResendTestButton />
+          <span className="w-px h-4 bg-zinc-200"></span>
           <span className="flex items-center gap-1.5"><User size={12} /> {users.length} Users</span>
           <span className="w-px h-4 bg-zinc-200"></span>
           <span className="flex items-center gap-1.5 text-blue-600"><Inbox size={12} /> {feedback.filter((f: any) => f.status === 'new').length} New Msgs</span>

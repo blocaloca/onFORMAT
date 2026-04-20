@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { sendTestEmailAction } from '@/app/admin/actions'
 
 export default function QuickFixes() {
   const router = useRouter()
@@ -9,6 +10,14 @@ export default function QuickFixes() {
   const [result, setResult] = useState<string>('')
 
   const fixes = [
+    {
+      name: 'Test Resend',
+      icon: '📧',
+      action: async () => {
+        const res = await sendTestEmailAction()
+        if (!res.success) throw new Error(res.error)
+      }
+    },
     {
       name: 'Clear Browser Cache',
       icon: '🗑️',

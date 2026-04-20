@@ -218,6 +218,8 @@ export async function fetchBetaRequests() {
     return data;
 }
 
+import { sendEmail } from '@/lib/resend';
+
 // Action: Approve Beta Request
 export async function approveBetaRequest(requestId: string) {
     try {
@@ -235,7 +237,33 @@ export async function approveBetaRequest(requestId: string) {
             .update({ status: 'approved' })
             .eq('id', requestId);
 
-        // 2. If user already exists in profiles, grant beta access and 30-day solo tier
+        // 2. Notify via Email
+        try {
+            await sendEmail({
+                to: request.email,
+                subject: '🎨 Access Granted: Welcome to the onFORMAT Private Beta',
+                html: `
+                    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #111;">
+                        <h1 style="color: #4F46E5; letter-spacing: -0.02em;">Welcome to the Pioneer Phase.</h1>
+                        <p>Hello,</p>
+                        <p>We've reviewed your application and are excited to invite you to the <strong>onFORMAT Private Beta</strong>.</p>
+                        <div style="background: #f4f4f5; padding: 24px; border-radius: 8px; margin: 24px 0;">
+                            <p style="margin-top: 0;"><strong>Next Steps:</strong></p>
+                            <p>You can now create your account and claim your <strong>30-day Pioneer Trial</strong>.</p>
+                            <a href="${process.env.NEXT_PUBLIC_APP_URL}/signup" style="display: inline-block; background: #111; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">Initialize Workspace</a>
+                        </div>
+                        <p>Welcome to the future of tactical production.</p>
+                        <br/>
+                        <p>Best regards,<br/>The onFORMAT Team</p>
+                    </div>
+                `
+            });
+            console.log("✅ Beta Approval email dispatched to", request.email);
+        } catch (emailErr) {
+            console.warn("⚠️ Failed to send approval email:", emailErr);
+        }
+
+        // 3. If user already exists in profiles, grant beta access and 30-day solo tier
         const { data: existingProfile } = await adminSupabase
             .from('profiles')
             .select('id')
@@ -285,6 +313,39 @@ export async function deleteBetaRequest(requestId: string) {
         return { success: true };
     } catch (error: any) {
         console.error("Delete Beta Request Error:", error.message);
+        return { success: false, error: error.message };
+    }
+}
+
+// Action: Send Test Email
+export async function sendTestEmailAction() {
+    try {
+        console.log("SERVER ACTION: Sending test email to casteelio@gmail.com");
+        
+        const result = await sendEmail({
+            to: 'casteelio@gmail.com',
+            subject: '🧪 onFORMAT: Resend Connection Test',
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #111; padding: 20px; border: 1px solid #e5e7eb; border-radius: 12px;">
+                    <h2 style="color: #4F46E5;">Resend Integration: Online</h2>
+                    <p>This is a diagnostic email triggered from the <strong>Dev Center</strong>.</p>
+                    <div style="background: #f9fafb; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 13px;">
+                        Status: SUCCESS<br/>
+                        Timestamp: ${new Date().toISOString()}<br/>
+                        environment: ${process.env.NODE_ENV}
+                    </div>
+                    <p style="margin-top: 20px; font-size: 13px; color: #666;">
+                        If you are seeing this, your Resend API connection is correctly configured and dispatching transactional mail.
+                    </p>
+                </div>
+            `
+        });
+
+        if (result.error) throw result.error;
+
+        return { success: true };
+    } catch (error: any) {
+        console.error("Test Email Error:", error.message);
         return { success: false, error: error.message };
     }
 }
