@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'onFORMAT - Production Operating System',
@@ -27,6 +28,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-CJW22668G4"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-CJW22668G4');
+          `}
+        </Script>
+      </head>
       <body suppressHydrationWarning className="font-sans antialiased bg-zinc-50 text-zinc-900 w-full max-w-[100vw] overflow-x-hidden">
         <ThemeProvider>
           {children}
