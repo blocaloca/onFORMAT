@@ -15,8 +15,8 @@ The platform is structured around four distinct chronological phases. Each phase
 
 ### Phase 1: DEVELOPMENT
 *Focus: Defining intent and creative shape before reality intrudes.*
-- **Brief**: Establishes project intent, format, and core objectives.
-- **Creative Direction**: Defines visual references, mood, and creative approach.
+- **AI Project Vision**: Agentic goal-setting and project scope definition.
+- **Creative Brief**: Establishes project intent, format, and core objectives.
 - **Shot & Scene Book**: Initial mapping of must-have visuals and scene breakdowns.
 - **AV Script**: Dual-column formatting for audio and visual elements.
 - **Storyboard**: Visual sequence mapping with prompt/description integration.

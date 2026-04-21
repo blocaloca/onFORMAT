@@ -161,8 +161,8 @@ export default function LandingPage() {
             </div>
             <h3 className="text-sm font-black tracking-widest text-zinc-900 mb-6 uppercase">Development</h3>
             <ul className="space-y-3 text-[13px] font-medium text-zinc-500">
-              <li className="flex items-center gap-2">• Brief</li>
-              <li className="flex items-center gap-2">• Creative Direction</li>
+              <li className="flex items-center gap-2 font-bold text-purple-600">• AI Project Vision</li>
+              <li className="flex items-center gap-2">• Creative Brief</li>
               <li className="flex items-center gap-2">• Shot & Scene Book</li>
               <li className="flex items-center gap-2">• AV Script</li>
               <li className="flex items-center gap-2">• Storyboard</li>
