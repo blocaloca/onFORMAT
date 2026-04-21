@@ -6,9 +6,14 @@ import {
   ArrowRight, 
   ChevronLeft, 
   ChevronRight, 
-  Compass, 
-  Layers, 
-  Printer, 
+  Lightbulb,
+  Calendar,
+  Camera,
+  Archive,
+  Smartphone,
+  LayoutDashboard,
+  BrainCircuit,
+  Printer,
   CheckCircle 
 } from 'lucide-react';
 import { getClient } from '@/lib/supabase';
@@ -141,40 +146,145 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* THREE PILLARS (Silver UI style) */}
+      {/* CORE PHILOSOPHY: THE PRODUCTION PHASES */}
       <section className="py-24 md:py-32 px-4 md:px-8 max-w-7xl mx-auto border-t border-zinc-200/60">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-          <div className="flex flex-col items-start bg-white rounded-3xl p-8 md:p-10 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
-            <div className="w-14 h-14 bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
-              <Compass className="text-zinc-700" size={24} />
+        <div className="mb-16">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">The Lifecycle</h2>
+          <p className="text-3xl font-bold tracking-tight text-zinc-900">Four Phases. One Workspace.</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Phase 1: Develop */}
+          <div className="bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 border border-purple-100">
+              <Lightbulb className="text-purple-600" size={22} />
             </div>
-            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">AI LIAISON</h3>
-            <p className="text-zinc-500 leading-relaxed font-medium">
-              Brainstorm creative with an AI trained in modern content creation.
-            </p>
+            <h3 className="text-sm font-black tracking-widest text-zinc-900 mb-6 uppercase">Development</h3>
+            <ul className="space-y-3 text-[13px] font-medium text-zinc-500">
+              <li className="flex items-center gap-2">• Brief</li>
+              <li className="flex items-center gap-2">• Creative Direction</li>
+              <li className="flex items-center gap-2">• Shot & Scene Book</li>
+              <li className="flex items-center gap-2">• AV Script</li>
+              <li className="flex items-center gap-2">• Storyboard</li>
+              <li className="flex items-center gap-2">• Creative Concept</li>
+              <li className="flex items-center gap-2">• Director's Treatment</li>
+              <li className="flex items-center gap-2">• Mood Board</li>
+              <li className="flex items-center gap-2">• Lookbook</li>
+            </ul>
           </div>
 
-          <div className="flex flex-col items-start bg-white rounded-3xl p-8 md:p-10 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
-            <div className="w-14 h-14 bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
-              <Layers className="text-zinc-700" size={24} />
+          {/* Phase 2: Pre-Prod */}
+          <div className="bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 border border-emerald-100">
+              <Calendar className="text-emerald-600" size={22} />
             </div>
-            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">POWER-UP PRODUCER!</h3>
-            <p className="text-zinc-500 leading-relaxed font-medium">
-              Maintain multiple projects simultaneously. 25+ Creative and Production Documents from Development to Post. Manage your set with a granular RBAC matrix and high-volume eCommerce shot lists.
-            </p>
+            <h3 className="text-sm font-black tracking-widest text-zinc-900 mb-6 uppercase">Pre-Production</h3>
+            <ul className="space-y-3 text-[13px] font-medium text-zinc-500">
+              <li className="flex items-center gap-2">• Locations & Sets</li>
+              <li className="flex items-center gap-2">• Casting & Talent</li>
+              <li className="flex items-center gap-2">• Crew List</li>
+              <li className="flex items-center gap-2">• Schedule</li>
+              <li className="flex items-center gap-2">• Budget</li>
+              <li className="flex items-center gap-2">• Equipment List</li>
+              <li className="flex items-center gap-2">• Props List</li>
+              <li className="flex items-center gap-2">• Wardrobe</li>
+              <li className="flex items-center gap-2">• Talent Release</li>
+              <li className="flex items-center gap-2">• Property Release</li>
+            </ul>
           </div>
 
-          <div className="flex flex-col items-start bg-white rounded-3xl p-8 md:p-10 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
-            <div className="w-14 h-14 bg-gradient-to-br from-zinc-100 to-zinc-200 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+          {/* Phase 3: Production */}
+          <div className="bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 border border-blue-100">
+              <Camera className="text-blue-600" size={22} />
+            </div>
+            <h3 className="text-sm font-black tracking-widest text-zinc-900 mb-6 uppercase">Production</h3>
+            <ul className="space-y-3 text-[13px] font-medium text-zinc-500">
+              <li className="flex items-center gap-2">• Call Sheet</li>
+              <li className="flex items-center gap-2">• On-Set Notes</li>
+              <li className="flex items-center gap-2">• EComm Shot List</li>
+              <li className="flex items-center gap-2">• Shot List</li>
+              <li className="flex items-center gap-2">• DIT Log</li>
+              <li className="flex items-center gap-2">• Camera Report</li>
+              <li className="flex items-center gap-2">• Sound Report</li>
+              <li className="flex items-center gap-2">• Script Notes</li>
+              <li className="flex items-center gap-2">• OnSet Control Panel</li>
+            </ul>
+          </div>
+
+          {/* Phase 4: Post */}
+          <div className="bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 border border-amber-100">
+              <Archive className="text-amber-600" size={22} />
+            </div>
+            <h3 className="text-sm font-black tracking-widest text-zinc-900 mb-6 uppercase">Post-Production</h3>
+            <ul className="space-y-3 text-[13px] font-medium text-zinc-500">
+              <li className="flex items-center gap-2">• Client Selects</li>
+              <li className="flex items-center gap-2">• Deliverables & Licensing</li>
+              <li className="flex items-center gap-2">• Archive Log</li>
+              <li className="flex items-center gap-2">• Budget Actuals</li>
+              <li className="flex items-center gap-2">• Releases Manager</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* TACTICAL FEATURES */}
+        <div className="mt-24 md:mt-32 mb-16">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Tactical Tools</h2>
+          <p className="text-3xl font-bold tracking-tight text-zinc-900">System Engines</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+              <Smartphone className="text-zinc-700" size={24} />
+            </div>
+            <h3 className="text-lg font-bold tracking-tight text-zinc-900 mb-4 uppercase">Onset Mobile Control</h3>
+            <ul className="space-y-2 text-sm text-zinc-500 font-medium">
+              <li className="flex items-center gap-2">• Real-time shot tracking</li>
+              <li className="flex items-center gap-2">• Instant call sheet distribution</li>
+              <li className="flex items-center gap-2">• Direct DIT-to-Office data flow</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+              <LayoutDashboard className="text-zinc-700" size={24} />
+            </div>
+            <h3 className="text-lg font-bold tracking-tight text-zinc-900 mb-4 uppercase">Project Dashboard</h3>
+            <ul className="space-y-2 text-sm text-zinc-500 font-medium">
+              <li className="flex items-center gap-2">• 25+ Integrated Templates</li>
+              <li className="flex items-center gap-2">• Granular RBAC Permissions</li>
+              <li className="flex items-center gap-2">• Cross-project data sync</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+              <BrainCircuit className="text-zinc-700" size={24} />
+            </div>
+            <h3 className="text-lg font-bold tracking-tight text-zinc-900 mb-4 uppercase">Project Vision AI Liaison</h3>
+            <ul className="space-y-2 text-sm text-zinc-500 font-medium">
+              <li className="flex items-center gap-2">• Creative brainstorming</li>
+              <li className="flex items-center gap-2">• Intelligent shot list generation</li>
+              <li className="flex items-center gap-2">• Automated data pre-population</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col items-start bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+            <div className="w-14 h-14 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
               <Printer className="text-zinc-700" size={24} />
             </div>
-            <h3 className="text-xl font-bold tracking-tight text-zinc-900 mb-4 uppercase">PRINTROOM</h3>
-            <p className="text-zinc-500 leading-relaxed font-medium">
-              All your filled documents, rendered beautifully in PDF, client ready with custom cover sheet.
-            </p>
+            <h3 className="text-lg font-bold tracking-tight text-zinc-900 mb-4 uppercase">Printroom</h3>
+            <ul className="space-y-2 text-sm text-zinc-500 font-medium">
+              <li className="flex items-center gap-2">• High-fidelity PDF rendering</li>
+              <li className="flex items-center gap-2">• Branded client cover sheets</li>
+              <li className="flex items-center gap-2">• Batch production stack export</li>
+            </ul>
           </div>
         </div>
       </section>
+
 
       {/* ONSET MOBILE */}
       <section className="py-24 md:py-32 px-4 md:px-8 bg-white border-y border-zinc-200/60 overflow-hidden relative">
