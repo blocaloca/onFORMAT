@@ -21,13 +21,12 @@ import BetaApplicationModal from '@/components/modals/BetaApplicationModal';
 
 const SCREENSHOTS = [
   '/assets/slider-1.png', '/assets/slider-2.png', '/assets/slider-3.png', '/assets/slider-4.png', '/assets/slider-5.png', '/assets/slider-6.png',
-  '/assets/slider-1.png', '/assets/slider-2.png', '/assets/slider-3.png', '/assets/slider-4.png', '/assets/slider-5.png', '/assets/slider-6.png'
+  '/assets/slider-7.png', '/assets/slider-8.png', '/assets/slider-9.png', '/assets/slider-10.png', '/assets/slider-11.png', '/assets/slider-12.png'
 ];
 
 const ONSET_SCREENSHOTS = [
-  '/assets/mobile-preview.png', '/assets/IMG_6707.PNG', '/assets/mobile-previewx.png', '/assets/mobile-previewxx.png',
-  '/assets/mobile-preview.png', '/assets/IMG_6707.PNG', '/assets/mobile-previewx.png', '/assets/mobile-previewxx.png',
-  '/assets/mobile-preview.png', '/assets/IMG_6707.PNG', '/assets/mobile-previewx.png', '/assets/mobile-previewxx.png'
+  '/assets/mobile-slider-1.png', '/assets/mobile-slider-2.png', '/assets/mobile-slider-3.png', '/assets/mobile-slider-4.png', '/assets/mobile-slider-5.png', '/assets/mobile-slider-6.png',
+  '/assets/mobile-slider-7.png', '/assets/mobile-slider-8.png', '/assets/mobile-slider-9.png', '/assets/mobile-slider-10.png', '/assets/mobile-slider-11.png', '/assets/mobile-slider-12.png'
 ];
 
 export default function LandingPage() {
