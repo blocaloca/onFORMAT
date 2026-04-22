@@ -20,15 +20,19 @@ import { getClient } from '@/lib/supabase';
 import BetaApplicationModal from '@/components/modals/BetaApplicationModal';
 
 const SCREENSHOTS = [
-  '/assets/slider-1.png',
-  '/assets/slider-2.png',
-  '/assets/slider-3.png',
-  '/assets/slider-4.png',
-  '/assets/slider-5.png'
+  '/assets/slider-1.png', '/assets/slider-2.png', '/assets/slider-3.png', '/assets/slider-4.png', '/assets/slider-5.png', '/assets/slider-6.png',
+  '/assets/slider-1.png', '/assets/slider-2.png', '/assets/slider-3.png', '/assets/slider-4.png', '/assets/slider-5.png', '/assets/slider-6.png'
+];
+
+const ONSET_SCREENSHOTS = [
+  '/assets/mobile-preview.png', '/assets/IMG_6707.PNG', '/assets/mobile-previewx.png', '/assets/mobile-previewxx.png',
+  '/assets/mobile-preview.png', '/assets/IMG_6707.PNG', '/assets/mobile-previewx.png', '/assets/mobile-previewxx.png',
+  '/assets/mobile-preview.png', '/assets/IMG_6707.PNG', '/assets/mobile-previewx.png', '/assets/mobile-previewxx.png'
 ];
 
 export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentOnsetSlide, setCurrentOnsetSlide] = useState(0);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
@@ -42,14 +46,25 @@ export default function LandingPage() {
     };
     checkUser();
 
-    const timer = setInterval(() => {
+    const heroTimer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
     }, 5000);
-    return () => clearInterval(timer);
+
+    const onsetTimer = setInterval(() => {
+      setCurrentOnsetSlide((prev) => (prev + 1) % ONSET_SCREENSHOTS.length);
+    }, 4000);
+
+    return () => {
+      clearInterval(heroTimer);
+      clearInterval(onsetTimer);
+    };
   }, []);
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + SCREENSHOTS.length) % SCREENSHOTS.length);
+
+  const nextOnsetSlide = () => setCurrentOnsetSlide((prev) => (prev + 1) % ONSET_SCREENSHOTS.length);
+  const prevOnsetSlide = () => setCurrentOnsetSlide((prev) => (prev - 1 + ONSET_SCREENSHOTS.length) % ONSET_SCREENSHOTS.length);
 
   return (
     <div className="min-h-screen bg-[#F9F9FB] text-zinc-900 font-sans tracking-tight selection:bg-zinc-200">
@@ -284,11 +299,35 @@ export default function LandingPage() {
       <section className="py-24 md:py-32 px-4 md:px-8 bg-white border-y border-zinc-200/60 overflow-hidden relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-center">
           <div className="order-2 md:order-1 flex justify-center perspective-[1000px]">
-            <div className="relative w-[280px] md:w-[320px] rounded-[3rem] border-[10px] border-zinc-100 bg-zinc-50 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden ring-1 ring-zinc-200 transform rotate-y-[-5deg] rotate-x-[5deg]">
-              <div className="absolute top-0 inset-x-0 h-6 bg-zinc-100 flex justify-center z-20">
-                <div className="w-20 h-4 bg-zinc-200 rounded-b-xl" />
+            {/* ONSET IMAGE SLIDER WINDOW */}
+            <div className="relative w-full max-w-[320px] mx-auto rounded-[2rem] border border-zinc-200/80 bg-white shadow-2xl overflow-hidden p-[6px] backdrop-blur-sm group">
+              <div className="relative rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-100 aspect-[1080/1920]">
+                {ONSET_SCREENSHOTS.map((src, idx) => (
+                  <img
+                    key={idx}
+                    src={src}
+                    alt={`onSET Mobile Interface ${idx + 1}`}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${idx === currentOnsetSlide ? 'opacity-100' : 'opacity-0'}`}
+                  />
+                ))}
+                {/* Slider Controls */}
+                <button onClick={prevOnsetSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
+                  <ChevronLeft size={20} />
+                </button>
+                <button onClick={nextOnsetSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
+                  <ChevronRight size={20} />
+                </button>
+                {/* Dots */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                  {ONSET_SCREENSHOTS.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentOnsetSlide(i)}
+                      className={`w-1.5 h-1.5 rounded-full transition-all ${i === currentOnsetSlide ? 'bg-zinc-800 scale-125' : 'bg-black/20 hover:bg-black/40'}`}
+                    />
+                  ))}
+                </div>
               </div>
-              <img src="/assets/mobile-preview.png" alt="Onset Mobile Interface" className="w-full h-auto mt-2" />
             </div>
           </div>
           <div className="order-1 md:order-2">
