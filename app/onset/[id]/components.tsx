@@ -3411,35 +3411,83 @@ export const MobileClientSelectsView = ({ data, onAdd, onUpdate, onDelete, isRea
     );
 };
 
-export const MobileControlView = ({ data, onUpdate }: { data: any, onUpdate: (tool: string, units: string[]) => void }) => {
+export const MobileControlView = ({ 
+    data, 
+    onUpdate, 
+    activeDayIndex = 0, 
+    totalDays = 1, 
+    onSelectDay 
+}: { 
+    data: any, 
+    onUpdate: (tool: string, units: string[]) => void,
+    activeDayIndex?: number,
+    totalDays?: number,
+    onSelectDay?: (idx: number) => void
+}) => {
     const sortedTools = Object.keys(DOC_LABELS).sort();
 
     return (
-        <div className="space-y-4 pb-8">
-            <h3 className="text-xs font-black uppercase text-zinc-500 dark:text-zinc-500 mb-4 pl-1">Delegation Dashboard</h3>
-            <div className="grid gap-2">
-                {sortedTools.map(key => {
-                    const groups = data?.toolGroups?.[key] || [];
-                    const isDelegated = groups.includes('D');
+        <div className="space-y-8 pb-12 animate-in fade-in duration-500">
+            {/* DAY SELECTOR SECTION */}
+            {totalDays > 1 && (
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                        <label className="text-[10px] font-black uppercase tracking-[0.15em] text-emerald-600">Production Day</label>
+                        <span className="text-[10px] font-mono text-zinc-400">Day {activeDayIndex + 1} of {totalDays}</span>
+                    </div>
+                    
+                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar -mx-1 px-1">
+                        {Array.from({ length: totalDays }).map((_, idx) => {
+                            const isActive = idx === activeDayIndex;
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() => onSelectDay?.(idx)}
+                                    className={`shrink-0 min-w-[70px] h-12 rounded-xl border flex flex-col items-center justify-center transition-all active:scale-95 ${
+                                        isActive 
+                                        ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-lg' 
+                                        : 'bg-white dark:bg-zinc-900/40 text-zinc-400 dark:text-zinc-600 border-zinc-200 dark:border-zinc-800'
+                                    }`}
+                                >
+                                    <span className="text-[8px] font-black uppercase tracking-widest leading-none mb-1">Day</span>
+                                    <span className="text-sm font-black leading-none">{idx + 1}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                    
+                    <p className="text-[9px] text-zinc-400 dark:text-zinc-500 italic px-1 leading-relaxed">
+                        Selecting a day updates the entire OnSet feed for your session. Perfect for prep or historical review.
+                    </p>
+                </div>
+            )}
 
-                    return (
-                        <div key={key} className="bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex items-center justify-between">
-                            <div>
-                                <p className="text-[17px] font-black tracking-tight text-zinc-900 dark:text-black uppercase">{DOC_LABELS[key] || key}</p>
-                                <p className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono">ID: {key}</p>
+            <div className="space-y-4">
+                <h3 className="text-xs font-black uppercase text-zinc-500 dark:text-zinc-500 pl-1">Delegation Dashboard</h3>
+                <div className="grid gap-2">
+                    {sortedTools.map(key => {
+                        const groups = data?.toolGroups?.[key] || [];
+                        const isDelegated = groups.includes('D');
+
+                        return (
+                            <div key={key} className="bg-white dark:bg-white rounded-[20px] p-5 shadow-sm border border-black/[0.03] hover:shadow-md transition-shadow flex items-center justify-between">
+                                <div>
+                                    <p className="text-[17px] font-black tracking-tight text-zinc-900 dark:text-black uppercase">{DOC_LABELS[key] || key}</p>
+                                    <p className="text-[10px] text-zinc-500 dark:text-zinc-500 font-mono">ID: {key}</p>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        const newGroups = isDelegated ? groups.filter((g: string) => g !== 'D') : [...groups, 'D'];
+                                        onUpdate(key, newGroups);
+                                    }}
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-white dark:text-zinc-500 transition-all ${isDelegated ? 'bg-red-500 shadow-lg scale-110' : 'bg-zinc-300'}`}
+                                >
+                                    D
+                                </button>
                             </div>
-                            <button
-                                onClick={() => {
-                                    const newGroups = isDelegated ? groups.filter((g: string) => g !== 'D') : [...groups, 'D'];
-                                    onUpdate(key, newGroups);
-                                }}
-                                className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-white dark:text-zinc-500 transition-all ${isDelegated ? 'bg-red-500 shadow-lg scale-110' : 'bg-zinc-300'}`}
-                            >
-                                D
-                            </button>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

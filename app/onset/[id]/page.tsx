@@ -204,6 +204,8 @@ export default function OnSetMobilePage() {
     const [isTestMode, setIsTestMode] = useState(false);
     const [liveUsers, setLiveUsers] = useState<string[]>([]);
     const [systemTaps, setSystemTaps] = useState(0);
+    const [activeDayIndex, setActiveDayIndex] = useState(0);
+    const [totalDays, setTotalDays] = useState(1);
 
     // Hardware Override: Jump to Glitch Lab
     useEffect(() => {
@@ -247,9 +249,15 @@ export default function OnSetMobilePage() {
             setActiveTab(savedTab as Tab);
             activeTabRef.current = savedTab as Tab;
         }
+        // Removed fetchData from here - now driven by reactive useEffect below
+    }, [id]);
 
-        fetchData();
-
+    useEffect(() => {
+        if (id) fetchData();
+    }, [id, activeDayIndex]);
+    useEffect(() => {
+        if (!id) return;
+        
         // Realtime Subscription
         const channel = supabase
             .channel(`project-live-${id}`)
@@ -400,45 +408,43 @@ export default function OnSetMobilePage() {
 
             const { data: projectData, _roleFromDB, error } = await Promise.race([fetchProjectPromise, timeoutPromise]) as any;
 
-            if (error || !projectData) {
-                throw new Error("Project not found or network offline");
-            }
-
-            // 2. Fetch Role Identity from Crew Membership if email exists
+            // 2. Fetch Role Identity from Crew Membership
             let role = 'Crew';
             if (emailToUse) {
-                const { data: { session } } = await supabase.auth.getSession();
-                const isOwnerDataMatch = session?.user && (projectData.user_id === session.user.id);
-                
                 // FIRST: Consult the explicit Production Crew Membership (Resolved server-side!)
                 if (_roleFromDB) {
                     role = _roleFromDB;
-                } else if (isOwnerDataMatch) {
-                    // SECOND: Default to Owner identity if not in the Crew List
-                    role = 'Owner';
                 }
+                // No more auto-granting "Owner" role to the database owner.
+                // You must be on the crew list to have a defined role in OnSet Mobile.
 
                 setUserRole(role);
             }
 
-            // 3. Parse Drafts with Reverse Phase Search & Array Unwrapping
+            // 3. Parse Drafts with Reactive Day Selection
             const allDrafts: Record<string, any> = {};
             const phaseOrder = ['DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST'];
+
+            let maxDaysFound = 1;
 
             phaseOrder.forEach(phaseKey => {
                 const phase = projectData.data?.phases?.[phaseKey];
                 if (phase?.drafts) {
                     Object.entries(phase.drafts).forEach(([key, val]) => {
                         const parsed = safeParse(val as string);
-                        // Array Unwrapping: Take the LATEST version (Index 0 in OnSet standard)
-                        if (Array.isArray(parsed) && parsed.length > 0) {
-                            allDrafts[key] = parsed[0];
+                        if (Array.isArray(parsed)) {
+                            if (parsed.length > maxDaysFound) maxDaysFound = parsed.length;
+                            // Pull the active day or fallback to the nearest available day
+                            const matchIdx = Math.min(activeDayIndex, parsed.length - 1);
+                            allDrafts[key] = parsed[matchIdx];
                         } else if (parsed) {
                             allDrafts[key] = parsed;
                         }
                     });
                 }
             });
+
+            setTotalDays(maxDaysFound);
 
             // VIRTUAL MIGRATION: Support legacy Shot Log data
             if (allDrafts['shot-log'] && !allDrafts['camera-report']) allDrafts['camera-report'] = allDrafts['shot-log'];
@@ -492,8 +498,7 @@ export default function OnSetMobilePage() {
             // PERMISSIONS: Confirm if the user is the project's true administrative owner
             const { data: { session } } = await supabase.auth.getSession();
             const isMasterOwner = session?.user && (projectData.user_id === session.user.id);
-            const effectiveTestMode = (typeof window !== 'undefined') && localStorage.getItem('onset_test_mode') === 'true';
-            const isOwner = isMasterOwner && !effectiveTestMode;
+            const isOwner = false; // Owner role is no longer auto-granted in Mobile logic
             
             // Find current user's role in the specific Crew List draft for IDENTITY
             // SEARCH ALL PHASES: If the latest crew list is empty, search backwards for a legacy one
@@ -564,17 +569,23 @@ export default function OnSetMobilePage() {
             const roleMatrix = matrix[roleId!] || {};
             
             // canEdit handles the per-tab write access
-            const canEdit = (!!isMasterOwner && !effectiveTestMode) || (!!activeTab && roleMatrix[activeTab] === 'edit');
+            const canEdit = (isMasterOwner && activeTab === 'onset-mobile-control') || (!!activeTab && roleMatrix[activeTab] === 'edit');
 
             let availableKeys: string[] = [];
 
-            if (mobileControl && !isLive && (!isMasterOwner || effectiveTestMode)) {
+            if (mobileControl && !isLive && !isMasterOwner) {
                 availableKeys = [];
             } else {
                 // DYNAMIC MATRIX RESOLUTION
                 availableKeys = MOBILE_SUPPORTED.filter(k => {
-                    if (roleId === 'owner' || (isMasterOwner && !effectiveTestMode)) return true;
-                    
+                    // Owners can always see the Control tab as a safety bridge
+                    if (isMasterOwner && k === 'onset-mobile-control') return true;
+
+                    // If user is not on the crew list (me is undefined) 
+                    // AND they aren't the Master Owner bypassing via the bridge above,
+                    // they should be denied access unless explicitly granted 'Crew' permissions.
+                    if (!me && !isMasterOwner) return false;
+
                     // Robust lookup: check exact key OR map legacy aliases to confirm permission
                     const permission = roleMatrix[k] || (() => {
                         const legacyKey = Object.keys(roleMatrix).find(mk => mapMobileKey(mk) === k);
@@ -604,16 +615,10 @@ export default function OnSetMobilePage() {
                 availableKeys, 
                 _canEdit: !!canEdit, 
                 _isMasterOwner: !!isMasterOwner, 
-                _isTestMode: !!effectiveTestMode,
+                _isTestMode: false,
                 _roleId: roleId
             };
             setData(finalData);
-
-            // AUTO CLEAR TEST MODE IF NOT OWNER (SAFETY)
-            if (!isMasterOwner && effectiveTestMode) {
-                localStorage.removeItem('onset_test_mode');
-                setIsTestMode(false);
-            }
 
             // CACHE FOR OFFLINE SAFETY NET (NOW INCLUDES AVAILABLE KEYS)
             localStorage.setItem(`onset_cache_data_${id}`, JSON.stringify(finalData));
@@ -712,23 +717,28 @@ export default function OnSetMobilePage() {
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (Array.isArray(parsed)) {
-                        if (parsed.length > 0) logData = parsed[0];
-                        history = parsed.slice(1);
+                        fullHistory = [...parsed];
+                        logData = parsed[activeDayIndex] || {};
                     } else {
                         logData = parsed;
+                        fullHistory = [parsed];
                     }
                 }
             } catch { }
 
             // 3. Append Item
             const updatedHead = {
-                ...logData, // Preserve other props
-                // @ts-ignore
+                ...logData, 
                 items: [newItem, ...(logData['items'] || [])]
             };
 
-            // Re-wrap in Array for consistency with Desktop Editor
-            const finalDraftString = JSON.stringify([updatedHead, ...history]);
+            // Re-wrap in Array at the correct index
+            if (fullHistory.length > 0) {
+                fullHistory[activeDayIndex] = updatedHead;
+            } else {
+                fullHistory = [updatedHead];
+            }
+            const finalDraftString = JSON.stringify(fullHistory);
 
             // 4. Save
             const mergedPhase = {
@@ -769,9 +779,18 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
+            let fullHistory: any[] = [];
             let logDoc = safeParse(updatedPhases[logPhaseKey].drafts['camera-report'] || updatedPhases[logPhaseKey].drafts['shot-log']);
-            if (Array.isArray(logDoc)) logDoc = logDoc[0];
-            if (!logDoc || !logDoc.items) logDoc = { items: [] };
+            
+            if (Array.isArray(logDoc)) {
+                fullHistory = [...logDoc];
+                logDoc = logDoc[activeDayIndex] || {};
+            } else {
+                logDoc = logDoc || {};
+                fullHistory = [logDoc];
+            }
+
+            if (!logDoc.items) logDoc.items = [];
 
             // Ensure backward compatibility or migration if needed
             if (!logDoc.items && logDoc.entries) {
@@ -781,7 +800,8 @@ export default function OnSetMobilePage() {
 
             logDoc.items.unshift(item);
 
-            updatedPhases[logPhaseKey].drafts['camera-report'] = JSON.stringify(logDoc);
+            fullHistory[activeDayIndex] = logDoc;
+            updatedPhases[logPhaseKey].drafts['camera-report'] = JSON.stringify(fullHistory);
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await saveProjectData(updatedProjectData);
 
@@ -919,8 +939,20 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
             if (!updatedPhases[phaseKey].drafts) updatedPhases[phaseKey].drafts = {};
 
-            const releaseDoc = { releases: updatedList };
-            updatedPhases[phaseKey].drafts['releases'] = JSON.stringify(releaseDoc);
+            let fullHistory: any[] = [];
+            let doc = safeParse(updatedPhases[phaseKey].drafts['releases']);
+            
+            if (Array.isArray(doc)) {
+                fullHistory = [...doc];
+                doc = doc[activeDayIndex] || {};
+            } else {
+                doc = doc || {};
+                fullHistory = [doc];
+            }
+
+            doc.releases = updatedList;
+            fullHistory[activeDayIndex] = doc;
+            updatedPhases[phaseKey].drafts['releases'] = JSON.stringify(fullHistory);
 
             await saveProjectData({ ...latest.data, phases: updatedPhases });
             fetchData();
@@ -1024,18 +1056,15 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
 
             let raw = updatedPhases[phaseKey].drafts['call-sheet'];
+            let fullHistory: any[] = [];
             let docList = safeParse(raw);
-            let history: any[] = [];
-
             if (Array.isArray(docList)) {
-                if (docList.length > 0) history = docList.slice(1);
-                // Head is docList[0], but we are replacing it with updatedDoc
+                fullHistory = [...docList];
             } else if (docList) {
-                // Single object case (legacy)
+                fullHistory = [docList];
             }
-
-            const finalDraft = JSON.stringify([updatedDoc, ...history]);
-            updatedPhases[phaseKey].drafts['call-sheet'] = finalDraft;
+            fullHistory[activeDayIndex] = updatedDoc;
+            updatedPhases[phaseKey].drafts['call-sheet'] = JSON.stringify(fullHistory);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await saveProjectData(updatedProjectData);
@@ -1084,15 +1113,17 @@ export default function OnSetMobilePage() {
             let updatedPhases = { ...phases };
             if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
 
-            let raw = updatedPhases[phaseKey].drafts[originalKey];
+            let fullHistory: any[] = [];
             let docList = safeParse(raw);
-            let history: any[] = [];
 
             if (Array.isArray(docList)) {
-                if (docList.length > 0) history = docList.slice(1);
+                fullHistory = [...docList];
+            } else if (docList) {
+                fullHistory = [docList];
             }
 
-            const finalDraft = JSON.stringify([updatedDoc, ...history]);
+            fullHistory[activeDayIndex] = updatedDoc;
+            const finalDraft = JSON.stringify(fullHistory);
             updatedPhases[phaseKey].drafts[originalKey] = finalDraft;
 
             // AUTO-SYNC: Schedule -> Call Sheet
@@ -1159,14 +1190,16 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let raw = updatedPhases[logPhaseKey].drafts['script-notes'];
-            let doc = safeParse(raw);
-            let history: any[] = [];
+            let fullHistory: any[] = [];
+            let doc = safeParse(updatedPhases[logPhaseKey].drafts['script-notes']);
+            
             if (Array.isArray(doc)) {
-                if (doc.length > 0) history = doc.slice(1);
-                doc = doc[0];
+                fullHistory = [...doc];
+                doc = doc[activeDayIndex] || {};
+            } else {
+                doc = doc || {};
+                fullHistory = [doc];
             }
-            if (!doc) doc = {};
             if (!doc.items) doc.items = [];
 
             let list = [...doc.items];
@@ -1181,7 +1214,8 @@ export default function OnSetMobilePage() {
             }
 
             doc.items = list;
-            updatedPhases[logPhaseKey].drafts['script-notes'] = JSON.stringify([doc, ...history]);
+            fullHistory[activeDayIndex] = doc;
+            updatedPhases[logPhaseKey].drafts['script-notes'] = JSON.stringify(fullHistory);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await saveProjectData(updatedProjectData);
@@ -1201,14 +1235,16 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let raw = updatedPhases[logPhaseKey].drafts['sound-report'];
-            let doc = safeParse(raw);
-            let history: any[] = [];
+            let fullHistory: any[] = [];
+            let doc = safeParse(updatedPhases[logPhaseKey].drafts['sound-report']);
+            
             if (Array.isArray(doc)) {
-                if (doc.length > 0) history = doc.slice(1);
-                doc = doc[0];
+                fullHistory = [...doc];
+                doc = doc[activeDayIndex] || {};
+            } else {
+                doc = doc || {};
+                fullHistory = [doc];
             }
-            if (!doc) doc = {};
             if (!doc.takes) doc.takes = [];
 
             let list = [...doc.takes];
@@ -1221,7 +1257,8 @@ export default function OnSetMobilePage() {
             }
 
             doc.takes = list;
-            updatedPhases[logPhaseKey].drafts['sound-report'] = JSON.stringify([doc, ...history]);
+            fullHistory[activeDayIndex] = doc;
+            updatedPhases[logPhaseKey].drafts['sound-report'] = JSON.stringify(fullHistory);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await saveProjectData(updatedProjectData);
@@ -1246,14 +1283,16 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let raw = updatedPhases[logPhaseKey].drafts['client-selects'];
-            let doc = safeParse(raw);
-            let history: any[] = [];
+            let fullHistory: any[] = [];
+            let doc = safeParse(updatedPhases[logPhaseKey].drafts['client-selects']);
+            
             if (Array.isArray(doc)) {
-                if (doc.length > 0) history = doc.slice(1);
-                doc = doc[0];
+                fullHistory = [...doc];
+                doc = doc[activeDayIndex] || {};
+            } else {
+                doc = doc || {};
+                fullHistory = [doc];
             }
-            if (!doc) doc = {};
             if (!doc.items) doc.items = [];
 
             let list = [...doc.items];
@@ -1266,7 +1305,8 @@ export default function OnSetMobilePage() {
             }
 
             doc.items = list;
-            updatedPhases[logPhaseKey].drafts['client-selects'] = JSON.stringify([doc, ...history]);
+            fullHistory[activeDayIndex] = doc;
+            updatedPhases[logPhaseKey].drafts['client-selects'] = JSON.stringify(fullHistory);
 
             await saveProjectData({ ...latest.data, phases: updatedPhases });
             fetchData();
@@ -1289,14 +1329,16 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let raw = updatedPhases[logPhaseKey].drafts['crew-list'];
-            let doc = safeParse(raw);
-            let history: any[] = [];
+            let fullHistory: any[] = [];
+            let doc = safeParse(updatedPhases[logPhaseKey].drafts['crew-list']);
+            
             if (Array.isArray(doc)) {
-                if (doc.length > 0) history = doc.slice(1);
-                doc = doc[0];
+                fullHistory = [...doc];
+                doc = doc[activeDayIndex] || {};
+            } else {
+                doc = doc || {};
+                fullHistory = [doc];
             }
-            if (!doc) doc = {};
             if (!doc.crew) doc.crew = [];
 
             let list = [...doc.crew];
@@ -1309,7 +1351,8 @@ export default function OnSetMobilePage() {
             }
 
             doc.crew = list;
-            updatedPhases[logPhaseKey].drafts['crew-list'] = JSON.stringify([doc, ...history]);
+            fullHistory[activeDayIndex] = doc;
+            updatedPhases[logPhaseKey].drafts['crew-list'] = JSON.stringify(fullHistory);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await saveProjectData(updatedProjectData);
@@ -1362,14 +1405,17 @@ export default function OnSetMobilePage() {
             if (!updatedPhases[logPhaseKey]) updatedPhases[logPhaseKey] = { drafts: {} };
             if (!updatedPhases[logPhaseKey].drafts) updatedPhases[logPhaseKey].drafts = {};
 
-            let raw = updatedPhases[logPhaseKey].drafts[originalKey];
-            let doc = safeParse(raw);
-            let history: any[] = [];
+            let fullHistory: any[] = [];
+            let doc = safeParse(updatedPhases[logPhaseKey].drafts[originalKey]);
+            
             if (Array.isArray(doc)) {
-                if (doc.length > 0) history = doc.slice(1);
-                doc = doc[0];
+                fullHistory = [...doc];
+                doc = doc[activeDayIndex] || {};
+            } else {
+                doc = doc || {};
+                fullHistory = [doc];
             }
-            if (!doc) doc = {};
+
             if (!doc[listKey]) doc[listKey] = [];
 
             let list = [...doc[listKey]];
@@ -1382,7 +1428,8 @@ export default function OnSetMobilePage() {
             }
 
             doc[listKey] = list;
-            updatedPhases[logPhaseKey].drafts[originalKey] = JSON.stringify([doc, ...history]);
+            fullHistory[activeDayIndex] = doc;
+            updatedPhases[logPhaseKey].drafts[originalKey] = JSON.stringify(fullHistory);
 
             const updatedProjectData = { ...latest.data, phases: updatedPhases };
             await saveProjectData(updatedProjectData);
@@ -1427,10 +1474,15 @@ export default function OnSetMobilePage() {
                             </div>
 
                             {/* Center: Dynamic Role / Document Name */}
-                            <div className="flex-1 min-w-0 flex items-center justify-center px-4">
+                            <div className="flex-1 min-w-0 flex flex-col items-center justify-center px-4">
                                 <span className="text-[11px] md:text-[12px] font-black uppercase tracking-[0.1em] text-emerald-600 dark:text-emerald-500 truncate text-center">
                                     {activeTab === '' ? (userRole || 'Crew') : (DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' '))}
                                 </span>
+                                {totalDays > 1 && (
+                                    <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mt-0.5">
+                                        Day {activeDayIndex + 1} of {totalDays}
+                                    </span>
+                                )}
                             </div>
 
                             {/* Dashboard / System Toggle */}
@@ -1753,6 +1805,15 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'lookbook' && <MobileLookbookView data={data.docs['lookbook']} onAdd={(m) => handleUpdateList('lookbook', 'add', m)} onUpdate={(m) => handleUpdateList('lookbook', 'update', m)} onDelete={(id) => handleUpdateList('lookbook', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
                                 {activeTab === 'wardrobe' && <MobileWardrobeView data={data.docs['wardrobe']} onAdd={(m) => handleUpdateList('wardrobe', 'add', m)} onUpdate={(m) => handleUpdateList('wardrobe', 'update', m)} onDelete={(id) => handleUpdateList('wardrobe', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
                                 {activeTab === 'casting' && <MobileCastingView data={data.docs['casting']} onAdd={(m) => handleUpdateList('casting', 'add', m)} onUpdate={(m) => handleUpdateList('casting', 'update', m)} onDelete={(id) => handleUpdateList('casting', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
+                                {activeTab === 'onset-mobile-control' && (
+                                    <MobileControlView 
+                                        data={data.docs['onset-mobile-control']} 
+                                        onUpdate={(tool, units) => handleUpdateControl(tool, units)}
+                                        activeDayIndex={activeDayIndex}
+                                        totalDays={totalDays}
+                                        onSelectDay={setActiveDayIndex}
+                                    />
+                                )}
                                 {activeTab === 'props-list' && <MobilePropsView data={data.docs['props-list']} onAdd={(m) => handleUpdateList('props-list', 'add', m)} onUpdate={(m) => handleUpdateList('props-list', 'update', m)} onDelete={(id) => handleUpdateList('props-list', 'delete', id)} isReadOnly={isReadOnlyDynamic} />}
 
                                 {/* Fallback for other docs */}
