@@ -32,6 +32,8 @@ const ONSET_SCREENSHOTS = [
 export default function LandingPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentOnsetSlide, setCurrentOnsetSlide] = useState(0);
+  const [validHeroImages, setValidHeroImages] = useState<string[]>([]);
+  const [validOnsetImages, setValidOnsetImages] = useState<string[]>([]);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
@@ -45,25 +47,57 @@ export default function LandingPage() {
     };
     checkUser();
 
-    const heroTimer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
-    }, 5000);
-
-    const onsetTimer = setInterval(() => {
-      setCurrentOnsetSlide((prev) => (prev + 1) % ONSET_SCREENSHOTS.length);
-    }, 4000);
-
-    return () => {
-      clearInterval(heroTimer);
-      clearInterval(onsetTimer);
+    // Validate Hero Images
+    const validateHero = async () => {
+      const results = await Promise.all(SCREENSHOTS.map(src => {
+        return new Promise<string | null>((resolve) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = () => resolve(src);
+          img.onerror = () => resolve(null);
+        });
+      }));
+      setValidHeroImages(results.filter((res): res is string => res !== null));
     };
+
+    // Validate OnSet Images
+    const validateOnset = async () => {
+      const results = await Promise.all(ONSET_SCREENSHOTS.map(src => {
+        return new Promise<string | null>((resolve) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = () => resolve(src);
+          img.onerror = () => resolve(null);
+        });
+      }));
+      setValidOnsetImages(results.filter((res): res is string => res !== null));
+    };
+
+    validateHero();
+    validateOnset();
   }, []);
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % SCREENSHOTS.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + SCREENSHOTS.length) % SCREENSHOTS.length);
+  useEffect(() => {
+    if (validHeroImages.length === 0) return;
+    const heroTimer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % validHeroImages.length);
+    }, 5000);
+    return () => clearInterval(heroTimer);
+  }, [validHeroImages]);
 
-  const nextOnsetSlide = () => setCurrentOnsetSlide((prev) => (prev + 1) % ONSET_SCREENSHOTS.length);
-  const prevOnsetSlide = () => setCurrentOnsetSlide((prev) => (prev - 1 + ONSET_SCREENSHOTS.length) % ONSET_SCREENSHOTS.length);
+  useEffect(() => {
+    if (validOnsetImages.length === 0) return;
+    const onsetTimer = setInterval(() => {
+      setCurrentOnsetSlide((prev) => (prev + 1) % validOnsetImages.length);
+    }, 4000);
+    return () => clearInterval(onsetTimer);
+  }, [validOnsetImages]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % validHeroImages.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + validHeroImages.length) % validHeroImages.length);
+
+  const nextOnsetSlide = () => setCurrentOnsetSlide((prev) => (prev + 1) % validOnsetImages.length);
+  const prevOnsetSlide = () => setCurrentOnsetSlide((prev) => (prev - 1 + validOnsetImages.length) % validOnsetImages.length);
 
   return (
     <div className="min-h-screen bg-[#F9F9FB] text-zinc-900 font-sans tracking-tight selection:bg-zinc-200">
@@ -125,7 +159,7 @@ export default function LandingPage() {
         {/* IMAGE SLIDER */}
         <div className="relative w-full max-w-5xl mx-auto rounded-[2rem] border border-zinc-200/80 bg-white shadow-2xl overflow-hidden p-[6px] backdrop-blur-sm group">
           <div className="relative rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-100 aspect-[16/10]">
-            {SCREENSHOTS.map((src, idx) => (
+            {validHeroImages.map((src, idx) => (
               <img
                 key={idx}
                 src={src}
@@ -134,15 +168,19 @@ export default function LandingPage() {
               />
             ))}
             {/* Slider Controls */}
-            <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100 md:w-10 md:h-10">
-              <ChevronLeft size={20} />
-            </button>
-            <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
-              <ChevronRight size={20} />
-            </button>
+            {validHeroImages.length > 1 && (
+              <>
+                <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100 md:w-10 md:h-10">
+                  <ChevronLeft size={20} />
+                </button>
+                <button onClick={nextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
+                  <ChevronRight size={20} />
+                </button>
+              </>
+            )}
             {/* Dots */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {SCREENSHOTS.map((_, i) => (
+              {validHeroImages.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentSlide(i)}
@@ -301,7 +339,7 @@ export default function LandingPage() {
             {/* ONSET IMAGE SLIDER WINDOW */}
             <div className="relative w-full max-w-[320px] mx-auto rounded-[2rem] border border-zinc-200/80 bg-white shadow-2xl overflow-hidden p-[6px] backdrop-blur-sm group">
               <div className="relative rounded-2xl overflow-hidden border border-zinc-100 bg-zinc-100 aspect-[1080/1920]">
-                {ONSET_SCREENSHOTS.map((src, idx) => (
+                {validOnsetImages.map((src, idx) => (
                   <img
                     key={idx}
                     src={src}
@@ -310,15 +348,19 @@ export default function LandingPage() {
                   />
                 ))}
                 {/* Slider Controls */}
-                <button onClick={prevOnsetSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
-                  <ChevronLeft size={20} />
-                </button>
-                <button onClick={nextOnsetSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
-                  <ChevronRight size={20} />
-                </button>
+                {validOnsetImages.length > 1 && (
+                  <>
+                    <button onClick={prevOnsetSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
+                      <ChevronLeft size={20} />
+                    </button>
+                    <button onClick={nextOnsetSlide} className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:bg-white text-zinc-800 transition-transform hover:scale-105 opacity-0 group-hover:opacity-100">
+                      <ChevronRight size={20} />
+                    </button>
+                  </>
+                )}
                 {/* Dots */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-                  {ONSET_SCREENSHOTS.map((_, i) => (
+                  {validOnsetImages.map((_, i) => (
                     <button
                       key={i}
                       onClick={() => setCurrentOnsetSlide(i)}
