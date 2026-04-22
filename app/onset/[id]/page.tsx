@@ -613,6 +613,7 @@ export default function OnSetMobilePage() {
                 ...computedData, 
                 version: Date.now(),
                 availableKeys, 
+                totalDays: maxDaysFound,
                 _canEdit: !!canEdit, 
                 _isMasterOwner: !!isMasterOwner, 
                 _isTestMode: false,
@@ -1478,7 +1479,7 @@ export default function OnSetMobilePage() {
                                 <span className="text-[11px] md:text-[12px] font-black uppercase tracking-[0.1em] text-emerald-600 dark:text-emerald-500 truncate text-center">
                                     {activeTab === '' ? (userRole || 'Crew') : (DOC_LABELS[activeTab] || activeTab.replace(/-/g, ' '))}
                                 </span>
-                                {totalDays > 1 && (
+                                {totalDays >= 1 && (
                                     <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400 dark:text-zinc-500 mt-0.5">
                                         Day {activeDayIndex + 1} of {totalDays}
                                     </span>

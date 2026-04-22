@@ -24,6 +24,9 @@ interface OnSetControlPanelTemplateProps {
     onUpdate: (data: any) => void;
     isLocked?: boolean;
     metadata?: any;
+    activeDayIndex?: number;
+    totalDays?: number;
+    onSelectDay?: (idx: number) => void;
 }
 
 
@@ -57,7 +60,15 @@ const DOCUMENT_TYPES = [
     { id: 'archive', name: 'Archive Log' }
 ];
 
-export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }: any) => {
+export const OnSetControlPanelTemplate = ({ 
+    data, 
+    onUpdate, 
+    isLocked, 
+    metadata,
+    activeDayIndex = 0,
+    totalDays = 1,
+    onSelectDay
+}: any) => {
     const safeData = (data && typeof data === 'object') ? data : {};
     const roles = safeData.roles || [];
     const matrix = safeData.matrix || {};
@@ -136,6 +147,42 @@ export const OnSetControlPanelTemplate = ({ data, onUpdate, isLocked, metadata }
     return (
         <div className="space-y-8 animate-in fade-in">
             
+            {/* DAY SELECTOR SECTION - Sync with Mobile */}
+            {totalDays >= 1 && (
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-[2rem] shadow-sm space-y-4 transition-all">
+                    <div className="flex items-center justify-between px-1">
+                        <div className="flex items-center gap-2">
+                            <Activity size={16} className="text-emerald-500" />
+                            <label className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-900 dark:text-white">Production Day Context</label>
+                        </div>
+                        <span className="text-[10px] font-mono text-zinc-400">Day {activeDayIndex + 1} of {totalDays}</span>
+                    </div>
+                    
+                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar -mx-1 px-1">
+                        {Array.from({ length: totalDays }).map((_, idx) => {
+                            const isActive = idx === activeDayIndex;
+                            return (
+                                <button
+                                    key={idx}
+                                    onClick={() => onSelectDay?.(idx)}
+                                    className={`shrink-0 min-w-[80px] h-12 rounded-xl border flex flex-col items-center justify-center transition-all active:scale-95 ${
+                                        isActive 
+                                        ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-lg' 
+                                        : 'bg-white dark:bg-zinc-900/40 text-zinc-400 dark:text-zinc-600 border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
+                                    }`}
+                                >
+                                    <span className="text-[8px] font-black uppercase tracking-widest leading-none mb-1">Day</span>
+                                    <span className="text-sm font-black leading-none">{idx + 1}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500 italic px-1">
+                        Switching the context here updates which data set is active for all mobile crew members.
+                    </p>
+                </div>
+            )}
+
             {/* COMPACT STATUS BAR */}
             <div className="flex flex-col sm:flex-row justify-between items-center bg-transparent px-6 py-4 rounded-[2rem] border border-zinc-200 dark:border-zinc-800 shadow-sm transition-colors">
                 <div className="flex items-center gap-4">

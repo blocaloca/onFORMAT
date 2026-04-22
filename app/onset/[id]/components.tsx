@@ -3429,7 +3429,7 @@ export const MobileControlView = ({
     return (
         <div className="space-y-8 pb-12 animate-in fade-in duration-500">
             {/* DAY SELECTOR SECTION */}
-            {totalDays > 1 && (
+            {totalDays >= 1 && (
                 <div className="space-y-4">
                     <div className="flex items-center justify-between px-1">
                         <label className="text-[10px] font-black uppercase tracking-[0.15em] text-emerald-600">Production Day</label>
@@ -3455,13 +3455,11 @@ export const MobileControlView = ({
                             );
                         })}
                     </div>
-                    
+                </div>
+            )}
                     <p className="text-[9px] text-zinc-400 dark:text-zinc-500 italic px-1 leading-relaxed">
                         Selecting a day updates the entire OnSet feed for your session. Perfect for prep or historical review.
                     </p>
-                </div>
-            )}
-
             <div className="space-y-4">
                 <h3 className="text-xs font-black uppercase text-zinc-500 dark:text-zinc-500 pl-1">Delegation Dashboard</h3>
                 <div className="grid gap-2">

@@ -310,6 +310,9 @@ export const DraftEditor = ({
                         onMagicImport={onMagicImport}
 
                         onAddDay={handleNew}
+                        activeDayIndex={safeIndex}
+                        totalDays={versions.length}
+                        onSelectDay={setActiveVersionIndex}
                     />
                 </div>
             </div>
