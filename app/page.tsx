@@ -299,29 +299,29 @@ export default function LandingPage() {
           </div>
           <div className="order-1 md:order-2">
             <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter text-zinc-900 mb-6 uppercase leading-none">
-              ONSET MOBILE.
+              ONSET MOBILE
             </h2>
             <p className="text-xl text-zinc-500 font-medium leading-relaxed mb-8">
-              The first mobile interface designed for the actual chaos of production. Once logged-in, the crew is unified in a digital environment.
+              A live-data mobile environment designed for the chaos of production. Connect your crew to a real-time feed that bridges the gap between onset execution and office management.
             </p>
             <ul className="space-y-5">
               <li className="flex items-center gap-4 text-zinc-700 font-medium text-lg">
                 <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
                   <CheckCircle size={16} className="text-zinc-500" />
                 </div>
-                View call sheets instantly
+                Real-time shot tracking for every department
               </li>
               <li className="flex items-center gap-4 text-zinc-700 font-medium text-lg">
                 <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
                   <CheckCircle size={16} className="text-zinc-500" />
                 </div>
-                Approve shots on the fly
+                Instant distribution of digital Call Sheets
               </li>
               <li className="flex items-center gap-4 text-zinc-700 font-medium text-lg">
                 <div className="w-8 h-8 rounded-full bg-zinc-100 border border-zinc-200 flex items-center justify-center flex-shrink-0">
                   <CheckCircle size={16} className="text-zinc-500" />
                 </div>
-                Sync with your team in real-time
+                Direct DIT and Producer onset data aggregation
               </li>
             </ul>
           </div>

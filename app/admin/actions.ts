@@ -166,43 +166,49 @@ export async function fetchFeedback() {
 }
 
 // Action: Mark Feedback as Read
-export async function markFeedbackRead(formData: FormData) {
-    const id = formData.get("id") as string;
-    if (!id) return;
-
-    console.log("SERVER ACTION: Marking read for ID", id);
-
+export async function markFeedbackRead(requestId: string | FormData) {
     try {
-        await adminSupabase
+        const id = typeof requestId === 'string' ? requestId : requestId.get("id") as string;
+        if (!id) return { success: false, error: "Missing ID" };
+
+        console.log("SERVER ACTION: Marking read for ID", id);
+
+        const { error } = await adminSupabase
             .from('feedback_messages')
             .update({ status: 'read' })
             .eq('id', id);
 
-    } catch (error) {
-        console.error("Database update error:", error);
+        if (error) throw error;
+        
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error: any) {
+        console.error("Database update error:", error.message);
+        return { success: false, error: error.message };
     }
-
-    revalidatePath('/admin');
 }
 
 // Action: Delete Feedback
-export async function deleteFeedback(formData: FormData) {
-    const id = formData.get("id") as string;
-    if (!id) return;
-
-    console.log("SERVER ACTION: Deleting ID", id);
-
+export async function deleteFeedback(requestId: string | FormData) {
     try {
-        await adminSupabase
+        const id = typeof requestId === 'string' ? requestId : requestId.get("id") as string;
+        if (!id) return { success: false, error: "Missing ID" };
+
+        console.log("SERVER ACTION: Deleting ID", id);
+
+        const { error } = await adminSupabase
             .from('feedback_messages')
             .delete()
             .eq('id', id);
 
-    } catch (error) {
-        console.error("Database delete error:", error);
-    }
+        if (error) throw error;
 
-    revalidatePath('/admin');
+        revalidatePath('/admin');
+        return { success: true };
+    } catch (error: any) {
+        console.error("Database delete error:", error.message);
+        return { success: false, error: error.message };
+    }
 }
 // Action: Fetch Beta Requests
 export async function fetchBetaRequests() {

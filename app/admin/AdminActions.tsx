@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Crown, Sparkles, Check, CheckCircle, Loader2 } from 'lucide-react';
-import { toggleProOverride, toggleBetaUser, markFeedbackRead, deleteFeedback } from './actions';
+import { toggleProOverride, toggleBetaUser, markFeedbackRead, deleteFeedback, approveBetaRequest, deleteBetaRequest } from './actions';
 import { Trash2 } from 'lucide-react';
 
 // User Actions Component
@@ -135,7 +135,6 @@ export function BetaRequestActions({ request }: { request: any }) {
     const router = useRouter();
     const [isPending, setIsPending] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const { approveBetaRequest, deleteBetaRequest } = require('./actions');
 
     const handleApprove = async () => {
         setIsPending(true);
