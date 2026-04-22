@@ -78,136 +78,57 @@ export const DraftEditor = ({
     isOwner
 }: DraftEditorProps) => {
 
-    // Schedule Import Logic - Search all relevant phases (ON_SET is default in OnFormat, PRODUCTION in OnSet Mobile)
-    let importedSchedule = null;
-    const scheduleDraft = phases?.['ON_SET']?.drafts?.['schedule'] || phases?.['PRODUCTION']?.drafts?.['schedule'] || phases?.['PRE_PRODUCTION']?.drafts?.['schedule'];
-    if (scheduleDraft) {
+    // --- Context-Aware Syncing Logic ---
+    const getImportedData = (fieldKey: string, index: number) => {
+        const draftContent = (phases as any)?.[fieldKey]?.drafts?.[activeToolKey] || 
+                            phases?.['ON_SET']?.drafts?.[fieldKey] || 
+                            phases?.['PRODUCTION']?.drafts?.[fieldKey] || 
+                            phases?.['PRE_PRODUCTION']?.drafts?.[fieldKey] ||
+                            phases?.['DEVELOPMENT']?.drafts?.[fieldKey];
+        
+        if (!draftContent) return null;
         try {
-            const raw = JSON.parse(scheduleDraft);
+            const raw = JSON.parse(draftContent);
             const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedSchedule = arr[0];
-        } catch { }
-    }
+            // Match the index if possible, otherwise fall back to the first day (Day 1)
+            // This handles "Master" schedules that only have 1 day while docs have many.
+            const matchIndex = Math.min(index, arr.length - 1);
+            return arr[matchIndex] || null;
+        } catch { return null; }
+    };
 
-    // AV Script Import Logic (for Script Notes)
-    let importedAVScript = null;
-    if (phases?.['DEVELOPMENT']?.drafts?.['av-script']) {
-        try {
-            const raw = JSON.parse(phases['DEVELOPMENT'].drafts['av-script']);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedAVScript = arr[0];
-        } catch { }
-    }
-
-    // Budget Import Logic (for Actuals)
-    let importedBudget = null;
-    if (phases?.['PRE_PRODUCTION']?.drafts?.['budget']) {
-        try {
-            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['budget']);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedBudget = arr[0];
-        } catch { }
-    }
-
-    // DIT Log Import Logic (for Control Panel Alerts)
-    let importedDITLog = null;
-    const ditLogDraft = phases?.['ON_SET']?.drafts?.['dit-log'] || phases?.['PRODUCTION']?.drafts?.['dit-log'];
-    if (ditLogDraft) {
-        try {
-            const raw = JSON.parse(ditLogDraft);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedDITLog = arr[0];
-        } catch { }
-    }
-
-    // Brief Import Logic (for Context)
-    let importedBrief = null;
-    const briefDraft = phases?.['DEVELOPMENT']?.drafts?.['brief'] || phases?.['STRATEGY']?.drafts?.['brief'] || phases?.['PRE_PRODUCTION']?.drafts?.['brief'];
-    if (briefDraft) {
-        try {
-            const raw = JSON.parse(briefDraft);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedBrief = arr[0];
-        } catch { }
-    }
-
-    // Project Vision Import Logic (for Context)
-    let importedVision = null;
-    const visionDraft = phases?.['DEVELOPMENT']?.drafts?.['project-vision'] || phases?.['STRATEGY']?.drafts?.['project-vision'];
-    if (visionDraft) {
-        try {
-            const raw = JSON.parse(visionDraft);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedVision = arr[0];
-        } catch { }
-    }
-
-    // Lookbook Import Logic (for Storyboard Sync)
-    let importedLookbook = null;
-    if (phases?.['DEVELOPMENT']?.drafts?.['lookbook']) {
-        try {
-            const raw = JSON.parse(phases['DEVELOPMENT'].drafts['lookbook']);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedLookbook = arr[0];
-        } catch { }
-    }
-
-    // --- Nav Mode Logic ---
-
-
-    // Mobile Role Extraction (for Crew List assignment)
-    let mobileRoles = [];
-    const mobileControlRaw = phases?.['ON_SET']?.drafts?.['onset-mobile-control'] || phases?.['PRODUCTION']?.drafts?.['onset-mobile-control'];
-    if (mobileControlRaw) {
-        try {
-            const raw = JSON.parse(mobileControlRaw);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0 && arr[0].roles) mobileRoles = arr[0].roles;
-        } catch { }
-    }
-
-    // Locations Import Logic (for Call Sheet Sync)
-    let importedLocations = null;
-    const locationsDraft = phases?.['PRE_PRODUCTION']?.drafts?.['locations-sets'] || phases?.['ON_SET']?.drafts?.['locations-sets'];
-    if (locationsDraft) {
-        try {
-            const raw = JSON.parse(locationsDraft);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedLocations = arr[0];
-        } catch { }
-    }
-
-    // Shot List Import Logic (for Storyboard Breakdown)
-    let importedShotList = null;
-    if (phases?.['PRE_PRODUCTION']?.drafts?.['shot-scene-book']) {
-        try {
-            const raw = JSON.parse(phases['PRE_PRODUCTION'].drafts['shot-scene-book']);
-            const arr = Array.isArray(raw) ? raw : [raw];
-            if (arr.length > 0) importedShotList = arr[0];
-        } catch { }
-    }
-
-    // --- Document Stack Logic ---
+    // --- Versioning / Day Logic ---
     const [activeVersionIndex, setActiveVersionIndex] = useState(0);
 
-    // Parse draft safely into an Array
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getVersions = (): any[] => {
         if (!draft) return [{}];
         try {
             const parsed = JSON.parse(draft);
             if (Array.isArray(parsed)) return parsed;
-            return [parsed]; // Migration for legacy single objects
-        } catch {
-            return [{}]; // Fallback
-        }
+            return [parsed];
+        } catch { return [{}]; }
     };
 
     const versions = getVersions();
-    // Safety: ensure activeVersionIndex is within bounds
     const safeIndex = Math.min(activeVersionIndex, versions.length - 1);
-    // Handle empty versions array or null entries case
     const activeData = (versions.length > 0 && versions[safeIndex]) ? versions[safeIndex] : {};
+
+    // Injected Metadata (Context-Aware)
+    const importedSchedule = getImportedData('schedule', safeIndex);
+    const importedAVScript = getImportedData('av-script', safeIndex);
+    const importedBudget = getImportedData('budget', safeIndex);
+    const importedDITLog = getImportedData('dit-log', safeIndex);
+    const importedBrief = getImportedData('brief', safeIndex);
+    const importedVision = getImportedData('project-vision', safeIndex);
+    const importedLookbook = getImportedData('lookbook', safeIndex);
+    const importedLocations = getImportedData('locations-sets', safeIndex);
+    const importedShotList = getImportedData('shot-scene-book', safeIndex);
+
+    // Mobile Role Extraction
+    let mobileRoles = [];
+    const mobileControl = getImportedData('onset-mobile-control', safeIndex);
+    if (mobileControl?.roles) mobileRoles = mobileControl.roles;
+
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUpdate = (updatedFields: any) => {
@@ -222,17 +143,17 @@ export const DraftEditor = ({
 
     // --- Nav Bar Actions ---
     // --- Nav Bar Actions ---
-    const handleNew = () => {
-        // Universal "Collection/Day" Mode: Append to End (Day 1, Day 2...)
-        // Smart Date Increment Logic
-        const lastItem = versions[versions.length - 1] || {};
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const newItem: any = {};
+    const handleNew = (duplicate: boolean = false) => {
+        const lastItem = versions[safeIndex] || versions[versions.length - 1] || {};
+        
+        // Base content: Either clone the current day or start empty
+        const newItem: any = duplicate ? JSON.parse(JSON.stringify(lastItem)) : {};
 
-        if (lastItem.date) {
+        // Smart Date Increment Logic (always applied if date exists)
+        const dateToInc = lastItem.date;
+        if (dateToInc) {
             try {
-                // Try to parse MM/DD/YYYY
-                const [m, d, y] = lastItem.date.split('/').map((n: string) => parseInt(n));
+                const [m, d, y] = dateToInc.split('/').map((n: string) => parseInt(n));
                 if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
                     const dateObj = new Date(y, m - 1, d);
                     dateObj.setDate(dateObj.getDate() + 1);
@@ -245,7 +166,7 @@ export const DraftEditor = ({
         }
 
         const newVersions = [...versions, newItem];
-        setActiveVersionIndex(newVersions.length - 1); // Jump to new last item
+        setActiveVersionIndex(newVersions.length - 1);
         onDraftChange(JSON.stringify(newVersions));
     };
 

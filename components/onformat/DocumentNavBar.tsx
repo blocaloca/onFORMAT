@@ -9,7 +9,7 @@ interface DocumentNavBarProps {
     versions: any[];
     activeVersionIndex: number;
     onSelectVersion: (index: number) => void;
-    onNew: () => void;
+    onNew: (duplicate?: boolean) => void;
     onClear: () => void;
     title: string;
     onOpenPrintRoom?: () => void;
@@ -38,6 +38,7 @@ export const DocumentNavBar = ({
 }: DocumentNavBarProps) => {
     const { theme, setTheme } = useTheme();
     const darkMode = theme === 'dark';
+    const [showNewMenu, setShowNewMenu] = React.useState(false);
 
     // Helpers for Collection Mode (Day Logic)
     // In Collection Mode: versions array = [Day 1, Day 2, Day 3]
@@ -91,9 +92,37 @@ export const DocumentNavBar = ({
                     <div className={`h-4 w-px mx-2 ${darkMode ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
 
                     {/* Day Actions */}
-                    <button onClick={onNew} className="p-1.5 text-zinc-500 hover:text-emerald-400 transition-colors" title="Add Day">
-                        <Plus size={16} />
-                    </button>
+                    <div className="relative">
+                        <button 
+                            onClick={() => setShowNewMenu(!showNewMenu)} 
+                            className={`p-1.5 transition-colors ${showNewMenu ? 'text-emerald-500' : 'text-zinc-500 hover:text-emerald-400'}`} 
+                            title="Add Day Options"
+                        >
+                            <Plus size={16} />
+                        </button>
+
+                        {showNewMenu && (
+                            <>
+                                <div className="fixed inset-0 z-40" onClick={() => setShowNewMenu(false)} />
+                                <div className={`absolute left-0 top-10 w-48 z-50 rounded-sm border shadow-xl p-1 animate-in fade-in slide-in-from-top-2 duration-150 ${darkMode ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-zinc-200'}`}>
+                                    <button
+                                        onClick={() => { onNew(false); setShowNewMenu(false); }}
+                                        className={`w-full flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest rounded-sm transition-colors ${darkMode ? 'hover:bg-zinc-800 text-zinc-300 hover:text-white' : 'hover:bg-zinc-50 text-zinc-600 hover:text-black'}`}
+                                    >
+                                        <Plus size={12} />
+                                        New Blank Day
+                                    </button>
+                                    <button
+                                        onClick={() => { onNew(true); setShowNewMenu(false); }}
+                                        className={`w-full flex items-center gap-2 px-3 py-2 text-[10px] font-bold uppercase tracking-widest rounded-sm transition-colors ${darkMode ? 'hover:bg-zinc-800 text-zinc-300 hover:text-white' : 'hover:bg-zinc-50 text-zinc-600 hover:text-black'}`}
+                                    >
+                                        <ChevronRight size={12} className="rotate-45" />
+                                        Duplicate Current
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
 
                     <button onClick={onClear} className={`p-1.5 transition-colors ${darkMode ? 'text-zinc-500 hover:text-red-500' : 'text-zinc-400 hover:text-red-600'}`} title="Delete Day">
                         <Trash2 size={14} />
