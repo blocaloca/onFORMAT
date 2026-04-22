@@ -99,18 +99,12 @@ export default function LandingPage() {
 
         <div className="flex flex-col items-center gap-4 mb-16">
           {!user && (
-            <>
-              <button 
-                onClick={() => setIsBetaModalOpen(true)}
-                className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3"
-              >
-                Join Private Beta <ArrowRight size={18} />
-              </button>
-              <p className="text-[10px] md:text-xs font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                Invitation / Access Code Required
-              </p>
-            </>
+            <button 
+              onClick={() => setIsBetaModalOpen(true)}
+              className="bg-zinc-900 text-white px-8 py-4 rounded-full text-xs md:text-sm font-black uppercase tracking-widest hover:bg-zinc-800 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3"
+            >
+              Join Private Beta <ArrowRight size={18} />
+            </button>
           )}
         </div>
 

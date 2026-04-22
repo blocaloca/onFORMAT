@@ -255,7 +255,7 @@ export async function approveBetaRequest(requestId: string) {
                         <p>We've reviewed your application and are excited to invite you to the <strong>onFORMAT Private Beta</strong>.</p>
                         <div style="background: #f4f4f5; padding: 24px; border-radius: 8px; margin: 24px 0;">
                             <p style="margin-top: 0;"><strong>Next Steps:</strong></p>
-                            <p>You can now create your account and claim your <strong>30-day Pioneer Trial</strong>.</p>
+                            <p>You can now create your account and claim your <strong>30-day trial Solo Tier</strong>.</p>
                             <a href="${process.env.NEXT_PUBLIC_APP_URL}/signup" style="display: inline-block; background: #111; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">Initialize Workspace</a>
                         </div>
                         <p>Welcome to the future of tactical production.</p>
