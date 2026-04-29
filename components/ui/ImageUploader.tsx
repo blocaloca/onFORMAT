@@ -107,16 +107,11 @@ export const ImageUploader = ({ currentUrl, onUpload, className = '', placeholde
             {/* Content Layer */}
             {currentUrl ? (
                 <>
-                    <div
-                        className="w-full h-full"
-                        style={{
-                            backgroundImage: `url(${currentUrl})`,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundRepeat: 'no-repeat',
-                            width: '100%',
-                            height: '100%'
-                        }}
+                    <img 
+                        src={currentUrl} 
+                        alt="Uploaded" 
+                        crossOrigin="anonymous" 
+                        className="w-full h-full object-cover" 
                     />
 
                     {/* Hover Overlay */}

@@ -28,7 +28,7 @@ export const ImageUpload = ({ value, onChange, className = '', placeholder, isLo
     if (value) {
         return (
             <div className={`relative group ${className}`}>
-                <img src={value} alt="Uploaded" className="w-full h-full object-cover" />
+                <img src={value} alt="Uploaded" crossOrigin="anonymous" className="w-full h-full object-cover" />
                 {!isLocked && (
                     <div
                         onClick={handleUploadClick}
