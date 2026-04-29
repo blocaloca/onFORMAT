@@ -4,6 +4,7 @@ import { PrintItem } from './types';
 import { getTemplateForTool } from '../TemplateRegistry';
 import { useProject } from '../ProjectContext';
 import { PDFPreviewWrapper } from './PDFPreviewWrapper';
+import { PrintContext } from './PrintContext';
 
 interface PrintPreviewProps {
     // We now support a single target for the "Preview Pane"
@@ -65,6 +66,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                 );
             })()}
 
+            <PrintContext.Provider value={true}>
             {/* 2. Sequence of Items */}
             {items.flatMap((item) => {
                 const Template = getTemplateForTool(item.id);
@@ -115,6 +117,7 @@ export const PrintPreview = ({ items = [], coverSettings, orientationOverride, s
                     );
                 });
             })}
+            </PrintContext.Provider>
 
             {/* Empty State Help Text */}
             {(!items || items.length === 0) && !coverSettings.showCover && (

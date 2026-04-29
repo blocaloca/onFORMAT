@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps, jsx-a11y/alt-text */
-import React from 'react';
+import React, { useContext } from 'react';
+import { PrintContext } from '../print/PrintContext';
 
 export interface DocumentMetadata {
     projectName?: string;
@@ -41,10 +42,13 @@ export const DocumentLayout = ({
     // If printing, we use the fixed "Paper" layout.
 
     // Printing Logic
+    const isPrintContext = useContext(PrintContext);
+    const finalIsPrinting = isPrinting || isPrintContext;
+
     const width = orientation === 'landscape' ? 1056 : 816;
     const height = orientation === 'landscape' ? 816 : 1056;
 
-    if (!isPrinting) {
+    if (!finalIsPrinting) {
         // --- CONTROL PANEL MODE (Fixed Paper Size Support) ---
         return (
             <div className={`
