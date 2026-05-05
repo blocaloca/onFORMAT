@@ -1,8 +1,31 @@
 import { NextResponse } from 'next/server'
 import { promises as fs } from 'fs'
 import { join } from 'path'
+import { createClient } from '@supabase/supabase-js'
+import { isFounder } from '@/lib/permissions'
+
+async function requireFounder(request: Request): Promise<NextResponse | null> {
+  const authHeader = request.headers.get('Authorization')
+  if (!authHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const supabaseAuth = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+  )
+
+  const { data: { user }, error } = await supabaseAuth.auth.getUser(authHeader.replace('Bearer ', ''))
+  if (error || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!isFounder(user.email)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  return null
+}
 
 export async function POST(request: Request) {
+  const authError = await requireFounder(request)
+  if (authError) return authError
+
   try {
     const { provider, apiKey } = await request.json()
 
@@ -46,17 +69,8 @@ export async function POST(request: Request) {
       // Replace commented key
       envContent = envContent.replace(commentedOpenaiKeyRegex, `OPENAI_API_KEY=${apiKey}`)
     } else {
-      // Add new key after Anthropic section
-      const anthropicSectionRegex = /(# Anthropic\nANTHROPIC_API_KEY=.*\n)/
-      if (anthropicSectionRegex.test(envContent)) {
-        envContent = envContent.replace(
-          anthropicSectionRegex,
-          `$1\n# OpenAI\nOPENAI_API_KEY=${apiKey}\n`
-        )
-      } else {
-        // Just append at the end
-        envContent += `\n# OpenAI\nOPENAI_API_KEY=${apiKey}\n`
-      }
+      // Just append at the end
+      envContent += `\n# OpenAI\nOPENAI_API_KEY=${apiKey}\n`
     }
 
     // Write back to .env.local

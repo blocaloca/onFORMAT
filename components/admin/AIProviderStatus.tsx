@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { getClient } from '@/lib/supabase'
 
 interface APIStatus {
   openai: 'online' | 'offline' | 'checking'
@@ -83,9 +84,14 @@ export default function AIProviderStatus() {
   const testProvider = async (provider: 'openai' | 'anthropic') => {
     setTesting(true)
     try {
+      const { data: { session } } = await getClient().auth.getSession()
+
       const res = await fetch('/api/admin/test-ai', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify({
           provider,
           message: 'Say "Hello!" if you can read this.'

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getClient } from '@/lib/supabase'
 
 interface StatusData {
   anthropic: {
@@ -59,9 +60,15 @@ export default function SystemStatus() {
       }))
     }
 
-    // Check Database (via admin audit)
+    // Check Database (via admin audit) — requires founder auth token
     try {
-      const res = await fetch('/api/admin/audit')
+      const { data: { session } } = await getClient().auth.getSession()
+
+      const res = await fetch('/api/admin/audit', {
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`
+        }
+      })
       const data = await res.json()
       setStatus(prev => ({
         ...prev,

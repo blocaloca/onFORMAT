@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getClient } from '@/lib/supabase'
 
 export default function APIKeyManager() {
   const [showOpenAI, setShowOpenAI] = useState(false)
@@ -23,9 +24,14 @@ export default function APIKeyManager() {
     setResult(null)
 
     try {
+      const { data: { session } } = await getClient().auth.getSession()
+
       const response = await fetch('/api/admin/save-api-key', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify({
           provider: 'openai',
           apiKey: openaiKey
@@ -107,15 +113,7 @@ export default function APIKeyManager() {
                 className="w-full p-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
               />
               <p className="text-xs text-blue-700 mt-1">
-                Get your key from:{' '}
-                <a
-                  href="https://platform.openai.com/api-keys"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-blue-900"
-                >
-                  https://platform.openai.com/api-keys
-                </a>
+                Get your key from platform.openai.com/api-keys
               </p>
             </div>
 

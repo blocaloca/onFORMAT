@@ -10,10 +10,24 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Project ID and Data are required' }, { status: 400 });
         }
 
-        // Optional: Could verify that the email is in crew_membership here for security.
-        // For now, we trust the client logic as it was prior to RLS.
+        if (!email) {
+            return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+        }
 
-        // Bypass RLS to allow onset mobile clients to update project data.
+        // Verify the caller is a crew member of this project before allowing the write.
+        // OnSet users have no JWT session (soft login via QR code), so RLS cannot protect
+        // server-side writes. This crew_membership check is the security gate.
+        const { data: membership } = await supabaseAdmin
+            .from('crew_membership')
+            .select('role')
+            .eq('project_id', id)
+            .ilike('user_email', email)
+            .maybeSingle();
+
+        if (!membership) {
+            return NextResponse.json({ error: 'Forbidden: not a crew member of this project' }, { status: 403 });
+        }
+
         const { data: updatedProject, error } = await supabaseAdmin
             .from('projects')
             .update({ data })

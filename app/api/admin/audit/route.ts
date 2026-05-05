@@ -1,5 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { isFounder } from '@/lib/permissions'
+
+async function requireFounder(request: NextRequest): Promise<NextResponse | null> {
+  const authHeader = request.headers.get('Authorization')
+  if (!authHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const supabaseAuth = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
+  )
+
+  const { data: { user }, error } = await supabaseAuth.auth.getUser(authHeader.replace('Bearer ', ''))
+  if (error || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  if (!isFounder(user.email)) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  return null
+}
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -7,6 +26,9 @@ const supabase = createClient(
 )
 
 export async function GET(request: NextRequest) {
+  const authError = await requireFounder(request)
+  if (authError) return authError
+
   try {
     const auditResults: any = {
       timestamp: new Date().toISOString(),
@@ -84,27 +106,10 @@ export async function GET(request: NextRequest) {
       variables: envVars
     }
 
-    // 5. API Key Test
-    try {
-      const apiKey = process.env.OPENROUTER_API_KEY
-      if (!apiKey) {
-        auditResults.checks.apiKey = {
-          status: 'fail',
-          message: 'OPENROUTER_API_KEY not set'
-        }
-      } else {
-        auditResults.checks.apiKey = {
-          status: 'pass',
-          message: 'API key configured',
-          length: apiKey.length,
-          prefix: apiKey.substring(0, 15)
-        }
-      }
-    } catch (err: any) {
-      auditResults.checks.apiKey = {
-        status: 'fail',
-        message: err.message
-      }
+    // 5. API Key Test — presence only, no prefix logged
+    auditResults.checks.apiKey = {
+      status: process.env.OPENROUTER_API_KEY ? 'pass' : 'fail',
+      message: process.env.OPENROUTER_API_KEY ? 'API key configured' : 'OPENROUTER_API_KEY not set'
     }
 
     // 6. Document Forms Test
