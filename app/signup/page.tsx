@@ -186,7 +186,7 @@ export default function SignupPage() {
           </form>
 
           <p className="text-xs text-purple-300 text-center mt-4 uppercase font-bold tracking-widest">
-            30-day Beta Pioneer Trial. No credit card required.
+            60-day Beta Pioneer Pro Trial. No credit card required.
           </p>
 
           <p className="text-center text-purple-200 mt-6">

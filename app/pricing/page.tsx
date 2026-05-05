@@ -107,7 +107,7 @@ export default function PricingPage() {
                     </h1>
                     <p className="text-zinc-500 font-medium text-lg leading-relaxed">
                         Join the waitlist to participate in our <span className="text-zinc-900 font-bold underline decoration-orange-500 decoration-2">beta testing program</span>. 
-                        Upon approval you will be granted a <span className="text-zinc-900 font-bold">30-Day trial Solo Tier ($19 value)</span>.
+                        Upon approval you will be granted a <span className="text-zinc-900 font-bold">60-Day Pro Tier ($98 value)</span>.
                     </p>
                 </div>
 

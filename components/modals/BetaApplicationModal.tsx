@@ -87,7 +87,7 @@ export default function BetaApplicationModal({ isOpen, onClose }: BetaModalProps
           {!submitted ? (
             <form onSubmit={handleSubmit} className="space-y-6 text-zinc-900 dark:text-zinc-100">
               <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                We are currently onboarding a limited group of creative pioneers. Approved applicants receive a <span className="font-bold text-zinc-900 dark:text-white underline decoration-orange-500">30-day trial Solo Tier ($19 value)</span> to stress-test the engine.
+                We are currently onboarding a limited group of creative pioneers. Approved applicants receive a <span className="font-bold text-zinc-900 dark:text-white underline decoration-orange-500">60-day Pro Tier ($98 value)</span> to stress-test the engine.
               </p>
 
               {error && (

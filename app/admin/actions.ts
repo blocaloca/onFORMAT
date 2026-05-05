@@ -255,7 +255,7 @@ export async function approveBetaRequest(requestId: string) {
                         <p>We've reviewed your application and are excited to invite you to the <strong>onFORMAT Private Beta</strong>.</p>
                         <div style="background: #f4f4f5; padding: 24px; border-radius: 8px; margin: 24px 0;">
                             <p style="margin-top: 0;"><strong>Next Steps:</strong></p>
-                            <p>You can now create your account and claim your <strong>30-day trial Solo Tier</strong>.</p>
+                            <p>You can now create your account and claim your <strong>60-day Pro Tier</strong>.</p>
                             <a href="${process.env.NEXT_PUBLIC_APP_URL}/signup" style="display: inline-block; background: #111; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em;">Initialize Workspace</a>
                         </div>
                         <p>Welcome to the future of tactical production.</p>
@@ -269,7 +269,7 @@ export async function approveBetaRequest(requestId: string) {
             console.warn("⚠️ Failed to send approval email:", emailErr);
         }
 
-        // 3. If user already exists in profiles, grant beta access and 30-day solo tier
+        // 3. If user already exists in profiles, grant beta access and 60-day pro tier
         const { data: existingProfile } = await adminSupabase
             .from('profiles')
             .select('id')
@@ -284,14 +284,14 @@ export async function approveBetaRequest(requestId: string) {
                 })
                 .eq('id', existingProfile.id);
             
-            // Grant 30-day solo tier (Scout)
+            // Grant 60-day pro tier
             await adminSupabase
                 .from('subscriptions')
                 .upsert({
                     user_id: existingProfile.id,
                     status: 'active',
-                    tier: 'scout',
-                    price_id: 'beta_grant_30d',
+                    tier: 'pro',
+                    price_id: 'beta_grant_60d_pro',
                     updated_at: new Date().toISOString()
                 }, { onConflict: 'user_id' });
         }
