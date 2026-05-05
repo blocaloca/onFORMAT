@@ -25,34 +25,6 @@ export const DEMO_PROJECT_DATA: Partial<WorkspaceState> = {
         POST: { locked: false, drafts: {} },
         STRATEGY: { locked: false, drafts: {} }
     },
-    chat: {
-        'brief': [
-            {
-                role: 'assistant',
-                content: "👋 **Welcome to onFORMAT.**\n\nI've set up your workspace. Let's jump straight into the **Creative Brief**.\n\nFirst, choose a subject to demo:",
-                actions: [
-                    {
-                        label: "Sustainable Surfboard",
-                        type: "draft_prefill",
-                        prominence: "primary",
-                        payload: "**Subject/Product:** Reef-Zero Algae Boards"
-                    },
-                    {
-                        label: "Coffee Flavored Gum",
-                        type: "draft_prefill",
-                        prominence: "primary",
-                        payload: "**Subject/Product:** JitterChew - The Espresso Gum"
-                    },
-                    {
-                        label: "Streetwear Brand",
-                        type: "draft_prefill",
-                        prominence: "primary",
-                        payload: "**Subject/Product:** CONCRETE x FLOW Collection"
-                    }
-                ]
-            }
-        ]
-    },
     persona: 'HYBRID',
     clientName: 'Cadence Coffee',
     projectName: 'Demo',

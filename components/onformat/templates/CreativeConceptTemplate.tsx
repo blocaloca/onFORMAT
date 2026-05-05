@@ -23,8 +23,6 @@ interface CreativeConceptTemplateProps {
     plain?: boolean;
     orientation?: 'portrait' | 'landscape';
     metadata?: any;
-    onGenerateFromVision?: (targetTool: string, visionText: string, promptPrefix: string) => void;
-    onOpenAi?: () => void;
     isPrinting?: boolean;
 }
 
@@ -35,8 +33,6 @@ export const CreativeConceptTemplate = ({
     plain,
     orientation,
     metadata,
-    onGenerateFromVision,
-    onOpenAi,
     isPrinting
 }: CreativeConceptTemplateProps) => {
 
@@ -67,8 +63,8 @@ export const CreativeConceptTemplate = ({
             {pages.map((page, index) => (
                 <DocumentLayout
                     key={page.id}
-                    title="AI VISION LAB"
-                    subtitle={index === 0 ? "ARCHITECTURAL DRAFT" : `EXPANSION PAGE ${index + 1}`}
+                    title="VISION NOTES"
+                    subtitle={index === 0 ? "DIRECTOR'S BOARD" : `EXPANSION PAGE ${index + 1}`}
                     hideHeader={index > 0}
                     plain={plain}
                     orientation={orientation}
@@ -82,7 +78,7 @@ export const CreativeConceptTemplate = ({
                         {index > 0 && (
                             <div className="mb-6 px-6 py-2 border-l border-zinc-200">
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">
-                                    Laboratory Continuation / {index + 1}
+                                    Notes Continuation / {index + 1}
                                 </span>
                             </div>
                         )}
@@ -91,7 +87,7 @@ export const CreativeConceptTemplate = ({
                             <textarea
                                 value={page.content}
                                 onChange={(e) => handleUpdatePage(page.id, e.target.value)}
-                                placeholder={index === 0 ? "// Architect your vision here... \n// Paste conceptual seeds from the AI Strategist and refine them into your North Star." : "Continue the architectural blueprint..."}
+                                placeholder={index === 0 ? "// Collect your thoughts and vision here... \n// Drop links, notes, and raw ideas to refine them into your North Star." : "Continue the vision notes..."}
                                 className={`flex-1 w-full bg-transparent resize-none outline-none text-sm leading-relaxed p-8 rounded-md transition-all font-mono tracking-tight text-black placeholder:text-zinc-400`}
                                 disabled={isLocked}
                                 spellCheck={false}

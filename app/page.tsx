@@ -207,7 +207,7 @@ export default function LandingPage() {
             </div>
             <h3 className="text-sm font-black tracking-widest text-zinc-900 mb-6 uppercase">Development</h3>
             <ul className="space-y-3 text-[13px] font-medium text-zinc-500">
-              <li className="flex items-center gap-2 font-bold text-purple-600">• AI Project Vision</li>
+              <li className="flex items-center gap-2 font-bold text-purple-600">• Project Vision Notes</li>
               <li className="flex items-center gap-2">• Creative Brief</li>
               <li className="flex items-center gap-2">• Shot & Scene Book</li>
               <li className="flex items-center gap-2">• AV Script</li>
@@ -307,13 +307,13 @@ export default function LandingPage() {
 
           <div className="flex flex-col items-start bg-white rounded-3xl p-8 border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
             <div className="w-14 h-14 bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
-              <BrainCircuit className="text-zinc-700" size={24} />
+              <Lightbulb className="text-zinc-700" size={24} />
             </div>
-            <h3 className="text-lg font-bold tracking-tight text-zinc-900 mb-4 uppercase">Project Vision AI Liaison</h3>
+            <h3 className="text-lg font-bold tracking-tight text-zinc-900 mb-4 uppercase">Project Vision Notes</h3>
             <ul className="space-y-2 text-sm text-zinc-500 font-medium">
-              <li className="flex items-center gap-2">• Creative brainstorming</li>
-              <li className="flex items-center gap-2">• Intelligent shot list generation</li>
-              <li className="flex items-center gap-2">• Automated data pre-population</li>
+              <li className="flex items-center gap-2">• Creative note taking</li>
+              <li className="flex items-center gap-2">• Manual shot curation</li>
+              <li className="flex items-center gap-2">• Unrestricted drafting space</li>
             </ul>
           </div>
 

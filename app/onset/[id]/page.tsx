@@ -711,7 +711,7 @@ export default function OnSetMobilePage() {
 
             // 2. Parse existing Log
             let logData = { items: [] };
-            let history: any[] = [];
+            let fullHistory: any[] = [];
 
             try {
                 const raw = existingDrafts['dit-log'];
@@ -1114,6 +1114,7 @@ export default function OnSetMobilePage() {
             let updatedPhases = { ...phases };
             if (!updatedPhases[phaseKey]) updatedPhases[phaseKey] = { drafts: {} };
 
+            let raw = updatedPhases[phaseKey].drafts[originalKey];
             let fullHistory: any[] = [];
             let docList = safeParse(raw);
 
@@ -1809,7 +1810,7 @@ export default function OnSetMobilePage() {
                                 {activeTab === 'onset-mobile-control' && (
                                     <MobileControlView 
                                         data={data.docs['onset-mobile-control']} 
-                                        onUpdate={(tool, units) => handleUpdateControl(tool, units)}
+                                        onUpdate={(newData) => handleUpdateDraft('onset-mobile-control', newData)}
                                         activeDayIndex={activeDayIndex}
                                         totalDays={totalDays}
                                         onSelectDay={setActiveDayIndex}

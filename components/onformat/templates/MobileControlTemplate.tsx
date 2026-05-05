@@ -102,7 +102,7 @@ export default function MobileControlTemplate({ data, onUpdate, isLocked, metada
         }
 
         const newRoles = [...roles, { id, name: nameToUse, color: 'zinc' }];
-        onUpdate({ ...safeData, roles: newRoles });
+        onUpdate({ ...data, roles: newRoles });
         setNewRoleName('');
         setIsDropdownOpen(false);
     };

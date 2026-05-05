@@ -15,15 +15,10 @@ interface DraftEditorProps {
     projectName?: string
     producer?: string
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     phases?: Record<string, any>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onGenerateFromVision?: (targetTool: any, visionText: string, promptPrefix: string) => void
-    onOpenAi?: () => void
     latestNotification?: { msg: string, time: number } | null
     onMagicImport?: (sourceData: any) => void
     onOpenPrintRoom?: () => void
-    isAiDocked?: boolean
     isOwner?: boolean
     orientation?: 'portrait' | 'landscape'
     onToggleOrientation?: () => void
@@ -69,12 +64,9 @@ export const DraftEditor = ({
     projectName,
     producer,
     phases,
-    onGenerateFromVision,
-    onOpenAi,
     latestNotification,
     onMagicImport,
     onOpenPrintRoom,
-    isAiDocked,
     isOwner
 }: DraftEditorProps) => {
 
@@ -263,8 +255,6 @@ export const DraftEditor = ({
                 onNew={handleNew}
                 onClear={handleClear}
                 onOpenPrintRoom={onOpenPrintRoom}
-                onToggleAi={onOpenAi}
-                isAiDocked={isAiDocked}
                 activeToolKey={activeToolKey}
                 orientation={orientation}
                 onToggleOrientation={toggleOrientation}
@@ -302,10 +292,6 @@ export const DraftEditor = ({
                             latestNotification,
                             mobileRoles
                         }}
-
-                        onGenerateFromVision={onGenerateFromVision}
-
-                        onOpenAi={onOpenAi}
 
                         onMagicImport={onMagicImport}
 

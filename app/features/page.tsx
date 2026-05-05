@@ -196,7 +196,7 @@ export default function FeaturesPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { icon: <Cpu />, title: "AI LIAISON", desc: "A creative partner trained in the nuances of production to help you draft scripts, vision, and strategy." },
+              { icon: <Cpu />, title: "VISION NOTES", desc: "A dedicated drafting space for your ideas, allowing you to manually map out concepts before structuring." },
               { icon: <Smartphone />, title: "onSET MOBILE", desc: "Mobile-first interfaces for crew that allow for live shot completion and technical logging." },
               { icon: <Shield />, title: "PERMISSION MATRIX", desc: "Producer-level control over which crew members see which documents based on a granular RBAC matrix." },
               { icon: <FileText />, title: "PRINT ROOM", desc: "Beautifully formatted, client-ready PDF exports that compile multiple project docs into one." },

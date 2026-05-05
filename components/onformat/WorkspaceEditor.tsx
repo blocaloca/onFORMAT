@@ -5,7 +5,6 @@ import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 
 import { Header } from '@/components/onformat/Header'
 import { ExperimentalWorkspaceNav } from '@/components/onformat/ExperimentalNav'
-import { ChatInterface } from '@/components/onformat/ChatInterface'
 import { ProjectOverview } from '@/components/onformat/ProjectOverview'
 import { DraftEditor } from '@/components/onformat/DraftEditor'
 import { PrintDashboard } from '@/components/onformat/print/PrintDashboard'
@@ -48,8 +47,7 @@ type ToolKey =
     | 'project-overview'
     | 'ecomm-shot-list'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ChatMsg = { role: 'user' | 'assistant'; content: string; actions?: any[] }
+// Removed ChatMsg
 
 const PHASES: Phase[] = ['STRATEGY', 'DEVELOPMENT', 'PRE_PRODUCTION', 'PRODUCTION', 'ON_SET', 'POST']
 
@@ -105,7 +103,6 @@ export type WorkspaceState = {
     lastActiveTool?: ToolKey
     lastActivePhase?: Phase
     phases: Record<Phase, PhaseState>
-    chat: Partial<Record<ToolKey, ChatMsg[]>>
     clientName?: string
     persona?: 'STILLS' | 'MOTION' | 'HYBRID'
     projectName?: string
@@ -127,7 +124,6 @@ export function makeInitialState(): WorkspaceState {
             ON_SET: { ...basePhaseState },
             POST: { ...basePhaseState },
         },
-        chat: {},
         clientName: '',
         persona: 'MOTION',
         projectName: '',
@@ -176,7 +172,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         const base = initialState ? { ...initialState } : { ...defaults };
 
         // Ensure critical structures exist even if loaded state is partial
-        if (!base.chat) base.chat = {};
         if (!base.phases) base.phases = defaults.phases;
 
         if (projectName) base.projectName = projectName;
@@ -208,8 +203,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         if (!initialState && !projectId) {
             const stored = safeJsonParse<WorkspaceState>(localStorage.getItem(STORAGE_KEY))
             if (stored) {
-                // Sanitize: ensure chat exists
-                if (!stored.chat) stored.chat = {};
                 if (!stored.phases) stored.phases = makeInitialState().phases;
                 setState(stored)
             }
@@ -303,10 +296,6 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
     // Placeholder for global side effects if any (formerly Rollcall)
     useEffect(() => { }, []);
 
-    const [input, setInput] = useState('')
-    const [isSending, setIsSending] = useState(false)
-    const [error, setError] = useState<string | null>(null)
-
 
     // Persist
     // Persist (Debounced)
@@ -390,112 +379,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         };
     }, [projectId]);
 
-    // Auto-Prompt for Creative Brief & AV Script & Treatment (Existing Logic)
-    useEffect(() => {
-        if (state.activeTool === 'brief') {
-            setState(s => {
-                const currentChat = s.chat['brief'] || [];
-                if (currentChat.length === 0) {
-                    return {
-                        ...s,
-                        chat: { ...s.chat, 'brief': [{ role: 'assistant', content: "What is the subject or product you are shooting?" }] }
-                    };
-                }
-                return s;
-            });
-        }
-        else if (state.activeTool === 'av-script') {
-            setState(s => {
-                const currentChat = s.chat['av-script'] || [];
-                if (currentChat.length === 0) {
-                    // Check Brief for Context
-                    const briefDraftRaw = s.phases['DEVELOPMENT']?.drafts['brief'];
-                    let briefContext = '';
-                    if (briefDraftRaw) {
-                        try {
-                            const b = JSON.parse(briefDraftRaw);
-                            const d = Array.isArray(b) ? b[0] : b;
-                            if (d.product) briefContext = `Vision: ${d.product || 'TBD'}\nObjective: ${d.objective || 'TBD'}\nAudience: ${d.targetAudience || 'TBD'}`;
-                        } catch { }
-                    }
-
-                    if (briefContext) {
-                        return {
-                            ...s,
-                            chat: {
-                                ...s.chat, 'av-script': [{
-                                    role: 'assistant',
-                                    content: "I see a Creative Brief available. Would you like generated script ideas?",
-                                    actions: [
-                                        {
-                                            label: "Yes, offer 3 ideas",
-                                            type: "suggestion",
-                                            payload: `Using the brief context:\n${briefContext}\n\nPlease generate 3 distinct script concepts. Output them as numbered options.`,
-                                            prominence: "primary"
-                                        },
-                                        {
-                                            label: "No, just write scenes",
-                                            type: "suggestion",
-                                            payload: `Using the brief context:\n${briefContext}\n\nPlease start writing scenes immediately in **Scene**, **Visual**, **Audio** format.`,
-                                            prominence: "secondary"
-                                        }
-                                    ]
-                                }]
-                            }
-                        };
-                    }
-
-                    return {
-                        ...s,
-                        chat: { ...s.chat, 'av-script': [{ role: 'assistant', content: "Describe Scene 1." }] }
-                    };
-                }
-                return s;
-            });
-        }
-        else if (state.activeTool === 'directors-treatment') {
-            setState(s => {
-                const currentChat = s.chat['directors-treatment'] || [];
-                if (currentChat.length === 0) {
-                    return {
-                        ...s,
-                        chat: { ...s.chat, 'directors-treatment': [{ role: 'assistant', content: "What do you want to call this treatment?" }] }
-                    };
-                }
-                return s;
-            });
-        }
-        else if (state.activeTool === 'shot-scene-book') {
-            setState(s => {
-                const currentChat = s.chat['shot-scene-book'] || [];
-                if (currentChat.length === 0) {
-                    return {
-                        ...s,
-                        chat: { ...s.chat, 'shot-scene-book': [{ role: 'assistant', content: "Scene 01 Describe the shot" }] }
-                    };
-                }
-                return s;
-            });
-        }
-        else if (state.activeTool === 'project-vision') {
-            setState(s => {
-                const currentChat = s.chat['project-vision'] || [];
-                if (currentChat.length === 0) {
-                    return {
-                        ...s,
-                        chat: {
-                            ...s.chat,
-                            'project-vision': [{
-                                role: 'assistant',
-                                content: "I can help you realize your vision. Just ask."
-                            }]
-                        }
-                    };
-                }
-                return s;
-            });
-        }
-    }, [state.activeTool]);
+    // Removed auto-prompting logic for AI
 
 
 
@@ -633,28 +517,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         });
     }, [isReadOnly]);
 
-    const handleGenerateFromVision = (targetTool: ToolKey, visionText: string, promptPrefix: string) => {
-        // AI VISION: Creative Playground Logic
-        // Instead of auto-populating fields (unstable), we switch tools and 
-        // prompt AI VISION to brainstorm content tailored to the new context.
-        
-        setState(s => ({
-            ...s,
-            activeTool: targetTool,
-            chat: {
-                ...s.chat,
-                [targetTool]: [
-                    ...(s.chat[targetTool] || []),
-                    { 
-                        role: 'assistant', 
-                        content: `Switched to **${TOOLS_BY_PHASE[s.activePhase]?.find(t => t.key === targetTool)?.label || targetTool}**. I am analyzing the Project Vision to help you structure your content here. What specific ideas from the vision should we expand on?` 
-                    }
-                ]
-            }
-        }));
-
-        setIsAiDocked(false);
-    };
+    // handleGenerateFromVision removed
 
     const handleMagicImport = (sourceData: any) => {
         if (!sourceData || !Array.isArray(sourceData.rows)) return;
@@ -720,128 +583,20 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
         setLatestNotification({ msg: `AI: Analyzed & Generated ${newShots.length} Shots`, time: Date.now() });
     };
 
-    const handleGenerateFromBrief = (targetTool: ToolKey) => {
-        // AI VISION: Manual Handoff Model
-        // We simply switch the tool. The context remains in the Project Vision 
-        // for the Producer to copy/paste as needed.
-        setState(s => ({ ...s, activeTool: targetTool }));
-        setIsAiDocked(true); // Close AI when leaving Vision
-    };
+    // handleGenerateFromBrief removed
 
-    async function send(overrideInput?: string, overrideTool?: ToolKey) {
-        const textToUse = (typeof overrideInput === 'string') ? overrideInput : input;
-
-        // Note: Legacy legacy brief->execution intercept removed to enforce Vision-first workflow.
-        
-        const trimmed = textToUse.trim()
-        if (!trimmed) return
-        setError(null)
-        setIsSending(true)
-
-        // Determine tool context
-        const effectiveTool = overrideTool || state.activeTool;
-
-        const currentToolChat = state.chat[effectiveTool] || []
-        const nextChat: ChatMsg[] = [...currentToolChat, { role: 'user', content: trimmed }]
-
-        const body = {
-            phase: state.activePhase,
-            toolType: effectiveTool,
-            lockedPhases,
-            phaseData,
-            messages: nextChat,
-            provider: 'openai',
-            mode: aiMode,
-        }
-
-        try {
-            const res = await fetch('/api/onformat-v0', {
-                method: 'POST',
-                headers: { 'content-type': 'application/json' },
-                body: JSON.stringify(body),
-            })
-            if (!res.ok) {
-                const txt = await res.text()
-                throw new Error(txt || `HTTP ${res.status}`)
-            }
-            const json = await res.json()
-            const assistantMsg = String(json?.message ?? '')
-
-            // INTERCEPT: AV Script Ideas Response - Attach Selection Buttons
-            let finalActions: any[] | undefined = undefined;
-            const lastUserPayload = nextChat[nextChat.length - 1]?.content.toLowerCase();
-
-            if (effectiveTool === 'av-script' && lastUserPayload.includes('generate 3 distinct script concepts')) {
-                finalActions = [
-                    { label: "Select Option 1", type: "suggestion", payload: "I choose Option 1. Break it down into scenes (Storyline, Characters, Dialog) using **Scene**, **Visual**, **Audio** format to be added to the script.", prominence: "primary" },
-                    { label: "Select Option 2", type: "suggestion", payload: "I choose Option 2. Break it down into scenes (Storyline, Characters, Dialog) using **Scene**, **Visual**, **Audio** format to be added to the script.", prominence: "primary" },
-                    { label: "Select Option 3", type: "suggestion", payload: "I choose Option 3. Break it down into scenes (Storyline, Characters, Dialog) using **Scene**, **Visual**, **Audio** format to be added to the script.", prominence: "primary" }
-                ];
-            }
-
-            setState((s) => ({
-                ...s,
-                chat: {
-                    ...s.chat,
-                    [effectiveTool]: [...nextChat, { role: 'assistant', content: assistantMsg, actions: finalActions }]
-                }
-            }))
-            if (overrideInput === undefined) setInput('')
-        } catch (e: any) {
-            setError(e?.message || 'Request failed')
-        } finally {
-            setIsSending(false)
-        }
-    }
+    // send message removed
 
     const currentDraft = activePhaseState.drafts[state.activeTool] ?? ''
-    const activeToolLabel = tools?.find(t => t.key === state.activeTool)?.label || state.activeTool
-    const activeChat = state.chat[state.activeTool] || []
-
-    // Default to OPEN (false) for new projects
-    // Default to OPEN (false)
-    const [isAiDocked, setIsAiDocked] = useState(true)
-
+    const activeToolLabel = tools?.find(t => t.key === state.activeTool)?.label || state.activeTool    // Default to OPEN (false) for new projects
     const { isLocked: trialLocked } = useTrialStatus()
     const router = useRouter();
     const [hasLoadedState, setHasLoadedState] = useState(false);
 
     // 1. Load State on Mount
     useEffect(() => {
-        const savedDock = localStorage.getItem('onformat_ai_docked');
-        if (savedDock !== null) {
-            setIsAiDocked(JSON.parse(savedDock));
-        }
         setHasLoadedState(true);
-    }, []);
-
-    // 2. Save State on Change (only after load)
-    useEffect(() => {
-        if (hasLoadedState) {
-            localStorage.setItem('onformat_ai_docked', JSON.stringify(isAiDocked));
-        }
-    }, [isAiDocked, hasLoadedState]);
-
-    // Auto-Context Logic: AI Mode is derived from Dock State + Active Phase
-    const aiMode = isAiDocked ? 'OFF' : (state.activePhase === 'DEVELOPMENT' ? 'DEVELOP' : 'ASSIST');
-
-    const toggleAiDock = () => {
-        setIsAiDocked(!isAiDocked);
-    };
-
-    // Auto-Open AI for Project Vision
-    useEffect(() => {
-        if (state.activeTool === 'project-vision') {
-            setIsAiDocked(false);
-        } else {
-            // Close AI when leaving Project Vision
-            setIsAiDocked(true);
-        }
-    }, [state.activeTool]);
-
-
-
-    // Calculate Contextual Placeholder Hint
+    }, []);    // Calculate Contextual Placeholder Hint
     const chatPlaceholderHint = useMemo(() => {
         if (!state.activeTool) return undefined;
         const currentDraftRaw = activePhaseState?.drafts?.[state.activeTool];
@@ -932,106 +687,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     alerts={navAlerts}
                 />
 
-                {/* AI VISION: Isolated to Project Vision Tool */}
-                {(state.activeTool === 'project-vision') && (
-                    <ChatInterface
-                        messages={activeChat}
-                        input={input}
-                        isSending={isSending}
-                        error={error}
-                        onInputChange={setInput}
-                        onSend={send}
-                        activeToolLabel="Creative Lab"
-                        activeToolKey={state.activeTool}
-                        placeholderHint="Architect your vision..."
-                        onInsertToDraft={(text: string) => {
-                            // Smart Append Logic for AI VISION
-                            // This ensures AI snippets don't corrupt the document stack JSON structure.
-                            setState(s => {
-                                const activePhaseKey = s.activePhase;
-                                const activeToolKey = s.activeTool;
-                                const raw = s.phases[activePhaseKey]?.drafts?.[activeToolKey] || '[]';
-                                
-                                let stack: any[] = [];
-                                try {
-                                    const parsed = JSON.parse(raw);
-                                    stack = Array.isArray(parsed) ? parsed : [parsed];
-                                } catch {
-                                    stack = [{}];
-                                }
-                                if (stack.length === 0) stack.push({});
-
-                                const head = { ...stack[0] };
-
-                                if (activeToolKey === 'project-vision') {
-                                    // Lab Logic: Append to active page content
-                                    const pages = head.pages || [{ id: `p-${Date.now()}`, content: '' }];
-                                    const activeId = head.activePageId || pages[0].id;
-                                    const updatedPages = pages.map((p: any) => {
-                                        if (p.id === activeId) {
-                                            return { ...p, content: p.content + (p.content ? '\n\n' : '') + text };
-                                        }
-                                        return p;
-                                    });
-                                    stack[0] = { ...head, pages: updatedPages, activePageId: activeId };
-                                } else {
-                                    // Generic Logic: Append to text or primary field
-                                    const currentText = typeof head === 'string' ? head : (head.content || head.text || '');
-                                    const newText = currentText + (currentText ? '\n\n' : '') + text;
-                                    if (typeof head === 'object') {
-                                        stack[0] = { ...head, content: newText };
-                                    } else {
-                                        stack[0] = newText;
-                                    }
-                                }
-
-                                return {
-                                    ...s,
-                                    phases: {
-                                        ...s.phases,
-                                        [activePhaseKey]: {
-                                            ...s.phases[activePhaseKey],
-                                            drafts: {
-                                                ...s.phases[activePhaseKey].drafts,
-                                                [activeToolKey]: JSON.stringify(stack)
-                                            }
-                                        }
-                                    }
-                                };
-                            });
-                        }}
-                        onClear={() => setState(s => ({
-                            ...s,
-                            chat: { ...s.chat, [s.activeTool]: [] }
-                        }))}
-                        isLocked={!!(activePhaseState.locked || isReadOnly)}
-                        isDocked={isAiDocked}
-                        onDock={() => setIsAiDocked(true)}
-                        activeMode="DEVELOP"
-                        onModeChange={() => { }}
-                        onNavigate={(targetTool: string, payload?: string) => {
-                            // Manual Handoff: Switch tool and let user paste
-                            let foundPhase: Phase | undefined;
-                            for (const [p, tools] of Object.entries(TOOLS_BY_PHASE)) {
-                                if (tools.some(t => t.key === targetTool)) {
-                                    foundPhase = p as Phase;
-                                    break;
-                                }
-                            }
-                            if (foundPhase) {
-                                setState(s => ({
-                                    ...s,
-                                    activePhase: foundPhase!,
-                                    activeTool: targetTool as ToolKey
-                                }));
-                                // We no longer auto-parse into the new tool.
-                                // The AI message will be in the vision chat history, ready for copy-paste.
-                            }
-                        }}
-                    />
-                )}
-
-                {/* Floating Mobile Control (Simulator) Removed */}
+                {/* AI VISION has been completely removed */}
 
 
                 {/* --- Main Content Area --- */}
@@ -1093,11 +749,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
                             phases={state.phases}
 
-                            onGenerateFromVision={handleGenerateFromVision}
-                            onOpenAi={state.activePhase === 'DEVELOPMENT' ? toggleAiDock : undefined}
-                            isAiDocked={isAiDocked}
                             latestNotification={latestNotification}
-                            onMagicImport={handleMagicImport}
                             onOpenPrintRoom={() => setState(s => ({ ...s, activeTool: 'project-export' }))}
                         />
                     )}
