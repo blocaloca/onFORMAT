@@ -14,6 +14,19 @@ export async function uploadImage(file: File): Promise<string> {
     const fileExt = file.name.split('.').pop()?.toLowerCase()
     const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`
 
+    console.log('📤 Checking storage limits for file size:', file.size);
+
+    // 1. Enforce Real Storage Limits based on Tier
+    const { data: storageCheck, error: rpcError } = await supabase
+      .rpc('check_storage_status', { file_size_bytes: file.size });
+
+    if (rpcError) {
+      console.warn("Could not verify storage limits, proceeding with upload attempt:", rpcError);
+    } else if (storageCheck && !storageCheck.allowed) {
+      // Limit Exceeded! Throw the reason from the database.
+      throw new Error(storageCheck.reason || 'Storage limit exceeded. Please upgrade your plan.');
+    }
+
     console.log('📤 Uploading to bucket "project-images":', fileName)
 
     const { data, error } = await supabase.storage
