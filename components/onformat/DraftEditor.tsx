@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { getTemplateForTool } from '@/components/onformat/TemplateRegistry'
 import { DocumentNavBar } from './DocumentNavBar'
 
@@ -239,6 +239,45 @@ export const DraftEditor = ({
         setOrientation(prev => prev === 'portrait' ? 'landscape' : 'portrait');
     };
 
+    // --- Pinch-to-zoom ---
+    const [zoom, setZoom] = useState(1);
+    const previewRef = useRef<HTMLDivElement>(null);
+    const pinchDistRef = useRef<number | null>(null);
+
+    useEffect(() => { setZoom(1); }, [activeToolKey]);
+
+    useEffect(() => {
+        const el = previewRef.current;
+        if (!el) return;
+
+        const getDist = (t: TouchList) => {
+            const dx = t[0].clientX - t[1].clientX;
+            const dy = t[0].clientY - t[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        };
+
+        const onStart = (e: TouchEvent) => {
+            if (e.touches.length === 2) pinchDistRef.current = getDist(e.touches);
+        };
+        const onMove = (e: TouchEvent) => {
+            if (e.touches.length !== 2 || pinchDistRef.current === null) return;
+            e.preventDefault();
+            const d = getDist(e.touches);
+            setZoom(z => Math.min(2.5, Math.max(0.4, z * (d / pinchDistRef.current!))));
+            pinchDistRef.current = d;
+        };
+        const onEnd = () => { pinchDistRef.current = null; };
+
+        el.addEventListener('touchstart', onStart, { passive: true });
+        el.addEventListener('touchmove', onMove, { passive: false });
+        el.addEventListener('touchend', onEnd);
+        return () => {
+            el.removeEventListener('touchstart', onStart);
+            el.removeEventListener('touchmove', onMove);
+            el.removeEventListener('touchend', onEnd);
+        };
+    }, []);
+
     // --- Template Switcher ---
     const TemplateComponent = getTemplateForTool(activeToolKey);
 
@@ -260,8 +299,11 @@ export const DraftEditor = ({
                 onToggleOrientation={toggleOrientation}
             />
 
-            <div className="flex-1 overflow-y-auto bg-zinc-50 dark:bg-zinc-900 flex flex-col" id="document-preview-area">
-                <div className={`w-full flex-1 flex flex-col ${activeToolKey === 'onset-mobile-control' ? 'max-w-7xl' : 'max-w-5xl'} mx-auto p-4 sm:p-8`}>
+            <div ref={previewRef} className="flex-1 overflow-y-auto overflow-x-auto bg-zinc-50 dark:bg-zinc-900 flex flex-col relative" id="document-preview-area">
+                <div
+                    className={`w-full flex-1 flex flex-col ${activeToolKey === 'onset-mobile-control' ? 'max-w-7xl' : 'max-w-5xl'} mx-auto p-4 sm:p-8`}
+                    style={{ zoom }}
+                >
                     <TemplateComponent
                         data={activeData}
 
@@ -301,6 +343,17 @@ export const DraftEditor = ({
                         onSelectDay={setActiveVersionIndex}
                     />
                 </div>
+
+                {zoom !== 1 && (
+                    <div className="fixed bottom-6 right-6 z-30 flex items-center gap-2 bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-mono backdrop-blur-sm select-none pointer-events-auto">
+                        <span>{Math.round(zoom * 100)}%</span>
+                        <button
+                            onClick={() => setZoom(1)}
+                            className="ml-1 opacity-70 hover:opacity-100 transition-opacity"
+                            title="Reset zoom"
+                        >↺</button>
+                    </div>
+                )}
             </div>
 
 

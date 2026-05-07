@@ -1,15 +1,16 @@
 import React from 'react';
 import { useTheme } from '@/components/ThemeProvider';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Menu } from 'lucide-react';
 import { BetaFeedbackTrigger } from '../feedback/BetaFeedbackTrigger';
 
 interface HeaderProps {
   projectName?: string;
   activeToolLabel?: string;
   syncStatus?: number;
+  onMenuToggle?: () => void;
 }
 
-export const Header = ({ projectName, activeToolLabel, syncStatus }: HeaderProps) => {
+export const Header = ({ projectName, activeToolLabel, syncStatus, onMenuToggle }: HeaderProps) => {
   const { theme, setTheme } = useTheme();
   const darkMode = theme === 'dark';
 
@@ -28,6 +29,15 @@ export const Header = ({ projectName, activeToolLabel, syncStatus }: HeaderProps
   return (
     <header className="flex justify-between items-center px-6 py-3 border-b transition-colors bg-background border-border relative">
       <div className="flex items-center gap-2 text-xs font-mono tracking-tight text-zinc-500">
+        {onMenuToggle && (
+          <button
+            onClick={onMenuToggle}
+            className="lg:hidden mr-1 p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 transition-colors"
+            aria-label="Toggle navigation"
+          >
+            <Menu size={16} />
+          </button>
+        )}
         <span className="hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors cursor-pointer">PROJECTS</span>
         <span className="text-zinc-300 dark:text-zinc-700">/</span>
 

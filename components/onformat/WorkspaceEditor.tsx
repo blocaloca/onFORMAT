@@ -190,6 +190,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
 
     const [latestNotification, setLatestNotification] = useState<{ msg: string; time: number } | null>(null);
     const [navAlerts, setNavAlerts] = useState<Record<string, boolean>>({});
+    const [navOpen, setNavOpen] = useState(false);
 
     const stateRef = React.useRef(state);
     const [syncTick, setSyncTick] = useState(0); // Forcing re-renders on external sync
@@ -650,7 +651,10 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                     userEmail={userEmail}
                     activeTool={state.activeTool}
                     activePhase={state.activePhase}
+                    isNavOpen={navOpen}
+                    onNavClose={() => setNavOpen(false)}
                     onToolSelect={(toolKey, phase) => {
+                        setNavOpen(false);
                         // Toggle Logic for Mobile Control
                         if (toolKey === 'onset-mobile-control') {
                             setState(s => {
@@ -697,6 +701,7 @@ export const WorkspaceEditor = ({ initialState, projectId, projectName, onSave, 
                         projectName={state.projectName}
                         activeToolLabel={activeToolLabel}
                         syncStatus={syncTick}
+                        onMenuToggle={() => setNavOpen(o => !o)}
                     />
 
                     {isReadOnly && (

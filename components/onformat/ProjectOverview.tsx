@@ -58,7 +58,7 @@ export const ProjectOverview = ({ phases, onOpenTool, activePhaseKey }: ProjectO
                 </header>
 
                 {/* Phase Timeline / Cards */}
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Object.keys(PHASE_META).map((key: string) => { // Explicitly typed key as string
                         // Safety check if meta exists for key
                         if (!PHASE_META[key]) return null;

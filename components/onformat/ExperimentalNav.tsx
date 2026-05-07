@@ -283,6 +283,8 @@ export const ExperimentalDashboardNav = ({
     );
 };
 
+// end ExperimentalDashboardNav
+
 
 // --- WORKSPACE SIDEBAR ---
 
@@ -293,7 +295,9 @@ interface WorkspaceSidebarProps {
     darkMode?: boolean;
     userEmail?: string;
     producerName?: string;
-    mobileStatus?: { isLive: boolean; hasAlert: boolean; alertMsg?: string }; // New prop
+    mobileStatus?: { isLive: boolean; hasAlert: boolean; alertMsg?: string };
+    isNavOpen?: boolean;
+    onNavClose?: () => void;
 }
 
 import { useTheme } from '@/components/ThemeProvider';
@@ -304,10 +308,11 @@ export const ExperimentalWorkspaceNav = ({
     activeTool,
     activePhase,
     onToolSelect,
-    // darkMode prop is removed in favor of context
     userEmail,
     mobileStatus,
-    alerts
+    alerts,
+    isNavOpen = false,
+    onNavClose,
 }: WorkspaceSidebarProps & { alerts?: Record<string, boolean> }) => {
     // const { theme } = useTheme();
 
@@ -324,7 +329,14 @@ export const ExperimentalWorkspaceNav = ({
     };
 
     return (
-        <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 dark:bg-zinc-900/60 border-zinc-300 dark:border-zinc-800 backdrop-blur-md`}>
+        <>
+        {isNavOpen && (
+            <div
+                className="lg:hidden fixed inset-0 z-30 bg-black/50 backdrop-blur-sm"
+                onClick={onNavClose}
+            />
+        )}
+        <aside className={`w-64 shrink-0 h-screen border-r flex flex-col font-sans transition-all duration-300 bg-zinc-200/60 dark:bg-zinc-900/60 border-zinc-300 dark:border-zinc-800 backdrop-blur-md fixed top-0 left-0 z-40 lg:relative lg:z-auto lg:translate-x-0 ${isNavOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
             <NavHeader />
 
             <div className="px-8 mb-6">
@@ -332,6 +344,14 @@ export const ExperimentalWorkspaceNav = ({
                     <ChevronLeft size={12} /> Back to Projects
                 </Link>
             </div>
+            {/* Close handle for mobile — tap X to dismiss */}
+            <button
+                onClick={onNavClose}
+                className="lg:hidden absolute top-4 right-4 p-1.5 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+                aria-label="Close navigation"
+            >
+                ✕
+            </button>
 
             <div className="flex-1 overflow-y-auto pt-2 scrollbar-none">
 
@@ -454,5 +474,6 @@ export const ExperimentalWorkspaceNav = ({
 
             <UserMenu email={userEmail} />
         </aside>
+        </>
     );
 };

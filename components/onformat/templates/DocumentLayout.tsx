@@ -60,9 +60,7 @@ export const DocumentLayout = ({
             `}
                 style={{
                     width: `${width}px`,
-                    height: `${height}px`,
-                    maxHeight: `${height}px`,
-                    overflow: 'hidden'
+                    minWidth: `${width}px`,
                 }}>
                 {/* Header (Simplified for Control Panel) */}
                 {!hideHeader && (
