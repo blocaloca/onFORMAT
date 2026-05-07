@@ -163,11 +163,11 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#E5E5EA] overflow-hidden">
+    <div className="bg-white dark:bg-zinc-900 rounded-xl border border-[#E5E5EA] dark:border-zinc-800 overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-[#E5E5EA] bg-gray-50">
-        <h2 className="font-semibold text-[#1D1D1F]">Shot List</h2>
-        <p className="text-xs text-gray-500 mt-1">
+      <div className="p-4 border-b border-[#E5E5EA] dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
+        <h2 className="font-semibold text-[#1D1D1F] dark:text-zinc-100">Shot List</h2>
+        <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
           Plan and organize all shots for your production
         </p>
       </div>
@@ -175,37 +175,37 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
       {/* Shots Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-[#E5E5EA]">
+          <thead className="bg-gray-50 dark:bg-zinc-800/50 border-b border-[#E5E5EA] dark:border-zinc-700">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider w-16">
                 #
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider">
                 Type
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider">
                 Location
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider">
                 Equipment
               </th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider">
                 Notes
               </th>
-              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">
+              <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase tracking-wider w-20">
                 Order
               </th>
               <th className="px-4 py-3 w-12"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#E5E5EA]">
+          <tbody className="divide-y divide-[#E5E5EA] dark:divide-zinc-800">
             {shotListData.shots.map((shot, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
                 <td className="px-4 py-3">
-                  <div className="w-12 px-3 py-2 bg-gray-100 border border-[#E5E5EA] rounded-lg text-sm text-center font-semibold text-gray-700">
+                  <div className="w-12 px-3 py-2 bg-gray-100 dark:bg-zinc-800 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-center font-semibold text-gray-700 dark:text-zinc-300">
                     {shot.number}
                   </div>
                 </td>
@@ -213,7 +213,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                   <select
                     value={shot.type}
                     onChange={(e) => updateShot(index, 'type', e.target.value)}
-                    className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
                     {shotTypes.map((type) => (
                       <option key={type} value={type}>{type}</option>
@@ -226,7 +226,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                     value={shot.location}
                     onChange={(e) => updateShot(index, 'location', e.target.value)}
                     placeholder="e.g., Studio A"
-                    className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -235,7 +235,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                     value={shot.description}
                     onChange={(e) => updateShot(index, 'description', e.target.value)}
                     placeholder="Shot description"
-                    className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -244,7 +244,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                     value={shot.equipment}
                     onChange={(e) => updateShot(index, 'equipment', e.target.value)}
                     placeholder="e.g., Slider, Gimbal"
-                    className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -253,7 +253,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                     value={shot.notes}
                     onChange={(e) => updateShot(index, 'notes', e.target.value)}
                     placeholder="Additional notes"
-                    className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -261,7 +261,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                     <button
                       onClick={() => moveShotUp(index)}
                       disabled={index === 0}
-                      className="p-1 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600"
+                      className="p-1 text-gray-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600"
                       title="Move up"
                     >
                       ↑
@@ -269,7 +269,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
                     <button
                       onClick={() => moveShotDown(index)}
                       disabled={index === shotListData.shots.length - 1}
-                      className="p-1 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600"
+                      className="p-1 text-gray-600 dark:text-zinc-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded transition disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600"
                       title="Move down"
                     >
                       ↓
@@ -292,7 +292,7 @@ const ShotListForm = forwardRef<ShotListFormHandle, ShotListFormProps>(({ conten
       </div>
 
       {/* Add Shot Button */}
-      <div className="p-4 border-t border-[#E5E5EA]">
+      <div className="p-4 border-t border-[#E5E5EA] dark:border-zinc-800">
         <button
           onClick={addShot}
           className="text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center gap-2"

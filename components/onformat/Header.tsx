@@ -39,7 +39,7 @@ export const Header = ({ projectName, activeToolLabel, syncStatus }: HeaderProps
         {activeToolLabel && (
           <>
             <span className="text-zinc-300 dark:text-zinc-700">/</span>
-            <span className="font-bold text-[#3B82F6] uppercase tracking-wider text-[10px] animate-in fade-in slide-in-from-left-1 flex items-center gap-2">
+            <span className="font-bold text-[#3B82F6] uppercase tracking-wider text-xs animate-in fade-in slide-in-from-left-1 flex items-center gap-2">
               {activeToolLabel}
               {isSyncing && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" title="Syncing..." />}
             </span>

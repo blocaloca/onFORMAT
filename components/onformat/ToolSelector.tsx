@@ -54,7 +54,7 @@ export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onP
                     </button>
                 )}
 
-                <div className="h-px w-full bg-zinc-200 mb-4" />
+                <div className="h-px w-full bg-zinc-200 dark:bg-zinc-700 mb-4" />
             </div>
 
 
@@ -70,7 +70,7 @@ export const ToolSelector = ({ tools, activeTool, onToolChange, activePhase, onP
 w-full text-left px-3 py-2 text-xs rounded-sm transition-colors border
               ${activePhase === key
                                     ? 'bg-black border-l-2 border-l-industrial-accent border-y-transparent border-r-transparent text-white'
-                                    : 'border-transparent text-zinc-600 hover:bg-zinc-200 hover:text-black'
+                                    : 'border-transparent text-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white'
                                 }
 `}
                         >
@@ -89,7 +89,7 @@ w-full text-left px-3 py-2 text-xs rounded-sm transition-colors border
 w-full text-left px-3 py-2 text-xs rounded-sm transition-colors border
               ${activeTool === tool.key
                                     ? 'bg-black border-l-2 border-l-industrial-accent border-y-transparent border-r-transparent text-white'
-                                    : 'border-transparent text-zinc-600 hover:bg-zinc-200 hover:text-black'
+                                    : 'border-transparent text-zinc-600 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white'
                                 }
 `}
                         >

@@ -78,7 +78,7 @@ export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', i
                     </div>
                     <button
                         onClick={onClose}
-                        className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                        className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
                     >
                         <X size={14} />
                     </button>
@@ -103,7 +103,7 @@ export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', i
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-[9px] font-bold uppercase text-zinc-500 tracking-wider">
+                                <label className="text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">
                                     Client Identity
                                 </label>
                                 <input
@@ -115,7 +115,7 @@ export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', i
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-bold uppercase text-zinc-500 tracking-wider">
+                                <label className="text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider">
                                     Producer
                                 </label>
                                 <input
@@ -130,7 +130,7 @@ export const NewProjectDialog = ({ isOpen, onClose, onCreate, mode = 'create', i
 
                         {/* Color Selection */}
                         <div className="space-y-3 pt-2">
-                            <label className="text-[9px] font-bold uppercase text-zinc-500 tracking-wider block">
+                            <label className="text-[9px] font-bold uppercase text-zinc-500 dark:text-zinc-400 tracking-wider block">
                                 Project Color Signature
                             </label>
                             <div className="flex gap-3">

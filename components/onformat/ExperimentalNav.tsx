@@ -158,7 +158,7 @@ const NavItem = ({
             )}
 
             {onAction && (
-                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAction(e); }} className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all absolute right-2 hover:bg-zinc-200`}>
+                <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAction(e); }} className={`opacity-0 group-hover:opacity-100 p-1 rounded transition-all absolute right-2 hover:bg-zinc-200 dark:hover:bg-zinc-800`}>
                     <MoreVertical size={12} className={'text-zinc-500 dark:text-zinc-400'} />
                 </div>
             )}

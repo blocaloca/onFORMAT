@@ -138,37 +138,37 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
   return (
     <div className="space-y-6">
       {/* Shoot Info Card */}
-      <div className="bg-white rounded-xl border border-[#E5E5EA] overflow-hidden">
-        <div className="p-4 border-b border-[#E5E5EA] bg-gray-50">
-          <h2 className="font-semibold text-[#1D1D1F]">Shoot Information</h2>
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-[#E5E5EA] dark:border-zinc-800 overflow-hidden">
+        <div className="p-4 border-b border-[#E5E5EA] dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
+          <h2 className="font-semibold text-[#1D1D1F] dark:text-zinc-100">Shoot Information</h2>
         </div>
         <div className="p-6 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                 Shoot Date
               </label>
               <input
                 type="date"
                 value={callSheetData.shootDate}
                 onChange={(e) => updateField('shootDate', e.target.value)}
-                className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                 Call Time
               </label>
               <input
                 type="time"
                 value={callSheetData.callTime}
                 onChange={(e) => updateField('callTime', e.target.value)}
-                className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
               Location
             </label>
             <input
@@ -176,11 +176,11 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
               value={callSheetData.location}
               onChange={(e) => updateField('location', e.target.value)}
               placeholder="e.g., 123 Main St, Los Angeles, CA"
-              className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
               Weather
             </label>
             <input
@@ -188,38 +188,38 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
               value={callSheetData.weather}
               onChange={(e) => updateField('weather', e.target.value)}
               placeholder="e.g., Partly Cloudy, 72°F"
-              className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-[#1D1D1F] dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
       </div>
 
       {/* Crew Table */}
-      <div className="bg-white rounded-xl border border-[#E5E5EA] overflow-hidden">
-        <div className="p-4 border-b border-[#E5E5EA] bg-gray-50">
-          <h2 className="font-semibold text-[#1D1D1F]">Crew</h2>
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-[#E5E5EA] dark:border-zinc-800 overflow-hidden">
+        <div className="p-4 border-b border-[#E5E5EA] dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
+          <h2 className="font-semibold text-[#1D1D1F] dark:text-zinc-100">Crew</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-[#E5E5EA]">
+            <thead className="bg-gray-50 dark:bg-zinc-800/50 border-b border-[#E5E5EA] dark:border-zinc-700">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Role</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Call</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Phone</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Call</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Phone</th>
                 <th className="px-4 py-3 w-12"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E5E5EA]">
+            <tbody className="divide-y divide-[#E5E5EA] dark:divide-zinc-800">
               {callSheetData.crew.map((member, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
                   <td className="px-4 py-3">
                     <input
                       type="text"
                       value={member.role}
                       onChange={(e) => updateCrewMember(index, 'role', e.target.value)}
                       placeholder="Director"
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -228,7 +228,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
                       value={member.name}
                       onChange={(e) => updateCrewMember(index, 'name', e.target.value)}
                       placeholder="Jane Smith"
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -236,7 +236,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
                       type="time"
                       value={member.call}
                       onChange={(e) => updateCrewMember(index, 'call', e.target.value)}
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -245,7 +245,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
                       value={member.phone}
                       onChange={(e) => updateCrewMember(index, 'phone', e.target.value)}
                       placeholder="555-1234"
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -261,7 +261,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
             </tbody>
           </table>
         </div>
-        <div className="p-4 border-t border-[#E5E5EA]">
+        <div className="p-4 border-t border-[#E5E5EA] dark:border-zinc-800">
           <button
             onClick={addCrewMember}
             className="text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center gap-2"
@@ -272,31 +272,31 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
       </div>
 
       {/* Talent Table */}
-      <div className="bg-white rounded-xl border border-[#E5E5EA] overflow-hidden">
-        <div className="p-4 border-b border-[#E5E5EA] bg-gray-50">
-          <h2 className="font-semibold text-[#1D1D1F]">Talent</h2>
+      <div className="bg-white dark:bg-zinc-900 rounded-xl border border-[#E5E5EA] dark:border-zinc-800 overflow-hidden">
+        <div className="p-4 border-b border-[#E5E5EA] dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/50">
+          <h2 className="font-semibold text-[#1D1D1F] dark:text-zinc-100">Talent</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-[#E5E5EA]">
+            <thead className="bg-gray-50 dark:bg-zinc-800/50 border-b border-[#E5E5EA] dark:border-zinc-700">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Role</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Call</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Notes</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Call</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-zinc-400 uppercase">Notes</th>
                 <th className="px-4 py-3 w-12"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E5E5EA]">
+            <tbody className="divide-y divide-[#E5E5EA] dark:divide-zinc-800">
               {callSheetData.talent.map((member, index) => (
-                <tr key={index} className="hover:bg-gray-50">
+                <tr key={index} className="hover:bg-gray-50 dark:hover:bg-zinc-800/50">
                   <td className="px-4 py-3">
                     <input
                       type="text"
                       value={member.role}
                       onChange={(e) => updateTalentMember(index, 'role', e.target.value)}
                       placeholder="Lead"
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -305,7 +305,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
                       value={member.name}
                       onChange={(e) => updateTalentMember(index, 'name', e.target.value)}
                       placeholder="John Doe"
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -313,7 +313,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
                       type="time"
                       value={member.call}
                       onChange={(e) => updateTalentMember(index, 'call', e.target.value)}
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -322,7 +322,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
                       value={member.notes}
                       onChange={(e) => updateTalentMember(index, 'notes', e.target.value)}
                       placeholder="Wardrobe ready"
-                      className="w-full px-3 py-2 bg-[#F9F9F9] border border-[#E5E5EA] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="w-full px-3 py-2 bg-[#F9F9F9] dark:bg-zinc-950 border border-[#E5E5EA] dark:border-zinc-700 rounded-lg text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   </td>
                   <td className="px-4 py-3">
@@ -338,7 +338,7 @@ const CallSheetForm = forwardRef<CallSheetFormHandle, CallSheetFormProps>(({ con
             </tbody>
           </table>
         </div>
-        <div className="p-4 border-t border-[#E5E5EA]">
+        <div className="p-4 border-t border-[#E5E5EA] dark:border-zinc-800">
           <button
             onClick={addTalentMember}
             className="text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center gap-2"

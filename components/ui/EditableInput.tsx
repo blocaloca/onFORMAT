@@ -49,7 +49,7 @@ export function EditableInput({ value, onSave, isEditable, type = 'text', classN
             <div className={`relative flex items-center w-full group ${className}`}>
                 {type === 'textarea' ? (
                     <textarea
-                        className="w-full bg-yellow-50/50 text-black border border-yellow-400 p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] resize-none"
+                        className="w-full bg-yellow-50/50 dark:bg-yellow-900/20 text-zinc-900 dark:text-zinc-100 border border-yellow-400 dark:border-yellow-600 p-1.5 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] resize-none"
                         value={currentValue}
                         onChange={(e) => setCurrentValue(e.target.value)}
                         onBlur={handleSave}
@@ -59,7 +59,7 @@ export function EditableInput({ value, onSave, isEditable, type = 'text', classN
                     />
                 ) : (
                     <input
-                        className="w-full bg-yellow-50/50 text-black border border-yellow-400 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] text-inherit font-inherit"
+                        className="w-full bg-yellow-50/50 dark:bg-yellow-900/20 text-zinc-900 dark:text-zinc-100 border border-yellow-400 dark:border-yellow-600 px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)] text-inherit font-inherit"
                         type="text"
                         value={currentValue}
                         onChange={(e) => setCurrentValue(e.target.value)}
@@ -74,7 +74,7 @@ export function EditableInput({ value, onSave, isEditable, type = 'text', classN
 
     return (
         <span
-            className={`group relative cursor-pointer hover:bg-zinc-200/50 hover:px-1 -mx-1 rounded transition-all flex items-center ${className}`}
+            className={`group relative cursor-pointer hover:bg-zinc-200/50 dark:hover:bg-zinc-700/50 hover:px-1 -mx-1 rounded transition-all flex items-center ${className}`}
             onClick={() => setIsEditing(true)}
             title="Click to edit"
         >

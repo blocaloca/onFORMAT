@@ -51,8 +51,8 @@ export const ImageUpload = ({ value, onChange, className = '', placeholder, isLo
     // Empty Locked Mode
     if (isLocked) {
         return (
-            <div className={`flex items-center justify-center bg-zinc-100 ${className}`}>
-                <span className="text-zinc-300 text-xs font-bold uppercase">No Image</span>
+            <div className={`flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 ${className}`}>
+                <span className="text-zinc-300 dark:text-zinc-600 text-xs font-bold uppercase">No Image</span>
             </div>
         );
     }
@@ -60,7 +60,7 @@ export const ImageUpload = ({ value, onChange, className = '', placeholder, isLo
     // Upload Mode
     return (
         <div
-            className={`flex flex-col items-center justify-center border-2 border-dashed transition-colors cursor-pointer ${isDragging ? 'bg-blue-50 border-blue-400' : 'bg-zinc-50 border-zinc-200 hover:bg-zinc-100'} ${className}`}
+            className={`flex flex-col items-center justify-center border-2 border-dashed transition-colors cursor-pointer ${isDragging ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-400 dark:border-blue-500' : 'bg-zinc-50 dark:bg-zinc-800/40 border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800'} ${className}`}
             onClick={handleUploadClick}
             onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
             onDragLeave={() => setIsDragging(false)}

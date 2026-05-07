@@ -9,7 +9,7 @@ export const GlassInput = ({ label, error, className = '', ...props }: GlassInpu
     return (
         <div className="w-full">
             {label && (
-                <label className="block text-[10px] font-bold uppercase text-zinc-500 tracking-wider mb-2">
+                <label className="block text-xs font-bold uppercase text-zinc-500 tracking-wider mb-2">
                     {label}
                 </label>
             )}
@@ -32,7 +32,7 @@ export const GlassInput = ({ label, error, className = '', ...props }: GlassInpu
                 {...props}
             />
             {error && (
-                <p className="mt-1 text-[9px] uppercase font-bold text-red-500 tracking-wide">{error}</p>
+                <p className="mt-1 text-xs uppercase font-bold text-red-500 tracking-wide">{error}</p>
             )}
         </div>
     );

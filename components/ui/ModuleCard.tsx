@@ -20,7 +20,7 @@ export const ModuleCard = ({ title, rightContent, children, className = '', isCo
                 <div className="px-5 py-4 border-b border-zinc-100/50 dark:border-zinc-800/50 flex justify-between items-center bg-white dark:bg-zinc-900/40">
                     <div className="flex items-center gap-2">
                         {title && (
-                            <h3 className="font-bold text-xs uppercase tracking-widest text-zinc-500">{title}</h3>
+                            <h2 className="font-bold text-sm uppercase tracking-widest text-zinc-500">{title}</h2>
                         )}
                     </div>
                     {rightContent && (
