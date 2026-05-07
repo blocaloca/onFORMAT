@@ -81,20 +81,25 @@ export default function ProjectPage() {
   };
 
   const handleSave = async (state: WorkspaceState) => {
-    // If read-only, DO NOT save
     if (permissionLock === 'read_only' && userEmail !== 'casteelio@gmail.com') {
       console.warn("Attempted to save to a Read-Only project. Ignoring.");
       return;
     }
 
-    // Debounce or just save
-    await supabase
-      .from('projects')
-      .update({
-        data: state,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', id);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.warn("No active session — save aborted.");
+      return;
+    }
+
+    await fetch('/api/projects', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ projectId: id, data: state }),
+    });
   };
 
   if (loading) {
