@@ -8,14 +8,12 @@ import { MoveToFolderDialog } from '@/components/dashboard/MoveToFolderDialog';
 import { FolderActionsDialog } from '@/components/dashboard/FolderActionsDialog';
 
 import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav';
-import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock, Archive } from 'lucide-react';
+import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock, Archive, ArchiveRestore } from 'lucide-react';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
 import { hasAccess } from '@/lib/permissions';
 import { useTrialStatus } from '@/lib/useTrialStatus';
-// import { useTheme } from '@/components/ThemeProvider';
-
 
 interface Folder {
     id: string;
@@ -31,7 +29,10 @@ interface Project {
     data: Record<string, any>;
     user_id: string;
     is_demo?: boolean;
+    status?: string;
 }
+
+type StatusTab = 'ACTIVE' | 'ARCHIVED' | 'ALL';
 
 export default function DashboardPage() {
     const supabase = createBrowserClient(
@@ -39,14 +40,13 @@ export default function DashboardPage() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
     const router = useRouter();
-    // const { theme, setTheme } = useTheme();
-    // const darkMode = theme === 'dark';
 
     const [user, setUser] = useState<string | null>(null);
     const [view, setView] = useState<'grid' | 'list' | 'timeline'>('grid');
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [statusTab, setStatusTab] = useState<StatusTab>('ACTIVE');
 
     // Folders
     const [folders, setFolders] = useState<Folder[]>([]);
@@ -62,6 +62,13 @@ export default function DashboardPage() {
 
     const [toastMessage, setToastMessage] = useState<{ title: string, description?: string, type: 'error' | 'success' } | null>(null);
 
+    // --- TAB SWITCHING ---
+
+    const handleTabSwitch = (tab: StatusTab) => {
+        setStatusTab(tab);
+        setActiveFolder(null);
+    };
+
     // --- HELPER FUNCTIONS ---
 
     const handleCreateFolder = (name: string, type: string) => {
@@ -74,6 +81,8 @@ export default function DashboardPage() {
     const handleMoveProject = async (folderId: string) => {
         if (!projectToMove) return;
 
+        const sourceFolderId = projectToMove.data?.folderId;
+
         // Optimistic Update
         const updatedProjects = projects.map(p =>
             p.id === projectToMove.id
@@ -81,6 +90,12 @@ export default function DashboardPage() {
                 : p
         );
         setProjects(updatedProjects);
+
+        // If the source folder is now empty and we're viewing it, reset to all
+        if (sourceFolderId && activeFolder === sourceFolderId) {
+            const stillHasProjects = updatedProjects.some(p => p.data?.folderId === sourceFolderId);
+            if (!stillHasProjects) setActiveFolder(null);
+        }
 
         // API Update
         try {
@@ -131,6 +146,7 @@ export default function DashboardPage() {
                 projectsInFolder.forEach(async (p) => {
                     await fetch('/api/projects', {
                         method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
                         body: JSON.stringify({ projectId: p.id, data: { ...p.data, folderId: null } })
                     });
                 });
@@ -153,32 +169,23 @@ export default function DashboardPage() {
     };
 
     // --- DATA FETCHING ---
+    // Fetches all projects regardless of status so tab counts are always accurate
 
     const fetchProjects = React.useCallback(async () => {
         setLoading(true);
         const { data: { user: authUser } } = await supabase.auth.getUser();
         if (!authUser) return;
 
-        // Update email state if not set
         if (!user) setUser(authUser.email || null);
-
-        console.log("DASHBOARD DEBUG: Auth User ID:", authUser.id);
-        console.log("DASHBOARD DEBUG: Auth User Email:", authUser.email);
 
         const { data, error } = await supabase
             .from('projects')
             .select('*')
             .eq('user_id', authUser.id)
-            .eq('status', 'ACTIVE')
             .order('updated_at', { ascending: false });
 
         if (error) {
-            console.error("DASHBOARD DEBUG: Fetch Error:", error.message, error.hint, error.details);
-        } else {
-            console.log("DASHBOARD DEBUG: Projects Found:", data?.length);
-            if (data && data.length > 0) {
-                console.log("DASHBOARD DEBUG: Sample Project UserID:", data[0].user_id);
-            }
+            console.error('Fetch Error:', error.message);
         }
 
         if (data) {
@@ -201,13 +208,11 @@ export default function DashboardPage() {
             // PHASE 1 HANDSHAKE: Link auth.uid to crew_membership
             if (user.email) {
                 try {
-                    // Attempt to link current user ID to any membership records with matching email
-                    // This ensures invited users "claim" their membership upon login
                     const { error } = await supabase
                         .from('crew_membership')
                         .update({ user_id: user.id })
-                        .ilike('user_email', user.email) // Case-insensitive match
-                        .is('user_id', null); // Only if not already claimed
+                        .ilike('user_email', user.email)
+                        .is('user_id', null);
 
                     if (error) console.warn("Handshake Error (Non-Critical - Verify Schema):", error);
                 } catch (e) {
@@ -330,20 +335,43 @@ export default function DashboardPage() {
         router.push(`/project/${id}`);
     };
 
-    const filteredProjects = projects.filter(p => {
-        if (activeFolder === 'ARCHIVED') {
+    // --- DERIVED STATE ---
+
+    const activeCount = projects.filter(p => p.status === 'ACTIVE').length;
+    const archivedCount = projects.filter(p => p.status === 'ARCHIVED').length;
+    const allCount = projects.length;
+
+    // Status filter first, then folder filter (folder filter only in ACTIVE tab)
+    const tabFiltered = statusTab === 'ACTIVE'
+        ? projects.filter(p => p.status === 'ACTIVE')
+        : statusTab === 'ARCHIVED'
+        ? projects.filter(p => p.status === 'ARCHIVED')
+        : projects;
+
+    const filteredProjects = statusTab !== 'ACTIVE'
+        ? tabFiltered
+        : tabFiltered.filter(p => {
+            if (activeFolder === 'ARCHIVED') {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const folder = folders.find(f => f.id === p.data?.folderId);
+                return folder?.type === 'archived';
+            }
+            if (activeFolder) {
+                return p.data?.folderId === activeFolder;
+            }
+            if (!p.data?.folderId) return true;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const folder = folders.find(f => f.id === p.data?.folderId);
-            return folder?.type === 'archived';
-        }
-        if (activeFolder) {
-            return p.data?.folderId === activeFolder;
-        }
-        if (!p.data?.folderId) return true;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const folder = folders.find(f => f.id === p.data.folderId);
-        return folder?.type !== 'archived';
-    });
+            const folder = folders.find(f => f.id === p.data.folderId);
+            return folder?.type !== 'archived';
+        });
+
+    const pageTitle = statusTab === 'ACTIVE' ? 'Projects' : statusTab === 'ARCHIVED' ? 'Archived' : 'All Projects';
+
+    const tabs = [
+        { key: 'ACTIVE' as const, label: 'Active', count: activeCount },
+        { key: 'ARCHIVED' as const, label: 'Archived', count: archivedCount },
+        { key: 'ALL' as const, label: 'All', count: allCount },
+    ];
 
     return (
         <div className="flex min-h-screen bg-background text-foreground font-sans transition-colors duration-200">
@@ -357,26 +385,25 @@ export default function DashboardPage() {
                 darkMode={true}
                 onNewProject={isLocked ? undefined : () => setIsDialogOpen(true)}
                 isLocked={isLocked}
-                projects={projects}
+                projects={projects.filter(p => p.status === 'ACTIVE')}
             />
 
             <main className="flex-1 p-12 max-w-[1600px] overflow-y-auto h-screen">
-                <div className="flex justify-between items-end mb-12 border-b border-zinc-800 pb-8">
-                    <div>
-                        <h2 className={`text-4xl font-light mb-2 tracking-tight text-foreground`}>
-                            {activeFolder === 'ARCHIVED'
-                                ? 'Archived Projects'
-                                : activeFolder
-                                    ? folders.find(f => f.id === activeFolder)?.name || 'Folder'
-                                    : 'Projects'}
-                        </h2>
-                        <p className="text-muted-foreground text-sm font-mono uppercase tracking-wide">
-                            {filteredProjects.length} Active • {new Date().toLocaleDateString()}
-                        </p>
-                    </div>
+                {/* Header */}
+                <div className="mb-12">
+                    {/* Title row */}
+                    <div className="flex justify-between items-end pb-6">
+                        <div>
+                            <h2 className="text-sm font-bold uppercase tracking-widest text-foreground mb-2">
+                                {pageTitle}
+                            </h2>
+                            <p className="text-xs text-zinc-400 tracking-wide">
+                                {new Date().toLocaleDateString()}
+                            </p>
+                        </div>
 
-                    <div className="flex items-center gap-4">
-                        <div className={`flex border rounded-sm p-1 bg-muted border-border`}>
+                        {/* View toggle — top right, alone */}
+                        <div className="flex border rounded-sm p-1 bg-muted border-border">
                             <button
                                 onClick={() => setView('grid')}
                                 className={`p-2 transition-colors ${view === 'grid' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
@@ -400,9 +427,26 @@ export default function DashboardPage() {
                             </button>
                         </div>
                     </div>
+
+                    {/* Full-width tab bar */}
+                    <div className="flex w-full border-b border-zinc-800">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.key}
+                                onClick={() => handleTabSwitch(tab.key)}
+                                className={`px-6 py-3 text-xs font-bold uppercase tracking-widest transition-colors
+                                    ${statusTab === tab.key
+                                        ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900'
+                                        : 'text-zinc-500 hover:text-foreground'
+                                    }`}
+                            >
+                                {tab.label} · {tab.count}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {activeFolder === 'ARCHIVED' && folders.filter(f => f.type === 'archived').length > 0 && (
+                {statusTab === 'ACTIVE' && activeFolder === 'ARCHIVED' && folders.filter(f => f.type === 'archived').length > 0 && (
                     <div className="mb-12">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-6">Archived Folders</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -428,8 +472,12 @@ export default function DashboardPage() {
                     <div className="text-center py-20 text-zinc-400 animate-pulse font-mono text-sm uppercase">Loading Projects...</div>
                 ) : !loading && filteredProjects.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 text-center">
-                        <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest mb-6">No projects here yet</p>
-                        {!isLocked && (
+                        <p className="text-zinc-400 font-mono text-xs uppercase tracking-widest mb-6">
+                            {statusTab === 'ACTIVE' ? 'No active projects yet'
+                                : statusTab === 'ARCHIVED' ? 'No archived projects'
+                                : 'No projects yet'}
+                        </p>
+                        {statusTab !== 'ARCHIVED' && !isLocked && (
                             <button
                                 onClick={() => setIsDialogOpen(true)}
                                 className="px-6 py-3 bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-zinc-700 transition-colors"
@@ -463,6 +511,9 @@ export default function DashboardPage() {
                                 const borderDiv = isLight ? 'border-zinc-300' : 'border-white/20';
                                 const hoverBg = isLight ? 'hover:bg-black/5' : 'hover:bg-black/20';
 
+                                const showArchive = statusTab === 'ACTIVE' || (statusTab === 'ALL' && p.status === 'ACTIVE');
+                                const showRestore = statusTab === 'ARCHIVED' || (statusTab === 'ALL' && p.status === 'ARCHIVED');
+
                                 return (
                                     <div
                                         key={p.id}
@@ -490,12 +541,41 @@ export default function DashboardPage() {
                                                             )}
                                                         </div>
                                                         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                                            <button
-                                                                onClick={async (e) => {
-                                                                    e.stopPropagation();
-                                                                    if (confirm('Archive this project?')) {
+                                                            {showArchive && (
+                                                                <button
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
+                                                                        if (confirm('Archive this project?')) {
+                                                                            const session = (await supabase.auth.getSession()).data.session;
+                                                                            const res = await fetch('/api/projects/archive', {
+                                                                                method: 'POST',
+                                                                                headers: {
+                                                                                    'Content-Type': 'application/json',
+                                                                                    'Authorization': `Bearer ${session?.access_token}`,
+                                                                                },
+                                                                                body: JSON.stringify({ id: p.id }),
+                                                                            });
+                                                                            if (!res.ok) {
+                                                                                const result = await res.json();
+                                                                                setToastMessage({ title: 'Archive Failed', description: result.error, type: 'error' });
+                                                                                setTimeout(() => setToastMessage(null), 5000);
+                                                                                return;
+                                                                            }
+                                                                            fetchProjects();
+                                                                        }
+                                                                    }}
+                                                                    title="Archive"
+                                                                    className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
+                                                                >
+                                                                    <Archive size={14} />
+                                                                </button>
+                                                            )}
+                                                            {showRestore && (
+                                                                <button
+                                                                    onClick={async (e) => {
+                                                                        e.stopPropagation();
                                                                         const session = (await supabase.auth.getSession()).data.session;
-                                                                        const res = await fetch('/api/projects/archive', {
+                                                                        const res = await fetch('/api/projects/unarchive', {
                                                                             method: 'POST',
                                                                             headers: {
                                                                                 'Content-Type': 'application/json',
@@ -505,35 +585,37 @@ export default function DashboardPage() {
                                                                         });
                                                                         if (!res.ok) {
                                                                             const result = await res.json();
-                                                                            setToastMessage({ title: 'Archive Failed', description: result.error, type: 'error' });
+                                                                            setToastMessage({ title: 'Restore Failed', description: result.error, type: 'error' });
                                                                             setTimeout(() => setToastMessage(null), 5000);
                                                                             return;
                                                                         }
+                                                                        setToastMessage({ title: 'Project Restored', type: 'success' });
+                                                                        setTimeout(() => setToastMessage(null), 3000);
                                                                         fetchProjects();
-                                                                    }
-                                                                }}
-                                                                title="Archive"
-                                                                className={`p-1.5 ${textSecondary} hover:text-black hover:bg-zinc-200 dark:hover:text-white dark:hover:bg-zinc-800 rounded-full transition-colors`}
-                                                            >
-                                                                <Archive size={14} />
-                                                            </button>
+                                                                    }}
+                                                                    title="Restore"
+                                                                    className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
+                                                                >
+                                                                    <ArchiveRestore size={14} />
+                                                                </button>
+                                                            )}
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); setProjectToMove(p); }}
-                                                                className={`p-1.5 ${textSecondary} ${textPrimary} ${hoverBg} rounded-full transition-colors`}
+                                                                className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
                                                                 title="Move to Folder"
                                                             >
                                                                 <FolderInput size={14} />
                                                             </button>
                                                             <button
                                                                 onClick={(e) => handleDuplicate(e, p)}
-                                                                className={`p-1.5 ${textSecondary} ${textPrimary} ${hoverBg} rounded-full transition-colors`}
+                                                                className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
                                                                 title="Duplicate"
                                                             >
                                                                 <Copy size={14} />
                                                             </button>
                                                             <button
                                                                 onClick={(e) => deleteProject(e, p.id, p.name)}
-                                                                className={`p-1.5 ${textSecondary} hover:text-red-500 ${hoverBg} rounded-full transition-colors`}
+                                                                className="p-1.5 bg-black/30 hover:bg-red-500/70 text-white rounded-full transition-colors"
                                                                 title="Delete"
                                                             >
                                                                 <Trash2 size={14} />
@@ -575,12 +657,41 @@ export default function DashboardPage() {
                                                         <div className="flex justify-between items-center mb-1">
                                                             <h3 className={`font-sans font-black text-2xl tracking-tight leading-none truncate ${textPrimary} ${textPrimaryHover} transition-colors`}>{p.name}</h3>
                                                             <div className="flex items-center gap-2">
-                                                                <button
-                                                                    onClick={async (e) => {
-                                                                        e.stopPropagation();
-                                                                        if (confirm('Archive this project?')) {
+                                                                {showArchive && (
+                                                                    <button
+                                                                        onClick={async (e) => {
+                                                                            e.stopPropagation();
+                                                                            if (confirm('Archive this project?')) {
+                                                                                const session = (await supabase.auth.getSession()).data.session;
+                                                                                const res = await fetch('/api/projects/archive', {
+                                                                                    method: 'POST',
+                                                                                    headers: {
+                                                                                        'Content-Type': 'application/json',
+                                                                                        'Authorization': `Bearer ${session?.access_token}`,
+                                                                                    },
+                                                                                    body: JSON.stringify({ id: p.id }),
+                                                                                });
+                                                                                if (!res.ok) {
+                                                                                    const result = await res.json();
+                                                                                    setToastMessage({ title: 'Archive Failed', description: result.error, type: 'error' });
+                                                                                    setTimeout(() => setToastMessage(null), 5000);
+                                                                                    return;
+                                                                                }
+                                                                                fetchProjects();
+                                                                            }
+                                                                        }}
+                                                                        title="Archive"
+                                                                        className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
+                                                                    >
+                                                                        <Archive size={14} />
+                                                                    </button>
+                                                                )}
+                                                                {showRestore && (
+                                                                    <button
+                                                                        onClick={async (e) => {
+                                                                            e.stopPropagation();
                                                                             const session = (await supabase.auth.getSession()).data.session;
-                                                                            const res = await fetch('/api/projects/archive', {
+                                                                            const res = await fetch('/api/projects/unarchive', {
                                                                                 method: 'POST',
                                                                                 headers: {
                                                                                     'Content-Type': 'application/json',
@@ -590,18 +701,20 @@ export default function DashboardPage() {
                                                                             });
                                                                             if (!res.ok) {
                                                                                 const result = await res.json();
-                                                                                setToastMessage({ title: 'Archive Failed', description: result.error, type: 'error' });
+                                                                                setToastMessage({ title: 'Restore Failed', description: result.error, type: 'error' });
                                                                                 setTimeout(() => setToastMessage(null), 5000);
                                                                                 return;
                                                                             }
+                                                                            setToastMessage({ title: 'Project Restored', type: 'success' });
+                                                                            setTimeout(() => setToastMessage(null), 3000);
                                                                             fetchProjects();
-                                                                        }
-                                                                    }}
-                                                                    title="Archive"
-                                                                    className={`p-2 rounded-sm bg-black/5 hover:bg-black/10 transition-colors ${textSecondary}`}
-                                                                >
-                                                                    <Archive size={14} />
-                                                                </button>
+                                                                        }}
+                                                                        title="Restore"
+                                                                        className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
+                                                                    >
+                                                                        <ArchiveRestore size={14} />
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         </div>
                                                         <p className={`text-[10px] font-mono uppercase tracking-widest ${textSecondary} mb-2`}>{p.data?.clientName || 'No Client'} • {p.data?.producerName || 'No Producer'}</p>
@@ -613,21 +726,21 @@ export default function DashboardPage() {
                                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); setProjectToMove(p); }}
-                                                        className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
+                                                        className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
                                                         title="Move to Folder"
                                                     >
                                                         <FolderInput size={16} />
                                                     </button>
                                                     <button
                                                         onClick={(e) => handleDuplicate(e, p)}
-                                                        className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
+                                                        className="p-1.5 bg-black/30 hover:bg-black/50 text-white rounded-full transition-colors"
                                                         title="Duplicate"
                                                     >
                                                         <Copy size={16} />
                                                     </button>
                                                     <button
                                                         onClick={(e) => deleteProject(e, p.id, p.name)}
-                                                        className={`p-2 ${textSecondary} hover:text-red-500 ${hoverBg} rounded-full transition-colors`}
+                                                        className="p-1.5 bg-black/30 hover:bg-red-500/70 text-white rounded-full transition-colors"
                                                         title="Delete"
                                                     >
                                                         <Trash2 size={16} />
@@ -638,9 +751,9 @@ export default function DashboardPage() {
                                     </div>
                                 );
                             })}
-                    </div >
+                    </div>
                 )}
-            </main >
+            </main>
 
             <MoveToFolderDialog
                 isOpen={!!projectToMove}
@@ -687,23 +800,20 @@ export default function DashboardPage() {
                 onClose={() => setIsUpgradeOpen(false)}
             />
 
-            {/* Custom Toast */}
-            {
-                toastMessage && (
-                    <div className={`fixed bottom-6 right-6 z-[100] p-4 rounded-xl shadow-2xl border flex items-start gap-3 backdrop-blur-md animate-in slide-in-from-bottom-5 ${toastMessage.type === 'error' ? 'bg-red-950/90 border-red-900/50 text-red-100' : 'bg-zinc-950/90 border-zinc-800 text-emerald-400'}`}>
-                        <div className="mt-0.5">
-                            {toastMessage.type === 'error' ? '❌' : '✅'}
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold tracking-tight">{toastMessage.title}</p>
-                            {toastMessage.description && <p className="text-xs opacity-80 mt-1 max-w-xs">{toastMessage.description}</p>}
-                        </div>
-                        <button onClick={() => setToastMessage(null)} className="ml-4 opacity-50 hover:opacity-100 transition-opacity">
-                            ✕
-                        </button>
+            {toastMessage && (
+                <div className={`fixed bottom-6 right-6 z-[100] p-4 rounded-xl shadow-2xl border flex items-start gap-3 backdrop-blur-md animate-in slide-in-from-bottom-5 ${toastMessage.type === 'error' ? 'bg-red-950/90 border-red-900/50 text-red-100' : 'bg-zinc-950/90 border-zinc-800 text-emerald-400'}`}>
+                    <div className="mt-0.5">
+                        {toastMessage.type === 'error' ? '❌' : '✅'}
                     </div>
-                )
-            }
-        </div >
+                    <div>
+                        <p className="text-sm font-bold tracking-tight">{toastMessage.title}</p>
+                        {toastMessage.description && <p className="text-xs opacity-80 mt-1 max-w-xs">{toastMessage.description}</p>}
+                    </div>
+                    <button onClick={() => setToastMessage(null)} className="ml-4 opacity-50 hover:opacity-100 transition-opacity">
+                        ✕
+                    </button>
+                </div>
+            )}
+        </div>
     );
 }

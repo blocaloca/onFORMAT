@@ -4,11 +4,9 @@ import {
     ChevronDown,
     ChevronLeft,
     Folder,
-    LayoutGrid,
     MoreVertical,
     Plus,
     FolderOpen,
-    Archive,
     Smartphone
 } from 'lucide-react';
 import { UserMenu } from './UserMenu';
@@ -209,8 +207,6 @@ export const ExperimentalDashboardNav = ({
     isLocked = false
 }: DashboardSidebarProps) => {
 
-    const allProjectsCount = projects.length;
-
     return (
         <aside className={`w-64 shrink-0 h-screen sticky top-0 border-r flex flex-col font-sans transition-colors bg-zinc-200/60 dark:bg-zinc-900/60 border-zinc-300 dark:border-zinc-800 backdrop-blur-md`}>
             <NavHeader />
@@ -242,9 +238,6 @@ export const ExperimentalDashboardNav = ({
             <div className="flex-1 overflow-y-auto pt-2 scrollbar-hide">
                 <NavSectionTitle>Folders</NavSectionTitle>
                 <div className="px-2 space-y-1">
-                    <NavItem icon={LayoutGrid} active={activeFolder === null} onClick={() => setActiveFolder(null)} count={allProjectsCount}>
-                        All Projects
-                    </NavItem>
                     {folders?.filter(f => f.type !== 'archived').map(f => {
                         const count = projects.filter(p => p.data?.folderId === f.id).length;
                         return (
@@ -267,14 +260,6 @@ export const ExperimentalDashboardNav = ({
                         <Plus size={12} /> New Folder
                     </button>
                 </div>
-
-                <div className="px-2 mt-8 space-y-1">
-                    <NavItem icon={Archive} href="/dashboard/archived">
-                        Archived
-                    </NavItem>
-                </div>
-
-
 
             </div>
 
