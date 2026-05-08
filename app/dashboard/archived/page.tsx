@@ -8,7 +8,7 @@ import { MoveToFolderDialog } from '@/components/dashboard/MoveToFolderDialog';
 import { FolderActionsDialog } from '@/components/dashboard/FolderActionsDialog';
 
 import { ExperimentalDashboardNav } from '@/components/onformat/ExperimentalNav';
-import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock, Archive } from 'lucide-react';
+import { Copy, Trash2, LayoutGrid, List as ListIcon, FolderOpen, FolderInput, MoreVertical, CalendarClock, ArchiveRestore } from 'lucide-react';
 import { GlobalGridContainer } from '@/components/dashboard/production-grid/GlobalGridContainer';
 import { buildGridRows } from '@/lib/production-grid/parser';
 import { UpgradeModal } from '@/components/dashboard/UpgradeModal';
@@ -130,6 +130,7 @@ export default function DashboardPage() {
                 projectsInFolder.forEach(async (p) => {
                     await fetch('/api/projects', {
                         method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
                         body: JSON.stringify({ projectId: p.id, data: { ...p.data, folderId: null } })
                     });
                 });
@@ -383,7 +384,7 @@ export default function DashboardPage() {
                                     : 'Projects'}
                         </h2>
                         <p className="text-muted-foreground text-sm font-mono uppercase tracking-wide">
-                            {filteredProjects.length} Active • {new Date().toLocaleDateString()}
+                            {filteredProjects.length} Archived • {new Date().toLocaleDateString()}
                         </p>
                     </div>
 
@@ -493,29 +494,29 @@ export default function DashboardPage() {
                                                             <button
                                                                 onClick={async (e) => {
                                                                     e.stopPropagation();
-                                                                    if (confirm('Archive this project?')) {
-                                                                        const session = (await supabase.auth.getSession()).data.session;
-                                                                        const res = await fetch('/api/projects/archive', {
-                                                                            method: 'POST',
-                                                                            headers: {
-                                                                                'Content-Type': 'application/json',
-                                                                                'Authorization': `Bearer ${session?.access_token}`,
-                                                                            },
-                                                                            body: JSON.stringify({ id: p.id }),
-                                                                        });
-                                                                        if (!res.ok) {
-                                                                            const result = await res.json();
-                                                                            setToastMessage({ title: 'Archive Failed', description: result.error, type: 'error' });
-                                                                            setTimeout(() => setToastMessage(null), 5000);
-                                                                            return;
-                                                                        }
-                                                                        fetchProjects();
+                                                                    const session = (await supabase.auth.getSession()).data.session;
+                                                                    const res = await fetch('/api/projects/unarchive', {
+                                                                        method: 'POST',
+                                                                        headers: {
+                                                                            'Content-Type': 'application/json',
+                                                                            'Authorization': `Bearer ${session?.access_token}`,
+                                                                        },
+                                                                        body: JSON.stringify({ id: p.id }),
+                                                                    });
+                                                                    if (!res.ok) {
+                                                                        const result = await res.json();
+                                                                        setToastMessage({ title: 'Restore Failed', description: result.error, type: 'error' });
+                                                                        setTimeout(() => setToastMessage(null), 5000);
+                                                                        return;
                                                                     }
+                                                                    setToastMessage({ title: 'Project Restored', type: 'success' });
+                                                                    setTimeout(() => setToastMessage(null), 3000);
+                                                                    fetchProjects();
                                                                 }}
-                                                                title="Archive"
+                                                                title="Restore"
                                                                 className={`p-1.5 ${textSecondary} hover:text-black hover:bg-zinc-200 dark:hover:text-white dark:hover:bg-zinc-800 rounded-full transition-colors`}
                                                             >
-                                                                <Archive size={14} />
+                                                                <ArchiveRestore size={14} />
                                                             </button>
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); setProjectToMove(p); }}
@@ -605,6 +606,33 @@ export default function DashboardPage() {
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <button
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation();
+                                                            const session = (await supabase.auth.getSession()).data.session;
+                                                            const res = await fetch('/api/projects/unarchive', {
+                                                                method: 'POST',
+                                                                headers: {
+                                                                    'Content-Type': 'application/json',
+                                                                    'Authorization': `Bearer ${session?.access_token}`,
+                                                                },
+                                                                body: JSON.stringify({ id: p.id }),
+                                                            });
+                                                            if (!res.ok) {
+                                                                const result = await res.json();
+                                                                setToastMessage({ title: 'Restore Failed', description: result.error, type: 'error' });
+                                                                setTimeout(() => setToastMessage(null), 5000);
+                                                                return;
+                                                            }
+                                                            setToastMessage({ title: 'Project Restored', type: 'success' });
+                                                            setTimeout(() => setToastMessage(null), 3000);
+                                                            fetchProjects();
+                                                        }}
+                                                        className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
+                                                        title="Restore"
+                                                    >
+                                                        <ArchiveRestore size={16} />
+                                                    </button>
                                                     <button
                                                         onClick={(e) => { e.stopPropagation(); setProjectToMove(p); }}
                                                         className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
