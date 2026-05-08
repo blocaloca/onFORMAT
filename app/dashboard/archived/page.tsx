@@ -512,6 +512,7 @@ export default function DashboardPage() {
                                                                     setToastMessage({ title: 'Project Restored', type: 'success' });
                                                                     setTimeout(() => setToastMessage(null), 3000);
                                                                     fetchProjects();
+                                                                    router.push('/dashboard');
                                                                 }}
                                                                 title="Restore"
                                                                 className={`p-1.5 ${textSecondary} hover:text-black hover:bg-zinc-200 dark:hover:text-white dark:hover:bg-zinc-800 rounded-full transition-colors`}
@@ -627,6 +628,7 @@ export default function DashboardPage() {
                                                             setToastMessage({ title: 'Project Restored', type: 'success' });
                                                             setTimeout(() => setToastMessage(null), 3000);
                                                             fetchProjects();
+                                                            router.push('/dashboard');
                                                         }}
                                                         className={`p-2 ${textSecondary} ${textPrimaryHover} ${hoverBg} rounded-full transition-colors`}
                                                         title="Restore"
