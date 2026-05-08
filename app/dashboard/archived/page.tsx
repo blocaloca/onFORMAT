@@ -16,8 +16,6 @@ import { hasAccess } from '@/lib/permissions';
 import { useTrialStatus } from '@/lib/useTrialStatus';
 // import { useTheme } from '@/components/ThemeProvider';
 
-import { DEMO_PROJECT_DATA } from '@/lib/demoProject';
-
 interface Folder {
     id: string;
     name: string;
@@ -62,8 +60,6 @@ export default function DashboardPage() {
     const [projectToDuplicate, setProjectToDuplicate] = useState<Project | null>(null);
 
     const [toastMessage, setToastMessage] = useState<{ title: string, description?: string, type: 'error' | 'success' } | null>(null);
-
-    const creationLock = React.useRef(false);
 
     // --- HELPER FUNCTIONS ---
 
@@ -155,35 +151,6 @@ export default function DashboardPage() {
         setFolderActionTarget(null);
     };
 
-    const createDemoProject = async (userId: string, userEmail: string | null) => {
-        try {
-            const payload = {
-                userId: userId,
-                userEmail: userEmail,
-                name: DEMO_PROJECT_DATA.projectName || 'Welcome Project',
-                data: DEMO_PROJECT_DATA,
-            };
-
-            await fetch('/api/projects', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}` },
-                body: JSON.stringify(payload)
-            });
-
-            localStorage.setItem(`onboarded_${userId}`, 'true');
-            // Re-fetch silently
-            // Re-fetch silently scoped to local user
-            const { data } = await supabase.from('projects')
-                .select('*')
-                .eq('user_id', userId)
-                .order('updated_at', { ascending: false });
-            if (data) setProjects(data);
-
-        } catch (e) {
-            console.error("Failed to create demo project", e);
-        }
-    };
-
     // --- DATA FETCHING ---
 
     const fetchProjects = React.useCallback(async () => {
@@ -215,25 +182,10 @@ export default function DashboardPage() {
 
         if (data) {
             setProjects(data);
-
-            // If they have no projects, give them the demo (even if they onboarded before, maybe they want to restart)
-            if (data.length === 0 && !creationLock.current) {
-                creationLock.current = true;
-                await createDemoProject(authUser.id, authUser.email || null);
-                creationLock.current = false;
-            }
         }
         setLoading(false);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [supabase, user]); // Removed createDemoProject from dependencies as it's defined in scope and not stable unless memoized? 
-    // Actually createDemoProject changes on every render because it's defined inside component.
-    // I should createDemoProject inside the component or outside? 
-    // It depends on State? No. It depends on `supabase` (which is unstable).
-    // I should probably wrap `createDemoProject` in useCallback too if I want to be 100% correct.
-    // But honestly, `fetchProjects` is only called in `useEffect` and other handlers.
-    // If I add it to dep array, it might loop if `createDemoProject` changes.
-    // Let's just suppress the dep warning for createDemoProject by not adding it, or wrapped it.
-    // For now, I'll define it as is. It's safe given it's called inside `fetchProjects`.
+    }, [supabase, user]);
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -542,7 +494,21 @@ export default function DashboardPage() {
                                                                 onClick={async (e) => {
                                                                     e.stopPropagation();
                                                                     if (confirm('Archive this project?')) {
-                                                                        await fetch('/api/projects/archive', { method: 'POST', body: JSON.stringify({ id: p.id }) });
+                                                                        const session = (await supabase.auth.getSession()).data.session;
+                                                                        const res = await fetch('/api/projects/archive', {
+                                                                            method: 'POST',
+                                                                            headers: {
+                                                                                'Content-Type': 'application/json',
+                                                                                'Authorization': `Bearer ${session?.access_token}`,
+                                                                            },
+                                                                            body: JSON.stringify({ id: p.id }),
+                                                                        });
+                                                                        if (!res.ok) {
+                                                                            const result = await res.json();
+                                                                            setToastMessage({ title: 'Archive Failed', description: result.error, type: 'error' });
+                                                                            setTimeout(() => setToastMessage(null), 5000);
+                                                                            return;
+                                                                        }
                                                                         fetchProjects();
                                                                     }
                                                                 }}
