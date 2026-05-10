@@ -203,7 +203,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                     <div className="w-full aspect-video bg-transparent border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden shrink-0">
                         {isPrinting ? (
                             <img
-                                src={slide.modules.image1 || ''}
+                                src={slide.modules.image1 || undefined}
                                 className="w-full h-full object-cover"
                                 alt="Slide Hero Visual"
                             />
@@ -245,7 +245,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                         <div className="flex-1 bg-transparent border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
                             {isPrinting ? (
                                 <img
-                                    src={slide.modules.image1 || ''}
+                                    src={slide.modules.image1 || undefined}
                                     className="w-full h-full object-cover"
                                     alt="Slide Visual 1"
                                 />
@@ -260,7 +260,7 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
                         <div className="flex-1 bg-transparent border border-dashed border-zinc-200 relative print:border-none print:bg-white overflow-hidden">
                             {isPrinting ? (
                                 <img
-                                    src={slide.modules.image2 || ''}
+                                    src={slide.modules.image2 || undefined}
                                     className="w-full h-full object-cover"
                                     alt="Slide Visual 2"
                                 />
@@ -297,22 +297,29 @@ export const DirectorsTreatmentTemplate = ({ data, onUpdate, isLocked = false, p
     return (
         <>
             {slides.map((slide, slideIndex) => {
-                const CHAR_LIMIT = 2000;
-                
+                // Image layout with an image occupies ~459px, leaving ~310px for text.
+                // Scale the first chunk limit proportionally: 2000 * (310/769) ≈ 806.
+                const hasImage = slide.layout === 'Image' && !!slide.modules.image1;
+                const FIRST_CHUNK_LIMIT = hasImage ? 800 : 2000;
+                const CONT_CHUNK_LIMIT = 2000;
+
                 const splitContent = (text: string) => {
                     if (!text) return [""];
                     const pages = [];
                     let remaining = text;
+                    let isFirst = true;
                     while (remaining.length > 0) {
-                        if (remaining.length <= CHAR_LIMIT) {
+                        const limit = isFirst ? FIRST_CHUNK_LIMIT : CONT_CHUNK_LIMIT;
+                        if (remaining.length <= limit) {
                             pages.push(remaining);
                             break;
                         }
-                        let breakIdx = remaining.lastIndexOf('\n', CHAR_LIMIT);
-                        if (breakIdx === -1 || breakIdx < CHAR_LIMIT * 0.5) breakIdx = remaining.lastIndexOf(' ', CHAR_LIMIT);
-                        if (breakIdx === -1) breakIdx = CHAR_LIMIT;
+                        let breakIdx = remaining.lastIndexOf('\n', limit);
+                        if (breakIdx === -1 || breakIdx < limit * 0.5) breakIdx = remaining.lastIndexOf(' ', limit);
+                        if (breakIdx === -1) breakIdx = limit;
                         pages.push(remaining.substring(0, breakIdx));
                         remaining = remaining.substring(breakIdx).trim();
+                        isFirst = false;
                     }
                     return pages;
                 };

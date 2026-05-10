@@ -84,7 +84,7 @@ export const AVScriptTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     // US Letter Portrait height: 1056px. Content area ~800-900px.
     // Base row height (padding + borders): ~100px.
     // Each line (~60 chars) adds ~20px.
-    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 650 : 850;
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 580 : 740;
 
     const pages: AVRow[][] = [];
     let currentPage: AVRow[] = [];

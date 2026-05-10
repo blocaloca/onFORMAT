@@ -90,28 +90,33 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
     const totalActual = items.reduce((sum, item) => sum + (item.actual || 0), 0);
     const totalVariance = totalBudgeted - totalActual;
 
-    // Dynamic Pagination
+    // Dynamic Pagination (print only — editor uses a single scrollable view)
     const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+    const SUMMARY_HEADER_SCORE = 120;
 
-    const pages: ActualLineItem[][] = [];
-    let currentPage: ActualLineItem[] = [];
-    let currentPageHeight = 0;
+    let pages: ActualLineItem[][];
+    if (isPrinting) {
+        const paginatedPages: ActualLineItem[][] = [];
+        let currentPage: ActualLineItem[] = [];
+        let currentPageHeight = SUMMARY_HEADER_SCORE;
 
-    items.forEach((item) => {
-        let rowScore = 38; // Base row height (~36px)
-        
-        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
-            pages.push(currentPage);
-            currentPage = [];
-            currentPageHeight = 0;
+        items.forEach((item) => {
+            const rowScore = 38;
+            if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+                paginatedPages.push(currentPage);
+                currentPage = [];
+                currentPageHeight = 0;
+            }
+            currentPage.push(item);
+            currentPageHeight += rowScore;
+        });
+
+        if (currentPage.length > 0 || items.length === 0) {
+            paginatedPages.push(currentPage);
         }
-
-        currentPage.push(item);
-        currentPageHeight += rowScore;
-    });
-
-    if (currentPage.length > 0 || items.length === 0) {
-        pages.push(currentPage);
+        pages = paginatedPages;
+    } else {
+        pages = [items];
     }
 
     return (
@@ -180,7 +185,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.description}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-bold uppercase outline-none px-1 py-1 text-zinc-900 print:hidden`}
+                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm font-bold uppercase outline-none px-1 py-1 text-zinc-900 print:hidden`}
                                                 disabled={isLocked}
                                             />
                                             <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black`}>{item.description}</div>
@@ -197,7 +202,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="number"
                                                 value={item.actual || ''}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { actual: parseFloat(e.target.value) || 0 })}
-                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm font-mono font-bold text-right outline-none px-1 py-1 text-zinc-900 print:hidden`}
+                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm font-mono font-bold text-right outline-none px-1 py-1 text-zinc-900 print:hidden`}
                                                 placeholder="0.00"
                                                 disabled={isLocked}
                                             />
@@ -215,7 +220,7 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                                 type="text"
                                                 value={item.notes}
                                                 onChange={(e) => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 px-2 text-sm text-zinc-500 font-mono outline-none px-1 py-1 print:hidden text-zinc-900`}
+                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm text-zinc-500 font-mono outline-none px-1 py-1 print:hidden text-zinc-900`}
                                                 placeholder="..."
                                                 disabled={isLocked}
                                             />

@@ -121,24 +121,23 @@ export const ShotListTemplate = ({ data, onUpdate, isLocked = false, plain, orie
     };
 
     // Dynamic Pagination
-    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
+    const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 560 : 740;
+    const HEADER_SCORE = 40; // Table header row rendered on every page
 
     const pages: Shot[][] = [];
     let currentPage: Shot[] = [];
-    let currentPageHeight = 0;
+    let currentPageHeight = HEADER_SCORE; // Always deduct header from available budget
 
     shots.forEach((shot) => {
         // Calculate row height score
-        // Base row height is roughly 40px
-        // Textarea height increases based on description length
         const descLength = shot.description?.length || 0;
         const textLines = Math.max(1, Math.ceil(descLength / 60)); // Approx 60 chars per line in this grid
-        const rowScore = 32 + (textLines * 18); // Base + (lines * approx line height)
-        
+        const rowScore = 44 + (textLines * 18); // Base increased from 32→44 to match actual row height
+
         if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
             pages.push(currentPage);
             currentPage = [];
-            currentPageHeight = 0;
+            currentPageHeight = HEADER_SCORE; // Reset with header cost for new page
         }
 
         currentPage.push(shot);

@@ -624,6 +624,82 @@ export const ECommShotListTemplate = ({ data, onUpdate, isLocked = false, plain,
             </div>
     );
 
+    // Print path: paginate rows across multiple DocumentLayout instances
+    if (isPrinting) {
+        const ECOMM_ROW_SCORE = 38;
+        const ECOMM_HEADER_SCORE = 30;
+        const ECOMM_MAX = orientation === 'landscape' ? 580 : 740;
+
+        const ecommPages: ProductRow[][] = [];
+        let ecommCurrentPage: ProductRow[] = [];
+        let ecommCurrentHeight = ECOMM_HEADER_SCORE;
+
+        rows.forEach(row => {
+            if (ecommCurrentHeight + ECOMM_ROW_SCORE > ECOMM_MAX && ecommCurrentPage.length > 0) {
+                ecommPages.push(ecommCurrentPage);
+                ecommCurrentPage = [];
+                ecommCurrentHeight = ECOMM_HEADER_SCORE;
+            }
+            ecommCurrentPage.push(row);
+            ecommCurrentHeight += ECOMM_ROW_SCORE;
+        });
+        if (ecommCurrentPage.length > 0 || rows.length === 0) {
+            ecommPages.push(ecommCurrentPage);
+        }
+
+        return (
+            <>
+                {ecommPages.map((pageRows, pageIndex) => (
+                    <DocumentLayout
+                        key={pageIndex}
+                        title="eComm Shot List"
+                        hideHeader={false}
+                        plain={plain}
+                        orientation={orientation}
+                        metadata={metadata}
+                        isPrinting={isPrinting}
+                        subtitle={pageIndex > 0 ? `eComm Shot List (Cont.)` : ''}
+                    >
+                        <div className="w-full">
+                            {pageRows.length === 0 ? (
+                                <p className="text-zinc-300 text-xs font-mono uppercase tracking-widest text-center py-12">No products</p>
+                            ) : (
+                                <table className="w-full text-left text-[9px] border-collapse border border-slate-300 table-fixed">
+                                    <thead>
+                                        <tr className="bg-transparent border-b border-black">
+                                            {columns.map(col => <th key={col} className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 break-words">{col}</th>)}
+                                            <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-16">Location</th>
+                                            <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-16">Deliver</th>
+                                            <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-12 text-center">Status</th>
+                                            <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-24">Selects</th>
+                                            <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-32">Notes</th>
+                                            <th className="border border-slate-300 p-1.5 font-bold uppercase tracking-wider text-slate-700 w-12 text-center">Thumb</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {pageRows.map(row => (
+                                            <tr key={row._id} className={row._status === 'Wrapped' ? 'opacity-50 grayscale bg-transparent' : 'bg-transparent'}>
+                                                {columns.map(col => <td key={col} className="border border-slate-300 p-1.5 whitespace-normal break-words font-medium text-slate-800">{row[col]}</td>)}
+                                                <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._location}</td>
+                                                <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._deliverables}</td>
+                                                <td className="border border-slate-300 p-1.5 font-black uppercase text-[7px] text-center tracking-widest text-slate-600 leading-tight">{row._status}</td>
+                                                <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700 font-medium">{row._selects}</td>
+                                                <td className="border border-slate-300 p-1.5 whitespace-normal break-words text-slate-700">{row._notes}</td>
+                                                <td className="border border-slate-300 p-1 text-center align-middle">
+                                                    {row._thumbnail ? <div className="w-full flex justify-center"><img src={row._thumbnail} className="w-8 h-8 object-cover object-center rounded shadow-sm border border-slate-200" /></div> : '-'}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </DocumentLayout>
+                ))}
+            </>
+        );
+    }
+
     if (hideControls) {
         return innerContent;
     }

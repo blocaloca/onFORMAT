@@ -5,14 +5,30 @@ interface PDFPreviewWrapperProps {
     scale?: number;
     children: ReactNode;
     toolId?: string;
+    multiPage?: boolean;
 }
 
-export const PDFPreviewWrapper = ({ orientation, scale = 0.75, children, toolId }: PDFPreviewWrapperProps) => {
+export const PDFPreviewWrapper = ({ orientation, scale = 0.75, children, toolId, multiPage = false }: PDFPreviewWrapperProps) => {
     const w = orientation === 'landscape' ? 1056 : 816;
     const h = orientation === 'landscape' ? 816 : 1056;
     const scaledW = w * scale;
     const scaledH = h * scale;
 
+    // Multi-page mode: zoom scales both visual and layout dimensions so all pages
+    // stack correctly and the preview container can scroll through them all.
+    if (multiPage) {
+        return (
+            <div className="flex flex-col items-center w-full">
+                <div style={{ width: scaledW }}>
+                    <div style={{ zoom: scale }}>
+                        {children}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Single-page mode (cover page): fixed-size clipped card.
     return (
         <div className="flex flex-col items-center w-full mb-8">
             <div
@@ -20,7 +36,7 @@ export const PDFPreviewWrapper = ({ orientation, scale = 0.75, children, toolId 
                 style={{ width: scaledW, height: scaledH }}
             >
                 <div
-                    className="bg-white origin-top-left print-page-capture"
+                    className="bg-white origin-top-left"
                     data-orientation={orientation}
                     data-toolid={toolId}
                     style={{

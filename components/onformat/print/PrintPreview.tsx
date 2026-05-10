@@ -74,7 +74,7 @@ export const PrintPreview = ({ toolId, orientation, coverSettings, scale = 0.75,
 
     return (
         <PrintContext.Provider value={true}>
-            <PDFPreviewWrapper orientation={orientation} scale={scale} toolId={toolId}>
+            <PDFPreviewWrapper orientation={orientation} scale={scale} toolId={toolId} multiPage={true}>
                 {Template ? (
                     <Template
                         data={data}

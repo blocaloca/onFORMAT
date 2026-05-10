@@ -23,7 +23,8 @@
       "Bash(mkdir:*)",
       "Bash(PORT=3002 npm run dev:*)",
       "Bash(git -C /Users/davidcasteel/Desktop/creative-os-fixed log --oneline --all)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(npm --prefix /Users/davidcasteel/Desktop/creative-os-fixed run dev)"
     ],
     "deny": [],
     "ask": []

@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { X, Printer, Eye, Layers, Check, ChevronDown } from 'lucide-react';
 import { PrintPreview } from './PrintPreview';
-import { PDFPreviewWrapper } from './PDFPreviewWrapper';
 import { PrintContext } from './PrintContext';
 import { getTemplateForTool } from '../TemplateRegistry';
 import { ProjectProvider, useProject } from '../ProjectContext';
@@ -645,7 +644,10 @@ const PrintRoomContent = ({
             {/* ── HIDDEN EXPORT AREA ──
                 position:fixed keeps it out of any overflow:hidden parent.
                 Positioned far off-screen so it's invisible but fully rendered
-                (opacity would make html2canvas capture transparent images).       */}
+                (opacity would make html2canvas capture transparent images).
+                Templates render their own DocumentLayout instances — each
+                DocumentLayout.document-page div carries print-page-capture
+                so querySelectorAll finds one element per page, unclipped.    */}
             <div
                 ref={exportAreaRef}
                 style={{
@@ -659,14 +661,20 @@ const PrintRoomContent = ({
             >
                 <PrintContext.Provider value={true}>
 
-                    {/* Cover page */}
+                    {/* Cover page — no DocumentLayout, so needs explicit capture div */}
                     {coverSettings.showCover && (
-                        <PDFPreviewWrapper orientation="portrait" scale={1} toolId="cover">
+                        <div
+                            className="print-page-capture bg-white"
+                            data-orientation="portrait"
+                            style={{ width: 816, height: 1056 }}
+                        >
                             <CoverContent />
-                        </PDFPreviewWrapper>
+                        </div>
                     )}
 
-                    {/* Selected documents — each version = one page (production days) */}
+                    {/* Selected documents — each Template renders DocumentLayout pages.
+                        Each DocumentLayout.document-page has print-page-capture, so the
+                        export loop finds all pages without overflow clipping.             */}
                     {orderedSelectedDocs.flatMap(doc => {
                         const Template = getTemplateForTool(doc.id);
                         const orientation = itemOrientations[doc.id] || 'portrait';
@@ -678,29 +686,17 @@ const PrintRoomContent = ({
                             : allVersions.slice(masterDay, masterDay + 1);
 
                         return versions.map((versionData: any, idx: number) => (
-                            <PDFPreviewWrapper
-                                key={`${doc.id}-${idx}`}
-                                orientation={orientation}
-                                scale={1}
-                                toolId={doc.id}
-                            >
-                                {Template ? (
-                                    <Template
-                                        data={versionData}
-                                        plain={false}
-                                        orientation={orientation}
-                                        isPrinting={true}
-                                        metadata={templateMetadata}
-                                        onUpdate={() => {}}
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center">
-                                        <p className="text-zinc-300 text-xs font-mono uppercase tracking-widest">
-                                            No template for {doc.label}
-                                        </p>
-                                    </div>
-                                )}
-                            </PDFPreviewWrapper>
+                            Template ? (
+                                <Template
+                                    key={`${doc.id}-${idx}`}
+                                    data={versionData}
+                                    plain={false}
+                                    orientation={orientation}
+                                    isPrinting={true}
+                                    metadata={templateMetadata}
+                                    onUpdate={() => {}}
+                                />
+                            ) : null
                         ));
                     })}
 

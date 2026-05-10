@@ -94,34 +94,23 @@ export const BriefTemplate = ({ data, onUpdate, persona, isPrinting, plain, orie
     // --- EDITOR VIEW ---
     if (!isPrinting) {
         return (
-            <div className="flex flex-col gap-8">
-                <DocumentLayout
-                    title="Creative Brief"
-                    hideHeader={false}
-                    metadata={metadata}
-                    plain={plain}
-                    orientation={orientation}
-                    isPrinting={isPrinting}
-                >
-                    <div className="space-y-6 h-full flex flex-col">
-                        <div className="space-y-6">
-                            {pages[0].sections.map(s => (
-                                <section key={s.field}>
-                                    <label className={labelStyle}>{s.label}</label>
-                                    {renderField(s.field as keyof BriefData, s.placeholder, s.minHeight)}
-                                </section>
-                            ))}
-                            <div className="border-b border-zinc-100 my-4" />
-                            {pages[1].sections.map(s => (
-                                <section key={s.field}>
-                                    <label className={labelStyle}>{s.label}</label>
-                                    {renderField(s.field as keyof BriefData, s.placeholder, s.minHeight)}
-                                </section>
-                            ))}
-                        </div>
-                    </div>
-                </DocumentLayout>
-            </div>
+            <DocumentLayout
+                title="Creative Brief"
+                hideHeader={false}
+                metadata={metadata}
+                plain={plain}
+                orientation={orientation}
+                isPrinting={isPrinting}
+            >
+                <div className="space-y-6">
+                    {[...pages[0].sections, ...pages[1].sections].map(s => (
+                        <section key={s.field}>
+                            <label className={labelStyle}>{s.label}</label>
+                            {renderField(s.field as keyof BriefData, s.placeholder, s.minHeight)}
+                        </section>
+                    ))}
+                </div>
+            </DocumentLayout>
         );
     }
 

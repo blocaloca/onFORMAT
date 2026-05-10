@@ -50,91 +50,95 @@ export const ProjectProvider = ({ children, phases, projectMetadata }: ProjectPr
         };
     }, [phases, projectMetadata]);
 
-    // Universal Unwrapper
-    // Searches all phases for the toolId and extracts the data
+    // Score a parsed data object by how much meaningful content it has.
+    // Arrays count by length (more items = richer), strings count as 1 each.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const scoreData = (data: any): number => {
+        if (!data || typeof data !== 'object') return 0;
+        let score = 0;
+        for (const val of Object.values(data)) {
+            if (val === null || val === undefined || val === '') continue;
+            if (Array.isArray(val)) score += val.length;
+            else if (typeof val === 'string' && val.trim()) score += 1;
+            else if (typeof val === 'number') score += 1;
+            else if (typeof val === 'object') score += Object.keys(val as object).length;
+        }
+        return score;
+    };
+
+    // Universal Unwrapper — picks the phase with the richest data for the tool.
+    // Tie-breaks by phase priority (POST > ON_SET > PRE_PRODUCTION > DEVELOPMENT)
+    // so that when scores are equal, later-phase data wins.
     const getToolData = useMemo(() => {
         return (toolId: string) => {
             if (!activeProject?.data?.phases) return {};
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let foundData: any = null;
             const phases = activeProject.data.phases;
-
-            // Search Priority: POST > ON_SET > PRE_PRODUCTION > DEVELOPMENT
             const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
+            const allPhaseKeys = [
+                ...priorityOrder,
+                ...Object.keys(phases).filter(k => !priorityOrder.includes(k))
+            ];
 
-            // 1. Priority Search
-            for (const phaseKey of priorityOrder) {
-                // Try exact casing first, then fallback to lowercase match if custom keys exist
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            let bestResult: any = {};
+            let bestScore = -1;
+
+            for (const phaseKey of allPhaseKeys) {
                 const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
-                if (phase?.drafts?.[toolId]) {
-                    foundData = phase.drafts[toolId];
-                    break;
-                }
-            }
-
-            // 2. Fallback Search (if not found in priority phases)
-            if (!foundData) {
-                for (const key of Object.keys(phases)) {
-                    if (phases[key]?.drafts?.[toolId]) {
-                        foundData = phases[key].drafts[toolId];
-                        break;
+                if (!phase?.drafts?.[toolId]) continue;
+                try {
+                    const parsed = typeof phase.drafts[toolId] === 'string'
+                        ? JSON.parse(phase.drafts[toolId])
+                        : phase.drafts[toolId];
+                    const data = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
+                    const score = scoreData(data);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestResult = data;
                     }
+                } catch (e) {
+                    console.error(`[ProjectContext] Error parsing data for ${toolId} in ${phaseKey}`, e);
                 }
             }
 
-            // Extract & Parse
-            let result = {};
-            try {
-                if (foundData) {
-                    const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
-                    // Array Extraction: Take LAST item (Most Recent Save)
-                    result = Array.isArray(parsed) ? (parsed[parsed.length - 1] || {}) : (parsed || {});
-                }
-            } catch (e) {
-                console.error(`[ProjectContext] Error parsing data for ${toolId}`, e);
-            }
-
-            return result;
+            return bestResult;
         };
     }, [activeProject]);
 
-    // Stack/Array Unwrapper (Returns all Versions/Days)
+    // Stack/Array Unwrapper — picks the phase whose stack has the highest total richness score.
     const getToolStack = useMemo(() => {
         return (toolId: string) => {
             if (!activeProject?.data?.phases) return [];
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let foundData: any = null;
             const phases = activeProject.data.phases;
             const priorityOrder = ['POST', 'ON_SET', 'PRE_PRODUCTION', 'DEVELOPMENT'];
-
-            for (const phaseKey of priorityOrder) {
-                const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
-                if (phase?.drafts?.[toolId]) {
-                    foundData = phase.drafts[toolId];
-                    break;
-                }
-            }
-
-            if (!foundData) {
-                for (const key of Object.keys(phases)) {
-                    if (phases[key]?.drafts?.[toolId]) {
-                        foundData = phases[key].drafts[toolId];
-                        break;
-                    }
-                }
-            }
+            const allPhaseKeys = [
+                ...priorityOrder,
+                ...Object.keys(phases).filter(k => !priorityOrder.includes(k))
+            ];
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            let result: any[] = [];
-            try {
-                if (foundData) {
-                    const parsed = typeof foundData === 'string' ? JSON.parse(foundData) : foundData;
-                    result = Array.isArray(parsed) ? parsed : [parsed];
-                }
-            } catch { }
-            return result;
+            let bestStack: any[] = [];
+            let bestScore = -1;
+
+            for (const phaseKey of allPhaseKeys) {
+                const phase = phases[phaseKey] || phases[phaseKey.toLowerCase()];
+                if (!phase?.drafts?.[toolId]) continue;
+                try {
+                    const parsed = typeof phase.drafts[toolId] === 'string'
+                        ? JSON.parse(phase.drafts[toolId])
+                        : phase.drafts[toolId];
+                    const stack: any[] = Array.isArray(parsed) ? parsed : [parsed];
+                    const score = stack.reduce((sum, item) => sum + scoreData(item), 0);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestStack = stack;
+                    }
+                } catch { }
+            }
+
+            return bestStack;
         };
     }, [activeProject]);
 
