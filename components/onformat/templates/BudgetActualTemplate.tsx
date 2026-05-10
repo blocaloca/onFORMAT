@@ -90,33 +90,146 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
     const totalActual = items.reduce((sum, item) => sum + (item.actual || 0), 0);
     const totalVariance = totalBudgeted - totalActual;
 
-    // Dynamic Pagination (print only — editor uses a single scrollable view)
+    // --- EDITOR VIEW ---
+    if (!isPrinting) {
+        return (
+            <DocumentLayout
+                title="Actual Budget"
+                hideHeader={false}
+                plain={plain}
+                orientation={orientation}
+                metadata={metadata}
+                isPrinting={false}
+            >
+                <div className="space-y-6 h-full flex flex-col">
+                    <div className="grid grid-cols-3 gap-8 border-b-2 border-black pb-6 mb-2">
+                        <div>
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Estimated Total</h2>
+                            <div className="text-xl font-mono font-bold">{formatter.format(totalBudgeted)}</div>
+                        </div>
+                        <div>
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Actual Total</h2>
+                            <div className="text-xl font-mono font-bold text-emerald-600">{formatter.format(totalActual)}</div>
+                        </div>
+                        <div className="text-right">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Variance</h2>
+                            <div className={`text-xl font-mono font-bold ${totalVariance < 0 ? 'text-red-500' : 'text-zinc-900'}`}>
+                                {totalVariance < 0 ? '-' : '+'}{formatter.format(Math.abs(totalVariance))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {!metadata?.importedBudget?.items && items.length === 0 && !isLocked && (
+                        <div className="text-center p-8 bg-transparent border border-dashed border-zinc-200 rounded text-zinc-400 text-xs uppercase tracking-widest">
+                            No Budget Data Found in Pre-Production
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 border-b border-black pb-2 items-end px-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Description</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Budgeted</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Actual</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Variance</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Notes</span>
+                        <span></span>
+                    </div>
+
+                    <div className="flex-1 space-y-0 divide-y divide-zinc-100">
+                        {items.map((item, idx) => {
+                            const variance = (item.budgeted || 0) - (item.actual || 0);
+                            return (
+                                <div key={item.id} className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 py-2 items-center px-2">
+                                    <input
+                                        type="text"
+                                        value={item.description}
+                                        onChange={(e) => handleUpdateItem(idx, { description: e.target.value })}
+                                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm font-bold uppercase outline-none px-1 py-1 text-zinc-900"
+                                        disabled={isLocked}
+                                    />
+                                    <div className="text-right text-xs font-mono text-zinc-500">
+                                        {formatter.format(item.budgeted)}
+                                    </div>
+                                    <input
+                                        type="number"
+                                        value={item.actual || ''}
+                                        onChange={(e) => handleUpdateItem(idx, { actual: parseFloat(e.target.value) || 0 })}
+                                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm font-mono font-bold text-right outline-none px-1 py-1 text-zinc-900"
+                                        placeholder="0.00"
+                                        disabled={isLocked}
+                                    />
+                                    <div className={`text-right text-sm font-mono font-bold ${variance < 0 ? 'text-red-500' : 'text-zinc-400'}`}>
+                                        {formatter.format(variance)}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={item.notes}
+                                        onChange={(e) => handleUpdateItem(idx, { notes: e.target.value })}
+                                        className="w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm text-zinc-500 font-mono outline-none px-1 py-1 text-zinc-900"
+                                        placeholder="..."
+                                        disabled={isLocked}
+                                    />
+                                    <div className="flex justify-end">
+                                        {!isLocked && (
+                                            <button
+                                                onClick={() => handleDeleteItem(idx)}
+                                                className="text-zinc-300 hover:text-red-500 transition-colors"
+                                            >
+                                                <Trash2 size={12} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        {!isLocked && (
+                            <div className="pt-2 flex justify-between items-center">
+                                <button
+                                    onClick={handleAddItem}
+                                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-black bg-transparent border border-transparent hover:border-zinc-200 px-3 py-2 rounded-sm transition-colors"
+                                >
+                                    <Plus size={10} className="mr-1" /> Add Line Item
+                                </button>
+                                {metadata?.importedBudget?.items && (
+                                    <button
+                                        onClick={() => {
+                                            if (confirm('This will overwrite current items with original budget data. Continue?')) {
+                                                handleImportBudget();
+                                            }
+                                        }}
+                                        className="text-zinc-300 hover:text-emerald-600 transition-colors p-2"
+                                        title="Reset to Original Budget"
+                                    >
+                                        <RefreshCw size={12} />
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </DocumentLayout>
+        );
+    }
+
+    // --- PRINT VIEW (paginated) ---
     const MAX_PAGE_HEIGHT_SCORE = orientation === 'landscape' ? 600 : 850;
     const SUMMARY_HEADER_SCORE = 120;
+    const pages: ActualLineItem[][] = [];
+    let currentPage: ActualLineItem[] = [];
+    let currentPageHeight = SUMMARY_HEADER_SCORE;
 
-    let pages: ActualLineItem[][];
-    if (isPrinting) {
-        const paginatedPages: ActualLineItem[][] = [];
-        let currentPage: ActualLineItem[] = [];
-        let currentPageHeight = SUMMARY_HEADER_SCORE;
-
-        items.forEach((item) => {
-            const rowScore = 38;
-            if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
-                paginatedPages.push(currentPage);
-                currentPage = [];
-                currentPageHeight = 0;
-            }
-            currentPage.push(item);
-            currentPageHeight += rowScore;
-        });
-
-        if (currentPage.length > 0 || items.length === 0) {
-            paginatedPages.push(currentPage);
+    items.forEach((item) => {
+        const rowScore = 38;
+        if (currentPageHeight + rowScore > MAX_PAGE_HEIGHT_SCORE && currentPage.length > 0) {
+            pages.push(currentPage);
+            currentPage = [];
+            currentPageHeight = 0;
         }
-        pages = paginatedPages;
-    } else {
-        pages = [items];
+        currentPage.push(item);
+        currentPageHeight += rowScore;
+    });
+
+    if (currentPage.length > 0 || items.length === 0) {
+        pages.push(currentPage);
     }
 
     return (
@@ -180,34 +293,15 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                     <div key={item.id} className="grid grid-cols-[1fr_100px_100px_100px_150px_30px] gap-4 py-2 items-center bg-transparent transition-colors px-2">
 
                                         {/* Description */}
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={item.description}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { description: e.target.value })}
-                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm font-bold uppercase outline-none px-1 py-1 text-zinc-900 print:hidden`}
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black`}>{item.description}</div>
-                                        </div>
+                                        <div className="w-full text-sm font-bold uppercase px-1 py-1 text-ellipsis overflow-hidden text-black">{item.description}</div>
 
                                         {/* Budgeted (ReadOnly) */}
                                         <div className="text-right text-xs font-mono text-zinc-500">
                                             {formatter.format(item.budgeted)}
                                         </div>
 
-                                        {/* Actual (Editable) */}
-                                        <div>
-                                            <input
-                                                type="number"
-                                                value={item.actual || ''}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { actual: parseFloat(e.target.value) || 0 })}
-                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm font-mono font-bold text-right outline-none px-1 py-1 text-zinc-900 print:hidden`}
-                                                placeholder="0.00"
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-sm font-mono font-bold text-right px-1 py-1 text-black`}>{formatter.format(item.actual)}</div>
-                                        </div>
+                                        {/* Actual */}
+                                        <div className="w-full text-sm font-mono font-bold text-right px-1 py-1 text-black">{formatter.format(item.actual)}</div>
 
                                         {/* Variance */}
                                         <div className={`text-right text-sm font-mono font-bold ${variance < 0 ? 'text-red-500' : 'text-zinc-400'}`}>
@@ -215,29 +309,10 @@ export const BudgetActualTemplate = ({ data, onUpdate, isLocked = false, plain, 
                                         </div>
 
                                         {/* Notes */}
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={item.notes}
-                                                onChange={(e) => handleUpdateItem(globalIdx, { notes: e.target.value })}
-                                                className={`w-full bg-transparent border-b border-transparent hover:border-zinc-200 text-sm text-zinc-500 font-mono outline-none px-1 py-1 print:hidden text-zinc-900`}
-                                                placeholder="..."
-                                                disabled={isLocked}
-                                            />
-                                            <div className={`${isPrinting ? 'block' : 'hidden print:block'} w-full text-[10px] text-zinc-500 font-mono px-1 py-1`}>{item.notes}</div>
-                                        </div>
+                                        <div className="w-full text-[10px] text-zinc-500 font-mono px-1 py-1">{item.notes}</div>
 
-                                        {/* Delete */}
-                                        <div className={`flex justify-end ${isPrinting ? 'hidden' : 'print:hidden'}`}>
-                                            {!isLocked && (
-                                                <button
-                                                    onClick={() => handleDeleteItem(globalIdx)}
-                                                    className="text-zinc-300 hover:text-red-500 transition-colors"
-                                                >
-                                                    <Trash2 size={12} />
-                                                </button>
-                                            )}
-                                        </div>
+                                        {/* Delete (hidden in print) */}
+                                        <div />
                                     </div>
                                 )
                             })}
