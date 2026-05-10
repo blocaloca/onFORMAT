@@ -88,7 +88,6 @@ import { PdfCallSheet } from './templates/PdfCallSheet';
 import { PdfCreativeBrief } from './templates/PdfCreativeBrief';
 import { PdfDirectorsTreatment } from './templates/PdfDirectorsTreatment';
 import { PdfLookbook } from './templates/PdfLookbook';
-import { PdfProjectVision } from './templates/PdfProjectVision';
 
 // --- Content Renderer Swouter ---
 const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
@@ -106,10 +105,6 @@ const ContentRenderer = ({ toolId, data }: { toolId: string, data: any }) => {
     if (toolId === 'lookbook') {
         return <PdfLookbook data={data} />;
     }
-    if (toolId === 'project-vision') {
-        return <PdfProjectVision data={data} />;
-    }
-
     // 2. Fallback for unmapped tools (Simple Dump)
     if (data && Object.keys(data).length > 0) {
         return (

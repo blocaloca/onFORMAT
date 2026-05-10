@@ -1,20 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
-// Mobile Polish Update - RETRY 2 - 10:47 AM
-import React, { useEffect, useMemo, useState } from 'react';
-import { X, Printer, Eye, ChevronDown, Layers, RectangleVertical, RectangleHorizontal, Check } from 'lucide-react';
-import { PrintItem } from './types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { X, Printer, Eye, Layers, Check, ChevronDown } from 'lucide-react';
 import { PrintPreview } from './PrintPreview';
-import { ProjectProvider, useProject } from '../ProjectContext'; // Adjust path if needed
-import { pdf } from '@react-pdf/renderer';
-import { saveAs } from 'file-saver';
-import { GlobalPdfDocument } from './pdf-factory/PdfDocumentFactory';
+import { PDFPreviewWrapper } from './PDFPreviewWrapper';
+import { PrintContext } from './PrintContext';
+import { getTemplateForTool } from '../TemplateRegistry';
+import { ProjectProvider, useProject } from '../ProjectContext';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 
 interface PrintDashboardProps {
     onClose: () => void;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    phases: any; // Full project data
+    phases: any;
     projectName?: string;
     clientName?: string;
     producer?: string;
@@ -22,535 +19,711 @@ interface PrintDashboardProps {
 }
 
 // ---------------------------------------------------------------------------
-// Tool Metadata Registry (Expanded)
+// Tool registry
 // ---------------------------------------------------------------------------
-const TOOL_TYPES: Record<string, { label: string, defaultOrient: 'portrait' | 'landscape' }> = {
-    // Development
-    'project-vision': { label: 'Project Vision', defaultOrient: 'portrait' },
-    'brief': { label: 'Creative Brief', defaultOrient: 'landscape' },
-    'directors-treatment': { label: 'Treatment', defaultOrient: 'landscape' },
-    'lookbook': { label: 'Lookbook', defaultOrient: 'landscape' },
-    'storyboard': { label: 'Storyboard', defaultOrient: 'landscape' },
-    'av-script': { label: 'AV Script', defaultOrient: 'portrait' },
-
-    // Pre-Production
-    'shot-scene-book': { label: 'Shot List', defaultOrient: 'landscape' },
-    'ecomm-shot-list': { label: 'eComm Shot List', defaultOrient: 'landscape' },
-    'budget': { label: 'Budget', defaultOrient: 'landscape' },
-    'schedule': { label: 'Production Schedule', defaultOrient: 'landscape' },
-    'crew-list': { label: 'Crew List', defaultOrient: 'portrait' },
-    'locations-sets': { label: 'Locations', defaultOrient: 'landscape' },
-    'casting-talent': { label: 'Talent', defaultOrient: 'portrait' },
-    'wardrobe-styling': { label: 'Wardrobe', defaultOrient: 'portrait' },
-    'props-list': { label: 'Props', defaultOrient: 'portrait' },
-
-    // On-Set
-    'call-sheet': { label: 'Call Sheet', defaultOrient: 'landscape' },
-    'dit-log': { label: 'DIT Log', defaultOrient: 'landscape' },
-    'sound-report': { label: 'Sound Report', defaultOrient: 'portrait' },
-    'camera-report': { label: 'Camera Report', defaultOrient: 'landscape' },
-    'on-set-notes': { label: 'On-Set Notes', defaultOrient: 'portrait' },
-    'script-notes': { label: 'Script Notes', defaultOrient: 'landscape' },
-
-    // Post
-    'budget-actual': { label: 'Actuals', defaultOrient: 'landscape' },
-    'deliverables-licensing': { label: 'Deliverables', defaultOrient: 'portrait' },
-    'client-selects': { label: 'Client Selects', defaultOrient: 'landscape' },
-    'archive-log': { label: 'Archive Log', defaultOrient: 'portrait' },
+const TOOL_TYPES: Record<string, { label: string; defaultOrient: 'portrait' | 'landscape' }> = {
+    'project-vision':         { label: 'Project Vision',     defaultOrient: 'portrait' },
+    'brief':                  { label: 'Creative Brief',      defaultOrient: 'portrait' },
+    'directors-treatment':    { label: 'Treatment',           defaultOrient: 'landscape' },
+    'lookbook':               { label: 'Lookbook',            defaultOrient: 'landscape' },
+    'storyboard':             { label: 'Storyboard',          defaultOrient: 'landscape' },
+    'av-script':              { label: 'AV Script',           defaultOrient: 'portrait' },
+    'shot-scene-book':        { label: 'Shot List',           defaultOrient: 'landscape' },
+    'ecomm-shot-list':        { label: 'eComm Shot List',     defaultOrient: 'landscape' },
+    'budget':                 { label: 'Budget',              defaultOrient: 'landscape' },
+    'schedule':               { label: 'Production Schedule', defaultOrient: 'landscape' },
+    'crew-list':              { label: 'Crew List',           defaultOrient: 'landscape' },
+    'locations-sets':         { label: 'Locations',           defaultOrient: 'landscape' },
+    'casting-talent':         { label: 'Talent',              defaultOrient: 'portrait' },
+    'wardrobe-styling':       { label: 'Wardrobe',            defaultOrient: 'portrait' },
+    'props-list':             { label: 'Props',               defaultOrient: 'portrait' },
+    'call-sheet':             { label: 'Call Sheet',          defaultOrient: 'landscape' },
+    'dit-log':                { label: 'DIT Log',             defaultOrient: 'landscape' },
+    'sound-report':           { label: 'Sound Report',        defaultOrient: 'portrait' },
+    'camera-report':          { label: 'Camera Report',       defaultOrient: 'landscape' },
+    'on-set-notes':           { label: 'On-Set Notes',        defaultOrient: 'portrait' },
+    'script-notes':           { label: 'Script Notes',        defaultOrient: 'landscape' },
+    'budget-actual':          { label: 'Actuals',             defaultOrient: 'landscape' },
+    'deliverables-licensing': { label: 'Deliverables',        defaultOrient: 'portrait' },
+    'client-selects':         { label: 'Client Selects',      defaultOrient: 'landscape' },
+    'archive-log':            { label: 'Archive Log',         defaultOrient: 'portrait' },
 };
 
 const PHASE_GROUPS: Record<string, string[]> = {
-    'Development': ['project-vision', 'brief', 'directors-treatment', 'lookbook', 'storyboard', 'av-script'],
-    'Pre-Production': ['shot-scene-book', 'budget', 'schedule', 'crew-list', 'locations-sets', 'casting-talent', 'wardrobe-styling', 'props-list'],
-    'Production': ['call-sheet', 'ecomm-shot-list', 'dit-log', 'sound-report', 'camera-report', 'on-set-notes', 'script-notes'],
-    'Post-Production': ['budget-actual', 'deliverables-licensing', 'client-selects', 'archive-log']
+    'Development':     ['project-vision', 'brief', 'directors-treatment', 'lookbook', 'storyboard', 'av-script'],
+    'Pre-Production':  ['shot-scene-book', 'budget', 'schedule', 'crew-list', 'locations-sets', 'casting-talent', 'wardrobe-styling', 'props-list'],
+    'Production':      ['call-sheet', 'ecomm-shot-list', 'dit-log', 'sound-report', 'camera-report', 'on-set-notes', 'script-notes'],
+    'Post-Production': ['budget-actual', 'deliverables-licensing', 'client-selects', 'archive-log'],
 };
 
-const DOCUMENTS_REGISTRY = TOOL_TYPES;
-
 // ---------------------------------------------------------------------------
-
-// Inner Component (Accesses Context)
+// Inner component — inside ProjectProvider, has context access
 // ---------------------------------------------------------------------------
-const PrintRoomContent = ({ onClose, projectName, clientName, producer, projectId }: { onClose: () => void, projectName: string, clientName?: string, producer?: string, projectId?: string }) => {
-    const { activeProject, getToolData, getToolStack } = useProject();
+const PrintRoomContent = ({
+    onClose, projectName, clientName, projectId,
+}: {
+    onClose: () => void;
+    projectName: string;
+    clientName?: string;
+    producer?: string;
+    projectId?: string;
+}) => {
+    const { getToolData, getToolStack, activeProject } = useProject();
 
-    // Selection State
+    // Per-item orientation — initialised from TOOL_TYPES defaults
+    const [itemOrientations, setItemOrientations] = useState<Record<string, 'portrait' | 'landscape'>>(() => {
+        const d: Record<string, 'portrait' | 'landscape'> = {};
+        Object.entries(TOOL_TYPES).forEach(([k, v]) => { d[k] = v.defaultOrient; });
+        return d;
+    });
+
     const [selectedTools, setSelectedTools] = useState<Set<string>>(new Set());
-    const [previewId, setPreviewId] = useState<string | null>(null);
-
-    // Master Day State (-1 = All, 0 = Day 1, 1 = Day 2, etc.)
-    // Default to Day 1
-    const [masterDay, setMasterDay] = useState<number>(0);
-
-    // Master Orientation State (Default to Landscape)
-    const [masterOrientation, setMasterOrientation] = useState<'portrait' | 'landscape'>('landscape');
-
-    // UI State
+    const [previewId, setPreviewId] = useState<string | null>(null); // null = cover page
+    const [masterDay, setMasterDay] = useState(-1); // -1 = all days, 0 = Day 1, etc.
     const [isExporting, setIsExporting] = useState(false);
+
     const [coverSettings, setCoverSettings] = useState({
         showCover: true,
         title: projectName,
         subtitle: clientName || '',
         date: new Date().toLocaleDateString(),
-        orientation: 'landscape' as 'portrait' | 'landscape', // Will be overridden by masterOrientation in preview
-        studioLogo: null as string | null
     });
 
-    // Persistence: Load preference on mount
+    const exportAreaRef = useRef<HTMLDivElement>(null);
+    const previewContainerRef = useRef<HTMLDivElement>(null);
+    const [previewScale, setPreviewScale] = useState(0.65);
+
+    // Force light mode while printroom is open
     useEffect(() => {
-        const saved = localStorage.getItem('printroom_orientation');
-        if (saved === 'portrait' || saved === 'landscape') {
-            setMasterOrientation(saved);
-        }
-
-        const logoKey = projectId ? `printroom_studiologo_${projectId}` : 'printroom_studiologo';
-        const savedLogo = localStorage.getItem(logoKey);
-        if (savedLogo) {
-            setCoverSettings(s => ({ ...s, studioLogo: savedLogo }));
-        }
-
-        // Force Light Mode for the entire Print Room (resolves dark mode leaking into documents)
-        const isDark = document.documentElement.classList.contains('dark');
-        if (isDark) {
-            document.documentElement.classList.remove('dark');
-        }
-
-        return () => {
-            // Restore dark mode when Print Room closes
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            }
-        };
+        const wasDark = document.documentElement.classList.contains('dark');
+        if (wasDark) document.documentElement.classList.remove('dark');
+        return () => { if (wasDark) document.documentElement.classList.add('dark'); };
     }, []);
 
-    // Persistence: Save preference on change
+    // Dynamic preview scale — responds to panel resize and preview target change
     useEffect(() => {
-        localStorage.setItem('printroom_orientation', masterOrientation);
-    }, [masterOrientation]);
+        const update = () => {
+            if (!previewContainerRef.current) return;
+            const containerW = previewContainerRef.current.clientWidth - 64;
+            const orient = previewId ? (itemOrientations[previewId] || 'portrait') : 'portrait';
+            const docW = orient === 'landscape' ? 1056 : 816;
+            setPreviewScale(Math.min(1, Math.max(0.3, containerW / docW)));
+        };
+        update();
+        const ro = new ResizeObserver(update);
+        if (previewContainerRef.current) ro.observe(previewContainerRef.current);
+        return () => ro.disconnect();
+    }, [previewId, itemOrientations]);
 
-    useEffect(() => {
-        const logoKey = projectId ? `printroom_studiologo_${projectId}` : 'printroom_studiologo';
-        if (coverSettings.studioLogo) {
-            localStorage.setItem(logoKey, coverSettings.studioLogo);
-        } else {
-            localStorage.removeItem(logoKey);
-        }
-    }, [coverSettings.studioLogo, projectId]);
-
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCoverSettings(s => ({ ...s, studioLogo: reader.result as string }));
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    // 1. Build List regarding Context Data
+    // Build document list with data status
     const documentList = useMemo(() => {
-        const list = Object.entries(DOCUMENTS_REGISTRY).map(([key, meta]) => {
-            // Always fetch full stack to ensure index alignment with Factory
-            // Fetch Stack (History) and Current Draft (Active)
-            const stack = getToolStack ? getToolStack(key) || [] : [];
+        return Object.entries(TOOL_TYPES).map(([key, meta]) => {
+            const stack = getToolStack ? (getToolStack(key) || []) : [];
             const currentDraft = getToolData(key);
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let versions: any[] = [...stack];
-
-            // Always ensure the active draft is included if valid, as it represents the latest edits
             if (currentDraft && Object.keys(currentDraft).length > 0) {
-                const lastVer = versions[versions.length - 1];
-                // Simple JSON compare to avoid exact duplicates
-                if (!lastVer || JSON.stringify(lastVer) !== JSON.stringify(currentDraft)) {
+                const last = versions[versions.length - 1];
+                if (!last || JSON.stringify(last) !== JSON.stringify(currentDraft)) {
                     versions.push(currentDraft);
                 }
             }
-            // Filter out purely empty objects or empty content structure
             versions = versions.filter(v => {
-                if (!v) return false;
-                if (Object.keys(v).length === 0) return false;
-                // Specific checks for known array-based tools
+                if (!v || Object.keys(v).length === 0) return false;
                 if (v.slides && Array.isArray(v.slides) && v.slides.length === 0) return false;
                 if (v.scenes && Array.isArray(v.scenes) && v.scenes.length === 0) return false;
-                if (v.content && Array.isArray(v.content) && v.content.length === 0) return false;
-                if (v.rows && Array.isArray(v.rows) && v.rows.length === 0) return false;
-                if (v.shots && Array.isArray(v.shots) && v.shots.length === 0) return false;
+                if (v.rows  && Array.isArray(v.rows)   && v.rows.length === 0)   return false;
+                if (v.shots && Array.isArray(v.shots)  && v.shots.length === 0)  return false;
                 return true;
             });
-
-            // Reconnected getToolStatus logic for "Ready" lights scanning DEVELOPMENT -> POST
-            const getToolStatus = (foundVersions: any[]) => foundVersions.length > 0;
-            const hasData = getToolStatus(versions);
-
-            return {
-                id: key,
-                label: meta.label,
-                defaultOrient: meta.defaultOrient,
-                hasData: hasData,
-                status: hasData ? (versions.length > 1 ? `${versions.length} Versions` : 'Drafted') : 'Empty',
-                versions: versions
-            };
+            return { id: key, label: meta.label, hasData: versions.length > 0, versions };
         });
-
-        console.log(`[UI-Restore] Sidebar rendering with [${list.length}] documents`);
-        return list;
     }, [getToolData, getToolStack]);
 
-    // Calculate Max Days available across all docs
+    // Max production days across all docs with data
     const maxDays = useMemo(() => {
-        let max = 1;
-        documentList.forEach(doc => {
-            if (doc.versions.length > max) max = doc.versions.length;
-        });
-        return max;
+        const counts = documentList.filter(d => d.hasData).map(d => d.versions.length);
+        return counts.length > 0 ? Math.max(...counts) : 1;
     }, [documentList]);
 
-    // Initial Selection (Start Empty, Show Cover)
-    useEffect(() => {
-        setSelectedTools(new Set());
-        setPreviewId(null);
-    }, []);
+    // Selected docs in phase order (for export)
+    const orderedSelectedDocs = useMemo(() => {
+        const result: typeof documentList = [];
+        Object.values(PHASE_GROUPS).flat().forEach(toolId => {
+            if (selectedTools.has(toolId)) {
+                const doc = documentList.find(d => d.id === toolId);
+                if (doc) result.push(doc);
+            }
+        });
+        return result;
+    }, [selectedTools, documentList]);
 
-    const toggleSelection = (id: string) => {
-        const next = new Set(selectedTools);
-        if (next.has(id)) {
-            next.delete(id);
-            if (previewId === id) setPreviewId(null);
-        } else {
-            next.add(id);
-            setPreviewId(id);
-        }
-        setSelectedTools(next);
+    // Select All (docs with data) / Deselect All
+    const selectAll = () => setSelectedTools(new Set(documentList.filter(d => d.hasData).map(d => d.id)));
+    const deselectAll = () => { setSelectedTools(new Set()); setPreviewId(null); };
+
+    // Row click: auto-select + set preview. Click active row again to deselect back to cover.
+    const handleRowClick = (toolId: string) => {
+        if (previewId === toolId) { setPreviewId(null); return; }
+        setSelectedTools(prev => { const n = new Set(prev); n.add(toolId); return n; });
+        setPreviewId(toolId);
     };
 
+    // Checkbox click: toggle selection only
+    const handleCheckboxClick = (e: React.MouseEvent, toolId: string) => {
+        e.stopPropagation();
+        setSelectedTools(prev => {
+            const n = new Set(prev);
+            if (n.has(toolId)) {
+                n.delete(toolId);
+                if (previewId === toolId) setPreviewId(null);
+            } else {
+                n.add(toolId);
+            }
+            return n;
+        });
+    };
 
+    // Orientation pill click
+    const handleOrientToggle = (e: React.MouseEvent, toolId: string, orient: 'portrait' | 'landscape') => {
+        e.stopPropagation();
+        setItemOrientations(prev => ({ ...prev, [toolId]: orient }));
+    };
 
+    // Export: capture from hidden area → jsPDF + footer text layer
     const handleExport = async () => {
+        if (!exportAreaRef.current) return;
         setIsExporting(true);
         try {
-            // Find ALL pages currently rendered visibly in the scrollable view
-            const elements = document.querySelectorAll('.print-page-capture');
-            if (elements.length === 0) {
-                throw new Error("No visible pages to export. Please ensure at least one document is selected.");
+            const pages = Array.from(
+                exportAreaRef.current.querySelectorAll('.print-page-capture')
+            ) as HTMLElement[];
+
+            if (pages.length === 0) {
+                throw new Error('Nothing to export. Enable Cover Page or select at least one document.');
             }
 
-            // Temporarily hide scrollbars or sticky elements if there are any that interfere with canvas
-            // but these wrappers are strictly content so it should be fine.
+            const total = pages.length;
+            let pdf: jsPDF | null = null;
 
-            // Initialize jsPDF with the master orientation
-            const pdfOut = new jsPDF({
-                orientation: masterOrientation === 'landscape' ? 'l' : 'p',
-                unit: 'pt',
-                format: 'letter'
-            });
+            for (let i = 0; i < pages.length; i++) {
+                const el = pages[i];
+                const orient = el.dataset.orientation === 'landscape' ? 'l' : 'p';
+                const pdfW = orient === 'l' ? 792 : 612;
+                const pdfH = orient === 'l' ? 612 : 792;
 
-            for (let i = 0; i < elements.length; i++) {
-                const el = elements[i] as HTMLElement;
-
-                // Allow specific pages to dictate their own orientation
-                const pageOrientation = el.dataset.orientation === 'landscape' ? 'l' : 'p';
-
-                // Add new page (skip first page initialization but correct size if necessary)
-                if (i > 0) {
-                    pdfOut.addPage('letter', pageOrientation);
-                } else if (i === 0 && pageOrientation !== (masterOrientation === 'landscape' ? 'l' : 'p')) {
-                    // Force the first page to switch orientation if the cover/first item demands it
-                    pdfOut.setPage(1);
-                    // The easiest trick in jsPDF for changing first page without remaking is actually just creating with the correct one.
-                    // But we'll trust the master for page 1 usually, or they match.
+                if (i === 0) {
+                    pdf = new jsPDF({ orientation: orient as 'l' | 'p', unit: 'pt', format: 'letter' });
+                } else {
+                    pdf!.addPage('letter', orient as 'l' | 'p');
                 }
 
-                // Native dimensions for letter
-                const pdfWidth = pageOrientation === 'l' ? 792 : 612;
-                const pdfHeight = pageOrientation === 'l' ? 612 : 792;
-
-                // Highest quality rendering
                 const canvas = await html2canvas(el, {
                     scale: 2,
                     useCORS: true,
-                    logging: true,
                     allowTaint: false,
-                    backgroundColor: '#FFFFFF'
+                    backgroundColor: '#FFFFFF',
+                    logging: false,
                 });
 
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                pdfOut.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                pdf!.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, pdfW, pdfH);
+
+                // Footer text layer — added after image, not captured in canvas
+                pdf!.setFontSize(7);
+                pdf!.setTextColor(190, 190, 190);
+                pdf!.text(
+                    `onFORMAT  ·  Page ${i + 1} of ${total}`,
+                    pdfW / 2,
+                    pdfH - 10,
+                    { align: 'center' }
+                );
             }
 
-            pdfOut.save(`${coverSettings.title || 'Project'} - Package.pdf`);
-
-        } catch (e) {
-            console.error("Export Failed", e);
-            alert(`Export failed: ${e instanceof Error ? e.message : String(e)}\nPlease check console for more details.`);
+            pdf!.save(`${coverSettings.title || 'Project'} — Package.pdf`);
+        } catch (err) {
+            console.error('Export failed', err);
+            alert(`Export failed: ${err instanceof Error ? err.message : String(err)}`);
         } finally {
             setIsExporting(false);
         }
     };
 
-    // --- Status Helper ---
+    // Derived display values
+    const previewOrientation: 'portrait' | 'landscape' = previewId
+        ? (itemOrientations[previewId] || 'portrait')
+        : 'portrait';
+    const previewLabel = previewId ? (TOOL_TYPES[previewId]?.label || previewId) : 'Cover Page';
 
+    // Pre-fetch the correct data slice for the preview panel — pulled from documentList
+    // so PrintPreview doesn't need to re-lookup via useProject() (avoids stale context reads)
+    const previewDocData: any = useMemo(() => {
+        if (!previewId) return undefined;
+        const doc = documentList.find(d => d.id === previewId);
+        if (!doc || doc.versions.length === 0) return {};
+        const idx = masterDay >= 0 ? masterDay : doc.versions.length - 1;
+        return doc.versions[idx] ?? {};
+    }, [previewId, documentList, masterDay]);
+    const selectedCount = selectedTools.size;
+    const coverPageCount = coverSettings.showCover ? 1 : 0;
+    const totalPageCount = coverPageCount + orderedSelectedDocs.reduce(
+        (sum, doc) => sum + Math.max(1, doc.versions.length), 0
+    );
+
+    // Shared metadata for template rendering
+    const templateMetadata = {
+        projectName: coverSettings.title,
+        date: coverSettings.date,
+        producer: activeProject?.owner_name,
+    };
+
+    // Cover page HTML (shared between preview and export area)
+    const CoverContent = () => (
+        <div className="bg-white w-full h-full flex items-center justify-center relative">
+            <div className="text-center p-12 flex flex-col items-center justify-center w-full h-full relative">
+                <h1 className="text-5xl font-black uppercase tracking-normal text-zinc-900 max-w-2xl leading-tight">
+                    {coverSettings.title || 'Untitled Project'}
+                </h1>
+                <div className="w-24 h-1.5 bg-black mx-auto my-8" />
+                <h2 className="text-lg font-bold tracking-[0.3em] uppercase text-zinc-500">
+                    {coverSettings.subtitle}
+                </h2>
+                <p className="mt-8 font-mono text-xs text-zinc-400 font-bold tracking-widest">
+                    {coverSettings.date}
+                </p>
+                <div className="absolute bottom-10 left-0 right-0 text-center">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-300 font-bold">
+                        Created with onFORMAT
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="fixed inset-0 bg-zinc-50 z-50 flex flex-col animate-in fade-in duration-200 overflow-hidden text-zinc-950">
+        <div className="fixed inset-0 bg-zinc-50 z-50 flex flex-col overflow-hidden text-zinc-950">
 
-            {/* TOP BAR */}
-            <header className="h-14 border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0 z-20">
+            {/* ── TOP BAR ── */}
+            <header className="h-14 border-b border-zinc-200 bg-white flex items-center justify-between px-6 shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 text-emerald-500">
-                        <Printer size={16} />
+                    <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200">
+                        <Printer size={15} className="text-zinc-700" />
                     </div>
                     <div>
-                        <h1 className="text-sm font-bold text-zinc-950 uppercase tracking-widest leading-none mb-0.5">Print Room</h1>
-                        <p className="text-[10px] text-zinc-500 font-mono">Unified Document Manager</p>
+                        <h1 className="text-xs font-bold uppercase tracking-widest text-zinc-950 leading-none mb-0.5">
+                            Printroom
+                        </h1>
+                        <p className="text-[10px] text-zinc-400 font-mono">
+                            {totalPageCount} page{totalPageCount !== 1 ? 's' : ''} · {selectedCount} doc{selectedCount !== 1 ? 's' : ''} selected
+                        </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    {/* Day Selector */}
-                    {maxDays > 0 && (
-                        <div className="relative group">
-                            <button className="flex items-center gap-2 bg-zinc-900 border border-zinc-800 text-zinc-300 px-3 py-1.5 rounded-sm text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-800 transition-colors">
-                                <span className="text-zinc-500">View:</span>
-                                {masterDay === -1 ? 'All Days' : `Day ${masterDay + 1}`}
-                                <ChevronDown size={12} className="text-zinc-500" />
-                            </button>
-                            <div className="absolute top-full right-0 pt-2 w-32 hidden group-hover:block z-50">
-                                <div className="bg-zinc-950 border border-zinc-800 rounded shadow-xl overflow-hidden">
-                                    <button
-                                        onClick={() => setMasterDay(-1)}
-                                        className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === -1 ? 'text-emerald-500' : 'text-zinc-400'}`}
-                                    >
-                                        All Days
-                                    </button>
-                                    {Array.from({ length: maxDays }).map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => setMasterDay(i)}
-                                            className={`w-full text-left px-4 py-2 text-[10px] font-bold uppercase tracking-wider hover:bg-zinc-900 ${masterDay === i ? 'text-emerald-500' : 'text-zinc-400'}`}
-                                        >
-                                            Day {i + 1}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+                    {/* Day selector — pills for ≤4 days, dropdown for >4 */}
+                    {maxDays <= 4 ? (
+                        <div className="flex items-center gap-1">
+                            {[{ label: 'ALL', value: -1 }, ...Array.from({ length: maxDays }, (_, i) => ({ label: `DAY ${i + 1}`, value: i }))].map(({ label, value }) => (
+                                <button
+                                    key={value}
+                                    onClick={() => setMasterDay(value)}
+                                    className={`px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest rounded-sm transition-colors ${
+                                        masterDay === value
+                                            ? 'bg-zinc-900 text-white'
+                                            : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800'
+                                    }`}
+                                >
+                                    {label}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="relative">
+                            <select
+                                value={masterDay}
+                                onChange={e => setMasterDay(Number(e.target.value))}
+                                className="appearance-none bg-zinc-100 border border-zinc-200 text-[10px] font-bold uppercase tracking-widest text-zinc-700 pl-3 pr-7 py-1.5 rounded-sm focus:outline-none focus:border-zinc-400 cursor-pointer"
+                            >
+                                <option value={-1}>VIEW: ALL</option>
+                                {Array.from({ length: maxDays }, (_, i) => (
+                                    <option key={i} value={i}>VIEW: DAY {i + 1}</option>
+                                ))}
+                            </select>
+                            <ChevronDown size={10} className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
                         </div>
                     )}
                     <button
                         onClick={handleExport}
                         disabled={isExporting}
-                        className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm border-t border-white/20 active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="bg-zinc-900 hover:bg-zinc-700 text-white px-5 py-2 text-xs font-bold uppercase tracking-widest transition-all flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed rounded-sm"
                     >
-                        {isExporting ? <div className="w-3 h-3 animate-spin border-2 border-white/30 border-t-white rounded-full" /> : <Printer size={14} />}
-                        <span>Export PDF</span>
+                        {isExporting ? (
+                            <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <Printer size={13} />
+                        )}
+                        Export PDF
                     </button>
-                    <button onClick={onClose} className="p-2 rounded hover:bg-zinc-100 text-zinc-500 hover:text-zinc-950 transition-colors">
+                    <button
+                        onClick={onClose}
+                        className="p-2 rounded hover:bg-zinc-100 text-zinc-400 hover:text-zinc-950 transition-colors"
+                    >
                         <X size={18} />
                     </button>
                 </div>
             </header>
 
-            {/* SPLIT PANE CONSOLE LAYOUT */}
-            <div className="flex-1 relative w-full bg-zinc-50 overflow-hidden isolate">
+            {/* ── SPLIT PANE ── */}
+            <div className="flex-1 flex overflow-hidden">
 
-                {/* --- LEFT RAIL: FIXED CONTROLS (z-index 50) --- */}
-                <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-zinc-50 border-r border-zinc-200 z-50 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-zinc-100 [&::-webkit-scrollbar-thumb]:bg-zinc-300 py-6 px-4 space-y-8 shadow-[10px_0_30px_rgba(0,0,0,0.05)] text-zinc-950">
+                {/* ── LEFT RAIL ── */}
+                <aside className="w-[280px] shrink-0 bg-white border-r border-zinc-200 flex flex-col overflow-hidden">
 
-                    {/* 1. COVER PAGE CONTROLS */}
-                    <section className="bg-zinc-100/50 border border-zinc-200 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xs font-black uppercase text-zinc-950 tracking-widest flex items-center gap-2">
-                                <Layers size={14} className="text-emerald-500" />
-                                Cover Page
-                            </h2>
-                            <div
-                                onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
-                                className={`w-10 h-5 rounded-full cursor-pointer relative transition-all duration-300 ${coverSettings.showCover ? 'bg-[#3B82F6]' : 'bg-zinc-800'}`}
+                    {/* Select All / Deselect All */}
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 shrink-0">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                            {selectedCount} selected
+                        </span>
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={selectAll}
+                                className="text-[10px] font-bold uppercase tracking-wider text-blue-500 hover:text-blue-600 transition-colors"
                             >
-                                <div className={`absolute top-1 w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-300 ${coverSettings.showCover ? 'left-[22px]' : 'left-1'}`} />
-                            </div>
+                                Select All
+                            </button>
+                            <span className="text-zinc-300 text-xs">·</span>
+                            <button
+                                onClick={deselectAll}
+                                className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 hover:text-zinc-700 transition-colors"
+                            >
+                                None
+                            </button>
                         </div>
+                    </div>
 
-                        {coverSettings.showCover && (
-                            <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
+                    {/* Scrollable content */}
+                    <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-zinc-200 py-5 px-4 space-y-6">
+
+                        {/* Cover Page */}
+                        <section>
+                            <div className="flex items-center justify-between mb-2.5">
+                                <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
+                                    <Layers size={11} />
+                                    Cover Page
+                                </h2>
+                                <button
+                                    onClick={() => setCoverSettings(s => ({ ...s, showCover: !s.showCover }))}
+                                    className={`w-8 h-4 rounded-full relative transition-colors duration-200 ${coverSettings.showCover ? 'bg-zinc-900' : 'bg-zinc-200'}`}
+                                >
+                                    <div className={`absolute top-0.5 w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${coverSettings.showCover ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                                </button>
+                            </div>
+                            {coverSettings.showCover && (
                                 <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Project Title</label>
                                     <input
                                         value={coverSettings.title}
-                                        onChange={(e) => setCoverSettings(s => ({ ...s, title: e.target.value }))}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded px-3 py-2 text-xs font-bold text-black focus:border-[#3B82F6] focus:ring-1 focus:ring-blue-500/50 focus:outline-none transition-all uppercase tracking-wide"
+                                        onChange={e => setCoverSettings(s => ({ ...s, title: e.target.value }))}
+                                        placeholder="Project title"
+                                        className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-1.5 text-xs font-bold text-zinc-900 uppercase tracking-wide focus:outline-none focus:border-zinc-400"
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Client</label>
                                     <input
                                         value={coverSettings.subtitle}
-                                        onChange={(e) => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
-                                        className="w-full bg-zinc-100 shadow-inner border border-zinc-200 rounded px-3 py-2 text-xs text-black focus:border-[#3B82F6] focus:outline-none transition-all placeholder:text-zinc-400"
-                                        placeholder="Client Name / Agency"
+                                        onChange={e => setCoverSettings(s => ({ ...s, subtitle: e.target.value }))}
+                                        placeholder="Client / Agency"
+                                        className="w-full bg-zinc-50 border border-zinc-200 rounded px-3 py-1.5 text-xs text-zinc-600 focus:outline-none focus:border-zinc-400"
                                     />
+                                    <p className="text-[10px] text-zinc-400 font-mono px-0.5">{coverSettings.date}</p>
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider">Producer / Owner</label>
-                                    <input
-                                        value={producer || activeProject?.owner_name || ''}
-                                        readOnly
-                                        className="w-full bg-zinc-200 border border-zinc-300 rounded px-3 py-2 text-xs text-zinc-500 focus:outline-none font-mono cursor-not-allowed shadow-inner"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </section>
-
-                    {/* 1.5 STUDIO LOGO CONTROLS */}
-                    <section className="bg-zinc-100/50 border border-zinc-200 rounded-xl p-4">
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-xs font-black uppercase text-zinc-950 tracking-widest flex items-center gap-2">
-                                <Layers size={14} className="text-emerald-500" />
-                                STUDIO LOGO
-                            </h2>
-                        </div>
-                        <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2">
-                            <label className="w-full bg-zinc-100 shadow-inner border border-dashed border-zinc-300 rounded-md p-4 flex items-center justify-center cursor-pointer hover:bg-zinc-200/50 transition-colors">
-                                <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-                                {coverSettings.studioLogo ? (
-                                    <img src={coverSettings.studioLogo} alt="Studio Logo" className="max-h-8 object-contain" />
-                                ) : (
-                                    <span className="font-mono text-[10px] text-zinc-500">+ UPLOAD BRAND MARK (PNG/JPG)</span>
-                                )}
-                            </label>
-                            {coverSettings.studioLogo && (
-                                <button
-                                    onClick={() => setCoverSettings(s => ({ ...s, studioLogo: null }))}
-                                    className="text-[10px] text-red-500 hover:text-red-600 uppercase tracking-widest font-bold text-center"
-                                >
-                                    Remove Logo
-                                </button>
                             )}
-                        </div>
-                    </section>
+                        </section>
 
-                    {/* 2. PHASED LIST */}
-                    <div className="space-y-10">
-                        {Object.entries(PHASE_GROUPS).map(([phase, tools]) => (
-                            <div key={phase} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <h3 className="text-[10px] font-black uppercase text-zinc-600 mb-4 tracking-[0.2em] border-b border-zinc-900 pb-2">
-                                    {phase}
-                                </h3>
-                                <div className="space-y-1">
-                                    {tools.map(toolId => {
-                                        let doc = documentList.find(d => d.id === toolId);
-                                        // Emergency Visibility
-                                        if (!doc) {
-                                            doc = {
+                        {/* Phase-grouped document playlist */}
+                        <section className="space-y-5">
+                            {/* Cover page row */}
+                            {coverSettings.showCover && (() => {
+                                const isCoverActive = previewId === null;
+                                return (
+                                    <div
+                                        onMouseDown={() => setPreviewId(null)}
+                                        className={`group flex items-center justify-between py-1.5 rounded cursor-pointer transition-colors mb-1 ${
+                                            isCoverActive
+                                                ? 'bg-zinc-900 border-l-2 border-blue-500 pl-1.5 pr-2'
+                                                : 'hover:bg-zinc-100 border-l-2 border-transparent pl-1.5 pr-2'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <Layers size={11} className={isCoverActive ? 'text-white/70 shrink-0' : 'text-zinc-400 shrink-0'} />
+                                            <span className={`text-[11px] font-bold uppercase tracking-wide ${isCoverActive ? 'text-white' : 'text-zinc-600'}`}>
+                                                Cover Page
+                                            </span>
+                                        </div>
+                                        {!isCoverActive && (
+                                            <span className="text-[9px] font-bold tracking-widest text-zinc-400 uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                Preview →
+                                            </span>
+                                        )}
+                                    </div>
+                                );
+                            })()}
+
+                            {Object.entries(PHASE_GROUPS).map(([phase, tools]) => (
+                                <div key={phase}>
+                                    <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-400 border-b border-zinc-100 pb-1.5 mb-1.5">
+                                        {phase}
+                                    </h3>
+                                    <div className="space-y-0.5">
+                                        {tools.map(toolId => {
+                                            const doc = documentList.find(d => d.id === toolId) || {
                                                 id: toolId,
-                                                label: toolId.replace('-', ' '),
-                                                defaultOrient: 'landscape',
+                                                label: TOOL_TYPES[toolId]?.label || toolId,
                                                 hasData: false,
-                                                status: 'Empty',
-                                                versions: []
+                                                versions: [],
                                             };
-                                        }
+                                            const isSelected = selectedTools.has(toolId);
+                                            const isPreviewing = previewId === toolId;
+                                            const orient = itemOrientations[toolId] || 'portrait';
 
-                                        const isSelected = selectedTools.has(toolId);
-                                        return (
-                                            <div
-                                                key={toolId}
-                                                className="group flex items-center justify-between p-3 rounded-md hover:bg-zinc-100 border border-transparent hover:border-zinc-200 transition-all cursor-pointer"
-                                                onClick={() => toggleSelection(toolId)}
-                                            >
-                                                {/* Left: Checkbox & Name */}
-                                                <div className="flex items-center gap-4">
-                                                    <div
-                                                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all duration-200 ${isSelected ? 'bg-[#3B82F6] border-blue-500 text-white shadow-[0_0_10px_rgba(59,130,246,0.4)]' : 'border-zinc-300 bg-white text-transparent group-hover:border-zinc-400 shadow-inner'}`}
-                                                    >
-                                                        <Check size={12} strokeWidth={4} className={`transform transition-transform ${isSelected ? 'scale-100' : 'scale-50 opacity-0'}`} />
+                                            return (
+                                                <div
+                                                    key={toolId}
+                                                    onMouseDown={() => handleRowClick(toolId)}
+                                                    className={`group flex items-center justify-between py-1.5 rounded cursor-pointer transition-colors ${
+                                                        isPreviewing
+                                                            ? 'bg-zinc-900 border-l-2 border-blue-500 pl-1.5 pr-2'
+                                                            : 'hover:bg-zinc-100 border-l-2 border-transparent pl-1.5 pr-2'
+                                                    }`}
+                                                >
+                                                    {/* Left: checkbox + status dot + name */}
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        {/* Checkbox */}
+                                                        <div
+                                                            onMouseDown={e => { e.stopPropagation(); handleCheckboxClick(e, toolId); }}
+                                                            className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all ${
+                                                                isSelected
+                                                                    ? 'bg-blue-500 border-blue-500'
+                                                                    : isPreviewing
+                                                                    ? 'border-white/30 bg-white/10'
+                                                                    : 'border-zinc-300 bg-white group-hover:border-zinc-400'
+                                                            }`}
+                                                        >
+                                                            {isSelected && (
+                                                                <Check size={9} strokeWidth={3} className="text-white" />
+                                                            )}
+                                                        </div>
+
+                                                        {/* Status dot */}
+                                                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                                            doc.hasData
+                                                                ? 'bg-emerald-500'
+                                                                : isPreviewing
+                                                                ? 'bg-white/20'
+                                                                : 'bg-zinc-200'
+                                                        }`} />
+
+                                                        {/* Label */}
+                                                        <span className={`text-[11px] font-bold uppercase tracking-wide truncate ${
+                                                            isPreviewing
+                                                                ? 'text-white'
+                                                                : doc.hasData
+                                                                ? 'text-zinc-800'
+                                                                : 'text-zinc-400'
+                                                        }`}>
+                                                            {doc.label}
+                                                        </span>
                                                     </div>
 
-                                                    <span className={`text-xs font-bold uppercase transition-colors tracking-wide ${isSelected ? 'text-zinc-950' : 'text-zinc-500 group-hover:text-zinc-600'}`}>
-                                                        {doc.label}
-                                                    </span>
+                                                    {/* Right side: PREVIEW → label on hover, P/L toggle always */}
+                                                    <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                                                        {!isPreviewing && (
+                                                            <span className="text-[9px] font-bold tracking-widest text-zinc-400 uppercase opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                                                Preview →
+                                                            </span>
+                                                        )}
+                                                        <div className={`flex rounded overflow-hidden border shrink-0 ${
+                                                            isPreviewing ? 'border-white/20' : 'border-zinc-200'
+                                                        }`}>
+                                                        <button
+                                                            onMouseDown={e => e.stopPropagation()}
+                                                            onClick={e => handleOrientToggle(e, toolId, 'portrait')}
+                                                            className={`px-1.5 py-0.5 text-[9px] font-bold transition-colors leading-none ${
+                                                                orient === 'portrait'
+                                                                    ? isPreviewing
+                                                                        ? 'bg-white text-zinc-900'
+                                                                        : 'bg-zinc-900 text-white'
+                                                                    : isPreviewing
+                                                                    ? 'text-white/40 hover:text-white/70'
+                                                                    : 'text-zinc-400 hover:text-zinc-700'
+                                                            }`}
+                                                        >
+                                                            P
+                                                        </button>
+                                                        <button
+                                                            onMouseDown={e => e.stopPropagation()}
+                                                            onClick={e => handleOrientToggle(e, toolId, 'landscape')}
+                                                            className={`px-1.5 py-0.5 text-[9px] font-bold transition-colors leading-none ${
+                                                                orient === 'landscape'
+                                                                    ? isPreviewing
+                                                                        ? 'bg-white text-zinc-900'
+                                                                        : 'bg-zinc-900 text-white'
+                                                                    : isPreviewing
+                                                                    ? 'text-white/40 hover:text-white/70'
+                                                                    : 'text-zinc-400 hover:text-zinc-700'
+                                                            }`}
+                                                        >
+                                                            L
+                                                        </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
+                                            );
+                                        })}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </section>
+
                     </div>
                 </aside>
 
-                {/* --- RIGHT PANE: OUTPUT PREVIEW (z-index 10) --- */}
-                <main className="absolute left-[280px] right-0 top-0 bottom-0 bg-zinc-100 z-10 flex flex-col pt-0">
+                {/* ── RIGHT PANEL: WYSIWYG PREVIEW ── */}
+                <main className="flex-1 flex flex-col overflow-hidden bg-zinc-100">
 
-                    {/* Preview Toolbar */}
-                    <div className="h-12 border-b border-zinc-200 bg-zinc-50 flex items-center justify-between px-4 shrink-0">
-                        <h2 className="text-[10px] font-black uppercase text-zinc-600 tracking-widest flex items-center gap-2">
-                            <Eye size={12} className="text-zinc-400" />
-                            Output Preview
-                        </h2>
-                        <div className="flex bg-zinc-100 p-0.5 rounded-md border border-zinc-200">
-                            <button
-                                onClick={() => setMasterOrientation('portrait')}
-                                className={`p-1.5 rounded transition-all ${masterOrientation === 'portrait' ? 'bg-white text-zinc-950 shadow-sm border border-zinc-200' : 'text-zinc-400 hover:text-zinc-600'}`}
-                                title="Portrait"
-                            >
-                                <RectangleVertical size={12} />
-                            </button>
-                            <button
-                                onClick={() => setMasterOrientation('landscape')}
-                                className={`p-1.5 rounded transition-all ${masterOrientation === 'landscape' ? 'bg-white text-zinc-950 shadow-sm border border-zinc-200' : 'text-zinc-400 hover:text-zinc-600'}`}
-                                title="Landscape"
-                            >
-                                <RectangleHorizontal size={12} />
-                            </button>
+                    {/* Preview toolbar */}
+                    <div className="h-10 border-b border-zinc-200 bg-white flex items-center justify-between px-4 shrink-0">
+                        <div className="flex items-center gap-2">
+                            <Eye size={12} className={previewId ? 'text-zinc-700' : 'text-zinc-300'} />
+                            {previewId ? (
+                                <>
+                                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Previewing</span>
+                                    <span className="text-[9px] text-zinc-300">·</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900">
+                                        {previewLabel}
+                                    </span>
+                                </>
+                            ) : (
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">
+                                    No document selected
+                                </span>
+                            )}
                         </div>
+                        {previewId && (
+                            <span className="text-[9px] font-mono uppercase tracking-wider text-zinc-400">
+                                {previewOrientation}
+                            </span>
+                        )}
                     </div>
 
-                    {/* Scrollable Preview Area */}
-                    <div className="flex-1 overflow-y-auto overflow-x-hidden relative bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-zinc-200/80 flex flex-col items-center pt-8 pb-20 px-8 opacity-[0.98]">
-                        <div className="flex flex-col items-center gap-8 w-full max-w-5xl">
-                            {/* Render the actual content but scaled */}
+                    {/* Scrollable preview area — single document WYSIWYG */}
+                    <div
+                        ref={previewContainerRef}
+                        className="flex-1 overflow-y-auto overflow-x-hidden flex flex-col items-center pt-10 pb-20 px-8"
+                    >
+                        {!previewId && !coverSettings.showCover ? (
+                            <div className="flex-1 flex flex-col items-center justify-center w-full gap-4 select-none pointer-events-none">
+                                <div className="w-12 h-12 rounded-full bg-zinc-200 flex items-center justify-center">
+                                    <Eye size={22} className="text-zinc-400" />
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-sm font-medium text-zinc-500">
+                                        Select a document to preview
+                                    </p>
+                                    <p className="text-xs text-zinc-400 mt-1">
+                                        Click any item in the playlist to flightcheck before export
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
                             <PrintPreview
-                                scale={1.0}
-                                items={documentList
-                                    .filter(doc => selectedTools.has(doc.id))
-                                    .map(doc => ({
-                                        id: doc.id,
-                                        toolKey: doc.id,
-                                        label: doc.label,
-                                        isSelected: true,
-                                        orientation: masterOrientation,
-                                        pageCountEstimate: 1,
-                                        selectedVersions: masterDay === -1
-                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                            ? doc.versions.map((_: any, i: number) => i)
-                                            : (doc.versions.length === 1 ? [0] : (masterDay < doc.versions.length ? [masterDay] : []))
-                                    }))
-                                }
-                                coverSettings={{
-                                    ...coverSettings,
-                                    orientation: masterOrientation
-                                }}
-                                orientationOverride={masterOrientation}
+                                toolId={previewId}
+                                orientation={previewOrientation}
+                                coverSettings={coverSettings}
+                                scale={previewScale}
+                                previewData={previewDocData}
                             />
-                        </div>
+                        )}
                     </div>
                 </main>
-
             </div>
+
+            {/* ── HIDDEN EXPORT AREA ──
+                position:fixed keeps it out of any overflow:hidden parent.
+                Positioned far off-screen so it's invisible but fully rendered
+                (opacity would make html2canvas capture transparent images).       */}
+            <div
+                ref={exportAreaRef}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: -9999,
+                    width: 1200,
+                    pointerEvents: 'none',
+                }}
+                aria-hidden="true"
+            >
+                <PrintContext.Provider value={true}>
+
+                    {/* Cover page */}
+                    {coverSettings.showCover && (
+                        <PDFPreviewWrapper orientation="portrait" scale={1} toolId="cover">
+                            <CoverContent />
+                        </PDFPreviewWrapper>
+                    )}
+
+                    {/* Selected documents — each version = one page (production days) */}
+                    {orderedSelectedDocs.flatMap(doc => {
+                        const Template = getTemplateForTool(doc.id);
+                        const orientation = itemOrientations[doc.id] || 'portrait';
+                        const allVersions = doc.versions.length > 0
+                            ? doc.versions
+                            : [getToolData(doc.id) || {}];
+                        const versions = masterDay === -1
+                            ? allVersions
+                            : allVersions.slice(masterDay, masterDay + 1);
+
+                        return versions.map((versionData: any, idx: number) => (
+                            <PDFPreviewWrapper
+                                key={`${doc.id}-${idx}`}
+                                orientation={orientation}
+                                scale={1}
+                                toolId={doc.id}
+                            >
+                                {Template ? (
+                                    <Template
+                                        data={versionData}
+                                        plain={false}
+                                        orientation={orientation}
+                                        isPrinting={true}
+                                        metadata={templateMetadata}
+                                        onUpdate={() => {}}
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <p className="text-zinc-300 text-xs font-mono uppercase tracking-widest">
+                                            No template for {doc.label}
+                                        </p>
+                                    </div>
+                                )}
+                            </PDFPreviewWrapper>
+                        ));
+                    })}
+
+                </PrintContext.Provider>
+            </div>
+
         </div>
     );
-}
+};
 
 // ---------------------------------------------------------------------------
-// Wrapper
+// Public export — wraps in ProjectProvider
 // ---------------------------------------------------------------------------
-export const PrintDashboard = ({ phases, projectName, clientName, producer, onClose, projectId }: PrintDashboardProps) => {
-    return (
-        <ProjectProvider phases={phases} projectMetadata={{ name: projectName, producer: producer }}>
-            <PrintRoomContent onClose={onClose} projectName={projectName || 'Untitled'} clientName={clientName} producer={producer} projectId={projectId} />
-        </ProjectProvider>
-    );
-};
+export const PrintDashboard = ({
+    phases, projectName, clientName, producer, onClose, projectId,
+}: PrintDashboardProps) => (
+    <ProjectProvider phases={phases} projectMetadata={{ name: projectName, producer }}>
+        <PrintRoomContent
+            onClose={onClose}
+            projectName={projectName || 'Untitled'}
+            clientName={clientName}
+            producer={producer}
+            projectId={projectId}
+        />
+    </ProjectProvider>
+);
